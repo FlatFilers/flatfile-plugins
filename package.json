@@ -24,5 +24,9 @@
   "bugs": {
     "url": "https://github.com/FlatFilers/flatfile-plugins/issues"
   },
-  "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme"
+  "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
+  "devDependencies": {
+    "eslint": "^8.38.0",
+    "prettier": "^2.8.7"
+  }
 }
