@@ -1,7 +1,7 @@
 {
-  "name": "smart-date",
+  "name": "@flatfile/plugin-record-hook",
   "version": "0.0.0",
-  "description": "A plugin for accepting and formatting dates in Flatfile.",
+  "description": "A plugin for writing custom record-level hooks in Flatfile.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
