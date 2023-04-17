@@ -6,7 +6,7 @@ Example usage:
 
 ```ts
 client.use(
-  recordHook('example-record-hook-sheet', (record: FlatfileRecord) => {
+  recordHook('my-sheet', (record: FlatfileRecord) => {
     const firstName = record.get('firstName')
     const lastName = record.get('lastName')
     if (firstName && lastName && !record.get('fullName')) {

@@ -7,8 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
-    "test": "jest",
-    "deploy": "../../../platform-sdk-mono/packages/cli/dist/index.js pubsub src/example.ts"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",

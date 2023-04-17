@@ -3,10 +3,10 @@ import { Client, FlatfileVirtualMachine } from '@flatfile/listener'
 import { FlatfileRecord } from '@flatfile/hooks'
 import { recordHook } from '.'
 
-const ExampleSheet: SheetConfig = {
-  name: 'ExampleSheet',
+const MySheet: SheetConfig = {
+  name: 'MySheet',
   description: 'An example sheet showing a record hook',
-  slug: 'example-record-hook-sheet',
+  slug: 'my-sheet',
   fields: [
     {
       key: 'firstName',
@@ -47,7 +47,7 @@ const example = Client.create((client) => {
           name: 'Record hook example workbook 11',
           spaceId: space.data.id,
           environmentId,
-          sheets: [ExampleSheet],
+          sheets: [MySheet],
         },
       })
 
@@ -68,7 +68,7 @@ const example = Client.create((client) => {
 })
 
 example.use(
-  recordHook('example-record-hook-sheet', (record: FlatfileRecord) => {
+  recordHook('my-sheet', (record: FlatfileRecord) => {
     const firstName = record.get('firstName')
     const lastName = record.get('lastName')
     if (firstName && lastName && !record.get('fullName')) {
