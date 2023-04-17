@@ -5,27 +5,27 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: ["eslint:recommended", "plugin:prettier/recommended"],
+  extends: ['eslint:recommended', 'plugin:prettier/recommended'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
     ecmaVersion: 12,
-    sourceType: "module",
+    sourceType: 'module',
   },
-  plugins: ["prettier"],
+  plugins: ['prettier', 'unused-imports'],
   rules: {
-    "no-case-declarations": "off",
-    "no-redeclare": "off",
-    "no-undef": "off",
-    "no-unused-vars": "off",
+    'no-case-declarations': 'off',
+    'no-redeclare': 'off',
+    'no-undef': 'off',
+    'no-unused-vars': 'off',
   },
   overrides: [
     {
-      files: ["**/*.ts?(x)"],
-      parser: "@typescript-eslint/parser",
+      files: ['**/*.ts?(x)'],
+      parser: '@typescript-eslint/parser',
       parserOptions: {
-        sourceType: "module",
+        sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
         },
@@ -35,7 +35,7 @@ module.exports = {
   ],
   settings: {
     react: {
-      version: "detect",
+      version: 'detect',
     },
   },
-};
+}
