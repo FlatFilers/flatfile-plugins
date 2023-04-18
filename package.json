@@ -1,0 +1,33 @@
+{
+  "name": "@flatfile/plugins",
+  "version": "0.0.0",
+  "description": "A library of open-source plugins for developers working with the Flatfile Platform.",
+  "engines": {
+    "node": ">=16 || >=18",
+    "pnpm": ">=7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git"
+  },
+  "keywords": [
+    "flatfile",
+    "data",
+    "typescript",
+    "node.js"
+  ],
+  "author": "Alex Hollenbeck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FlatFilers/flatfile-plugins/issues"
+  },
+  "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
+  "devDependencies": {
+    "@changesets/cli": "^2.26.1",
+    "eslint": "^8.38.0",
+    "prettier": "^2.8.7"
+  }
+}
