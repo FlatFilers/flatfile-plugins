@@ -1,6 +1,6 @@
 # Flatfile Record Hook Plugin
 
-This plugin provides a consise syntax for running custom logic on individual data records in Flatfile.
+This plugin provides a concise syntax for running custom logic on individual data records in Flatfile.
 
 Example usage:
 

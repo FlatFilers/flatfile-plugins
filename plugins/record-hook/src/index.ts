@@ -1,6 +1,6 @@
 import { Client, FlatfileEvent } from '@flatfile/listener'
 import { RecordHook } from '@flatfile/configure'
-import { FlatfileRecord } from '@flatfile/hooks'
+import type { FlatfileRecord } from '@flatfile/hooks'
 
 export const recordHook = (
   sheetSlug: string,
