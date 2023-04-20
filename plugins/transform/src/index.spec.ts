@@ -160,8 +160,13 @@ describe('validate', () => {
       },
       rowId: 0,
     })
-    validate(record, 'lastName', 'Last name cannot contain numbers', (value) =>
-      /\d/.test(value.toString())
+    validate(
+      record,
+      'lastName',
+      'Last name cannot contain numbers',
+      (value) => {
+        return !/\d/.test(value.toString())
+      }
     )
     const messages = record.toJSON().info
     expect(messages.length).toBe(1)

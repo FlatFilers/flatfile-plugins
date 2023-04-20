@@ -1,8 +1,10 @@
 import { FlatfileRecord, TPrimitive } from '@flatfile/hooks'
 
-export type FieldTransformation = (
-  value: string | number | boolean
-) => TPrimitive
+export type NonNullFieldValue = string | number | boolean
+
+export type FieldTransformation = (value: NonNullFieldValue) => TPrimitive
+
+export type FieldValidator = (value: NonNullFieldValue) => boolean
 
 export type RecordTransformation = (record: FlatfileRecord) => TPrimitive
 
@@ -59,9 +61,11 @@ export const validate = (
   record: FlatfileRecord,
   fieldName: string,
   message: string,
-  validator: (record: FlatfileRecord) => boolean
+  validator: FieldValidator
 ) => {
-  if (!validator(record)) {
+  if (typeof record.get(fieldName) === null) return
+  const value = record.get(fieldName) as string | number | boolean
+  if (!validator(value)) {
     record.addError(fieldName, message)
   }
 }
