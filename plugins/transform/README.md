@@ -1,3 +1,8 @@
+---
+title: Transform
+description: Provides utilities for transforming and validating data in Flatfile.
+---
+
 # Flatfile Transform Plugin
 
 This plugin provides utilities for transforming and validating data in Flatfile.

@@ -1,3 +1,8 @@
+---
+title: Record Hook
+description: Provides a concise syntax for running custom logic on individual data records in Flatfile.
+---
+
 # Flatfile Record Hook Plugin
 
 This plugin provides a concise syntax for running custom logic on individual data records in Flatfile.
