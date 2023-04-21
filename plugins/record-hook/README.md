@@ -4,7 +4,9 @@ This plugin provides a concise syntax for running custom logic on individual dat
 
 ## Install & import
 
-`npm i @flatfile/plugin-transform @flatfile/hooks`
+```bash
+npm i @flatfile/plugin-transform @flatfile/hooks
+```
 
 ```ts
 import { recordHook } from '@flatfile/plugin-record-hook'
