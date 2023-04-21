@@ -27,7 +27,7 @@ export const compute = (
   message?: string
 ) => {
   if (typeof record.get(fieldName) === null) return
-  const currentValue = record.get(fieldName) as string | number | boolean
+  const currentValue = record.get(fieldName) as NonNullFieldValue
   record.set(fieldName, transformation(currentValue))
   if (message) {
     record.addComment(fieldName, message)
@@ -64,7 +64,7 @@ export const validate = (
   message: string
 ) => {
   if (typeof record.get(fieldName) === null) return
-  const value = record.get(fieldName) as string | number | boolean
+  const value = record.get(fieldName) as NonNullFieldValue
   if (!validator(value)) {
     record.addError(fieldName, message)
   }
