@@ -16,6 +16,7 @@ describe('compute', () => {
     )
     expect(record.get('firstName')).toBe('alex')
   })
+
   test('it takes an optional message and sets it on compute', () => {
     const record = new FlatfileRecord({
       rawData: {
@@ -57,6 +58,7 @@ describe('transform', () => {
     )
     expect(record.get('fullName')).toBe('Alex Hollenbeck')
   })
+
   test('it takes an optional message and sets it on transform', () => {
     const record = new FlatfileRecord({
       rawData: {
