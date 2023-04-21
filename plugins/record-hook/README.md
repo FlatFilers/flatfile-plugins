@@ -2,7 +2,63 @@
 
 This plugin provides a concise syntax for running custom logic on individual data records in Flatfile.
 
-Example usage:
+## Install & import
+
+`npm i @flatfile/plugin-transform @flatfile/hooks`
+
+```ts
+import { recordHook } from '@flatfile/plugin-record-hook'
+```
+
+## Usage
+
+Pass `recordHook` to a Flatfile data listener and provide a function to run when data is added or updated.
+
+### 1. Create a listener
+
+Set up a listener to configure Flatfile and respond to data events:
+
+<!-- TODO: Link to listener documentation here -->
+
+```ts
+import {
+  Client,
+  FlatfileVirtualMachine,
+  FlatfileEvent,
+} from '@flatfile/listener'
+
+const listener = Client.create((client) => {
+  // Set up your configuration here
+})
+
+const FlatfileVM = new FlatfileVirtualMachine()
+
+listener.mount(FlatfileVM)
+
+export default listener
+```
+
+### 2. Listen for data changes
+
+Use the this plugin to set up a hook that responds to data changes:
+
+<!-- TODO: link to record hook plugin documentation here -->
+
+```ts
+import { recordHook } from '@flatfile/plugin-record-hook'
+
+listener.use(
+  recordHook('my-sheet', (record: FlatfileRecord) => {
+    // Your logic goes here
+  })
+)
+```
+
+Replace `my-sheet` with the slug of the Sheet you want to attach this hook to.
+
+## Example usage
+
+Create a record hook that populates a "full name" field based on the values of first name and last name:
 
 ```ts
 client.use(
@@ -20,3 +76,9 @@ client.use(
   })
 )
 ```
+
+## Related plugins
+
+Use helper functions from @flatfile/plugin-transform in your record hooks for cleaner syntax.
+
+<!-- TODO: add link to plugin-transform docs -->

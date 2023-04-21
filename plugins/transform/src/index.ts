@@ -1,4 +1,4 @@
-import { FlatfileRecord, TPrimitive } from '@flatfile/hooks'
+import type { FlatfileRecord, TPrimitive } from '@flatfile/hooks'
 
 export type NonNullFieldValue = string | number | boolean
 
