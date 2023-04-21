@@ -163,10 +163,10 @@ describe('validate', () => {
     validate(
       record,
       'lastName',
-      'Last name cannot contain numbers',
       (value) => {
         return !/\d/.test(value.toString())
-      }
+      },
+      'Last name cannot contain numbers'
     )
     const messages = record.toJSON().info
     expect(messages.length).toBe(1)
@@ -175,5 +175,26 @@ describe('validate', () => {
       level: 'error',
       message: 'Last name cannot contain numbers',
     })
+  })
+
+  test('it does nothing when the validate condition is met', () => {
+    const record = new FlatfileRecord({
+      rawData: {
+        firstName: 'Alex',
+        lastName: 'Hollenbeck',
+        fullName: null,
+      },
+      rowId: 0,
+    })
+    validate(
+      record,
+      'lastName',
+      (value) => {
+        return !/\d/.test(value.toString())
+      },
+      'Last name cannot contain numbers'
+    )
+    const messages = record.toJSON().info
+    expect(messages.length).toBe(0)
   })
 })

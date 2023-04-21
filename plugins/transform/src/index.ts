@@ -60,8 +60,8 @@ export const computeIfPresent = transformIfPresent
 export const validate = (
   record: FlatfileRecord,
   fieldName: string,
-  message: string,
-  validator: FieldValidator
+  validator: FieldValidator,
+  message: string
 ) => {
   if (typeof record.get(fieldName) === null) return
   const value = record.get(fieldName) as string | number | boolean

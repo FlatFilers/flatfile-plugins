@@ -63,7 +63,7 @@ Replace `my-sheet` with the slug of the Sheet you want to attach this hook to.
 Create a record hook that populates a "full name" field based on the values of first name and last name:
 
 ```ts
-client.use(
+listener.use(
   recordHook('my-sheet', (record: FlatfileRecord) => {
     const firstName = record.get('firstName')
     const lastName = record.get('lastName')

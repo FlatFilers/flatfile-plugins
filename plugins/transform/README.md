@@ -1,10 +1,12 @@
 # Flatfile Transform Plugin
 
-This plugin provides utilities for transforming and validating records in Flatfile.
+This plugin provides utilities for transforming and validating data in Flatfile.
 
 ## Install & import
 
-`npm i @flatfile/plugin-transform @flatfile/hooks`
+```bash
+npm i @flatfile/plugin-transform @flatfile/hooks
+```
 
 ```ts
 import {
@@ -18,7 +20,7 @@ import type { FlatfileRecord } from '@flatfile/hooks'
 
 ## Usage
 
-Use these transformation utilities inside a record hook to transform and validate individual record hooks. Listen for updates to data records, and respond by transforming or validating the incoming data.
+Use these transformation utilities inside a record hook to transform and validate data. Listen for updates to data records, and respond by transforming or validating the incoming data.
 
 ### 1. Create a listener
 
@@ -44,7 +46,7 @@ listener.mount(FlatfileVM)
 export default listener
 ```
 
-### 2. Listen for record changes
+### 2. Listen for data changes
 
 Use the @flatfile/plugin-record-hook plugin to set up a hook that responds to data changes:
 
@@ -79,8 +81,8 @@ listener.use(
     validate(
       record,
       'lastName',
-      'Last name cannot contain numbers',
-      (value) => !/\d/.test(value.toString())
+      (value) => !/\d/.test(value.toString()),
+      'Last name cannot contain numbers'
     )
     return record
   })
@@ -95,9 +97,8 @@ Computes a new value for a field based solely on the intial value of that field.
 
 #### Syntax
 
-```
+```ts
 compute(record, fieldName, transformation, message)
-
 ```
 
 `record: FlatfileRecord` the record to transform
@@ -131,7 +132,7 @@ Transforms the value of a field based on other fields in the record. Differs fro
 
 #### Syntax
 
-```
+```ts
 transform(record, fieldName, transformation, message)
 ```
 
@@ -166,7 +167,7 @@ Transforms the value of a field if specified fields are present.
 
 #### Syntax
 
-```
+```ts
 transformIfPresent(record, presentFields, fieldName, transformation, message)
 ```
 
@@ -204,17 +205,17 @@ Sets a field as invalid if its value does not meet a specified condition.
 
 #### Syntax
 
-```
-validate(record, fieldName, message, validator)
+```ts
+validate(record, fieldName, validator, message)
 ```
 
 `record: FlatfileRecord` the record to validate
 
 `fieldName: string` the name of the field to validate
 
-`message: string` the message to display when the field is invalid
-
 `validator: (value) => boolean` a function that determines whether a given field value is valid
+
+`message: string` the message to display when the field is invalid
 
 ```ts
 client.use(
