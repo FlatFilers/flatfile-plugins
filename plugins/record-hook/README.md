@@ -1,8 +1,3 @@
----
-title: Record Hook
-description: Provides a concise syntax for running custom logic on individual data records in Flatfile.
----
-
 # Flatfile Record Hook Plugin
 
 This plugin provides a concise syntax for running custom logic on individual data records in Flatfile.
@@ -25,8 +20,6 @@ Pass `recordHook` to a Flatfile data listener and provide a function to run when
 
 Set up a listener to configure Flatfile and respond to data events:
 
-<!-- TODO: Link to listener documentation here -->
-
 ```ts
 import {
   Client,
@@ -48,8 +41,6 @@ export default listener
 ### 2. Listen for data changes
 
 Use the this plugin to set up a hook that responds to data changes:
-
-<!-- TODO: link to record hook plugin documentation here -->
 
 ```ts
 import { recordHook } from '@flatfile/plugin-record-hook'
@@ -86,6 +77,4 @@ listener.use(
 
 ## Related plugins
 
-Use helper functions from @flatfile/plugin-transform in your record hooks for cleaner syntax.
-
-<!-- TODO: add link to plugin-transform docs -->
+Use helper functions from [@flatfile/plugin-transform](https://www.npmjs.com/package/@flatfile/plugin-transform) in your record hooks for cleaner syntax.
