@@ -1,8 +1,3 @@
----
-title: Transform
-description: Provides utilities for transforming and validating data in Flatfile.
----
-
 # Flatfile Transform Plugin
 
 This plugin provides utilities for transforming and validating data in Flatfile.
@@ -31,8 +26,6 @@ Use these transformation utilities inside a record hook to transform and validat
 
 Set up a listener to configure Flatfile and respond to data events:
 
-<!-- TODO: Link to listener documentation here -->
-
 ```ts
 import {
   Client,
@@ -53,9 +46,7 @@ export default listener
 
 ### 2. Listen for data changes
 
-Use the @flatfile/plugin-record-hook plugin to set up a hook that responds to data changes:
-
-<!-- TODO: link to record hook plugin documentation here -->
+Use the [@flatfile/plugin-record-hook](https://www.npmjs.com/package/@flatfile/plugin-record-hook) plugin to set up a hook that responds to data changes:
 
 ```ts
 import { recordHook } from '@flatfile/plugin-record-hook'
