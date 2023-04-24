@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.0.3
+
+### Patch Changes
+
+- aaf6cc6: README updates
+
 ## 0.0.2
 
 ### Patch Changes
