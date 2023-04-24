@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-record-hook",
-  "version": "0.0.3",
+  "version": "0.0.2",
   "description": "A plugin for writing custom record-level hooks in Flatfile.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -10,7 +10,11 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alex Hollenbeck",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/plugin-record-hook.git"
+  },
   "license": "ISC",
   "dependencies": {
     "@flatfile/configure": "^0.5.22",

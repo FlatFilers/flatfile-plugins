@@ -10,7 +10,11 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alex Hollenbeck",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/plugin-transform.git"
+  },
   "license": "ISC",
   "dependencies": {
     "@flatfile/hooks": "^1.2.4"
