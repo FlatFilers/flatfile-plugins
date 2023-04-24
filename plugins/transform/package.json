@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-transform",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A plugin for transforming and validating records in Flatfile.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
