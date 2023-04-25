@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.0.4
+
+### Patch Changes
+
+- ae45695: Update readmes and package info
+
 ## 0.0.3
 
 ### Patch Changes
