@@ -5,11 +5,12 @@ This plugin provides a concise syntax for running custom logic on individual dat
 ## Install & import
 
 ```bash
-npm i @flatfile/plugin-transform @flatfile/hooks
+npm i @flatfile/plugin-record-hook @flatfile/hooks
 ```
 
 ```ts
 import { recordHook } from '@flatfile/plugin-record-hook'
+import type { FlatfileRecord } from '@flatfile/hooks'
 ```
 
 ## Usage

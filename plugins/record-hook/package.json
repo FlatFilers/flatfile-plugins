@@ -10,7 +10,12 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alex Hollenbeck",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/record-hook"
+  },
   "license": "ISC",
   "dependencies": {
     "@flatfile/configure": "^0.5.22",
