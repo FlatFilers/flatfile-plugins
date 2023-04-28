@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-transform",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A plugin for transforming and validating records in Flatfile.",
   "registryMetadata": {
     "category": "transform"
