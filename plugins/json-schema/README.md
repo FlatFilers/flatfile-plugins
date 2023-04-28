@@ -1,3 +1,3 @@
-# Flatfile Record Hook Plugin
+# Flatfile JSON Schema Plugin
 
 Coming soon!

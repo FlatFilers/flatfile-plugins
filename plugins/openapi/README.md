@@ -1,3 +1,3 @@
-# Flatfile Record Hook Plugin
+# Flatfile OpenAPI plugin
 
 Coming soon!

@@ -1,6 +1,6 @@
-import { autocast } from '.'
+import { jsonSchema } from '.'
 
-describe('autocast', () => {
+describe('jsonSchema', () => {
   test('test goes here', () => {
     // To be implemented
   })

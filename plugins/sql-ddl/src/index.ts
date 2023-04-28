@@ -1,3 +1,3 @@
-export const autocast = () => {
+export const sqlDdl = () => {
   // To be implemented
 }

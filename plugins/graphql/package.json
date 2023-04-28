@@ -1,9 +1,10 @@
 {
-  "name": "@flatfile/plugin-autocast",
-  "version": "0.0.1",
-  "description": "A plugin for automatically casting values in Flatfile.",
+  "name": "@flatfile/plugin-graphql",
+  "version": "0.0.0",
+  "description": "A plugin for converting Graphql to Flatfile blueprint.",
   "registryMetadata": {
-    "status": "Coming soon"
+    "status": "Coming soon",
+    "category": "schema"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -17,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/autocast"
+    "directory": "plugins/graphql"
   },
   "license": "ISC",
   "devDependencies": {

@@ -1,6 +1,6 @@
-import { autocast } from '.'
+import { graphql } from '.'
 
-describe('autocast', () => {
+describe('graphql', () => {
   test('test goes here', () => {
     // To be implemented
   })

@@ -1,6 +1,6 @@
-import { autocast } from '.'
+import { openapi } from '.'
 
-describe('autocast', () => {
+describe('openapi', () => {
   test('test goes here', () => {
     // To be implemented
   })

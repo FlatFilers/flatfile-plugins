@@ -1,6 +1,6 @@
-import { autocast } from '.'
+import { sqlDdl } from '.'
 
-describe('autocast', () => {
+describe('sqlDdl', () => {
   test('test goes here', () => {
     // To be implemented
   })

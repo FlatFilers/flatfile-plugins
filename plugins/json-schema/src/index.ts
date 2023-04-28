@@ -1,3 +1,3 @@
-export const autocast = () => {
+export const jsonSchema = () => {
   // To be implemented
 }
