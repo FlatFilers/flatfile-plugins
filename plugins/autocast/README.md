@@ -1,3 +1,3 @@
-# Flatfile Record Hook Plugin
+# Flatfile Autocast Plugin
 
 Coming soon!
