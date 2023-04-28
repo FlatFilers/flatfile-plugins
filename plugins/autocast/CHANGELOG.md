@@ -1,5 +1,11 @@
 # @flatfile/plugin-autocast
 
+## 0.0.3
+
+### Patch Changes
+
+- cc27156: Fix readme
+
 ## 0.0.2
 
 ### Patch Changes
