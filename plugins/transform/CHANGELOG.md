@@ -1,5 +1,11 @@
 # @flatfile/plugin-transform
 
+## 0.0.4
+
+### Patch Changes
+
+- 8ed9bb3: Add four new plugin skeletons; add category metadata to existing
+
 ## 0.0.3
 
 ### Patch Changes
