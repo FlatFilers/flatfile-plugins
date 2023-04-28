@@ -15,6 +15,20 @@ importers:
       eslint: 8.38.0
       prettier: 2.8.7
 
+  plugins/autocast:
+    specifiers:
+      '@types/jest': ^29.5.0
+      jest: ^29.5.0
+      ts-jest: ^29.1.0
+      tsup: ^6.7.0
+      typescript: ^5.0.4
+    devDependencies:
+      '@types/jest': 29.5.0
+      jest: 29.5.0
+      ts-jest: 29.1.0_tobmchb5uviuq5lwsinkw5fvje
+      tsup: 6.7.0_typescript@5.0.4
+      typescript: 5.0.4
+
   plugins/graphql:
     specifiers:
       '@types/jest': ^29.5.0
