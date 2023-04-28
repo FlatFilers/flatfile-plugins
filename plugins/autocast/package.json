@@ -1,9 +1,10 @@
 {
-  "name": "@flatfile/plugin-transform",
-  "version": "0.0.3",
-  "description": "A plugin for transforming and validating records in Flatfile.",
+  "name": "@flatfile/plugin-autocast",
+  "version": "0.0.1",
+  "description": "A plugin for automatically casting values in Flatfile.",
   "registryMetadata": {
-    "category": "transform"
+    "status": "Coming soon",
+    "cagegory": "transform"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -17,12 +18,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/transform"
+    "directory": "plugins/autocast"
   },
   "license": "ISC",
-  "dependencies": {
-    "@flatfile/hooks": "^1.2.4"
-  },
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "jest": "^29.5.0",
