@@ -15,7 +15,35 @@ importers:
       eslint: 8.38.0
       prettier: 2.8.7
 
-  plugins/autocast:
+  plugins/graphql:
+    specifiers:
+      '@types/jest': ^29.5.0
+      jest: ^29.5.0
+      ts-jest: ^29.1.0
+      tsup: ^6.7.0
+      typescript: ^5.0.4
+    devDependencies:
+      '@types/jest': 29.5.0
+      jest: 29.5.0
+      ts-jest: 29.1.0_tobmchb5uviuq5lwsinkw5fvje
+      tsup: 6.7.0_typescript@5.0.4
+      typescript: 5.0.4
+
+  plugins/json-schema:
+    specifiers:
+      '@types/jest': ^29.5.0
+      jest: ^29.5.0
+      ts-jest: ^29.1.0
+      tsup: ^6.7.0
+      typescript: ^5.0.4
+    devDependencies:
+      '@types/jest': 29.5.0
+      jest: 29.5.0
+      ts-jest: 29.1.0_tobmchb5uviuq5lwsinkw5fvje
+      tsup: 6.7.0_typescript@5.0.4
+      typescript: 5.0.4
+
+  plugins/openapi:
     specifiers:
       '@types/jest': ^29.5.0
       jest: ^29.5.0
@@ -43,6 +71,20 @@ importers:
       '@flatfile/configure': 0.5.22
       '@flatfile/hooks': 1.2.4
       '@flatfile/listener': 0.0.5
+    devDependencies:
+      '@types/jest': 29.5.0
+      jest: 29.5.0
+      ts-jest: 29.1.0_tobmchb5uviuq5lwsinkw5fvje
+      tsup: 6.7.0_typescript@5.0.4
+      typescript: 5.0.4
+
+  plugins/sql-ddl:
+    specifiers:
+      '@types/jest': ^29.5.0
+      jest: ^29.5.0
+      ts-jest: ^29.1.0
+      tsup: ^6.7.0
+      typescript: ^5.0.4
     devDependencies:
       '@types/jest': 29.5.0
       jest: 29.5.0

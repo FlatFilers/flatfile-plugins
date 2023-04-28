@@ -2,6 +2,9 @@
   "name": "@flatfile/plugin-transform",
   "version": "0.0.3",
   "description": "A plugin for transforming and validating records in Flatfile.",
+  "registryMetadata": {
+    "category": "transform"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
