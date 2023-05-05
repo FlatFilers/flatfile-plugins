@@ -44,7 +44,7 @@ export default function (listener) {
         primary: true,
       },
       (event, api) => {
-        const { actionName, sheetSlug, sheetId, workbookId } = event.context
+        const { sheetId, workbookId } = event.context
         const sheetResponse = await api.sheets.get(sheetId)
         const sheetConfig = sheetResponse.data.config
 
