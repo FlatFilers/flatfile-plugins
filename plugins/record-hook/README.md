@@ -22,35 +22,26 @@ Pass `recordHook` to a Flatfile data listener and provide a function to run when
 Set up a listener to configure Flatfile and respond to data events:
 
 ```ts
-import {
-  Client,
-  FlatfileVirtualMachine,
-  FlatfileEvent,
-} from '@flatfile/listener'
-
-const listener = Client.create((client) => {
-  // Set up your configuration here
-})
-
-const FlatfileVM = new FlatfileVirtualMachine()
-
-listener.mount(FlatfileVM)
-
-export default listener
+export default function (listener) {
+  // Set up your listener configuration here
+}
 ```
 
 ### 2. Listen for data changes
 
-Use the this plugin to set up a hook that responds to data changes:
+Use the plugin to set up a hook that responds to data changes:
 
 ```ts
 import { recordHook } from '@flatfile/plugin-record-hook'
+import type { FlatfileRecord } from '@flatfile/hooks'
 
-listener.use(
-  recordHook('my-sheet', (record: FlatfileRecord) => {
-    // Your logic goes here
-  })
-)
+export default function (listener) {
+  listener.use(
+    recordHook('my-sheet', (record: FlatfileRecord) => {
+      // Your logic goes here
+    })
+  )
+}
 ```
 
 Replace `my-sheet` with the slug of the Sheet you want to attach this hook to.
