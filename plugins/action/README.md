@@ -43,7 +43,7 @@ export default function (listener) {
         description: 'Make a copy of the current sheet in this workbook',
         primary: true,
       },
-      (context, api) => {
+      (event, api) => {
         const { actionName, sheetSlug, sheetId, workbookId } = event.context
         const sheetResponse = await api.sheets.get(sheetId)
         const sheetConfig = sheetResponse.data.config
