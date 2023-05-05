@@ -13,7 +13,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['prettier', 'unused-imports'],
+  plugins: ['prettier'],
   rules: {
     'no-case-declarations': 'off',
     'no-redeclare': 'off',
