@@ -82,10 +82,11 @@ Blueprint:
       "fields": [ ... ],
       "actions": [
         {
-          "slug": "duplicateSheet",
-          "label": "Duplicate this sheet",
+          "slug": "submitJSON",
+          "label": "Submit JSON",
           "type": "string",
-          "description": "Creates a copy of this sheet."
+          "description": "Submits the JSON.",
+          "operation": "submitJSON"
         }
       ]
     }
@@ -102,13 +103,24 @@ import { action } from '@flatfile/plugin-action'
 export default function (listener) {
   listener.use(
     action('contacts', 'duplicateSheet', (event, api) => {
+      await api.jobs.update(jobId, {
+        progress: 25,
+      })
+
       const { sheetId, workbookId } = event.context
       const sheetResponse = await api.sheets.get(sheetId)
       const sheetConfig = sheetResponse.data.config
+      await api.jobs.update(jobId, {
+        progress: 50,
+      })
 
       // Get current workbook
       const workbookResponse = await api.workbooks.get(workbookId)
       const { name, spaceId, environmentId, sheets } = workbookResponse.data
+
+      await api.jobs.update(jobId, {
+        progress: 75,
+      })
 
       // Create a copy of the current sheet
       const duplicateSheetConfig = {

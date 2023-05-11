@@ -1,5 +1,9 @@
 import { action } from '.'
-import { Client, FlatfileEvent } from '@flatfile/listener'
+import {
+  Client,
+  FlatfileEvent,
+  FlatfileVirtualMachine,
+} from '@flatfile/listener'
 
 describe('action', () => {
   let testFn: jest.Mock
@@ -12,6 +16,8 @@ describe('action', () => {
     const client = Client.create((c) => {
       c.use(action('originSlug', 'actionName', testFn))
     })
+    const FlatfileVM = new FlatfileVirtualMachine()
+    client.mount(FlatfileVM)
     client.dispatchEvent({
       topic: 'action:triggered',
       context: { actionName: 'originSlug:actionName' },
