@@ -40,21 +40,16 @@ export default function (listener) {
 
 ```ts
 action(
-  origin: string,
-  name: string,
-  operation: (event: FlatfileEvent, api: FlatfileClient) => void
+  operation: string,
+  fn: (event: FlatfileEvent, api: FlatfileClient) => void
 )
 ```
 
-### `origin`
-
-The slug of the sheet or workbook that this action is attached to.
-
-### `name`
-
-The slug of the action you are defining.
-
 ### `operation`
+
+The name of this action's operation, as specified in the blueprint.
+
+### `fn`
 
 The function that you use to define the action's behavior. Receives two arguments to help you define your action:
 
@@ -68,9 +63,7 @@ Use this to make calls to the [Flatfile API](https://reference.flatfile.com/docs
 
 ## Example
 
-In this example we set up a "duplicate sheet" action on the "contacts" sheet in our workbook.
-
-Blueprint:
+In this example we set up a "duplicate sheet" action on the "contacts" sheet in our workbook:
 
 ```json
 {
@@ -82,11 +75,10 @@ Blueprint:
       "fields": [ ... ],
       "actions": [
         {
-          "slug": "submitJSON",
-          "label": "Submit JSON",
+          "label": "Duplicate sheet",
           "type": "string",
-          "description": "Submits the JSON.",
-          "operation": "submitJSON"
+          "description": "Creates a copy of this sheet.",
+          "operation": "duplicateSheet"
         }
       ]
     }
@@ -95,18 +87,19 @@ Blueprint:
 }
 ```
 
-Listener:
+And then in the listener, we use the plugin to define our action. Note the use of `event` to get information about the job, sheet, and workbook, and the use of `api` to fetch data and post updates to the workbook.
 
 ```ts
 import { action } from '@flatfile/plugin-action'
 
 export default function (listener) {
   listener.use(
-    action('contacts', 'duplicateSheet', (event, api) => {
+    action('duplicateSheet', (event, api) => {
       await api.jobs.update(jobId, {
         progress: 25,
       })
 
+      // Get current sheet
       const { sheetId, workbookId } = event.context
       const sheetResponse = await api.sheets.get(sheetId)
       const sheetConfig = sheetResponse.data.config
@@ -117,7 +110,6 @@ export default function (listener) {
       // Get current workbook
       const workbookResponse = await api.workbooks.get(workbookId)
       const { name, spaceId, environmentId, sheets } = workbookResponse.data
-
       await api.jobs.update(jobId, {
         progress: 75,
       })

@@ -10,6 +10,9 @@ export const action = (
     client.on('job:created', async (event: FlatfileEvent) => {
       const { jobId } = event.context
       if (event.payload.operation === operation) {
+        await api.jobs.update(jobId, {
+          status: 'executing',
+        })
         await fn(event, api)
         await api.jobs.update(jobId, {
           status: 'complete',
