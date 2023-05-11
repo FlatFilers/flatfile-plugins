@@ -23,7 +23,7 @@
   "dependencies": {
     "@flatfile/configure": "^0.5.22",
     "@flatfile/hooks": "^1.2.4",
-    "@flatfile/listener": "^0.0.7"
+    "@flatfile/listener": "^0.0.8"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
