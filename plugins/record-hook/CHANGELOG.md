@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.0.7
+
+### Patch Changes
+
+- cf6d07e: Fixes a bug where we don't return the promise so we can't wait for the event to complete
+
 ## 0.0.6
 
 ### Patch Changes
