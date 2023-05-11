@@ -3,7 +3,7 @@ import { FlatfileClient } from '@flatfile/api'
 
 export const action = (
   operation: string,
-  fn: (event: FlatfileEvent, api: FlatfileClient) => void
+  fn: (event: FlatfileEvent, api: FlatfileClient, jobId: string) => void
 ) => {
   const api = new FlatfileClient()
   return (client: Client) => {
@@ -13,7 +13,7 @@ export const action = (
         await api.jobs.update(jobId, {
           status: 'executing',
         })
-        await fn(event, api)
+        await fn(event, api, jobId)
         await api.jobs.update(jobId, {
           status: 'complete',
         })

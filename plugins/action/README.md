@@ -29,7 +29,7 @@ import { action } from '@flatfile/plugin-action'
 
 export default function (listener) {
   listener.use(
-    action('sheetOrWorkbookSlug', 'actionName', (event, api) => {
+    action('operationName', (event, api, jobId) => {
       // Define your operation here
     })
   )
@@ -60,6 +60,10 @@ Information about the event, including context about what workbook or sheet trig
 #### `api`
 
 Use this to make calls to the [Flatfile API](https://reference.flatfile.com/docs/api/pgrqb7max440y-introduction) to fetch, update, or otherwise modify workbooks, sheets, records, etc.
+
+#### `jobId`
+
+The id of the job that this action is associated with. Use this to update the progress of the job in the UI.
 
 ## Example
 
@@ -94,7 +98,7 @@ import { action } from '@flatfile/plugin-action'
 
 export default function (listener) {
   listener.use(
-    action('duplicateSheet', (event, api) => {
+    action('duplicateSheet', (event, api, jobId) => {
       await api.jobs.update(jobId, {
         progress: 25,
       })
