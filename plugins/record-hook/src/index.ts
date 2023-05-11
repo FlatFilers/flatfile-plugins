@@ -10,13 +10,14 @@ export const recordHook = (
     client.on(
       'records:*',
       {
+        // todo: fix this filter
         context: {
           // @ts-ignore
           sheetSlug,
         },
       },
       (event: FlatfileEvent) => {
-        RecordHook(event, callback)
+        return RecordHook(event, callback)
       }
     )
   }
