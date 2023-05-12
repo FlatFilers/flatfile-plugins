@@ -9,7 +9,7 @@ npm i @flatfile/plugin-create-space
 ```
 
 ```ts
-import { createSpace } from '@flatfile/plugin-record-hook'
+import { createSpace, action } from '@flatfile/plugin-events'
 ```
 
 ## Usage
@@ -17,7 +17,7 @@ import { createSpace } from '@flatfile/plugin-record-hook'
 Pass `createSpace` to a Flatfile data listener and provide a function to run when a new space is created via the UI.
 
 ```ts
-import { createSpace } from '@flatfile/plugin-record-hook'
+import { createSpace } from '@flatfile/plugin-create-space'
 export default function (listener) {
   listener.use(
     createSpace(async (event, api, spaceId) => {
@@ -30,9 +30,7 @@ export default function (listener) {
 ## Syntax
 
 ```ts
-createSpace(
-	fn: async (event, api, spaceId) => void
-)
+createSpace(fn: async (event, api, spaceId) => void)
 ```
 
 ### `fn`
