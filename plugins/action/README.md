@@ -41,7 +41,7 @@ export default function (listener) {
 ```ts
 action(
   operation: string,
-  fn: (event: FlatfileEvent, api: FlatfileClient) => void
+  fn: (event: FlatfileEvent, api: FlatfileClient, jobId: string) => void
 )
 ```
 
