@@ -7,7 +7,7 @@ import {
   TRecordDataWithLinks,
 } from '@flatfile/hooks'
 
-import { RecordWithLinks } from '@flatfile/api/api'
+import { RecordWithLinks, Record_ } from '@flatfile/api/api'
 
 export class RecordTranslater<T extends FlatfileRecord | RecordWithLinks> {
   constructor(private readonly records: T[]) {
@@ -79,7 +79,7 @@ export class RecordTranslater<T extends FlatfileRecord | RecordWithLinks> {
         }
       })
     } else {
-      return this.records as RecordWithLinks[]
+      return this.records as Record_[]
     }
   }
 }
