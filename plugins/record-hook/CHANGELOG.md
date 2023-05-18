@@ -1,5 +1,15 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.0
+
+### Minor Changes
+
+- a377336: Move RecordHook functionality into this package and remove configure dependency.
+
+### Patch Changes
+
+- 41e7f5a: upped the listener version
+
 ## 0.0.7
 
 ### Patch Changes
