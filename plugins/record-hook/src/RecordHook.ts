@@ -1,7 +1,8 @@
 import { FlatfileEvent } from '@flatfile/listener'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
-import { RecordWithLinks } from '@flatfile/api/api'
+import { RecordWithLinks, Record_ } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
+import api from '@flatfile/api'
 
 export const RecordHook = async (
   event: FlatfileEvent,
@@ -23,10 +24,8 @@ export const RecordHook = async (
       batch.records
     ).toXRecords()
 
-    await event.api.updateRecords({
-      sheetId,
-      recordsUpdates,
-    })
+    // TODO: likely swap this for event.update()
+    await api.records.update(sheetId, recordsUpdates as Record_[])
   } catch (e) {
     console.log(`Error getting records: ${e}`)
   }
