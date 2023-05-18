@@ -1,5 +1,5 @@
 import { Client, FlatfileEvent } from '@flatfile/listener'
-import { RecordHook } from '@flatfile/configure'
+import { RecordHook } from './RecordHook'
 import type { FlatfileRecord } from '@flatfile/hooks'
 
 export const recordHook = (
