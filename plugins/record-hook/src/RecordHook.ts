@@ -1,6 +1,6 @@
 import { FlatfileEvent } from '@flatfile/listener'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
-import { RecordWithLinks } from '@flatfile/api'
+import { RecordWithLinks } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
 
 export const RecordHook = async (
