@@ -6,7 +6,7 @@ import api from '@flatfile/api'
 
 export const RecordHook = async (
   event: FlatfileEvent,
-  handler: (record: FlatfileRecord) => any | Promise<any>
+  handler: (record: FlatfileRecord, event: FlatfileEvent) => any | Promise<any>
 ) => {
   const { sheetId } = event.context
   try {
