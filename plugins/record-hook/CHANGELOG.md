@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.1
+
+### Patch Changes
+
+- 42bbefd: Add lifecycle methods and update packages
+
 ## 0.1.0
 
 ### Minor Changes
