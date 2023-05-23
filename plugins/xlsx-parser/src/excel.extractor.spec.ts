@@ -10,7 +10,6 @@ describe('ExcelParser', function () {
   )
 
   const parser = new ExcelExtractor({
-    // type: EventTopic.FileCreated,
     topic: EventTopic.FileCreated,
     payload: {} as Record<string, unknown>, 
     createdAt: new Date(),
