@@ -1,5 +1,5 @@
 ---
-'@flatfile/plugin-xlsx-parser': minor
+'@flatfile/plugin-xlsx-parser': major
 ---
 
 Initial release of xlsx plugin
