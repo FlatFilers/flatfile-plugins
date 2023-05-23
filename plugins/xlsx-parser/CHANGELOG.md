@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.0
+
+### Major Changes
+
+- 7bbc5b4: Initial release of xlsx plugin
+
 ## 0.1.0
 
 ### Minor Changes
