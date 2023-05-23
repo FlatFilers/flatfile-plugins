@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-xlsx-parser",
+  "name": "@flatfile/plugin-xlsx-extractor",
   "version": "1.0.0",
   "description": "A plugin for parsing xlsx files Flatfile.",
   "registryMetadata": {
