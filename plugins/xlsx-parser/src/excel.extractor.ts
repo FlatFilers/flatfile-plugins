@@ -71,7 +71,7 @@ export class ExcelExtractor extends AbstractExtractor {
    */
   public async runExtraction(): Promise<boolean> {
     try {
-      const { data: file } = await this.api.getFile({ fileId: this.fileId })
+      const { data: file } = await this.api.files.get(this.fileId)
 
       if (file.ext !== 'xlsx') {
         return false
@@ -88,10 +88,7 @@ export class ExcelExtractor extends AbstractExtractor {
           continue
         }
         const recordsData = this.makeAPIRecords(capture[sheet.name])
-        await this.api.addRecords({
-          sheetId: sheet.id,
-          recordsData,
-        })
+        await this.api.records.insert(sheet.id, recordsData)
       }
       await this.completeJob(job)
       return true

@@ -1,13 +1,21 @@
-import type {
-  DefaultApi,
+import {
+  FlatfileClient,
+  Flatfile,
+  // Job,
+  // RecordData,
+  // SheetConfig,
+  // Workbook,
+  // WorkbookConfig,
+} from '@flatfile/api'
+
+import {
   Job,
   RecordData,
+  CreateWorkbookConfig,
   SheetConfig,
   Workbook,
-  WorkbookConfig,
-} from '@flatfile/api'
+} from '@flatfile/api/api'
 import { mapValues } from 'remeda'
-import { FlatfileEvent } from '@flatfile/configure'
 import { FlatfileEvent as ListenerEvent } from '@flatfile/listener'
 /**
  * This is a universal helper for writing custom file extractors within Flatfile
@@ -21,20 +29,26 @@ export class AbstractExtractor {
   /**
    * Convenience reference for API client
    */
-  public api: DefaultApi
+  public api: FlatfileClient
 
-  constructor(public event: FlatfileEvent | ListenerEvent) {
+  constructor(public event: Flatfile.Event | ListenerEvent) {
     this.fileId = event.context.fileId
-    this.api = event.api
+    this.api = new FlatfileClient()
   }
 
   /**
    * Download file data from Flatfile
    */
   public async getFileBufferFromApi(): Promise<Buffer> {
-    const file = await this.api.downloadFile({ fileId: this.fileId })
-    const arrayBuffer = await file.arrayBuffer()
-    return Buffer.from(arrayBuffer)
+    const file = await this.api.files.download(this.fileId)
+
+    const chunks = []
+    // node.js readable streams implement the async iterator protocol
+    for await (const chunk of file) {
+      chunks.push(chunk)
+    }
+
+    return Buffer.concat(chunks)
   }
 
   /**
@@ -43,13 +57,13 @@ export class AbstractExtractor {
    */
   public async startJob(): Promise<Job> {
     try {
-      const res = await this.api.createJob({
-        jobConfig: {
-          type: 'file',
-          operation: 'extract',
-          status: 'executing',
-          source: this.fileId,
-        },
+      const res = await this.api.jobs.create({
+        type: 'file',
+        operation: 'extract',
+        status: 'executing',
+        source: this.fileId,
+        // TODO: This should be configurable
+        managed: true,
       })
       if (!res || !res.data) {
         throw new Error(`Unable to create job: ${JSON.stringify(res)}`)
@@ -70,11 +84,8 @@ export class AbstractExtractor {
   public async completeJob(job: Job) {
     try {
       // TODO: Is there a new API endpoint for this?
-      const res = await this.api.updateJob({
-        jobId: job.id,
-        jobUpdate: {
-          status: 'complete',
-        },
+      const res = await this.api.jobs.update(job.id, {
+        status: 'complete',
       })
       return res.data
     } catch (e) {
@@ -101,17 +112,14 @@ export class AbstractExtractor {
     )
 
     try {
-      const workbook = await this.api.addWorkbook({ workbookConfig })
+      const workbook = await this.api.workbooks.create(workbookConfig)
 
       if (!workbook || !workbook.data) {
         throw new Error(
           `Unable to create workbook: ${JSON.stringify(workbook)}`
         )
       }
-      await this.api.updateFileById({
-        fileId: file.id,
-        fileConfig: { workbookId: workbook.data?.id },
-      })
+      await this.api.files.update(file.id, { workbookId: workbook.data?.id })
 
       return workbook.data
     } catch (e) {
@@ -147,7 +155,7 @@ export class AbstractExtractor {
     spaceId: string,
     environmentId: string,
     workbookCapture: WorkbookCapture
-  ): WorkbookConfig {
+  ): CreateWorkbookConfig {
     const sheets = Object.values(
       mapValues(workbookCapture, (sheet, sheetName) => {
         return this.getSheetConfig(sheetName, sheet)
