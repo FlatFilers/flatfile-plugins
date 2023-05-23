@@ -1,6 +1,6 @@
 import { FlatfileEvent } from '@flatfile/listener'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
-import { RecordWithLinks, Record_ } from '@flatfile/api/api'
+import { RecordWithLinks, Record_, RecordsWithLinks } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
 import api from '@flatfile/api'
 
@@ -10,7 +10,10 @@ export const RecordHook = async (
 ) => {
   const { sheetId } = event.context
   try {
-    const { records } = await event.data
+    const records = await event.cache.init<RecordsWithLinks>(
+      'records',
+      async () => (await event.data).records
+    )
     if (!records) return
 
     const batch = await prepareXRecords(records)
@@ -25,7 +28,23 @@ export const RecordHook = async (
     ).toXRecords()
 
     // TODO: likely swap this for event.update()
-    await api.records.update(sheetId, recordsUpdates as Record_[])
+    await event.cache.set('records', async () => recordsUpdates)
+
+    event.afterAll(async () => {
+      const records = event.cache.get('records')
+      const clearedMessages = (records as RecordsWithLinks).map((record) => {
+        // clear existing cell validation messages
+        Object.keys(record.values).forEach((k) => {
+          record.values[k].messages = []
+        })
+        return record
+      })
+      try {
+        return await api.records.update(sheetId, recordsUpdates as Record_[])
+      } catch (e) {
+        console.log(`Error putting records: ${e}`)
+      }
+    })
   } catch (e) {
     console.log(`Error getting records: ${e}`)
   }
