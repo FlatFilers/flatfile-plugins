@@ -1,7 +1,8 @@
 import * as fs from 'fs'
 import { ExcelExtractor } from './excel.extractor'
 import * as path from 'path'
-import { FlatfileEvent } from '@flatfile/configure'
+import { Flatfile } from '@flatfile/api'
+import { EventTopic } from '@flatfile/api/api'
 
 describe('ExcelParser', function () {
   const buffer: Buffer = fs.readFileSync(
@@ -9,7 +10,11 @@ describe('ExcelParser', function () {
   )
 
   const parser = new ExcelExtractor({
-    domain: 'upload',
+    // type: EventTopic.FileCreated,
+    topic: EventTopic.FileCreated,
+    payload: {} as Record<string, unknown>, 
+    createdAt: new Date(),
+    domain: 'space',
     name: 'upload:completed',
     id: 'dev_ev_45sTvU0GMMNwXmZP',
     context: {
@@ -19,7 +24,7 @@ describe('ExcelParser', function () {
       environmentId: 'dev_env_rH3SeKkh',
     } as any,
     api: {} as any,
-  } as FlatfileEvent)
+  } as Flatfile.UploadCompletedEvent)
 
   describe('test-basic.xlsx', function () {
     test('finds all the sheet names', () => {

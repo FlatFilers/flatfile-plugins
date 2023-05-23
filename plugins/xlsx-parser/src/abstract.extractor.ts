@@ -31,8 +31,8 @@ export class AbstractExtractor {
    */
   public api: FlatfileClient
 
-  constructor(public event: Flatfile.Event | ListenerEvent) {
-    this.fileId = event.context.fileId
+  constructor(public event: Flatfile.UploadCompletedEvent) {
+    this.fileId = event.context.fileId || ''
     this.api = new FlatfileClient()
   }
 
@@ -106,7 +106,7 @@ export class AbstractExtractor {
   ): Promise<Workbook> {
     const workbookConfig = this.getWorkbookConfig(
       file.name,
-      this.event.context.spaceId,
+      this.event.context.spaceId!,
       this.event.context.environmentId,
       workbookCapture
     )
@@ -188,9 +188,9 @@ export class AbstractExtractor {
       fields: headers.map((key) => ({
         key,
         label: key,
-        description: descriptions?.[key] || undefined,
+        description: descriptions?.[key] || '',
         type: 'string',
-        constraints: required?.[key] ? [{ type: 'required' }] : undefined,
+        constraints: required?.[key] ? [{ type: 'required' }] : [],
       })),
     }
   }

@@ -9,7 +9,7 @@ export class ExcelExtractor extends AbstractExtractor {
     rawNumbers?: boolean
   }
   constructor(
-    public event: Flatfile.Event | ListenerEvent,
+    public event: Flatfile.UploadCompletedEvent,
     public options?: {
       rawNumbers?: boolean
     }
