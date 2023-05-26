@@ -32,15 +32,8 @@ export const RecordHook = async (
 
     event.afterAll(async () => {
       const records = event.cache.get('records')
-      const clearedMessages = (records as RecordsWithLinks).map((record) => {
-        // clear existing cell validation messages
-        Object.keys(record.values).forEach((k) => {
-          record.values[k].messages = []
-        })
-        return record
-      })
       try {
-        return await api.records.update(sheetId, recordsUpdates as Record_[])
+        return await api.records.update(sheetId, records as Record_[])
       } catch (e) {
         console.log(`Error putting records: ${e}`)
       }
