@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.3
+
+### Patch Changes
+
+- b925834: Fix messages being set on record properly
+
 ## 0.1.2
 
 ### Patch Changes
