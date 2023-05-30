@@ -2,7 +2,7 @@ import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
 import { RecordHook } from './RecordHook'
 import type { FlatfileRecord } from '@flatfile/hooks'
 export * from './RecordHook'
-const recordHook = (
+export const recordHook = (
   sheetSlug: string,
   callback: (record: FlatfileRecord) => {}
 ) => {
@@ -22,5 +22,3 @@ const recordHook = (
     )
   }
 }
-
-export default recordHook
