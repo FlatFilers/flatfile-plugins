@@ -1,14 +1,14 @@
 import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
 import { RecordHook } from './RecordHook'
 import type { FlatfileRecord } from '@flatfile/hooks'
-
-export const recordHook = (
+export * from './RecordHook'
+const recordHook = (
   sheetSlug: string,
   callback: (record: FlatfileRecord) => {}
 ) => {
   return (client: FlatfileListener) => {
     client.on(
-      'records:*',
+      'commit:created',
       {
         // todo: fix this filter
         context: {
@@ -22,3 +22,5 @@ export const recordHook = (
     )
   }
 }
+
+export default recordHook

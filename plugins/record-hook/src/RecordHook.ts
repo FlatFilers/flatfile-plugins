@@ -1,6 +1,6 @@
 import { FlatfileEvent } from '@flatfile/listener'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
-import { RecordWithLinks, Record_, RecordsWithLinks } from '@flatfile/api/api'
+import { RecordWithLinks, Record_, RecordsWithLinks, Records } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
 import api from '@flatfile/api'
 
@@ -31,9 +31,9 @@ export const RecordHook = async (
     await event.cache.set('records', async () => recordsUpdates)
 
     event.afterAll(async () => {
-      const records = event.cache.get('records')
+      const records = event.cache.get<RecordsWithLinks>('records')
       try {
-        return await api.records.update(sheetId, records as Record_[])
+        return await api.records.update(sheetId, records)
       } catch (e) {
         console.log(`Error putting records: ${e}`)
       }
