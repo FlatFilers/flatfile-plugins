@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.4
+
+### Patch Changes
+
+- ab27fa9: Export both recordHook and RecordHook
+
 ## 0.1.3
 
 ### Patch Changes
