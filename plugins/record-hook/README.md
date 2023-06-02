@@ -5,7 +5,7 @@ This plugin exports a function named `recordHook` that sets up an event listener
 ## Install & import
 
 ```bash
-npm i @flatfile/plugin-record-hook
+npm i @flatfile/plugin-record-hook @flatfile/hooks
 ```
 
 See the full README in the [https://https://flatfile.com/docs/plugins/transform/record-hook](Flatfile Docs)
