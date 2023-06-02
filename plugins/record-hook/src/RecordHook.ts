@@ -1,16 +1,16 @@
 import { FlatfileEvent } from '@flatfile/listener'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
-import { RecordWithLinks, Record_, RecordsWithLinks, Records } from '@flatfile/api/api'
+import { Record_, Records } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
 import api from '@flatfile/api'
 
 export const RecordHook = async (
   event: FlatfileEvent,
-  handler: (record: FlatfileRecord) => any | Promise<any>
+  handler: (record: FlatfileRecord, event: FlatfileEvent) => any | Promise<any>
 ) => {
   const { sheetId } = event.context
   try {
-    const records = await event.cache.init<RecordsWithLinks>(
+    const records = await event.cache.init<Records>(
       'records',
       async () => (await event.data).records
     )
@@ -20,7 +20,7 @@ export const RecordHook = async (
 
     // run client defined data hooks
     for (const x of batch.records) {
-      await handler(x)
+      await handler(x, event)
     }
 
     const recordsUpdates = new RecordTranslater<FlatfileRecord>(
@@ -31,7 +31,7 @@ export const RecordHook = async (
     await event.cache.set('records', async () => recordsUpdates)
 
     event.afterAll(async () => {
-      const records = event.cache.get<RecordsWithLinks>('records')
+      const records = event.cache.get<Records>('records')
       try {
         return await api.records.update(sheetId, records)
       } catch (e) {
@@ -46,7 +46,7 @@ export const RecordHook = async (
 }
 
 const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
-  const clearedMessages: RecordWithLinks[] = records.map(
+  const clearedMessages: Record_[] = records.map(
     (record: { values: { [x: string]: { messages: never[] } } }) => {
       // clear existing cell validation messages
       Object.keys(record.values).forEach((k) => {
@@ -55,6 +55,6 @@ const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
       return record
     }
   )
-  const fromX = new RecordTranslater<RecordWithLinks>(clearedMessages)
+  const fromX = new RecordTranslater<Record_>(clearedMessages)
   return fromX.toFlatFileRecords()
 }
