@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.5
+
+### Patch Changes
+
+- c2310c0: Add event to RecordHook Handler
+
 ## 0.1.4
 
 ### Patch Changes
