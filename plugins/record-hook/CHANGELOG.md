@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.6
+
+### Patch Changes
+
+- d589b7c: Update @flatfile/api to latest 1.5.6
+
 ## 0.1.5
 
 ### Patch Changes
