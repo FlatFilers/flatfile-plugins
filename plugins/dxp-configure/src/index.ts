@@ -1,12 +1,15 @@
 import type { Workbook } from '@flatfile/configure'
 import type { Client } from '@flatfile/listener'
 import api from '@flatfile/api'
+import { shimTarget } from './shim.target'
 
 export const dxpConfigure = (workbook: Workbook) => {
   return (client: Client) => {
     client.on('**', (event) => {
       // @ts-ignore
-      return workbook.routeEvent(event.src) // event.src is a private property but js doesn't care
+      const newEvent = { ...event.src, target: shimTarget(event.src) }
+      // @ts-ignore
+      return workbook.routeEvent(newEvent) // event.src is a private property but js doesn't care
     })
 
     client.on(
