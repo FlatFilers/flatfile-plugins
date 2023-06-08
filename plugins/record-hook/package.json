@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-record-hook",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A plugin for writing custom record-level hooks in Flatfile.",
   "registryMetadata": {
     "category": "records"
@@ -8,7 +8,11 @@
   "engines": {
     "node": ">= 12"
   },
-  "browserslist": ["> 0.5%","last 2 versions","not dead"],
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
   "source": "src/index.ts",
   "main": "dist/main.js",
   "module": "dist/module.mjs",

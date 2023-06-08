@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.1
+
+### Patch Changes
+
+- 41261d0: Build tooling refactor
+
 ## 1.0.0
 
 ### Major Changes
