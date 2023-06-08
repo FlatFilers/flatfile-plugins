@@ -39,6 +39,7 @@ export const RecordHook = async (
       }
     });
   } catch (e) {
+    console.error(e)
     console.log(`Error getting records: ${e}`);
   }
 
