@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-dxp-configure",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A plugin for using DXP class-based configurations.",
   "registryMetadata": {
     "category": "utilities"
@@ -8,7 +8,11 @@
   "engines": {
     "node": ">= 12"
   },
-  "browserslist": ["> 0.5%","last 2 versions","not dead"],
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
   "source": "src/index.ts",
   "main": "dist/main.js",
   "module": "dist/module.mjs",
