@@ -1,1 +1,1 @@
-export * from './excel.extractor'
+export * from "./excel.extractor";

@@ -1,6 +1,3 @@
 {
-  "singleQuote": true,
-  "jsxSingleQuote": true,
-  "trailingComma": "es5",
-  "semi": false
+  "parser": "typescript"
 }

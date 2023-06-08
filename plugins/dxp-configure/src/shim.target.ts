@@ -4,15 +4,15 @@
  * @param event
  */
 export function shimTarget(event: any) {
-  const actionName = event.payload?.['actionName']
-  const sheetSlug = event.context.sheetSlug
+  const actionName = event.payload?.["actionName"];
+  const sheetSlug = event.context.sheetSlug;
   const domain =
-    sheetSlug && event.domain === 'workbook' ? 'sheet' : event.domain
-  const actionTarget = `${domain}(${actionName?.split(':')[0]})`
+    sheetSlug && event.domain === "workbook" ? "sheet" : event.domain;
+  const actionTarget = `${domain}(${actionName?.split(":")[0]})`;
 
-  return domain === 'file'
-    ? 'space(*)'
+  return domain === "file"
+    ? "space(*)"
     : actionName
     ? actionTarget
-    : `sheet(${sheetSlug?.split('/').pop()})` // workbook(PrimaryCRMWorkbook)
+    : `sheet(${sheetSlug?.split("/").pop()})`; // workbook(PrimaryCRMWorkbook)
 }
