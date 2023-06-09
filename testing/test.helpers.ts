@@ -3,10 +3,20 @@ import { PubSubDriver } from "@flatfile/listener-driver-pubsub";
 import { TestListener } from "./test.listener";
 import axios from "axios";
 
+/**
+ * Retrieves the environment ID from the process environment.
+ *
+ * @returns The environment id string.
+ */
 export function getEnvironmentId(): string {
   return process.env.FLATFILE_ENVIRONMENT_ID;
 }
 
+/**
+ * Generates a new space on Flatfile with a unique name.
+ *
+ * @returns A Promise that resolves to created space data.
+ */
 export async function setupSpace(): Promise<Flatfile.spaces.Space> {
   const environmentId = getEnvironmentId();
 
@@ -18,6 +28,11 @@ export async function setupSpace(): Promise<Flatfile.spaces.Space> {
   return space;
 }
 
+/**
+ * Establishes a connection to a PubSub channel and binds a listener to it.
+ *
+ * @param listener - The listener instance to bind to the channel.
+ */
 export function streamEvents(listener: TestListener) {
   const environmentId = getEnvironmentId();
 
@@ -33,6 +48,11 @@ export function streamEvents(listener: TestListener) {
   });
 }
 
+/**
+ * Sets up a TestListener object that maintains a count of the events it has received.
+ *
+ * @returns The newly created TestListener object.
+ */
 export function setupListener(): TestListener {
   const listener = new TestListener();
   streamEvents(listener);
@@ -46,6 +66,13 @@ export function setupListener(): TestListener {
   return listener;
 }
 
+/**
+ * Creates a new workbook object with given Space ID and fields.
+ *
+ * @param spaceId - The space ID where the workbook will be created.
+ * @param fields - The list of properties or field keys for the workbook.
+ * @returns A Promise that resolves to created workbook data.
+ */
 export async function setupSimpleWorkbook(
   spaceId: string,
   fields: Array<Flatfile.Property | string>
@@ -67,6 +94,12 @@ export async function setupSimpleWorkbook(
   return res.data;
 }
 
+/**
+ * Retrieves the records from a sheet with a specific ID.
+ *
+ * @param sheetId - The sheet ID where the records will be retrieved.
+ * @returns A Promise that resolves to the array of records.
+ */
 export async function getRecords(sheetId: string) {
   const {
     data: { records },
@@ -74,6 +107,12 @@ export async function getRecords(sheetId: string) {
   return records;
 }
 
+/**
+ * Creates records in a given sheet.
+ *
+ * @param sheetId - The sheet ID where the records will be created.
+ * @param records - The array of records to be created.
+ */
 export async function createRecords(
   sheetId: string,
   records: Array<Record<string, any>>
