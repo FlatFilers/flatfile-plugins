@@ -1,0 +1,23 @@
+{
+  "name": "@flatfile/plugin-automap",
+  "version": "0.0.1",
+  "description": "A plugin for auto mapping when desired.",
+  "registryMetadata": {
+    "status": "Coming soon",
+    "category": "schema"
+  },
+  "keywords": [],
+  "author": "David Boskovic",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/automap"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/utils-debugger": "^0.0.3"
+  },
+  "devDependencies": {
+    "@flatfile/common-plugin-utils": "^1.0.0"
+  }
+}

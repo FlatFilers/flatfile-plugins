@@ -1,0 +1,31 @@
+{
+  "name": "@flatfile/common-plugin-utils",
+  "version": "1.0.0",
+  "description": "A library containing common utilities and helpers for plugins",
+  "keywords": [],
+  "author": "David Boskovic",
+  "engines": {
+    "node": ">= 12"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "support/common-utils"
+  },
+  "license": "ISC"
+}
