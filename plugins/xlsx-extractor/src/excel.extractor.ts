@@ -69,19 +69,56 @@ export class ExcelExtractor extends AbstractExtractor {
    * Extract the data from an uploaded XLSX file
    */
   public async runExtraction(): Promise<boolean> {
-    try {
-      const { data: file } = await this.api.files.get(this.fileId);
+    const { data: file } = await this.api.files.get(this.fileId);
 
-      if (file.ext !== "xlsx") {
-        return false;
-      }
-      const job = await this.startJob();
-      const buffer = await this.getFileBufferFromApi();
+    if (file.ext !== "xlsx") {
+      return false;
+    }
+    const job = await this.startJob();
+
+    try {
+      //set status for getFileBuffer()
+      await this.api.jobs.update(job.id, {
+        status: "executing",
+      });
+
+      await this.api.jobs.ack(job.id, {
+        progress: 10,
+        info: "Downloading file",
+      });
+      console.log("10% Downloading file");
+
+      const buffer = await this.getFileBufferFromApi(job);
+
+      //set status for parseBuffer()
+      await this.api.jobs.ack(job.id, {
+        progress: 30,
+        info: "Parsing Sheets",
+      });
+      console.log("30% Parsing Sheets");
+
       const capture = this.parseBuffer(buffer);
 
-      const workbook = await this.createWorkbook(file, capture);
+      //set status for createWorkbook()
+      await this.api.jobs.ack(job.id, {
+        progress: 50,
+        info: "Creating Workbook",
+      });
+      console.log("50% Creating Workbook");
 
-      if (!workbook?.sheets) return false;
+      const workbook = await this.createWorkbook(job, file, capture);
+      if (!workbook?.sheets) {
+        await this.failJob(job, "because no Sheets found.");
+        return false;
+      }
+
+      //set status for adding records
+      await this.api.jobs.ack(job.id, {
+        progress: 80,
+        info: "Adding records to Sheets",
+      });
+      console.log("80% Adding records to Sheets");
+
       for (const sheet of workbook.sheets) {
         if (!capture[sheet.name]) {
           continue;
@@ -92,6 +129,7 @@ export class ExcelExtractor extends AbstractExtractor {
       await this.completeJob(job);
       return true;
     } catch (e) {
+      await this.failJob(job, "while adding Records to Sheets.");
       return false;
     }
   }
