@@ -2,13 +2,11 @@ import { FlatfileEvent } from "@flatfile/listener";
 import { FlatfileRecord, FlatfileRecords } from "@flatfile/hooks";
 import { Record_, Records } from "@flatfile/api/api";
 import { RecordTranslater } from "./record.translater";
-import api from "@flatfile/api";
 
 export const RecordHook = async (
   event: FlatfileEvent,
   handler: (record: FlatfileRecord, event: FlatfileEvent) => any | Promise<any>
 ) => {
-  const { sheetId } = event.context;
   try {
     const records = await event.cache.init<Records>(
       "records",
@@ -32,7 +30,7 @@ export const RecordHook = async (
     event.afterAll(async () => {
       const records = event.cache.get<Records>("records");
       try {
-        await event.update(records);
+        return await event.update(records);
       } catch (e) {
         console.log(`Error updating records: ${e}`);
       }
