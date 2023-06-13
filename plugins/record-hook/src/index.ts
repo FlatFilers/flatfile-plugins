@@ -5,7 +5,7 @@ export * from "./RecordHook";
 
 export const recordHook = (
   sheetSlug: string,
-  callback: (record: FlatfileRecord) => {}
+  callback: (record: FlatfileRecord, event?: FlatfileEvent) => {}
 ) => {
   return (client: FlatfileListener) => {
     client.on("commit:created", { sheetSlug }, (event: FlatfileEvent) => {

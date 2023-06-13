@@ -24,11 +24,7 @@ describe("recordHook() e2e", () => {
 
   describe("record created", () => {
     beforeEach(async () => {
-      listener.use(
-        recordHook("test", (record) => {
-          return record.set("name", "daddy");
-        })
-      );
+      listener.use(recordHook("test", (record) => record.set("name", "daddy")));
     });
 
     it("correctly modifies a value", async () => {
