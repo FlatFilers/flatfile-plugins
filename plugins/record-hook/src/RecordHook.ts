@@ -27,15 +27,14 @@ export const RecordHook = async (
       batch.records
     ).toXRecords();
 
-    // TODO: likely swap this for event.update()
     await event.cache.set("records", async () => recordsUpdates);
 
     event.afterAll(async () => {
       const records = event.cache.get<Records>("records");
       try {
-        return await api.records.update(sheetId, records);
+        await event.update(records);
       } catch (e) {
-        console.log(`Error putting records: ${e}`);
+        console.log(`Error updating records: ${e}`);
       }
     });
   } catch (e) {
