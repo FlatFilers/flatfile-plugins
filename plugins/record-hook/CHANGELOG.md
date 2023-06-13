@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.9
+
+### Patch Changes
+
+- 8e41b36: Add FlatfileRecord as export
+
 ## 0.1.8
 
 ### Patch Changes
