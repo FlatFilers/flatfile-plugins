@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.8
+
+### Patch Changes
+
+- 83c4c98: Update internals to use the dataUrl for updating records
+
 ## 0.1.7
 
 ### Patch Changes
