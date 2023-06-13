@@ -1,18 +1,66 @@
-# XLSX Extractor Plugin
+## @flatfile/plugin-xlsx-extractor
 
-This parses all Sheets in an XLSX file and extracts them into X with `@flatfile/api` version 1.4.8. Here's an example of how to use it:
+A plugin for parsing .xlsx files in Flatfile.
+
+### Overview
+
+This plugin parses all Sheets in an XLSX file and extracts them into Flatfile.
+
+<small class="font-semibold text-primary dark:text-primary-light">INSTALL</small><br/>
+``npm i @flatfile/plugin-xlsx-extractor``
+
+---
+
+## Import
+
+```bash
+npm i @flatfile/plugin-xlsx-extractor
+```
+
 
 ```ts
-import { EventTopic } from '@flatfile/api/api'
+import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor'
+```
 
-SpaceConfig1.on([EventTopic.FileCreated], (event) => {
+## Plugin Usage
+
+Add the plugin via `listener.use()` - and feel free to pass in parse options as needed. The platform will then extract the file automatically. Once complete, the file will be ready for import in the Files area.
+
+```ts
+listener.use(xlsxExtractorPlugin({ rawNumbers: true }))
+```
+
+## ExcelExtractor Usage
+
+```ts
+import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
+```
+
+## Usage
+
+Listen for an XLSX file to be uploaded to Flatfile. The platform will then extract the file automatically. Once complete, the file will be ready for import in the Files area.
+
+```ts
+listener.on(['file:created'], (event) => {
   return new ExcelExtractor(event).runExtraction()
 })
 ```
-The Extractor can accept an addition options parameter that includes rawNumbers: boolean which will be passed along to the Sheet.js parsing engine.
+
+## Additional Options
+
+The extractor can accept additional properties. Props will be passed along to the Sheet.js parsing engine.
 
 ```ts
-SpaceConfig1.on([EventTopic.FileCreated], (event) => {
+listener.on(['file:created'], (event) => {
   return new ExcelExtractor(event, { rawNumbers: true }).runExtraction()
 })
 ```
+
+### Properties
+
+<ParamField path="rawNumbers" type="boolean" optional>
+  In Excel, you could have rounding or formatting on a number cell to only display say 2 decimal places.
+   By default, Flatfile will just take the displayed decimal places versus the raw numbers. 
+   Set this value to true to take the raw numbers and disregard how it’s displayed in Excel.
+</ParamField>
+

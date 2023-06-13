@@ -23,16 +23,20 @@ export class AbstractExtractor {
   /**
    * Download file data from Flatfile
    */
-  public async getFileBufferFromApi(): Promise<Buffer> {
-    const file = await this.api.files.download(this.fileId);
+  public async getFileBufferFromApi(job: Flatfile.Job): Promise<Buffer> {
+    try {
+      const file = await this.api.files.download(this.fileId);
 
-    const chunks = [];
-    // node.js readable streams implement the async iterator protocol
-    for await (const chunk of file) {
-      chunks.push(chunk);
+      const chunks = [];
+      // node.js readable streams implement the async iterator protocol
+      for await (const chunk of file) {
+        chunks.push(chunk);
+      }
+
+      return Buffer.concat(chunks);
+    } catch (error) {
+      this.failJob(job, "during file buffering.");
     }
-
-    return Buffer.concat(chunks);
   }
 
   /**
@@ -43,15 +47,17 @@ export class AbstractExtractor {
     try {
       const res = await this.api.jobs.create({
         type: "file",
-        operation: "extract",
-        status: "executing",
+        operation: "xlsx-extract",
         source: this.fileId,
         // TODO: This should be configurable
         managed: true,
+        info: "Waiting",
       });
+
       if (!res || !res.data) {
         throw new Error(`Unable to create job: ${JSON.stringify(res)}`);
       }
+
       return res.data;
     } catch (e) {
       console.log(`error ${e}`);
@@ -68,10 +74,30 @@ export class AbstractExtractor {
   public async completeJob(job: Flatfile.Job) {
     try {
       // TODO: Is there a new API endpoint for this?
-      const res = await this.api.jobs.update(job.id, {
-        status: "complete",
+      const res = await this.api.jobs.complete(job.id, {
+        info: "Extraction complete",
       });
-      return res.data;
+      console.log("100% Extraction complete");
+      return res;
+    } catch (e) {
+      this.failJob(job, "when completing Job.");
+
+      console.log(`error ${e}`);
+      throw e;
+    }
+  }
+
+  /**
+   * Fail a previously started extraction job.
+   *
+   * @param job
+   */
+  public async failJob(job: Flatfile.Job, reason) {
+    try {
+      const res = await this.api.jobs.fail(job.id, {
+        info: "Extraction failed " + reason,
+      });
+      return res;
     } catch (e) {
       console.log(`error ${e}`);
       throw e;
@@ -85,6 +111,7 @@ export class AbstractExtractor {
    * @param workbookCapture
    */
   public async createWorkbook(
+    job: Flatfile.Job,
     file: any,
     workbookCapture: WorkbookCapture
   ): Promise<Flatfile.Workbook> {
@@ -99,6 +126,7 @@ export class AbstractExtractor {
       const workbook = await this.api.workbooks.create(workbookConfig);
 
       if (!workbook || !workbook.data) {
+        await this.failJob(job, "because no Workbook/data in Workbook.");
         throw new Error(
           `Unable to create workbook: ${JSON.stringify(workbook)}`
         );
@@ -107,6 +135,7 @@ export class AbstractExtractor {
 
       return workbook.data;
     } catch (e) {
+      await this.failJob(job, "while creating Workbook.");
       console.log(`error ${e}`);
       throw e;
     }
