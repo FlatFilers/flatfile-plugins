@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.2
+
+### Patch Changes
+
+- 413251a: Progress Improvements and adds xlsxExtractorPlugin
+
 ## 1.0.1
 
 ### Patch Changes
