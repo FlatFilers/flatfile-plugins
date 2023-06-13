@@ -17,6 +17,21 @@ This plugin parses all Sheets in an XLSX file and extracts them into Flatfile.
 npm i @flatfile/plugin-xlsx-extractor
 ```
 
+
+```ts
+import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor'
+```
+
+## Plugin Usage
+
+Add the plugin via `listener.use()` - and feel free to pass in parse options as needed. The platform will then extract the file automatically. Once complete, the file will be ready for import in the Files area.
+
+```ts
+listener.use(xlsxExtractorPlugin({ rawNumbers: true }))
+```
+
+## ExcelExtractor Usage
+
 ```ts
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
 ```
