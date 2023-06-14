@@ -1,7 +1,7 @@
-import * as XLSX from "xlsx";
-import { mapKeys, mapValues } from "remeda";
-import { AbstractExtractor, SheetCapture } from "./abstract.extractor";
 import type { Flatfile } from "@flatfile/api";
+import { mapKeys, mapValues } from "remeda";
+import * as XLSX from "xlsx";
+import { AbstractExtractor, SheetCapture } from "./abstract.extractor";
 
 export class ExcelExtractor extends AbstractExtractor {
   private readonly _options: {
@@ -80,6 +80,7 @@ export class ExcelExtractor extends AbstractExtractor {
       //set status for getFileBuffer()
       await this.api.jobs.update(job.id, {
         status: "executing",
+        info: 'Starting extraction'
       });
 
       await this.api.jobs.ack(job.id, {

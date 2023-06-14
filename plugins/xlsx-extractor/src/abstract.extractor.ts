@@ -51,7 +51,6 @@ export class AbstractExtractor {
         source: this.fileId,
         // TODO: This should be configurable
         managed: true,
-        info: "Waiting",
       });
 
       if (!res || !res.data) {
