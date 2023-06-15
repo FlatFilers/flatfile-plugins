@@ -1,6 +1,6 @@
 # @flatfile/dxp-configure
 
-This plugin lets you easily attach your implementation of the class-based schema configuration library `@flatfile/configure` to `@flatfile/listener`.
+This package lets you easily attach your implementation of the class-based schema configuration library `@flatfile/configure` to `@flatfile/listener`.
 
 `npm i @flatfile/plugin-dxp-configure`
 
