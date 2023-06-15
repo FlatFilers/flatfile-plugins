@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.10
+
+### Patch Changes
+
+- 7fa7925: updating readmes
+
 ## 0.1.9
 
 ### Patch Changes
