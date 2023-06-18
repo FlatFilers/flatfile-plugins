@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.4
+
+### Patch Changes
+
+- 749ebdc: introduce records chunking to xlsx extractor
+
 ## 1.0.3
 
 ### Patch Changes
