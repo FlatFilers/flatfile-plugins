@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-xlsx-extractor",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A plugin for parsing xlsx files Flatfile.",
   "registryMetadata": {
     "category": "records"
