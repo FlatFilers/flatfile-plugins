@@ -6,7 +6,7 @@ import {
 } from "./abstract.extractor";
 import type { Flatfile } from "@flatfile/api";
 import Papa, { ParseResult } from "papaparse";
-import fs from "fs";
+import * as fs from 'fs';
 
 export class PsvExtractor extends AbstractExtractor {
   private readonly _options: {
@@ -22,10 +22,9 @@ export class PsvExtractor extends AbstractExtractor {
     this._options = { rawNumbers: false, ...options };
   }
 
-  public parseBuffer(filePath: string): WorkbookCapture {
-    const fileContent = fs.readFileSync(filePath, "utf8");
-
-    const results = Papa.parse(fileContent, {
+public parseBuffer(fileContents: string): WorkbookCapture {
+  try {
+    const results = Papa.parse(fileContents, {
       delimiter: "|",
       header: true, // If the first row contains headers
     });
@@ -39,14 +38,27 @@ export class PsvExtractor extends AbstractExtractor {
         data: parsedData,
       },
     };
+  } catch (error) {
+    // Handle the error
+    console.error('An error occurred:', error);
+    return null; // Return an appropriate value or throw a custom error if needed
   }
+}
 
-  convertSheet(sheet: string): SheetCapture {
-    let { data: rows } = Papa.parse(sheet, {
+
+  convertSheet(sheet: string): SheetCapture | undefined {
+    let parsedSheet = Papa.parse(sheet, {
       delimiter: "|",
-      header: true,
-    }) as ParseResult<Record<string, string>>;
+      header: true, // If the first row contains headers
+    }).data;
 
+    if (!parsedSheet || !parsedSheet.length) {
+      console.error('No data found in the sheet');
+      return undefined;
+    }
+
+    let rows = parsedSheet.slice();
+    // use a basic pattern check on the 1st row - should be switched to core header detection
     const hasHeader = this.isHeaderCandidate(rows[0]);
 
     const colMap: Record<string, string> | null = hasHeader
@@ -54,25 +66,16 @@ export class PsvExtractor extends AbstractExtractor {
       : null;
 
     if (colMap) {
-      if (colMap) {
-        const headers = mapValues(colMap, (val) => val?.replace("*", ""));
-        const required = mapValues(colMap, (val) => val?.includes("*"));
-        const data = rows.map((row) =>
-          mapKeys(row, (key) => {
-            if (typeof key === "string") {
-              return headers[key] ? headers[key] : key;
-            }
-            return key;
-          })
-        );
-        return {
-          headers: Object.values(headers).filter((v) => v),
-          required: mapKeys(required, (k) => headers[k]),
-          data,
-        };
-      } else {
-        return { headers: Object.keys(rows[0]), data: rows };
-      }
+      const headers = mapValues(colMap, (val) => val?.replace("*", ""));
+      const required = mapValues(colMap, (val) => val?.includes("*"));
+      const data = rows.map((row) => mapKeys(row, (key) => headers[String(key)] ?? String(key)));
+      return {
+        headers: Object.values(headers).filter((v) => v),
+        required: mapKeys(required, (k) => headers[String(k)]),
+        data,
+      };
+    } else {
+      return { headers: Object.keys(rows[0]), data: rows };
     }
   }
 
@@ -86,6 +89,7 @@ export class PsvExtractor extends AbstractExtractor {
 
     try {
       await this.api.jobs.update(job.id, { status: "executing" });
+      console.log("about to acknowledge job and download file")
       await this.api.jobs.ack(job.id, {
         progress: 10,
         info: "Downloading file",
@@ -94,9 +98,13 @@ export class PsvExtractor extends AbstractExtractor {
       const buffer = await this.getFileBufferFromApi(job);
       const fileContents = buffer.toString();
 
+      console.log("about to parse sheets")
+
       await this.api.jobs.ack(job.id, { progress: 30, info: "Parsing Sheets" });
 
       const capture = this.parseBuffer(fileContents);
+
+      console.log("about to create workbook")
 
       await this.api.jobs.ack(job.id, {
         progress: 50,
@@ -108,6 +116,8 @@ export class PsvExtractor extends AbstractExtractor {
         await this.failJob(job, "because no Sheets found.");
         return false;
       }
+
+      console.log("about to add records")
 
       await this.api.jobs.ack(job.id, {
         progress: 80,
@@ -130,7 +140,8 @@ export class PsvExtractor extends AbstractExtractor {
       await this.completeJob(job);
       return true;
     } catch (e) {
-      await this.failJob(job, "while adding Records to Sheets.");
+      const message = (await this.api.jobs.get(job.id)).data.info
+      await this.failJob(job, "while " + message);
       return false;
     }
   }

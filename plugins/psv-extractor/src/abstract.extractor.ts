@@ -149,6 +149,7 @@ export class AbstractExtractor {
    * @private
    */
   protected makeAPIRecords(sheet: SheetCapture): Flatfile.RecordData[] {
+    console.log(this.makeAPIRecords)
     return sheet.data.map((row: Record<string, any>) => {
       return mapValues(row, (value) => ({ value }));
     });

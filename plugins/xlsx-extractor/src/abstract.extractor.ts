@@ -122,8 +122,12 @@ export class AbstractExtractor {
       workbookCapture
     );
 
+    console.log(workbookConfig)
+
     try {
       const workbook = await this.api.workbooks.create(workbookConfig);
+
+      console.log(workbook)
 
       if (!workbook || !workbook.data) {
         await this.failJob(job, "because no Workbook/data in Workbook.");

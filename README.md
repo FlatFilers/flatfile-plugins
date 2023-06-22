@@ -4,8 +4,8 @@ Library of open-source plugins for developing with the Flatfile Platform
 
 To get started building plugins:
 
-1. Run `pnpm i` at the root level.
-2. To make a changeset, run `pnpm run changeset` at the root level and choose the plugin you want to update.
+1. Run `npm i` at the root level.
+2. To make a changeset, run `npm run changeset` at the root level and choose the plugin you want to update.
 
 Additional Commands
 

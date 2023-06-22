@@ -131,7 +131,8 @@ export class ExcelExtractor extends AbstractExtractor {
       await this.completeJob(job);
       return true;
     } catch (e) {
-      await this.failJob(job, "while adding Records to Sheets.");
+      const message = (await this.api.jobs.get(job.id)).data.info
+      await this.failJob(job, "while " + message);
       return false;
     }
   }
