@@ -3,9 +3,13 @@ import { psv2json } from 'psv2json';
 import { mapValues } from "remeda";
 
 export class PsvExtractor extends AbstractExtractor {
-  public static supports = ['.psv'];
 
-  public async runExtraction() {
+  public async runExtraction(): Promise<boolean> {
+    const { data: file } = await this.api.files.get(this.fileId);
+
+    if (file.ext !== "psv") {
+      return false;
+    }
     const job = await this.startJob();
 
     try {
@@ -16,7 +20,7 @@ export class PsvExtractor extends AbstractExtractor {
         info: "Downloading file",
       });
       console.log("10% Downloading file");
-      const fileBuffer = await this.getFileBufferFromApi(job);
+      const buffer = await this.getFileBufferFromApi(job);
 
       // Parse the file
       await this.api.jobs.ack(job.id, {
@@ -24,7 +28,7 @@ export class PsvExtractor extends AbstractExtractor {
         info: "Parsing Sheets",
       });
       console.log("30% Parsing Sheets");
-      const workbookCapture = this.parseBuffer(fileBuffer, this.fileId);
+      const capture = this.parseBuffer(buffer, file.name);
 
       // Create the workbook
       await this.api.jobs.ack(job.id, {
@@ -32,14 +36,28 @@ export class PsvExtractor extends AbstractExtractor {
         info: "Creating Workbook",
       });
       console.log("50% Creating Workbook");
-      const workbook = await this.createWorkbook(job, fileBuffer, workbookCapture);
+      const workbook = await this.createWorkbook(job, file, capture);
+      if (!workbook?.sheets) {
+        await this.failJob(job, "because no Sheets found.");
+        return false;
+      }
 
+      // Add records
       await this.api.jobs.ack(job.id, {
         progress: 80,
         info: "Adding records to Sheets",
       });
       console.log("80% Adding records to Sheets");
 
+      for (const sheet of workbook.sheets) {
+        if (!capture[sheet.name]) {
+          continue;
+        }
+        const recordsData = this.makeAPIRecords(capture[sheet.name]);
+        await asyncBatch(recordsData, async (chunk) => {
+          await this.api.records.insert(sheet.id, chunk);
+        }, { chunkSize: 10000, parallel: 1 });
+      }
       // Complete the job
       await this.completeJob(job);
     } catch (e) {
@@ -79,4 +97,61 @@ export class PsvExtractor extends AbstractExtractor {
       }, {}),
     };
   }
+}
+
+async function asyncBatch<T, R>(
+  arr: T[],
+  callback: (chunk: T[]) => Promise<R>,
+  options: { chunkSize?: number; parallel?: number } = {}
+): Promise<R> {
+  const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options }
+  const results: R[] = []
+
+  // Split the array into chunks
+  const chunks: T[][] = []
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    chunks.push(arr.slice(i, i + chunkSize))
+  }
+
+  // Create a helper function to process a chunk
+  async function processChunk(chunk: T[]): Promise<void> {
+    const result = await callback(chunk)
+    results.push(result)
+  }
+
+  // Execute the chunks in parallel
+  const promises: Promise<void>[] = []
+  let running = 0
+  let currentIndex = 0
+
+  function processNext(): void {
+    if (currentIndex >= chunks.length) {
+      // All chunks have been processed
+      return
+    }
+
+    const currentChunk = chunks[currentIndex]
+    const promise = processChunk(currentChunk).finally(() => {
+      running--
+      processNext() // Process next chunk
+    })
+
+    promises.push(promise)
+    currentIndex++
+    running++
+
+    if (running < parallel) {
+      processNext() // Process another chunk if available
+    }
+  }
+
+  // Start processing the chunks
+  for (let i = 0; i < parallel && i < chunks.length; i++) {
+    processNext()
+  }
+
+  // Wait for all promises to resolve
+  await Promise.all(promises)
+
+  return results.flat() as R
 }
