@@ -1,9 +1,9 @@
-# @flatfile/plugin-xlsx-extractor"
+# @flatfile/plugin-psv-extractor"
 
-This package parses all Sheets in an XLSX file and extracts them into Flatfile.
+This package parses a pipe-separated values file extracts it into Flatfile.
 
-`npm i @flatfile/plugin-xlsx-extractor`
+`npm i @flatfile/plugin-psv-extractor`
 
 ## Get Started
 
-Follow [this guide](https://flatfile.com/docs/plugins/extractors/xlsx-extractor) to learn how to use the plugin.
+Follow [this guide](https://flatfile.com/docs/plugins/extractors/psv-extractor) to learn how to use the plugin.
