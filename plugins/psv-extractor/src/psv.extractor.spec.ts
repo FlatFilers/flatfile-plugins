@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { psvExtractor } from "./psv.extractor";
+import { PsvExtractor } from "./psv.extractor";
 import * as path from "path";
 import { Flatfile } from "@flatfile/api";
 
@@ -8,7 +8,7 @@ describe("psvParser", function () {
     path.join(__dirname, "../ref/test-basic.psv")
   );
 
-  const parser = new psvExtractor({
+  const parser = new PsvExtractor({
     topic: Flatfile.EventTopic.FileCreated,
     payload: {} as Record<string, unknown>,
     createdAt: new Date(),

@@ -47,7 +47,7 @@ export class AbstractExtractor {
     try {
       const res = await this.api.jobs.create({
         type: "file",
-        operation: "xlsx-extract",
+        operation: "psv-extract",
         source: this.fileId,
         // TODO: This should be configurable
         managed: true,
