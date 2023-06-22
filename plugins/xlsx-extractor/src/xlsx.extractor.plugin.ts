@@ -4,7 +4,7 @@ import { UploadCompletedEvent } from "@flatfile/api/api";
 
 export const xlsxExtractorPlugin = (options?: { rawNumbers?: boolean }) => {
   return (client: FlatfileListener) => {
-    client.on("file:created", (event) => {
+    client.on("file:created", {mode: "import"}, (event) => {
       return new ExcelExtractor(
         event as unknown as UploadCompletedEvent,
         options
