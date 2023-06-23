@@ -86,7 +86,6 @@ export class ExcelExtractor extends AbstractExtractor {
         progress: 10,
         info: "Downloading file",
       });
-      console.log("10% Downloading file");
 
       const buffer = await this.getFileBufferFromApi(job);
 
@@ -95,7 +94,6 @@ export class ExcelExtractor extends AbstractExtractor {
         progress: 30,
         info: "Parsing Sheets",
       });
-      console.log("30% Parsing Sheets");
 
       const capture = this.parseBuffer(buffer);
 
@@ -104,7 +102,6 @@ export class ExcelExtractor extends AbstractExtractor {
         progress: 50,
         info: "Creating Workbook",
       });
-      console.log("50% Creating Workbook");
 
       const workbook = await this.createWorkbook(job, file, capture);
       if (!workbook?.sheets) {
@@ -117,7 +114,6 @@ export class ExcelExtractor extends AbstractExtractor {
         progress: 80,
         info: "Adding records to Sheets",
       });
-      console.log("80% Adding records to Sheets");
 
       for (const sheet of workbook.sheets) {
         if (!capture[sheet.name]) {

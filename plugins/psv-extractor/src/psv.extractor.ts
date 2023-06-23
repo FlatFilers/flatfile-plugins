@@ -129,7 +129,6 @@ export class PsvExtractor extends AbstractExtractor {
 
     try {
       await this.api.jobs.update(job.id, { status: "executing" });
-      console.log("about to acknowledge job and download file");
       await this.api.jobs.ack(job.id, {
         progress: 10,
         info: "Downloading file",
@@ -138,13 +137,9 @@ export class PsvExtractor extends AbstractExtractor {
       const buffer = await this.getFileBufferFromApi(job);
       const fileContents = buffer.toString();
 
-      console.log("about to parse sheets");
-
       await this.api.jobs.ack(job.id, { progress: 30, info: "Parsing Sheets" });
 
       const capture = this.parseBuffer(fileContents);
-
-      console.log("about to create workbook");
 
       await this.api.jobs.ack(job.id, {
         progress: 50,
@@ -156,8 +151,6 @@ export class PsvExtractor extends AbstractExtractor {
         await this.failJob(job, "because no Sheets found.");
         return false;
       }
-
-      console.log("about to add records");
 
       await this.api.jobs.ack(job.id, {
         progress: 80,

@@ -60,7 +60,7 @@ export class AbstractExtractor {
 
       return res.data;
     } catch (e) {
-      console.log(`error ${e}`);
+      console.error(`error ${e}`);
       throw e;
     }
   }
@@ -77,12 +77,11 @@ export class AbstractExtractor {
       const res = await this.api.jobs.complete(job.id, {
         info: "Extraction complete",
       });
-      console.log("100% Extraction complete");
       return res;
     } catch (e) {
       this.failJob(job, "when completing Job.");
 
-      console.log(`error ${e}`);
+      console.error(`error ${e}`);
       throw e;
     }
   }
@@ -99,7 +98,7 @@ export class AbstractExtractor {
       });
       return res;
     } catch (e) {
-      console.log(`error ${e}`);
+      console.error(`error ${e}`);
       throw e;
     }
   }
@@ -122,12 +121,8 @@ export class AbstractExtractor {
       workbookCapture
     );
 
-    console.log(workbookConfig)
-
     try {
       const workbook = await this.api.workbooks.create(workbookConfig);
-
-      console.log(workbook)
 
       if (!workbook || !workbook.data) {
         await this.failJob(job, "because no Workbook/data in Workbook.");
@@ -140,7 +135,7 @@ export class AbstractExtractor {
       return workbook.data;
     } catch (e) {
       await this.failJob(job, "while creating Workbook.");
-      console.log(`error ${e}`);
+      console.error(`error ${e}`);
       throw e;
     }
   }
