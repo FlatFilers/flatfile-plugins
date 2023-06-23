@@ -22,27 +22,36 @@ describe("PsvParser", function () {
 
   describe("test-basic.psv", function () {
     beforeEach(() => {
-  const buffer = Buffer.from('"Code"|"Details"|"BranchName"|"Tenant"\n"Personal Care"|"Personal Care"|"Department"|"notdata"\n"Home Nursing"|"Home Nursing"|"Department"|"notdata"', "utf8");
-  jest.spyOn(fs, "readFileSync").mockReturnValue(buffer);
-});
+      const buffer = Buffer.from(
+        '"Code"|"Details"|"BranchName"|"Tenant"\n"Personal Care"|"Personal Care"|"Department"|"notdata"\n"Home Nursing"|"Home Nursing"|"Department"|"notdata"',
+        "utf8"
+      );
+      jest.spyOn(fs, "readFileSync").mockReturnValue(buffer);
+    });
 
     test("finds the sheet name", () => {
-      const capture = parser.parseBuffer('"Code"|"Details"|"BranchName"|"Tenant"\n"Personal Care"|"Personal Care"|"Department"|"notdata"\n"Home Nursing"|"Home Nursing"|"Department"|"notdata"');
+      const capture = parser.parseBuffer(
+        '"Code"|"Details"|"BranchName"|"Tenant"\n"Personal Care"|"Personal Care"|"Department"|"notdata"\n"Home Nursing"|"Home Nursing"|"Department"|"notdata"'
+      );
       const sheetNames = capture ? Object.keys(capture) : [];
       expect(sheetNames).toEqual(["Sheet1"]);
     });
 
     test("finds the header names", () => {
-      const capture = parser.parseBuffer('"Code"|"Details"|"BranchName"|"Tenant"\n"Personal Care"|"Personal Care"|"Department"|"notdata"\n"Home Nursing"|"Home Nursing"|"Department"|"notdata"');
-      const headers = capture && capture["Sheet1"] ? capture["Sheet1"].headers : [];
+      const capture = parser.parseBuffer(
+        '"Code"|"Details"|"BranchName"|"Tenant"\n"Personal Care"|"Personal Care"|"Department"|"notdata"\n"Home Nursing"|"Home Nursing"|"Department"|"notdata"'
+      );
+      const headers =
+        capture && capture["Sheet1"] ? capture["Sheet1"].headers : [];
       expect(headers).toHaveLength(4); // Assuming there are 4 headers
     });
 
     test("finds values", () => {
-      const capture = parser.parseBuffer('"Code"|"Details"|"BranchName"|"Tenant"\n"Personal Care"|"Personal Care"|"Department"|"notdata"\n"Home Nursing"|"Home Nursing"|"Department"|"notdata"');
+      const capture = parser.parseBuffer(
+        '"Code"|"Details"|"BranchName"|"Tenant"\n"Personal Care"|"Personal Care"|"Department"|"notdata"\n"Home Nursing"|"Home Nursing"|"Department"|"notdata"'
+      );
       const data = capture && capture["Sheet1"] ? capture["Sheet1"].data : [];
       expect(data.length).toBeGreaterThan(0); // Assuming there's at least one row
     });
-
   });
 });

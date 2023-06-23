@@ -6,7 +6,7 @@ import {
 } from "./abstract.extractor";
 import type { Flatfile } from "@flatfile/api";
 import Papa, { ParseResult } from "papaparse";
-import * as fs from 'fs';
+import * as fs from "fs";
 
 export class PsvExtractor extends AbstractExtractor {
   private readonly _options: {
@@ -23,87 +23,101 @@ export class PsvExtractor extends AbstractExtractor {
     this._options = { rawNumbers: false, ...options };
   }
 
-public parseBuffer(fileContents: string): WorkbookCapture {
-  try {
-    if (!fileContents) {
-      console.error('Invalid file contents');
-      return undefined;
-    }
+  public parseBuffer(fileContents: string): WorkbookCapture {
+    try {
+      if (!fileContents) {
+        console.error("Invalid file contents");
+        return undefined;
+      }
 
-    const results: ParseResult<Record<string, string>> = Papa.parse(fileContents, {
-      delimiter: "|",
-      header: true,
-    });
-
-    const parsedData = results.data;
-
-    if (!parsedData || !parsedData.length) {
-      console.error('No data found in the file');
-      return undefined;
-    }
-
-    const sheetName = 'Sheet1'; // Set the sheet name
-
-    return {
-      [sheetName]: {
-        headers: Object.keys(parsedData[0]),
-        data: parsedData,
-      },
-    };
-  } catch (error) {
-    console.error('An error occurred:', error);
-    throw error;
-  }
-}
-
-
-
-  convertSheet(sheet: string): SheetCapture | undefined {
-  try {
-    if (!sheet) {
-      console.error('Invalid sheet data');
-      return undefined;
-    }
-
-    const parsedSheet: ParseResult<Record<string, string>> = Papa.parse(sheet, {
-      delimiter: "|",
-      header: true,
-    });
-
-    if (!parsedSheet.data || !parsedSheet.data.length) {
-      console.error('No data found in the sheet');
-      return undefined;
-    }
-
-    const rows = parsedSheet.data;
-    const hasHeader = this.isHeaderCandidate(rows[0]);
-
-    const colMap: Record<string, string> | null = hasHeader
-      ? (rows.shift() as Record<string, string>)
-      : null;
-
-    if (colMap) {
-      const headers = Object.values(colMap).map(val => val?.replace("*", "")).filter(Boolean);
-      const required = Object.fromEntries(
-        Object.entries(colMap).map(([key, val]) => [headers.find(h => colMap[h] === val), val?.includes("*")])
+      const results: ParseResult<Record<string, string>> = Papa.parse(
+        fileContents,
+        {
+          delimiter: "|",
+          header: true,
+        }
       );
-      const data = rows.map(row =>
-        Object.fromEntries(Object.entries(row).map(([key, val]) => [headers.find(h => colMap[h] === key) || key, val]))
-      );
+
+      const parsedData = results.data;
+
+      if (!parsedData || !parsedData.length) {
+        console.error("No data found in the file");
+        return undefined;
+      }
+
+      const sheetName = "Sheet1"; // Set the sheet name
 
       return {
-        headers,
-        required,
-        data,
+        [sheetName]: {
+          headers: Object.keys(parsedData[0]),
+          data: parsedData,
+        },
       };
-    } else {
-      return { headers: Object.keys(rows[0]), data: rows };
+    } catch (error) {
+      console.error("An error occurred:", error);
+      throw error;
     }
-   } catch (error) {
-    console.error('An error occurred:', error);
-    throw error;
   }
-}
+
+  convertSheet(sheet: string): SheetCapture | undefined {
+    try {
+      if (!sheet) {
+        console.error("Invalid sheet data");
+        return undefined;
+      }
+
+      const parsedSheet: ParseResult<Record<string, string>> = Papa.parse(
+        sheet,
+        {
+          delimiter: "|",
+          header: true,
+        }
+      );
+
+      if (!parsedSheet.data || !parsedSheet.data.length) {
+        console.error("No data found in the sheet");
+        return undefined;
+      }
+
+      const rows = parsedSheet.data;
+      const hasHeader = this.isHeaderCandidate(rows[0]);
+
+      const colMap: Record<string, string> | null = hasHeader
+        ? (rows.shift() as Record<string, string>)
+        : null;
+
+      if (colMap) {
+        const headers = Object.values(colMap)
+          .map((val) => val?.replace("*", ""))
+          .filter(Boolean);
+        const required = Object.fromEntries(
+          Object.entries(colMap).map(([key, val]) => [
+            headers.find((h) => colMap[h] === val),
+            val?.includes("*"),
+          ])
+        );
+        const data = rows.map((row) =>
+          Object.fromEntries(
+            Object.entries(row).map(([key, val]) => [
+              headers.find((h) => colMap[h] === key) || key,
+              val,
+            ])
+          )
+        );
+
+        return {
+          headers,
+          required,
+          data,
+        };
+      } else {
+        return { headers: Object.keys(rows[0]), data: rows };
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      throw error;
+    }
+  }
 
   public async runExtraction(): Promise<boolean> {
     const { data: file } = await this.api.files.get(this.fileId);
@@ -115,7 +129,7 @@ public parseBuffer(fileContents: string): WorkbookCapture {
 
     try {
       await this.api.jobs.update(job.id, { status: "executing" });
-      console.log("about to acknowledge job and download file")
+      console.log("about to acknowledge job and download file");
       await this.api.jobs.ack(job.id, {
         progress: 10,
         info: "Downloading file",
@@ -124,13 +138,13 @@ public parseBuffer(fileContents: string): WorkbookCapture {
       const buffer = await this.getFileBufferFromApi(job);
       const fileContents = buffer.toString();
 
-      console.log("about to parse sheets")
+      console.log("about to parse sheets");
 
       await this.api.jobs.ack(job.id, { progress: 30, info: "Parsing Sheets" });
 
       const capture = this.parseBuffer(fileContents);
 
-      console.log("about to create workbook")
+      console.log("about to create workbook");
 
       await this.api.jobs.ack(job.id, {
         progress: 50,
@@ -143,7 +157,7 @@ public parseBuffer(fileContents: string): WorkbookCapture {
         return false;
       }
 
-      console.log("about to add records")
+      console.log("about to add records");
 
       await this.api.jobs.ack(job.id, {
         progress: 80,
@@ -166,7 +180,7 @@ public parseBuffer(fileContents: string): WorkbookCapture {
       await this.completeJob(job);
       return true;
     } catch (e) {
-      const message = (await this.api.jobs.get(job.id)).data.info
+      const message = (await this.api.jobs.get(job.id)).data.info;
       await this.failJob(job, "while " + message);
       return false;
     }
