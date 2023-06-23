@@ -10,17 +10,17 @@ import * as fs from "fs";
 
 export class PsvExtractor extends AbstractExtractor {
   private readonly _options: {
-    rawNumbers?: boolean;
+    //add if needed
   };
 
   constructor(
     public event: Flatfile.UploadCompletedEvent,
     public options?: {
-      rawNumbers?: boolean;
+      //add if needed
     }
   ) {
     super(event);
-    this._options = { rawNumbers: false, ...options };
+    this._options = { ...options };
   }
 
   public parseBuffer(fileContents: string): WorkbookCapture {
