@@ -60,7 +60,7 @@ export class AbstractExtractor {
 
       return res.data;
     } catch (e) {
-      console.log(`error ${e}`);
+      console.error(`error ${e}`);
       throw e;
     }
   }
@@ -81,7 +81,7 @@ export class AbstractExtractor {
     } catch (e) {
       this.failJob(job, "when completing Job.");
 
-      console.log(`error ${e}`);
+      console.error(`error ${e}`);
       throw e;
     }
   }
@@ -98,7 +98,7 @@ export class AbstractExtractor {
       });
       return res;
     } catch (e) {
-      console.log(`error ${e}`);
+      console.error(`error ${e}`);
       throw e;
     }
   }
@@ -135,7 +135,7 @@ export class AbstractExtractor {
       return workbook.data;
     } catch (e) {
       await this.failJob(job, "while creating Workbook.");
-      console.log(`error ${e}`);
+      console.error(`error ${e}`);
       throw e;
     }
   }
