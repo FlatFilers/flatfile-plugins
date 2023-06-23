@@ -26,7 +26,7 @@ export class PsvExtractor extends AbstractExtractor {
   public parseBuffer(fileContents: string): WorkbookCapture {
     try {
       if (!fileContents) {
-        console.error("Invalid file contents");
+        console.log("Invalid file contents");
         return undefined;
       }
 
@@ -41,7 +41,7 @@ export class PsvExtractor extends AbstractExtractor {
       const parsedData = results.data;
 
       if (!parsedData || !parsedData.length) {
-        console.error("No data found in the file");
+        console.log("No data found in the file");
         return undefined;
       }
 
@@ -54,7 +54,7 @@ export class PsvExtractor extends AbstractExtractor {
         },
       };
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.log("An error occurred:", error);
       throw error;
     }
   }
@@ -62,7 +62,7 @@ export class PsvExtractor extends AbstractExtractor {
   convertSheet(sheet: string): SheetCapture | undefined {
     try {
       if (!sheet) {
-        console.error("Invalid sheet data");
+        console.log("Invalid sheet data");
         return undefined;
       }
 
@@ -75,7 +75,7 @@ export class PsvExtractor extends AbstractExtractor {
       );
 
       if (!parsedSheet.data || !parsedSheet.data.length) {
-        console.error("No data found in the sheet");
+        console.log("No data found in the sheet");
         return undefined;
       }
 
@@ -114,7 +114,7 @@ export class PsvExtractor extends AbstractExtractor {
         return { headers: Object.keys(rows[0]), data: rows };
       }
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.log("An error occurred:", error);
       throw error;
     }
   }
