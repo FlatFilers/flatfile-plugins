@@ -12,6 +12,7 @@ export class PsvExtractor extends AbstractExtractor {
   private readonly _options: {
     rawNumbers?: boolean;
   };
+
   constructor(
     public event: Flatfile.UploadCompletedEvent,
     public options?: {
@@ -24,41 +25,57 @@ export class PsvExtractor extends AbstractExtractor {
 
 public parseBuffer(fileContents: string): WorkbookCapture {
   try {
-    const results = Papa.parse(fileContents, {
+    if (!fileContents) {
+      console.error('Invalid file contents');
+      return undefined;
+    }
+
+    const results: ParseResult<Record<string, string>> = Papa.parse(fileContents, {
       delimiter: "|",
-      header: true, // If the first row contains headers
+      header: true,
     });
 
     const parsedData = results.data;
 
-    // Assuming single sheet, name it 'Sheet1'
+    if (!parsedData || !parsedData.length) {
+      console.error('No data found in the file');
+      return undefined;
+    }
+
+    const sheetName = 'Sheet1'; // Set the sheet name
+
     return {
-      'Sheet1': {
+      [sheetName]: {
         headers: Object.keys(parsedData[0]),
         data: parsedData,
       },
     };
   } catch (error) {
-    // Handle the error
     console.error('An error occurred:', error);
-    return null; // Return an appropriate value or throw a custom error if needed
+    throw error;
   }
 }
 
 
-  convertSheet(sheet: string): SheetCapture | undefined {
-    let parsedSheet = Papa.parse(sheet, {
-      delimiter: "|",
-      header: true, // If the first row contains headers
-    }).data;
 
-    if (!parsedSheet || !parsedSheet.length) {
+  convertSheet(sheet: string): SheetCapture | undefined {
+  try {
+    if (!sheet) {
+      console.error('Invalid sheet data');
+      return undefined;
+    }
+
+    const parsedSheet: ParseResult<Record<string, string>> = Papa.parse(sheet, {
+      delimiter: "|",
+      header: true,
+    });
+
+    if (!parsedSheet.data || !parsedSheet.data.length) {
       console.error('No data found in the sheet');
       return undefined;
     }
 
-    let rows = parsedSheet.slice();
-    // use a basic pattern check on the 1st row - should be switched to core header detection
+    const rows = parsedSheet.data;
     const hasHeader = this.isHeaderCandidate(rows[0]);
 
     const colMap: Record<string, string> | null = hasHeader
@@ -66,18 +83,27 @@ public parseBuffer(fileContents: string): WorkbookCapture {
       : null;
 
     if (colMap) {
-      const headers = mapValues(colMap, (val) => val?.replace("*", ""));
-      const required = mapValues(colMap, (val) => val?.includes("*"));
-      const data = rows.map((row) => mapKeys(row, (key) => headers[String(key)] ?? String(key)));
+      const headers = Object.values(colMap).map(val => val?.replace("*", "")).filter(Boolean);
+      const required = Object.fromEntries(
+        Object.entries(colMap).map(([key, val]) => [headers.find(h => colMap[h] === val), val?.includes("*")])
+      );
+      const data = rows.map(row =>
+        Object.fromEntries(Object.entries(row).map(([key, val]) => [headers.find(h => colMap[h] === key) || key, val]))
+      );
+
       return {
-        headers: Object.values(headers).filter((v) => v),
-        required: mapKeys(required, (k) => headers[String(k)]),
+        headers,
+        required,
         data,
       };
     } else {
       return { headers: Object.keys(rows[0]), data: rows };
     }
+   } catch (error) {
+    console.error('An error occurred:', error);
+    throw error;
   }
+}
 
   public async runExtraction(): Promise<boolean> {
     const { data: file } = await this.api.files.get(this.fileId);
