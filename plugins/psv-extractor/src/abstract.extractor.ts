@@ -26,9 +26,8 @@ export class AbstractExtractor {
   public async getFileBufferFromApi(job: Flatfile.Job): Promise<Buffer> {
     try {
       const file = await this.api.files.download(this.fileId);
+      const chunks: Buffer[] = [];
 
-      const chunks = [];
-      // node.js readable streams implement the async iterator protocol
       for await (const chunk of file) {
         chunks.push(chunk);
       }
@@ -36,6 +35,7 @@ export class AbstractExtractor {
       return Buffer.concat(chunks);
     } catch (error) {
       this.failJob(job, "during file buffering.");
+      throw error;
     }
   }
 
@@ -47,7 +47,7 @@ export class AbstractExtractor {
     try {
       const res = await this.api.jobs.create({
         type: "file",
-        operation: "xlsx-extract",
+        operation: "psv-extract",
         source: this.fileId,
         // TODO: This should be configurable
         managed: true,
