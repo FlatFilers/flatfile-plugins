@@ -1,15 +1,16 @@
+import api, { Flatfile } from "@flatfile/api";
+import fs from "fs";
+import path from "path";
+import { automap } from "./automap.plugin";
 import {
   getEnvironmentId,
   setupListener,
   setupSimpleWorkbook,
   setupSpace,
 } from "../../../testing/test.helpers";
-import { automap } from "./automap.plugin";
-import api from "@flatfile/api";
-import fs from "fs";
-import path from "path";
 
 jest.setTimeout(15_000);
+
 describe("automap() e2e", () => {
   const listener = setupListener();
 
@@ -19,7 +20,7 @@ describe("automap() e2e", () => {
   beforeAll(async () => {
     const space = await setupSpace();
     spaceId = space.id;
-    const workbook = await setupSimpleWorkbook(space.id, [
+    const workbook = await setupSimpleWorkbook(spaceId, [
       "name",
       "email",
       "notes",
@@ -28,13 +29,16 @@ describe("automap() e2e", () => {
   });
 
   describe("record created", () => {
-    const fn = jest.fn();
+    const mockFn = jest.fn();
+
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, "../test.csv"));
+
       await api.files.upload(stream, {
         spaceId,
         environmentId: getEnvironmentId(),
       });
+
       listener.use(
         automap({
           accuracy: "exact",
@@ -42,14 +46,16 @@ describe("automap() e2e", () => {
           defaultTargetSheet: "test",
         })
       );
-      listener.on("job:completed", { job: "workbook:map" }, (e) => {
-        fn(e.context.jobId);
+
+      listener.on(Flatfile.EventTopic.JobCompleted, { job: "workbook:map" }, (event) => {
+        mockFn(event.context.jobId);
       });
     });
 
     it("correctly modifies a value", async () => {
-      await listener.waitFor("job:completed", 2);
-      expect(fn).toHaveBeenCalled();
+      await listener.waitFor(Flatfile.EventTopic.JobCompleted, 2);
+
+      expect(mockFn).toHaveBeenCalled();
     });
   });
 });

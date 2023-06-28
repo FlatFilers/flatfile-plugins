@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A library containing common utilities and helpers for plugins",
   "keywords": [],
-  "author": "David Boskovic",
+  "author": "Flatfile",
   "engines": {
     "node": ">= 12"
   },

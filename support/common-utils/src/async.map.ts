@@ -1,17 +1,28 @@
 /**
+ * Configuration for asyncMap function
+ *
+ * @property {boolean} parallel - Flag to control parallel or sequential (default) execution.
+ * @property {number} timeout - Timeout duration (in milliseconds) for each callback.
+ */
+interface AsyncMapConfig {
+  readonly parallel?: boolean;
+  readonly timeout?: number;
+}
+
+/**
  * A utility function to map over an array and perform asynchronous callbacks in series or parallel.
  *
- * @param array - The array to be processed.
+ * @param items - The array of items to be processed.
  * @param callback - The asynchronous callback function to be applied on each item.
  * @param config - Configuration for controlling parallel execution and timeout.
  * @returns A promise that resolves to an array of results of each callback.
  */
 export async function asyncMap<T, U>(
-  array: T[],
+  items: ReadonlyArray<T>,
   callback: (item: T) => Promise<U>,
-  config: AsyncMapConfig = {}
-): Promise<U[]> {
-  const { parallel = false, timeout = 30_000 } = config;
+  config: AsyncMapConfig = { parallel: false, timeout: 30_000 }
+): Promise<ReadonlyArray<U>> {
+  const { parallel, timeout } = config;
 
   const wrapper = (item: T): Promise<U> =>
     new Promise((resolve, reject) => {
@@ -32,11 +43,11 @@ export async function asyncMap<T, U>(
     });
 
   if (parallel) {
-    return Promise.all(array.map(wrapper));
+    return Promise.all(items.map(wrapper));
   }
 
   const results: U[] = [];
-  for (const item of array) {
+  for (const item of items) {
     try {
       const result = await wrapper(item);
       results.push(result);
@@ -44,15 +55,6 @@ export async function asyncMap<T, U>(
       throw new Error(`Error processing item. ${error}`);
     }
   }
-  return results;
-}
 
-/**
- * Configuration for asyncMap function
- * @property {boolean} parallel - Flag to control parallel execution.
- * @property {number} timeout - Timeout duration for each callback.
- */
-interface AsyncMapConfig {
-  parallel?: boolean;
-  timeout?: number;
+  return results;
 }

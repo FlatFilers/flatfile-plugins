@@ -1,37 +1,45 @@
-import { AutomapOptions } from "./automap.plugin";
-import { FlatfileEvent, FlatfileListener } from "@flatfile/listener";
 import api, { Flatfile } from "@flatfile/api";
-import axios from "axios";
-import { CrossEnvConfig } from "@flatfile/cross-env-config";
+import { FlatfileEvent, FlatfileListener } from "@flatfile/listener";
 import { asyncMap } from "@flatfile/common-plugin-utils";
+import * as R from "remeda";
+import { AutomapOptions } from "./automap.plugin";
 
-/**
- * Automap Service Class.
- */
+type SheetSample = Readonly<{
+  sheet: Flatfile.Sheet;
+  records: Flatfile.RecordsWithLinks;
+}>;
+
 export class AutomapService {
   constructor(public readonly options: AutomapOptions) {}
 
   /**
-   * Assign listeners to a FlatfileListener.
+   * Create listeners for Flatfile to respond to for auto mapping.
+   *
    * @param listener - The listener to be assigned.
    */
   public assignListeners(listener: FlatfileListener): void {
-    listener.on("job:completed", { job: "file:extract" }, (e) =>
-      this.handleFileExtraction(e)
+    listener.on(
+      Flatfile.EventTopic.JobCreated,
+      { job: "workbook:map" },
+      (event) => this.handleMappingPlanCreated(event)
     );
-    listener.on("job:created", { job: "workbook:map" }, (e) =>
-      this.handleMappingPlanCreated(e)
+
+    listener.on(
+      Flatfile.EventTopic.JobCompleted,
+      { job: "file:extract" },
+      (event) => this.handleFileExtraction(event)
     );
   }
 
   /**
    * Handle file extraction.
    *
-   * @param e
-   * @private
+   * @param event - Flatfile event
    */
-  public async handleFileExtraction(e: FlatfileEvent): Promise<any> {
-    const file = await this.getFile(e.context.fileId);
+  public async handleFileExtraction(event: FlatfileEvent): Promise<void> {
+    const { fileId, spaceId } = event.context;
+
+    const file = await this.getFileById(fileId);
 
     if (!this.isFileNameMatch(file)) {
       await this.updateFileName(file.id, `⏸️️ ${file.name}`);
@@ -44,7 +52,7 @@ export class AutomapService {
     }
 
     const { data: workbooks } = await api.workbooks.list({
-      spaceId: e.context.spaceId,
+      spaceId,
     });
 
     const destinationWorkbook = this.getTargetWorkbook(workbooks);
@@ -59,13 +67,16 @@ export class AutomapService {
       if (!target) {
         return;
       }
+
       destinationSheet = destinationWorkbook.sheets?.find(
         (s) => s.name === target || s.id === target
       );
+
       const destinationSheetId = destinationSheet?.id;
       if (!destinationSheetId) {
         return;
       }
+
       const { data: job } = await api.jobs.create({
         type: "workbook",
         operation: "map",
@@ -77,9 +88,12 @@ export class AutomapService {
           destinationSheetId,
         },
       });
+
       return job;
     });
-    const actualJobs = jobs.filter((j) => j) as Flatfile.Job[];
+
+    const actualJobs = jobs.filter((j) => j);
+
     if (actualJobs.length) {
       await this.updateFileName(
         file.id,
@@ -120,6 +134,7 @@ export class AutomapService {
           w.id === this.options.targetWorkbook ||
           w.name === this.options.targetWorkbook
       );
+
       if (target) return target;
     }
 
@@ -134,27 +149,25 @@ export class AutomapService {
    * Once the initial mapping plan is created, check if our automation rules apply and
    * execute the mapping job if they do.
    *
-   * @param e
+   * @param event - Flatfile event
    * @private
    */
-  private async handleMappingPlanCreated(e: any): Promise<void> {
-    const {
-      data: { plan },
-    } = (await api.jobs.getExecutionPlan(e.context.jobId)) as any;
+  private async handleMappingPlanCreated(event: FlatfileEvent): Promise<void> {
+    const { jobId } = event.context;
 
-    if (this.verifyAbsoluteMatchingStrategy(plan, e.context.jobId)) {
-      await api.jobs.execute(e.context.jobId);
+     const {
+       data: { plan },
+     } = (await api.jobs.getExecutionPlan(jobId)) as any;
+//    const { plan } = await api.jobs.getExecutionPlan(jobId); // types don't line up... why?
+
+    if (!R.isNil(plan) && this.verifyAbsoluteMatchingStrategy(plan)) {
+      await api.jobs.execute(jobId);
     }
   }
 
-  /**
-   * Get file by id from the API.
-   *
-   * @param fileId
-   * @private
-   */
-  private async getFile(fileId: string): Promise<Flatfile.File_> {
+  private async getFileById(fileId: string): Promise<Flatfile.File_> {
     const { data: file } = await api.files.get(fileId);
+
     return file;
   }
 
@@ -171,6 +184,7 @@ export class AutomapService {
 
     return this.options.matchFilename.test(file.name);
   }
+
   /**
    * Attempts to create a mapping for each sheet in the provided file. The mapping is created
    * based on a sample of the records in each sheet and a selection function (`this.options.selectSheets`).
@@ -194,8 +208,10 @@ export class AutomapService {
     // If a function for selecting sheets is defined, use it to create mappings.
     if (this.options.selectSheets) {
       const sample = await this.getRecordSampleForSheets(sheets);
+
       const assignments = await asyncMap(sample, async ({ sheet, records }) => {
         const target = await this.options.selectSheets!(records, sheet);
+
         return { source: sheet.id, target };
       });
 
@@ -212,7 +228,6 @@ export class AutomapService {
       ];
     }
 
-    // If no mappings could be created, return an empty array.
     return [];
   }
 
@@ -230,47 +245,31 @@ export class AutomapService {
    * @private
    */
   private async getRecordSampleForSheets(
-    sheets: Flatfile.Sheet[]
-  ): Promise<SheetSample[]> {
+    sheets: ReadonlyArray<Flatfile.Sheet>
+  ): Promise<ReadonlyArray<SheetSample>> {
     return asyncMap(sheets, async (sheet) => {
       const response = await api.records.get(sheet.id, { pageSize: 10 });
       const records = response.data.records;
+
       return { sheet, records: records! };
     });
   }
 
-  /**
-   * Verify that the mapping plan is absolute.
-   *
-   * @param plan
-   * @param jobId
-   * @private
-   */
-  private verifyAbsoluteMatchingStrategy(plan: any, jobId: string): boolean {
+  private verifyAbsoluteMatchingStrategy(
+    plan: Flatfile.JobExecutionPlan
+  ): boolean {
     return (
-      plan?.fieldMapping?.every(
+      plan.fieldMapping?.every(
         (e: any) =>
           e.metadata?.certainty === "strong" && e.metadata?.source === "exact"
       ) && this.options.accuracy === "exact"
     );
   }
 
-  private updateFileName(fileId: string, fileName: string) {
-    return axios.patch(
-      "https://platform.flatfile.com/api/v1/files/" + fileId,
-      {
-        name: fileName,
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + CrossEnvConfig.get("FLATFILE_API_KEY"),
-        },
-      }
-    );
+  private updateFileName(
+    fileId: string,
+    fileName: string
+  ): Promise<Flatfile.FileResponse> {
+    return api.files.update(fileId, { name: fileName });
   }
 }
-
-type SheetSample = {
-  sheet: Flatfile.Sheet;
-  records: Flatfile.RecordsWithLinks;
-};
