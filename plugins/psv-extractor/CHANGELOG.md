@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 0.0.3
+
+### Patch Changes
+
+- e16b17f: fix to empty columns
+
 ## 0.0.2
 
 ### Patch Changes
