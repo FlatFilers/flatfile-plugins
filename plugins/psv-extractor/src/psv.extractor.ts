@@ -36,6 +36,7 @@ export class PsvExtractor extends AbstractExtractor {
           delimiter: "|",
           header: true,
           skipEmptyLines: "greedy",
+          transform: (value) => value || "", // Handle empty cells by replacing them with an empty string
         }
       );
 
