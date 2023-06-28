@@ -86,12 +86,6 @@ export class ExcelExtractor extends AbstractExtractor {
     const job = await this.startJob();
 
     try {
-      //only run the extractor for "import" jobs
-      if (job.operation !== "import") {
-        await this.failJob(job, "because not a file import.");
-        return false
-      }
-
       //set status for getFileBuffer()
       await this.api.jobs.update(job.id, {
         status: "executing",
