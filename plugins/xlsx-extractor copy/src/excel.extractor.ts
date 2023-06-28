@@ -70,28 +70,13 @@ export class ExcelExtractor extends AbstractExtractor {
    */
   public async runExtraction(): Promise<boolean> {
     const { data: file } = await this.api.files.get(this.fileId);
-    
-    // File_ doesn't have a definition for "mode" as an object parameter, even though it is returned in the "file" response
-    // Need to override typescript casting to deconstruct
-    const { mode, ext } = file as any
 
-    if (ext !== "xlsx") {
+    if (file.ext !== "xlsx") {
       return false;
     }
-
-    if (mode !== "import") {
-      return false;
-    }
-
     const job = await this.startJob();
 
     try {
-      //only run the extractor for "import" jobs
-      if (job.operation !== "import") {
-        await this.failJob(job, "because not a file import.");
-        return false
-      }
-
       //set status for getFileBuffer()
       await this.api.jobs.update(job.id, {
         status: "executing",
