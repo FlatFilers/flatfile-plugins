@@ -47,9 +47,13 @@ describe("automap() e2e", () => {
         })
       );
 
-      listener.on(Flatfile.EventTopic.JobCompleted, { job: "workbook:map" }, (event) => {
-        mockFn(event.context.jobId);
-      });
+      listener.on(
+        Flatfile.EventTopic.JobCompleted,
+        { job: "workbook:map" },
+        (event) => {
+          mockFn(event.context.jobId);
+        }
+      );
     });
 
     it("correctly modifies a value", async () => {

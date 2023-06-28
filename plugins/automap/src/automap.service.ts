@@ -44,12 +44,11 @@ export class AutomapService {
     if (!this.isFileNameMatch(file)) {
       await this.updateFileName(file.id, `⏸️️ ${file.name}`);
       return;
+    } else {
+      await this.updateFileName(file.id, `⚡️ ${file.name}`);
     }
 
-    await this.updateFileName(file.id, `⚡️ ${file.name}`);
-    if (!file.workbookId) {
-      return;
-    }
+    if (R.isNil(file.workbookId)) return;
 
     const { data: workbooks } = await api.workbooks.list({
       spaceId,
@@ -57,25 +56,20 @@ export class AutomapService {
 
     const destinationWorkbook = this.getTargetWorkbook(workbooks);
 
-    if (!destinationWorkbook) {
-      return;
-    }
+    if (R.isNil(destinationWorkbook)) return;
 
     const mappings = await this.getMappingJobs(file);
     let destinationSheet: Flatfile.Sheet | undefined;
     const jobs = await asyncMap(mappings, async ({ target, source }) => {
-      if (!target) {
-        return;
-      }
+      if (R.isNil(target)) return;
 
-      destinationSheet = destinationWorkbook.sheets?.find(
-        (s) => s.name === target || s.id === target
+      destinationSheet = R.pipe(
+        destinationWorkbook.sheets,
+        R.find((s) => s.name === target || s.id === target)
       );
 
       const destinationSheetId = destinationSheet?.id;
-      if (!destinationSheetId) {
-        return;
-      }
+      if (R.isNil(destinationSheetId)) return;
 
       const { data: job } = await api.jobs.create({
         type: "workbook",
@@ -92,9 +86,12 @@ export class AutomapService {
       return job;
     });
 
-    const actualJobs = jobs.filter((j) => j);
+    const actualJobs = R.pipe(
+      jobs,
+      R.reject((j) => R.isNil(j))
+    );
 
-    if (actualJobs.length) {
+    if (actualJobs.length > 0) {
       await this.updateFileName(
         file.id,
         `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`
@@ -105,44 +102,38 @@ export class AutomapService {
   /**
    * This method selects a target workbook based on the provided set of workbooks and the class options.
    *
-   * It first filters out any workbooks that have a "file" label.
-   * If no such workbooks remain, it returns undefined.
-   *
-   * Next, it checks the `targetWorkbook` option. If it is set, it attempts to find a workbook with a matching id or name.
-   *
-   * If the `targetWorkbook` option is not set and there's only one workbook, that workbook is selected as the target.
-   *
-   * If there's more than one workbook and no target has been found yet, it looks for a workbook with a "primary" label and selects it as the target.
-   *
-   * If no suitable target workbook can be found following these rules, it returns undefined.
-   *
    * @param workbooks - The array of workbooks from which to select a target.
    * @returns The selected target workbook or undefined if no suitable workbook could be found.
    */
   private getTargetWorkbook(
     workbooks: Array<Flatfile.Workbook>
   ): Flatfile.Workbook | undefined {
-    const targets = workbooks.filter((w) => !w.labels?.includes("file"));
+    const targets = R.pipe(
+      workbooks,
+      R.reject((w) => w.labels?.includes("file"))
+    );
 
     if (targets.length === 0) {
       return undefined;
-    }
-
-    if (this.options.targetWorkbook) {
-      const target = targets.find(
-        (w) =>
-          w.id === this.options.targetWorkbook ||
-          w.name === this.options.targetWorkbook
+    } else if (!R.isNil(this.options.targetWorkbook)) {
+      const target = R.pipe(
+        targets,
+        R.find(
+          (w) =>
+            w.id === this.options.targetWorkbook ||
+            w.name === this.options.targetWorkbook
+        )
       );
 
-      if (target) return target;
+      if (!R.isNil(target)) return target;
+    } else if (targets.length === 1) {
+      return R.first(targets);
+    } else {
+      return R.pipe(
+        targets,
+        R.find((w) => w.labels?.includes("primary"))
+      );
     }
-
-    if (targets.length === 1) {
-      return targets[0];
-    }
-
-    return targets.find((w) => w.labels?.includes("primary"));
   }
 
   /**
@@ -155,12 +146,14 @@ export class AutomapService {
   private async handleMappingPlanCreated(event: FlatfileEvent): Promise<void> {
     const { jobId } = event.context;
 
-     const {
-       data: { plan },
-     } = (await api.jobs.getExecutionPlan(jobId)) as any;
-//    const { plan } = await api.jobs.getExecutionPlan(jobId); // types don't line up... why?
+    const {
+      data: { plan },
+    } = (await api.jobs.getExecutionPlan(jobId)) as any;
+    // const { plan } = await api.jobs.getExecutionPlan(jobId); // types don't line up... why?
 
-    if (!R.isNil(plan) && this.verifyAbsoluteMatchingStrategy(plan)) {
+    if (R.isNil(plan)) return;
+
+    if (this.verifyAbsoluteMatchingStrategy(plan)) {
       await api.jobs.execute(jobId);
     }
   }
@@ -178,11 +171,12 @@ export class AutomapService {
    * @private
    */
   private isFileNameMatch(file: Flatfile.File_): boolean {
-    if (!this.options.matchFilename) {
+    if (R.isNil(this.options.matchFilename)) {
+      // allow mapping to continue b/c we weren't explicitly told not to
       return true;
+    } else {
+      return this.options.matchFilename.test(file.name);
     }
-
-    return this.options.matchFilename.test(file.name);
   }
 
   /**
@@ -201,12 +195,10 @@ export class AutomapService {
   private async getMappingJobs(
     file: Flatfile.File_
   ): Promise<Array<{ source: string; target: string | boolean }>> {
-    // Get the workbook related to the file.
     const workbookResponse = await api.workbooks.get(file.workbookId!);
     const sheets = workbookResponse.data.sheets || [];
 
-    // If a function for selecting sheets is defined, use it to create mappings.
-    if (this.options.selectSheets) {
+    if (!R.isNil(this.options.selectSheets)) {
       const sample = await this.getRecordSampleForSheets(sheets);
 
       const assignments = await asyncMap(sample, async ({ sheet, records }) => {
@@ -215,20 +207,20 @@ export class AutomapService {
         return { source: sheet.id, target };
       });
 
-      // Filter out any assignments that did not have a target.
-      return assignments.filter(({ target }) => target !== false) as Array<{
-        source: string;
-        target: string | boolean;
-      }>;
-    }
-    // If no selectSheets function is defined, but there's only one sheet in the workbook and a defaultTargetSheet is defined, create a default mapping.
-    else if (sheets.length === 1 && this.options.defaultTargetSheet) {
+      return R.pipe(
+        assignments,
+        R.reject(({ target }) => target === false)
+      );
+    } else if (
+      sheets.length === 1 &&
+      !R.isNil(this.options.defaultTargetSheet)
+    ) {
       return [
         { source: sheets[0].id, target: this.options.defaultTargetSheet },
       ];
+    } else {
+      return [];
     }
-
-    return [];
   }
 
   /**
@@ -259,9 +251,12 @@ export class AutomapService {
     plan: Flatfile.JobExecutionPlan
   ): boolean {
     return (
-      plan.fieldMapping?.every(
-        (e: any) =>
-          e.metadata?.certainty === "strong" && e.metadata?.source === "exact"
+      R.pipe(plan, (p) =>
+        p.fieldMapping?.every(
+          (edge) =>
+            edge.metadata?.certainty === Flatfile.Certainty.Strong ||
+            edge.metadata?.certainty === Flatfile.Certainty.Absolute
+        )
       ) && this.options.accuracy === "exact"
     );
   }
