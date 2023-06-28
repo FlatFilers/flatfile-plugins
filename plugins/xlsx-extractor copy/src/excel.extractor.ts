@@ -70,28 +70,13 @@ export class ExcelExtractor extends AbstractExtractor {
    */
   public async runExtraction(): Promise<boolean> {
     const { data: file } = await this.api.files.get(this.fileId);
-    
-    // File_ doesn't have a definition for "mode" as an object parameter, even though it is returned in the "file" response
-    // Need to override typescript casting to deconstruct
-    const { mode, ext } = file as any
 
-    if (ext !== "xlsx") {
+    if (file.ext !== "xlsx") {
       return false;
     }
-
-    if (mode !== "import") {
-      return false;
-    }
-
     const job = await this.startJob();
 
     try {
-      //only run the extractor for "import" jobs
-      if (job.operation !== "import") {
-        await this.failJob(job, "because not a file import.");
-        return false
-      }
-
       //set status for getFileBuffer()
       await this.api.jobs.update(job.id, {
         status: "executing",
@@ -101,7 +86,6 @@ export class ExcelExtractor extends AbstractExtractor {
         progress: 10,
         info: "Downloading file",
       });
-      console.log("10% Downloading file");
 
       const buffer = await this.getFileBufferFromApi(job);
 
@@ -110,7 +94,6 @@ export class ExcelExtractor extends AbstractExtractor {
         progress: 30,
         info: "Parsing Sheets",
       });
-      console.log("30% Parsing Sheets");
 
       const capture = this.parseBuffer(buffer);
 
@@ -119,7 +102,6 @@ export class ExcelExtractor extends AbstractExtractor {
         progress: 50,
         info: "Creating Workbook",
       });
-      console.log("50% Creating Workbook");
 
       const workbook = await this.createWorkbook(job, file, capture);
       if (!workbook?.sheets) {
@@ -132,21 +114,25 @@ export class ExcelExtractor extends AbstractExtractor {
         progress: 80,
         info: "Adding records to Sheets",
       });
-      console.log("80% Adding records to Sheets");
 
       for (const sheet of workbook.sheets) {
         if (!capture[sheet.name]) {
           continue;
         }
         const recordsData = this.makeAPIRecords(capture[sheet.name]);
-        await asyncBatch(recordsData, async (chunk) => {
-          await this.api.records.insert(sheet.id, chunk);
-        }, { chunkSize: 10000, parallel: 1 });
+        await asyncBatch(
+          recordsData,
+          async (chunk) => {
+            await this.api.records.insert(sheet.id, chunk);
+          },
+          { chunkSize: 10000, parallel: 1 }
+        );
       }
       await this.completeJob(job);
       return true;
     } catch (e) {
-      await this.failJob(job, "while adding Records to Sheets.");
+      const message = (await this.api.jobs.get(job.id)).data.info;
+      await this.failJob(job, "while " + message);
       return false;
     }
   }
@@ -177,54 +163,54 @@ async function asyncBatch<T, R>(
   callback: (chunk: T[]) => Promise<R>,
   options: { chunkSize?: number; parallel?: number } = {}
 ): Promise<R> {
-  const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options }
-  const results: R[] = []
+  const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options };
+  const results: R[] = [];
 
   // Split the array into chunks
-  const chunks: T[][] = []
+  const chunks: T[][] = [];
   for (let i = 0; i < arr.length; i += chunkSize) {
-    chunks.push(arr.slice(i, i + chunkSize))
+    chunks.push(arr.slice(i, i + chunkSize));
   }
 
   // Create a helper function to process a chunk
   async function processChunk(chunk: T[]): Promise<void> {
-    const result = await callback(chunk)
-    results.push(result)
+    const result = await callback(chunk);
+    results.push(result);
   }
 
   // Execute the chunks in parallel
-  const promises: Promise<void>[] = []
-  let running = 0
-  let currentIndex = 0
+  const promises: Promise<void>[] = [];
+  let running = 0;
+  let currentIndex = 0;
 
   function processNext(): void {
     if (currentIndex >= chunks.length) {
       // All chunks have been processed
-      return
+      return;
     }
 
-    const currentChunk = chunks[currentIndex]
+    const currentChunk = chunks[currentIndex];
     const promise = processChunk(currentChunk).finally(() => {
-      running--
-      processNext() // Process next chunk
-    })
+      running--;
+      processNext(); // Process next chunk
+    });
 
-    promises.push(promise)
-    currentIndex++
-    running++
+    promises.push(promise);
+    currentIndex++;
+    running++;
 
     if (running < parallel) {
-      processNext() // Process another chunk if available
+      processNext(); // Process another chunk if available
     }
   }
 
   // Start processing the chunks
   for (let i = 0; i < parallel && i < chunks.length; i++) {
-    processNext()
+    processNext();
   }
 
   // Wait for all promises to resolve
-  await Promise.all(promises)
+  await Promise.all(promises);
 
-  return results.flat() as R
+  return results.flat() as R;
 }
