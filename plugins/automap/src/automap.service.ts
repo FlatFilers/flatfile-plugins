@@ -39,63 +39,91 @@ export class AutomapService {
   public async handleFileExtraction(event: FlatfileEvent): Promise<void> {
     const { fileId, spaceId } = event.context;
 
-    const file = await this.getFileById(fileId);
+    try {
+      const file = await this.getFileById(fileId);
 
-    if (!this.isFileNameMatch(file)) {
-      await this.updateFileName(file.id, `⏸️️ ${file.name}`);
+      if (!this.isFileNameMatch(file)) {
+        await this.updateFileName(file.id, `⏸️️ ${file.name}`);
+        return;
+      } else {
+        await this.updateFileName(file.id, `⚡️ ${file.name}`);
+      }
+
+      if (R.isNil(file.workbookId)) return;
+
+      try {
+        const { data: workbooks } = await api.workbooks.list({
+          spaceId,
+        });
+
+        const destinationWorkbook = this.getTargetWorkbook(workbooks);
+        if (R.isNil(destinationWorkbook)) return;
+
+        try {
+          const mappings = await this.getMappingJobs(file);
+          let destinationSheet: Flatfile.Sheet | undefined;
+          const jobs = await asyncMap(mappings, async ({ target, source }) => {
+            if (R.isNil(target)) return;
+
+            destinationSheet = R.pipe(
+              destinationWorkbook.sheets,
+              R.find((s) => s.name === target || s.id === target)
+            );
+
+            const destinationSheetId = destinationSheet?.id;
+            if (R.isNil(destinationSheetId)) return;
+
+            try {
+              const { data: job } = await api.jobs.create({
+                type: "workbook",
+                operation: "map",
+                source: file.workbookId!,
+                managed: true,
+                destination: destinationWorkbook.id,
+                config: {
+                  sourceSheetId: source,
+                  destinationSheetId,
+                },
+              });
+
+              return job;
+            } catch (_jobError: unknown) {
+              console.error(
+                "[@flatfile/plugin-automap]:[FATAL] Unable to create mapping job"
+              );
+              return;
+            }
+          });
+
+          const actualJobs = R.pipe(
+            jobs,
+            R.reject((j) => R.isNil(j))
+          );
+
+          if (actualJobs.length > 0) {
+            await this.updateFileName(
+              file.id,
+              `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`
+            );
+          }
+        } catch (_mappingsError: unknown) {
+          console.error(
+            "[@flatfile/plugin-automap]:[FATAL] Unable to fetch mappings"
+          );
+          return;
+        }
+      } catch (_workbookError: unknown) {
+        console.error(
+          "[@flatfile/plugin-automap]:[FATAL] Unable to list workbooks"
+        );
+        return;
+      }
+    } catch (_fileError: unknown) {
+      console.error(
+        "[@flatfile/plugin-automap]:[FATAL] Unable to fetch file with id: " +
+          fileId
+      );
       return;
-    } else {
-      await this.updateFileName(file.id, `⚡️ ${file.name}`);
-    }
-
-    if (R.isNil(file.workbookId)) return;
-
-    const { data: workbooks } = await api.workbooks.list({
-      spaceId,
-    });
-
-    const destinationWorkbook = this.getTargetWorkbook(workbooks);
-
-    if (R.isNil(destinationWorkbook)) return;
-
-    const mappings = await this.getMappingJobs(file);
-    let destinationSheet: Flatfile.Sheet | undefined;
-    const jobs = await asyncMap(mappings, async ({ target, source }) => {
-      if (R.isNil(target)) return;
-
-      destinationSheet = R.pipe(
-        destinationWorkbook.sheets,
-        R.find((s) => s.name === target || s.id === target)
-      );
-
-      const destinationSheetId = destinationSheet?.id;
-      if (R.isNil(destinationSheetId)) return;
-
-      const { data: job } = await api.jobs.create({
-        type: "workbook",
-        operation: "map",
-        source: file.workbookId!,
-        managed: true,
-        destination: destinationWorkbook.id,
-        config: {
-          sourceSheetId: source,
-          destinationSheetId,
-        },
-      });
-
-      return job;
-    });
-
-    const actualJobs = R.pipe(
-      jobs,
-      R.reject((j) => R.isNil(j))
-    );
-
-    if (actualJobs.length > 0) {
-      await this.updateFileName(
-        file.id,
-        `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`
-      );
     }
   }
 
