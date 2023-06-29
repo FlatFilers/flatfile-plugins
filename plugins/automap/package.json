@@ -28,11 +28,11 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.4.9",
+    "@flatfile/api": "^1.5.11",
     "@flatfile/common-plugin-utils": "^1.0.0",
-    "@flatfile/listener": "^0.3.4",
+    "@flatfile/listener": "^0.3.10",
     "@flatfile/utils-debugger": "^0.0.3",
-    "remeda": "^1.14.0"
+    "remeda": "^1.23.0"
   },
   "devDependencies": {}
 }

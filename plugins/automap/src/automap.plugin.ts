@@ -1,4 +1,3 @@
-import { Flatfile } from "@flatfile/api";
 import { FlatfileListener } from "@flatfile/listener";
 import { AutomapService } from "./automap.service";
 
@@ -18,19 +17,14 @@ export function automap(options: AutomapOptions) {
 /**
  * Plugin config options.
  *
- * @property {string} accuracy - asdf
- * @property {RegExp} matchFilename - asdf
- * @property {function} selectSheets - asdf
- * @property {string} defaultTargetSheet - asdf
+ * @property {string} accuracy - match columns either by 'confident' (>= 80% match) or 'exact' (100% match).
+ * @property {RegExp} matchFilename - a regular expression to match specific files to perform automapping on.
+ * @property {string} defaultTargetSheet - exact sheet name to import data to
  * @property {string} targetWorkbook - asdf
  */
 export interface AutomapOptions {
-  readonly accuracy: "exact";
+  readonly accuracy: "confident" | "exact";
   readonly matchFilename?: RegExp;
-  readonly selectSheets?: (
-    records: Flatfile.RecordsWithLinks,
-    sheet: Flatfile.Sheet
-  ) => string | false | Promise<string | false>;
   readonly defaultTargetSheet?: string;
   readonly targetWorkbook?: string;
 }

@@ -108,6 +108,7 @@ export class AutomapService {
   private getTargetWorkbook(
     workbooks: Array<Flatfile.Workbook>
   ): Flatfile.Workbook | undefined {
+    const { targetWorkbook } = this.options;
     const targets = R.pipe(
       workbooks,
       R.reject((w) => w.labels?.includes("file"))
@@ -115,14 +116,10 @@ export class AutomapService {
 
     if (targets.length === 0) {
       return undefined;
-    } else if (!R.isNil(this.options.targetWorkbook)) {
+    } else if (!R.isNil(targetWorkbook)) {
       const target = R.pipe(
         targets,
-        R.find(
-          (w) =>
-            w.id === this.options.targetWorkbook ||
-            w.name === this.options.targetWorkbook
-        )
+        R.find((w) => w.id === targetWorkbook || w.name === targetWorkbook)
       );
 
       if (!R.isNil(target)) return target;
@@ -153,8 +150,17 @@ export class AutomapService {
 
     if (R.isNil(plan)) return;
 
-    if (this.verifyAbsoluteMatchingStrategy(plan)) {
-      await api.jobs.execute(jobId);
+    switch (this.options.accuracy) {
+      case "confident":
+        if (this.verifyConfidentMatchingStrategy(plan)) {
+          await api.jobs.execute(jobId);
+        }
+        break;
+      case "exact":
+        if (this.verifyAbsoluteMatchingStrategy(plan)) {
+          await api.jobs.execute(jobId);
+        }
+        break;
     }
   }
 
@@ -171,11 +177,13 @@ export class AutomapService {
    * @private
    */
   private isFileNameMatch(file: Flatfile.File_): boolean {
-    if (R.isNil(this.options.matchFilename)) {
+    const { matchFilename: regex } = this.options;
+
+    if (R.isNil(regex)) {
       // allow mapping to continue b/c we weren't explicitly told not to
       return true;
     } else {
-      return this.options.matchFilename.test(file.name);
+      return regex.test(file.name);
     }
   }
 
@@ -197,27 +205,24 @@ export class AutomapService {
   ): Promise<Array<{ source: string; target: string | boolean }>> {
     const workbookResponse = await api.workbooks.get(file.workbookId!);
     const sheets = workbookResponse.data.sheets || [];
+    const { defaultTargetSheet } = this.options;
 
-    if (!R.isNil(this.options.selectSheets)) {
-      const sample = await this.getRecordSampleForSheets(sheets);
+    // if (!R.isNil(this.options.selectSheets)) {
+    //   const sample = await this.getRecordSampleForSheets(sheets);
 
-      const assignments = await asyncMap(sample, async ({ sheet, records }) => {
-        const target = await this.options.selectSheets!(records, sheet);
+    //   const assignments = await asyncMap(sample, async ({ sheet, records }) => {
+    //     const target = await this.options.selectSheets!(records, sheet);
 
-        return { source: sheet.id, target };
-      });
+    //     return { source: sheet.id, target };
+    //   });
 
-      return R.pipe(
-        assignments,
-        R.reject(({ target }) => target === false)
-      );
-    } else if (
-      sheets.length === 1 &&
-      !R.isNil(this.options.defaultTargetSheet)
-    ) {
-      return [
-        { source: sheets[0].id, target: this.options.defaultTargetSheet },
-      ];
+    //   return R.pipe(
+    //     assignments,
+    //     R.reject(({ target }) => target === false)
+    //   );
+    // } else
+    if (sheets.length === 1 && !R.isNil(defaultTargetSheet)) {
+      return [{ source: R.first(sheets).id, target: defaultTargetSheet }];
     } else {
       return [];
     }
@@ -250,14 +255,22 @@ export class AutomapService {
   private verifyAbsoluteMatchingStrategy(
     plan: Flatfile.JobExecutionPlan
   ): boolean {
-    return (
-      R.pipe(plan, (p) =>
-        p.fieldMapping?.every(
-          (edge) =>
-            edge.metadata?.certainty === Flatfile.Certainty.Strong ||
-            edge.metadata?.certainty === Flatfile.Certainty.Absolute
-        )
-      ) && this.options.accuracy === "exact"
+    return R.pipe(plan, (p) =>
+      p.fieldMapping?.every(
+        (edge) => edge.metadata?.certainty === Flatfile.Certainty.Absolute
+      )
+    );
+  }
+
+  private verifyConfidentMatchingStrategy(
+    plan: Flatfile.JobExecutionPlan
+  ): boolean {
+    return R.pipe(plan, (p) =>
+      p.fieldMapping?.every(
+        (edge) =>
+          edge.metadata?.certainty === Flatfile.Certainty.Strong ||
+          edge.metadata?.certainty === Flatfile.Certainty.Absolute
+      )
     );
   }
 
