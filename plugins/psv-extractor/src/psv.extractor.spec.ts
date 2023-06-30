@@ -1,8 +1,6 @@
 import { PsvExtractor } from "./psv.extractor";
-import * as path from "path";
 import { Flatfile } from "@flatfile/api";
 import * as fs from "fs";
-import Papa, { ParseResult } from "papaparse";
 
 jest.mock("fs");
 
