@@ -13,11 +13,10 @@
   "module": "dist/module.mjs",
   "types": "dist/types.d.ts",
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "build": "tsup src/index.ts --format esm,cjs --dts",
-    "dev": "tsup src/index.ts --format esm,cjs --dts  --watch",
-    "poll": "tsup src/dev.ts --format esm,cjs --watch --dts --onSuccess \"node dist/dev.js\"",
-    "test": "jest --passWithNoTests"
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js"
   },
   "keywords": [],
   "author": "Ashley Mulligan",
@@ -38,7 +37,6 @@
   "devDependencies": {
     "@types/papaparse": "^5.3.7",
     "mock-fs": "^5.2.0",
-    "@flatfile/cross-env-config": "*",
     "@types/flat": "^5.0.2",
     "@types/jest": "^29.5.1",
     "eslint": "^8.19.0",
