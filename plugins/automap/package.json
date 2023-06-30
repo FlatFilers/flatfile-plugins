@@ -3,11 +3,10 @@
   "version": "0.0.1",
   "description": "A plugin for auto mapping imported files when confidence levels are high.",
   "registryMetadata": {
-    "status": "Coming soon",
-    "category": "schema"
+    "category": "automation"
   },
   "engines": {
-    "node": ">= 12"
+    "node": ">= 16"
   },
   "source": "src/index.ts",
   "main": "dist/main.js",
