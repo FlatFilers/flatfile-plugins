@@ -1,4 +1,3 @@
-import { mapKeys, mapValues } from 'remeda'
 import {
   AbstractExtractor,
   SheetCapture,
@@ -6,7 +5,6 @@ import {
 } from './abstract.extractor'
 import type { Flatfile } from '@flatfile/api'
 import Papa, { ParseResult } from 'papaparse'
-import * as fs from 'fs'
 
 export class PsvExtractor extends AbstractExtractor {
   private readonly _options: {
