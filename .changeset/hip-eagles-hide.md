@@ -1,5 +1,5 @@
 ---
-"@flatfile/plugin-psv-extractor": patch
+"@flatfile/plugin-psv-extractor": major
 ---
 
 fixing empty columns
