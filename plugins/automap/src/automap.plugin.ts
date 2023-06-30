@@ -1,4 +1,4 @@
-import { FlatfileListener } from "@flatfile/listener";
+import { FlatfileEvent, FlatfileListener } from "@flatfile/listener";
 import { AutomapService } from "./automap.service";
 
 /**
@@ -19,14 +19,16 @@ export function automap(options: AutomapOptions) {
  *
  * @property {string} accuracy - match columns either by 'confident' (>= 80% match) or 'exact' (100% match).
  * @property {boolean} debug - show helpul messages useful for debugging (use intended for development).
- * @property {RegExp} matchFilename - a regular expression to match specific files to perform automapping on.
  * @property {string} defaultTargetSheet - exact sheet name to import data to
+ * @property {RegExp} matchFilename - a regular expression to match specific files to perform automapping on.
+ * @property {Function} onFailure - callback to be executed when plugin bails.
  * @property {string} targetWorkbook - asdf
  */
 export interface AutomapOptions {
   readonly accuracy: "confident" | "exact";
   readonly debug?: boolean;
-  readonly matchFilename?: RegExp;
   readonly defaultTargetSheet?: string;
+  readonly matchFilename?: RegExp;
+  readonly onFailure?: (event: FlatfileEvent) => void;
   readonly targetWorkbook?: string;
 }

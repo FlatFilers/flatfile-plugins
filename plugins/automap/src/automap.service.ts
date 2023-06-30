@@ -187,6 +187,10 @@ export class AutomapService {
 
       if (R.length((plan as Flatfile.JobExecutionPlan).fieldMapping) === 0) {
         this.logWarn("At least one field must be mapped");
+
+        if (!R.isNil(this.options.onFailure)) {
+          this.options.onFailure(event);
+        }
         return;
       }
 
@@ -199,6 +203,10 @@ export class AutomapService {
               if (this.options.debug) {
                 this.logWarn("Skipping automap due to lack of confidence");
               }
+
+              if (!R.isNil(this.options.onFailure)) {
+                this.options.onFailure(event);
+              }
             }
             break;
           case "exact":
@@ -207,6 +215,10 @@ export class AutomapService {
             } else {
               if (this.options.debug) {
                 this.logWarn("Skipping automap due to lack of confidence");
+              }
+
+              if (!R.isNil(this.options.onFailure)) {
+                this.options.onFailure(event);
               }
             }
             break;
