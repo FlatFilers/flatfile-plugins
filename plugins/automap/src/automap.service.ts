@@ -100,7 +100,7 @@ export class AutomapService {
             R.reject((j) => R.isNil(j))
           );
 
-          if (actualJobs.length > 0) {
+          if (R.length(actualJobs) > 0) {
             await this.updateFileName(
               file.id,
               `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`
@@ -142,7 +142,7 @@ export class AutomapService {
       R.reject((w) => w.labels?.includes("file"))
     );
 
-    if (targets.length === 0) {
+    if (R.length(targets) === 0) {
       return undefined;
     } else if (!R.isNil(targetWorkbook)) {
       const target = R.pipe(
@@ -151,7 +151,7 @@ export class AutomapService {
       );
 
       if (!R.isNil(target)) return target;
-    } else if (targets.length === 1) {
+    } else if (R.length(targets) === 1) {
       return R.first(targets);
     } else {
       return R.pipe(
@@ -171,24 +171,47 @@ export class AutomapService {
   private async handleMappingPlanCreated(event: FlatfileEvent): Promise<void> {
     const { jobId } = event.context;
 
-    const {
-      data: { plan },
-    } = (await api.jobs.getExecutionPlan(jobId)) as any;
-    // const { plan } = await api.jobs.getExecutionPlan(jobId); // types don't line up... why?
+    try {
+      const {
+        data: { plan },
+      } = (await api.jobs.getExecutionPlan(jobId)) as any;
+      // const { plan } = await api.jobs.getExecutionPlan(jobId); // types don't line up... why?
 
-    if (R.isNil(plan)) return;
+      if (R.isNil(plan)) return;
 
-    switch (this.options.accuracy) {
-      case "confident":
-        if (this.verifyConfidentMatchingStrategy(plan)) {
-          await api.jobs.execute(jobId);
+      if (R.length((plan as Flatfile.JobExecutionPlan).fieldMapping) === 0) {
+        console.warn(
+          "[@flatfile/plugin-automap]:[WARN] At least one field must be mapped"
+        );
+        return;
+      }
+
+      try {
+        switch (this.options.accuracy) {
+          case "confident":
+            if (this.verifyConfidentMatchingStrategy(plan)) {
+              await api.jobs.execute(jobId);
+            }
+            break;
+          case "exact":
+            if (this.verifyAbsoluteMatchingStrategy(plan)) {
+              await api.jobs.execute(jobId);
+            }
+            break;
         }
-        break;
-      case "exact":
-        if (this.verifyAbsoluteMatchingStrategy(plan)) {
-          await api.jobs.execute(jobId);
-        }
-        break;
+      } catch (_jobError: unknown) {
+        console.error(
+          "[@flatfile/plugin-automap]:[FATAL] Unable to execute job with id: " +
+            jobId
+        );
+        return;
+      }
+    } catch (_execPlanError: unknown) {
+      console.error(
+        "[@flatfile/plugin-automap]:[FATAL] Unable to fetch execution plan for job with id: " +
+          jobId
+      );
+      return;
     }
   }
 
@@ -249,7 +272,7 @@ export class AutomapService {
     //     R.reject(({ target }) => target === false)
     //   );
     // } else
-    if (sheets.length === 1 && !R.isNil(defaultTargetSheet)) {
+    if (R.length(sheets) === 1 && !R.isNil(defaultTargetSheet)) {
       return [{ source: R.first(sheets).id, target: defaultTargetSheet }];
     } else {
       return [];
