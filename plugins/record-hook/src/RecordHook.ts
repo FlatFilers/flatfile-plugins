@@ -5,6 +5,7 @@ import { RecordTranslater } from "./record.translater";
 
 export const RecordHook = async (
   event: FlatfileEvent,
+  sheet,
   handler: (record: FlatfileRecord, event: FlatfileEvent) => any | Promise<any>
 ) => {
   try {
