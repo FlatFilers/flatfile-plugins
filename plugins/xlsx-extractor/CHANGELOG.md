@@ -1,5 +1,30 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.6
+
+### Patch Changes
+
+- c4bf511: console log not error
+- 809b95a: new extractor for psv file types and fix to xlsx-extractor
+
+## 1.0.4
+
+### Patch Changes
+
+- 749ebdc: introduce records chunking to xlsx extractor
+
+## 1.0.3
+
+### Patch Changes
+
+- 7fa7925: updating readmes
+
+## 1.0.2
+
+### Patch Changes
+
+- 413251a: Progress Improvements and adds xlsxExtractorPlugin
+
 ## 1.0.1
 
 ### Patch Changes

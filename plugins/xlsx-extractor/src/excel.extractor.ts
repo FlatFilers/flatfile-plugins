@@ -69,29 +69,70 @@ export class ExcelExtractor extends AbstractExtractor {
    * Extract the data from an uploaded XLSX file
    */
   public async runExtraction(): Promise<boolean> {
-    try {
-      const { data: file } = await this.api.files.get(this.fileId);
+    const { data: file } = await this.api.files.get(this.fileId);
 
-      if (file.ext !== "xlsx") {
-        return false;
-      }
-      const job = await this.startJob();
-      const buffer = await this.getFileBufferFromApi();
+    if (file.ext !== "xlsx") {
+      return false;
+    }
+    const job = await this.startJob();
+
+    try {
+      //set status for getFileBuffer()
+      await this.api.jobs.update(job.id, {
+        status: "executing",
+      });
+
+      await this.api.jobs.ack(job.id, {
+        progress: 10,
+        info: "Downloading file",
+      });
+
+      const buffer = await this.getFileBufferFromApi(job);
+
+      //set status for parseBuffer()
+      await this.api.jobs.ack(job.id, {
+        progress: 30,
+        info: "Parsing Sheets",
+      });
+
       const capture = this.parseBuffer(buffer);
 
-      const workbook = await this.createWorkbook(file, capture);
+      //set status for createWorkbook()
+      await this.api.jobs.ack(job.id, {
+        progress: 50,
+        info: "Creating Workbook",
+      });
 
-      if (!workbook?.sheets) return false;
+      const workbook = await this.createWorkbook(job, file, capture);
+      if (!workbook?.sheets) {
+        await this.failJob(job, "because no Sheets found.");
+        return false;
+      }
+
+      //set status for adding records
+      await this.api.jobs.ack(job.id, {
+        progress: 80,
+        info: "Adding records to Sheets",
+      });
+
       for (const sheet of workbook.sheets) {
         if (!capture[sheet.name]) {
           continue;
         }
         const recordsData = this.makeAPIRecords(capture[sheet.name]);
-        await this.api.records.insert(sheet.id, recordsData);
+        await asyncBatch(
+          recordsData,
+          async (chunk) => {
+            await this.api.records.insert(sheet.id, chunk);
+          },
+          { chunkSize: 10000, parallel: 1 }
+        );
       }
       await this.completeJob(job);
       return true;
     } catch (e) {
+      const message = (await this.api.jobs.get(job.id)).data.info;
+      await this.failJob(job, "while " + message);
       return false;
     }
   }
@@ -115,4 +156,61 @@ export class ExcelExtractor extends AbstractExtractor {
       typeof v === "string" ? /^[0-9]+$/.test(v) : !!v
     );
   }
+}
+
+async function asyncBatch<T, R>(
+  arr: T[],
+  callback: (chunk: T[]) => Promise<R>,
+  options: { chunkSize?: number; parallel?: number } = {}
+): Promise<R> {
+  const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options };
+  const results: R[] = [];
+
+  // Split the array into chunks
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    chunks.push(arr.slice(i, i + chunkSize));
+  }
+
+  // Create a helper function to process a chunk
+  async function processChunk(chunk: T[]): Promise<void> {
+    const result = await callback(chunk);
+    results.push(result);
+  }
+
+  // Execute the chunks in parallel
+  const promises: Promise<void>[] = [];
+  let running = 0;
+  let currentIndex = 0;
+
+  function processNext(): void {
+    if (currentIndex >= chunks.length) {
+      // All chunks have been processed
+      return;
+    }
+
+    const currentChunk = chunks[currentIndex];
+    const promise = processChunk(currentChunk).finally(() => {
+      running--;
+      processNext(); // Process next chunk
+    });
+
+    promises.push(promise);
+    currentIndex++;
+    running++;
+
+    if (running < parallel) {
+      processNext(); // Process another chunk if available
+    }
+  }
+
+  // Start processing the chunks
+  for (let i = 0; i < parallel && i < chunks.length; i++) {
+    processNext();
+  }
+
+  // Wait for all promises to resolve
+  await Promise.all(promises);
+
+  return results.flat() as R;
 }

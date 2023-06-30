@@ -1,5 +1,23 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.10
+
+### Patch Changes
+
+- 7fa7925: updating readmes
+
+## 0.1.9
+
+### Patch Changes
+
+- 8e41b36: Add FlatfileRecord as export
+
+## 0.1.8
+
+### Patch Changes
+
+- 83c4c98: Update internals to use the dataUrl for updating records
+
 ## 0.1.7
 
 ### Patch Changes

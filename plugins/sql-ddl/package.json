@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-sql-ddl",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A plugin for converting SQL DDL into Flatfile blueprint.",
   "registryMetadata": {
     "status": "Coming soon",

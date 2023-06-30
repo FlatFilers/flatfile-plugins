@@ -1,18 +1,9 @@
-# XLSX Extractor Plugin
+# @flatfile/plugin-xlsx-extractor"
 
-This parses all Sheets in an XLSX file and extracts them into X with `@flatfile/api` version 1.4.8. Here's an example of how to use it:
+This package parses all Sheets in an XLSX file and extracts them into Flatfile.
 
-```ts
-import { EventTopic } from '@flatfile/api/api'
+`npm i @flatfile/plugin-xlsx-extractor`
 
-SpaceConfig1.on([EventTopic.FileCreated], (event) => {
-  return new ExcelExtractor(event).runExtraction()
-})
-```
-The Extractor can accept an addition options parameter that includes rawNumbers: boolean which will be passed along to the Sheet.js parsing engine.
+## Get Started
 
-```ts
-SpaceConfig1.on([EventTopic.FileCreated], (event) => {
-  return new ExcelExtractor(event, { rawNumbers: true }).runExtraction()
-})
-```
+Follow [this guide](https://flatfile.com/docs/plugins/extractors/xlsx-extractor) to learn how to use the plugin.

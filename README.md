@@ -1,13 +1,17 @@
-# Official Flatfile Plugins
+# flatfile-plugins
 
-This repo contains all official Flatfile plugins. All these plugins are open source and we invite contribution, forking, and asks.
+Library of open-source plugins for developing with the Flatfile Platform
 
-- Suggest a Plugin
-- Report a bug
-- [Contribution guide for pull requests](./CONTRIBUTING.md)
+To get started building plugins:
 
-## Directory
+1. Run `npm i` at the root level.
+2. To make a changeset, run `npm run changeset` at the root level and choose the plugin you want to update.
 
-- [`@flatfile/plugin-record-hook`](./plugins/record-hook/README.md) — Transform or validate records as they're modified.
-- [`@flatfile/plugin-xlsx-extractor`](./plugins/xlsx-extractor/README.md) — Extractor for multi-sheet XLSX files.
-- [`@flatfile/plugin-dxp-configure`](./plugins/dxp-configure/README.md) — Shim to using the class-based `@flatfile/configure` library in your listener code.
+Additional Commands
+
+There are more commands that you can run on every plugin at the root level. For instance, the release is run by Github so you don't have to do this manually.
+
+
+Each plugin has its own package.json that you can run.
+
+1. `build` command uses what's in index.ts and builds a minified compiled version of the code using tsup. That is what gets published to npm.

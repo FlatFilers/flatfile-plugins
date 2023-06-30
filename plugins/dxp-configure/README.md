@@ -1,38 +1,9 @@
-# Flatfile DXP Configuration Shim
+# @flatfile/dxp-configure
 
-This plugin lets you easily attach your implementation of the class-based schema configuration library `@flatfile/configure` to `@flatfile/listener`.
+This package lets you easily attach your implementation of the class-based schema configuration library `@flatfile/configure` to `@flatfile/listener`.
 
-## Attaching a DXP Workbook configuration
+`npm i @flatfile/plugin-dxp-configure`
 
-You can simply attach any existing workbook configuration you have to a listener and it'll automatically apply to your next space.
+## Get Started
 
-`listener.js`
-```js
-import { MyWorkbook } from './my-dxp-workbook.js'
-import { dxpConfigure } from '@flatfile/plugin-dxp-configure'
-
-export default (listener) => {
-  listener.use(dxpConfigure(MyWorkbook))
-}
-```
-
-`my-dxp-workbook.js`
-```js 
-import { Sheet, TextField, Workbook } from '@flatfile/configure'
-
-export const MyWorkbook = new Workbook({
-  name: 'My Workbook',
-  namespace: 'test',
-  sheets: {
-    mySheet: new Sheet('Test', {
-      name: TextField('Full Name'),
-      email: TextField({
-        name: 'Email Address',
-        compute: (val) => {
-          return val.toLowerCase()
-        },
-      }),
-    }),
-  },
-})
-```
+Follow [this guide](https://flatfile.com/docs/plugins/migrations/dxp-configure) to learn how to use the plugin.

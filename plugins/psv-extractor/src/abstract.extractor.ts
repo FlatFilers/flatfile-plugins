@@ -26,9 +26,8 @@ export class AbstractExtractor {
   public async getFileBufferFromApi(job: Flatfile.Job): Promise<Buffer> {
     try {
       const file = await this.api.files.download(this.fileId);
+      const chunks: Buffer[] = [];
 
-      const chunks = [];
-      // node.js readable streams implement the async iterator protocol
       for await (const chunk of file) {
         chunks.push(chunk);
       }
@@ -36,6 +35,7 @@ export class AbstractExtractor {
       return Buffer.concat(chunks);
     } catch (error) {
       this.failJob(job, "during file buffering.");
+      throw error;
     }
   }
 
@@ -47,7 +47,7 @@ export class AbstractExtractor {
     try {
       const res = await this.api.jobs.create({
         type: "file",
-        operation: "xlsx-extract",
+        operation: "psv-extract",
         source: this.fileId,
         // TODO: This should be configurable
         managed: true,
@@ -60,7 +60,7 @@ export class AbstractExtractor {
 
       return res.data;
     } catch (e) {
-      console.error(`error ${e}`);
+      console.log(`error ${e}`);
       throw e;
     }
   }
@@ -81,7 +81,7 @@ export class AbstractExtractor {
     } catch (e) {
       this.failJob(job, "when completing Job.");
 
-      console.error(`error ${e}`);
+      console.log(`error ${e}`);
       throw e;
     }
   }
@@ -91,14 +91,14 @@ export class AbstractExtractor {
    *
    * @param job
    */
-  public async failJob(job: Flatfile.Job, reason) {
+  public async failJob(job: Flatfile.Job, reason: String) {
     try {
       const res = await this.api.jobs.fail(job.id, {
         info: "Extraction failed " + reason,
       });
       return res;
     } catch (e) {
-      console.error(`error ${e}`);
+      console.log(`error ${e}`);
       throw e;
     }
   }
@@ -135,7 +135,7 @@ export class AbstractExtractor {
       return workbook.data;
     } catch (e) {
       await this.failJob(job, "while creating Workbook.");
-      console.error(`error ${e}`);
+      console.log(`error ${e}`);
       throw e;
     }
   }
