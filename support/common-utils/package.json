@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/common-plugin-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A library containing common utilities and helpers for plugins",
   "keywords": [],
   "author": "Flatfile",
