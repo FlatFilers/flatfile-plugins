@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-psv-extractor",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "description": "A plugin for parsing psv files Flatfile.",
   "registryMetadata": {
     "category": "extractors"
