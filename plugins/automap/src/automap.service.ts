@@ -49,7 +49,12 @@ export class AutomapService {
         await this.updateFileName(file.id, `⚡️ ${file.name}`);
       }
 
-      if (R.isNil(file.workbookId)) return;
+      if (R.isNil(file.workbookId)) {
+        if (this.options.debug) {
+          this.logError("No Workbook Id found");
+        }
+        return;
+      }
 
       try {
         const { data: workbooks } = await api.workbooks.list({
@@ -57,7 +62,12 @@ export class AutomapService {
         });
 
         const destinationWorkbook = this.getTargetWorkbook(workbooks);
-        if (R.isNil(destinationWorkbook)) return;
+        if (R.isNil(destinationWorkbook)) {
+          if (this.options.debug) {
+            this.logError("Unable to determine destination Workbook");
+          }
+          return;
+        }
 
         try {
           const mappings = await this.getMappingJobs(file);
@@ -80,6 +90,7 @@ export class AutomapService {
                 source: file.workbookId!,
                 managed: true,
                 destination: destinationWorkbook.id,
+
                 config: {
                   sourceSheetId: source,
                   destinationSheetId,
@@ -88,9 +99,7 @@ export class AutomapService {
 
               return job;
             } catch (_jobError: unknown) {
-              console.error(
-                "[@flatfile/plugin-automap]:[FATAL] Unable to create mapping job"
-              );
+              this.logError("Unable to create mapping job");
               return;
             }
           });
@@ -107,22 +116,15 @@ export class AutomapService {
             );
           }
         } catch (_mappingsError: unknown) {
-          console.error(
-            "[@flatfile/plugin-automap]:[FATAL] Unable to fetch mappings"
-          );
+          this.logError("Unable to fetch mappings");
           return;
         }
       } catch (_workbookError: unknown) {
-        console.error(
-          "[@flatfile/plugin-automap]:[FATAL] Unable to list workbooks"
-        );
+        this.logError("Unable to list workbooks");
         return;
       }
     } catch (_fileError: unknown) {
-      console.error(
-        "[@flatfile/plugin-automap]:[FATAL] Unable to fetch file with id: " +
-          fileId
-      );
+      this.logError(`Unable to fetch file with id: ${fileId}`);
       return;
     }
   }
@@ -179,10 +181,12 @@ export class AutomapService {
 
       if (R.isNil(plan)) return;
 
+      if (this.options.debug) {
+        this.logInfo(`Job Execution Plan:\n${JSON.stringify(plan, null, 2)}`);
+      }
+
       if (R.length((plan as Flatfile.JobExecutionPlan).fieldMapping) === 0) {
-        console.warn(
-          "[@flatfile/plugin-automap]:[WARN] At least one field must be mapped"
-        );
+        this.logWarn("At least one field must be mapped");
         return;
       }
 
@@ -191,26 +195,28 @@ export class AutomapService {
           case "confident":
             if (this.verifyConfidentMatchingStrategy(plan)) {
               await api.jobs.execute(jobId);
+            } else {
+              if (this.options.debug) {
+                this.logWarn("Skipping automap due to lack of confidence");
+              }
             }
             break;
           case "exact":
             if (this.verifyAbsoluteMatchingStrategy(plan)) {
               await api.jobs.execute(jobId);
+            } else {
+              if (this.options.debug) {
+                this.logWarn("Skipping automap due to lack of confidence");
+              }
             }
             break;
         }
       } catch (_jobError: unknown) {
-        console.error(
-          "[@flatfile/plugin-automap]:[FATAL] Unable to execute job with id: " +
-            jobId
-        );
+        this.logError(`Unable to execute job with id: ${jobId}`);
         return;
       }
     } catch (_execPlanError: unknown) {
-      console.error(
-        "[@flatfile/plugin-automap]:[FATAL] Unable to fetch execution plan for job with id: " +
-          jobId
-      );
+      this.logError(`Unable to fetch execution plan for job with id: ${jobId}`);
       return;
     }
   }
@@ -330,5 +336,17 @@ export class AutomapService {
     fileName: string
   ): Promise<Flatfile.FileResponse> {
     return api.files.update(fileId, { name: fileName });
+  }
+
+  private logError(msg: string): void {
+    console.error("[@flatfile/plugin-automap]:[FATAL]", msg);
+  }
+
+  private logInfo(msg: string): void {
+    console.log("[@flatfile/plugin-automap]:[INFO]", msg);
+  }
+
+  private logWarn(msg: string): void {
+    console.warn("[@flatfile/plugin-automap]:[WARN]", msg);
   }
 }
