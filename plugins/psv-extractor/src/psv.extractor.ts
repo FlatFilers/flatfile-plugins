@@ -36,6 +36,7 @@ export class PsvExtractor extends AbstractExtractor {
           delimiter: "|",
           header: true,
           skipEmptyLines: "greedy",
+          transform: (value) => value || "",
         }
       );
 
