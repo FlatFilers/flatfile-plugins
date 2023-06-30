@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.0.0
+
+### Major Changes
+
+- ee6551e: fixing empty columns
+
 ## 0.0.3
 
 ### Patch Changes
