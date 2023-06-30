@@ -1,0 +1,37 @@
+{
+  "name": "@flatfile/plugin-automap",
+  "version": "0.0.0",
+  "description": "A plugin for auto mapping imported files when confidence levels are high.",
+  "registryMetadata": {
+    "category": "automation"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js"
+  },
+  "keywords": [],
+  "author": "Flatfile",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/automap"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.5.11",
+    "@flatfile/common-plugin-utils": "^1.0.0",
+    "@flatfile/listener": "^0.3.10",
+    "@flatfile/utils-debugger": "^0.0.3",
+    "remeda": "^1.23.0"
+  },
+  "devDependencies": {}
+}
