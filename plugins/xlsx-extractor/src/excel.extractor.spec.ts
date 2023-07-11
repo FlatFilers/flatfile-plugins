@@ -10,6 +10,8 @@ describe("ExcelParser", function () {
 
   const parser = new ExcelExtractor({
     topic: Flatfile.EventTopic.FileCreated,
+    // TODO: type should not be in Flatfile.Event
+    type: 'client:init',
     payload: {} as Record<string, unknown>,
     createdAt: new Date(),
     domain: "space",
@@ -22,7 +24,7 @@ describe("ExcelParser", function () {
       environmentId: "dev_env_rH3SeKkh",
     } as any,
     api: {} as any,
-  } as Flatfile.UploadCompletedEvent);
+  } as Flatfile.Event);
 
   describe("test-basic.xlsx", function () {
     test("finds all the sheet names", () => {
