@@ -22,29 +22,25 @@ export const run = async (event: FlatfileEvent, config: PluginOptions) => {
       const meta = R.pipe(
         sheets,
         R.reduce((acc, sheet) => {
-          return (
-            acc +
-            `Sheet: ${sheet.name}(${sheet.id}) with ${sheet.countRecords} records\n`
-          );
+          return acc + `\n\t${sheet.name}(${sheet.id})`;
         }, "")
       );
-      logInfo("Sheets retrieved:\n" + meta);
+      logInfo("Sheets retrieved:" + meta);
     }
 
     const recordsForAllSheets: Record<string, Flatfile.RecordsWithLinks> =
       R.pipe(
         sheets,
         R.reduce(async (acc, sheet) => {
-          try {
-            const { data: records } = await api.records.get(sheet.id);
-
-            return {
-              ...acc,
-              [sheet.name]: records,
-            };
-          } catch (_sheetRecordsError: unknown) {
-            logError("Failed to fetch records for sheet: " + sheet.name);
-          }
+          return api.records
+            .get(sheet.id)
+            .then(({ data }) => {
+              return Object.assign(acc, { [sheet.name]: data.records });
+            })
+            .catch((_sheetRecordsError: unknown) => {
+              logError("Failed to fetch records for sheet: " + sheet.name);
+              return acc;
+            });
         }, {})
       );
 
@@ -127,13 +123,13 @@ export const run = async (event: FlatfileEvent, config: PluginOptions) => {
 };
 
 const logError = (msg: string): void => {
-  console.error("[@flatfile/plugin-xlsx-workbook-sink]:[FATAL]", msg);
+  console.error("[@flatfile/plugin-xlsx-workbook-sink]:[FATAL] " + msg);
 };
 
 const logInfo = (msg: string): void => {
-  console.log("[@flatfile/plugin-xlsx-workbook-sink]:[INFO]", msg);
+  console.log("[@flatfile/plugin-xlsx-workbook-sink]:[INFO] " + msg);
 };
 
 const logWarn = (msg: string): void => {
-  console.warn("[@flatfile/plugin-xlsx-workbook-sink]:[WARN]", msg);
+  console.warn("[@flatfile/plugin-xlsx-workbook-sink]:[WARN] " + msg);
 };
