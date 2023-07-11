@@ -1,4 +1,4 @@
-# @flatfile/plugin-psv-extractor"
+# @flatfile/plugin-psv-extractor
 
 This package parses all Sheets in a PSV file and extracts them into Flatfile.
 
