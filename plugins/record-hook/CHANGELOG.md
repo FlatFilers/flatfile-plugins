@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 0.1.11
+
+### Patch Changes
+
+- 8a87451: Updates record-hook dependencies
+
 ## 0.1.10
 
 ### Patch Changes
