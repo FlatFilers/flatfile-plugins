@@ -1,8 +1,8 @@
-import api, { Flatfile } from "@flatfile/api";
+import api from "@flatfile/api";
 import { FlatfileEvent } from "@flatfile/listener";
 import * as ExcelJS from "exceljs";
-import * as path from "path";
 import * as fs from "fs";
+import * as path from "path";
 import * as R from "remeda";
 
 export interface PluginOptions {
@@ -22,7 +22,7 @@ export const run = async (event: FlatfileEvent, config: PluginOptions) => {
       const meta = R.pipe(
         sheets,
         R.reduce((acc, sheet) => {
-          return acc + `\n\t'${sheet.name}'(${sheet.id})`;
+          return acc + `\n\t'${sheet.name}' (${sheet.id})`;
         }, "")
       );
       logInfo("Sheets retrieved:" + meta);
@@ -39,24 +39,36 @@ export const run = async (event: FlatfileEvent, config: PluginOptions) => {
       R.pipe(
         sheets,
         R.map(async (sheet) => {
+          // Limit sheet name to 31 characters
           const worksheet = excelWorkbook.addWorksheet(
             sheet.name.substring(0, 31)
           );
           const { data } = await api.records.get(sheet.id);
 
-          if (R.length(data.records) === 0) {
-            logWarn(`Found no records for '${sheet.name}'(${sheet.id})`);
+          if (R.isEmpty(data.records)) {
+            logWarn(`Found no records for '${sheet.name}' (${sheet.id})`);
             return;
           }
 
-          const [head, tail] = R.splitAt(data.records, 1);
-
-          worksheet.addRow(Object.keys(head.values));
-
+          // write header row columns
           R.pipe(
-            tail,
-            R.map(({ values: cellData }) => {
-              worksheet.addRow(cellData.value);
+            data.records,
+            R.first(),
+            ({ values }) => Object.keys(values),
+            (headers) => worksheet.addRow(headers).commit()
+          );
+
+          // write rows
+          R.pipe(
+            data.records,
+            R.map(({ values: rowData }) => {
+              R.pipe(
+                Object.keys(rowData),
+                R.reduce((acc, columnName) => {
+                  return [...acc, rowData[columnName].value];
+                }, []),
+                (newRow) => worksheet.addRow(newRow).commit()
+              );
             })
           );
         })
