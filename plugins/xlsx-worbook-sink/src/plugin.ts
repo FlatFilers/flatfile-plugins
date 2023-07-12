@@ -61,25 +61,25 @@ export const run = async (
               return;
             }
 
-            // write header row columns
-            R.pipe(
-              data.records,
-              R.first(),
-              ({ values }) => Object.keys(values),
-              (headers) => worksheet.addRow(headers).commit()
+            // write header row
+            const headers = R.pipe(data.records, R.first(), ({ values }) =>
+              Object.keys(values)
             );
 
-            // write rows
+            worksheet.addRow(headers);
+
+            // write data rows
             R.pipe(
               data.records,
               R.map(({ values: rowData }) => {
-                R.pipe(
+                const newRow = R.pipe(
                   Object.keys(rowData),
                   R.reduce((acc, columnName) => {
                     return [...acc, rowData[columnName].value];
-                  }, []),
-                  (newRow) => worksheet.addRow(newRow).commit()
+                  }, [])
                 );
+
+                worksheet.addRow(newRow);
               })
             );
           } catch (_getRecordsError: unknown) {
@@ -115,7 +115,9 @@ export const run = async (
         })
         .then(async () => {
           if (opts.debug) {
-            logInfo("Excel document uploaded");
+            logInfo(
+              `Excel document uploaded. View file at https://spaces.flatfile.com/space/${spaceId}/files?mode=export`
+            );
           }
 
           await api.jobs
@@ -135,12 +137,26 @@ export const run = async (
               return;
             });
         })
-        .catch(() => {
+        .catch(async () => {
           logError("Failed to upload file");
+
+          await api.jobs.fail(jobId, {
+            outcome: {
+              message:
+                "This job failed probably because it couldn't write to the Excel file or upload it.",
+            },
+          });
           return;
         });
     } catch (_writeError: unknown) {
       logError("Failed to write file");
+
+      await api.jobs.fail(jobId, {
+        outcome: {
+          message:
+            "This job failed probably because it couldn't write to the Excel file or upload it.",
+        },
+      });
       return;
     }
   } catch (_fetchSheetsError: unknown) {

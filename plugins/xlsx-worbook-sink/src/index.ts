@@ -9,8 +9,8 @@ import { PluginOptions, run } from "./plugin";
  */
 export const xlsxSinkPlugin = (opts: PluginOptions = {}) => {
   return (listener: FlatfileListener) => {
-    listener.filter({ job: "workbook:downloadExcelWorkbook" }, (listener_) => {
-      listener_.on("job:ready", async (event) => {
+    listener.filter({ job: "workbook:downloadExcelWorkbook" }, () => {
+      listener.on("job:ready", async (event) => {
         await run(event, opts);
       });
     });
