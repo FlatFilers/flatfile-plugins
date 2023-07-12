@@ -351,14 +351,14 @@ export class AutomapService {
   }
 
   private logError(msg: string): void {
-    console.error("[@flatfile/plugin-automap]:[FATAL]", msg);
+    console.error("[@flatfile/plugin-automap]:[FATAL] " + msg);
   }
 
   private logInfo(msg: string): void {
-    console.log("[@flatfile/plugin-automap]:[INFO]", msg);
+    console.log("[@flatfile/plugin-automap]:[INFO] " + msg);
   }
 
   private logWarn(msg: string): void {
-    console.warn("[@flatfile/plugin-automap]:[WARN]", msg);
+    console.warn("[@flatfile/plugin-automap]:[WARN] " + msg);
   }
 }
