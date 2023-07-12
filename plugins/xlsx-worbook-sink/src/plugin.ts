@@ -20,7 +20,10 @@ export interface PluginOptions {
  * @param event - Flatfile event
  * @param opts - plugin config options
  */
-export const run = async (event: FlatfileEvent, opts: PluginOptions) => {
+export const run = async (
+  event: FlatfileEvent,
+  opts: PluginOptions
+): Promise<void> => {
   const { environmentId, jobId, spaceId, workbookId } = event.context;
 
   try {
@@ -36,7 +39,7 @@ export const run = async (event: FlatfileEvent, opts: PluginOptions) => {
       logInfo("Sheets retrieved:" + meta);
     }
 
-    const excelWorkbook = new ExcelJS.Workbook();
+    const workbook = new ExcelJS.Workbook();
 
     try {
       await api.jobs.ack(jobId, {
@@ -48,9 +51,7 @@ export const run = async (event: FlatfileEvent, opts: PluginOptions) => {
         sheets,
         R.map(async (sheet) => {
           // Limit sheet name to 31 characters
-          const worksheet = excelWorkbook.addWorksheet(
-            sheet.name.substring(0, 31)
-          );
+          const worksheet = workbook.addWorksheet(sheet.name.substring(0, 31));
 
           try {
             const { data } = await api.records.get(sheet.id);
@@ -83,6 +84,7 @@ export const run = async (event: FlatfileEvent, opts: PluginOptions) => {
             );
           } catch (_getRecordsError: unknown) {
             logError("Failed to fetch records for sheet with id: " + sheet.id);
+            return;
           }
         })
       );
@@ -96,10 +98,12 @@ export const run = async (event: FlatfileEvent, opts: PluginOptions) => {
     }
 
     try {
-      const dateTime = new Date().toISOString().replace(/[:.]/g, "-");
-      const tempFilePath = path.join(__dirname, `Workbook_${dateTime}.xlsx`);
+      const tempFilePath = path.join(
+        __dirname,
+        `Workbook-${currentEpoch()}.xlsx`
+      );
 
-      await excelWorkbook.xlsx.writeFile(tempFilePath);
+      await workbook.xlsx.writeFile(tempFilePath);
 
       const reader = fs.createReadStream(tempFilePath);
 
@@ -109,26 +113,30 @@ export const run = async (event: FlatfileEvent, opts: PluginOptions) => {
           environmentId,
           mode: "export",
         })
-        .then(() => {
-          logInfo("Excel document uploaded");
+        .then(async () => {
+          if (opts.debug) {
+            logInfo("Excel document uploaded");
+          }
+
+          await api.jobs
+            .complete(jobId, {
+              outcome: {
+                message:
+                  'Data was successfully written to Excel file and uploaded. You can access the workbook in the "Available Downloads" section of the Files page in Flatfile.',
+              },
+            })
+            .then(() => {
+              if (opts.debug) {
+                logInfo("Done");
+              }
+            })
+            .catch(() => {
+              logError("Failed to complete job");
+              return;
+            });
         })
         .catch(() => {
           logError("Failed to upload file");
-          return;
-        });
-
-      await api.jobs
-        .complete(jobId, {
-          outcome: {
-            message:
-              'Data was successfully written to Excel file and uploaded. You can access the workbook in the "Available Downloads" section of the Files page in Flatfile.',
-          },
-        })
-        .then(() => {
-          logInfo("Done");
-        })
-        .catch(() => {
-          logError("Failed to complete job");
           return;
         });
     } catch (_writeError: unknown) {
@@ -139,6 +147,10 @@ export const run = async (event: FlatfileEvent, opts: PluginOptions) => {
     logError("Failed to fetch sheets for workbook id: " + workbookId);
     return;
   }
+};
+
+const currentEpoch = (): string => {
+  return `${Math.floor(Date.now() / 1000)}`;
 };
 
 const logError = (msg: string): void => {
