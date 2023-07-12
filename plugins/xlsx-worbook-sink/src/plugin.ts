@@ -5,20 +5,28 @@ import * as fs from "fs";
 import * as path from "path";
 import * as R from "remeda";
 
+/**
+ * Plugin config options.
+ *
+ * @property {boolean} debug - show helpul messages useful for debugging (use intended for development).
+ */
 export interface PluginOptions {
   readonly debug?: boolean;
 }
 
 /**
- * Some JSDOC here
+ * Runs extractor and creates an `.xlsx` file with all Flatfile Workbook data.
+ *
+ * @param event - Flatfile event
+ * @param opts - plugin config options
  */
-export const run = async (event: FlatfileEvent, config: PluginOptions) => {
+export const run = async (event: FlatfileEvent, opts: PluginOptions) => {
   const { environmentId, jobId, spaceId, workbookId } = event.context;
 
   try {
     const { data: sheets } = await api.sheets.list({ workbookId });
 
-    if (config.debug) {
+    if (opts.debug) {
       const meta = R.pipe(
         sheets,
         R.reduce((acc, sheet) => {
@@ -43,34 +51,39 @@ export const run = async (event: FlatfileEvent, config: PluginOptions) => {
           const worksheet = excelWorkbook.addWorksheet(
             sheet.name.substring(0, 31)
           );
-          const { data } = await api.records.get(sheet.id);
 
-          if (R.isEmpty(data.records)) {
-            logWarn(`Found no records for '${sheet.name}' (${sheet.id})`);
-            return;
+          try {
+            const { data } = await api.records.get(sheet.id);
+
+            if (R.isEmpty(data.records)) {
+              logWarn(`Found no records for '${sheet.name}' (${sheet.id})`);
+              return;
+            }
+
+            // write header row columns
+            R.pipe(
+              data.records,
+              R.first(),
+              ({ values }) => Object.keys(values),
+              (headers) => worksheet.addRow(headers).commit()
+            );
+
+            // write rows
+            R.pipe(
+              data.records,
+              R.map(({ values: rowData }) => {
+                R.pipe(
+                  Object.keys(rowData),
+                  R.reduce((acc, columnName) => {
+                    return [...acc, rowData[columnName].value];
+                  }, []),
+                  (newRow) => worksheet.addRow(newRow).commit()
+                );
+              })
+            );
+          } catch (_getRecordsError: unknown) {
+            logError("Failed to fetch records for sheet with id: " + sheet.id);
           }
-
-          // write header row columns
-          R.pipe(
-            data.records,
-            R.first(),
-            ({ values }) => Object.keys(values),
-            (headers) => worksheet.addRow(headers).commit()
-          );
-
-          // write rows
-          R.pipe(
-            data.records,
-            R.map(({ values: rowData }) => {
-              R.pipe(
-                Object.keys(rowData),
-                R.reduce((acc, columnName) => {
-                  return [...acc, rowData[columnName].value];
-                }, []),
-                (newRow) => worksheet.addRow(newRow).commit()
-              );
-            })
-          );
         })
       );
     } catch (_jobAckError: unknown) {
@@ -78,7 +91,7 @@ export const run = async (event: FlatfileEvent, config: PluginOptions) => {
       return;
     }
 
-    if (config.debug) {
+    if (opts.debug) {
       logInfo("All data written to Excel workbook");
     }
 
@@ -88,10 +101,10 @@ export const run = async (event: FlatfileEvent, config: PluginOptions) => {
 
       await excelWorkbook.xlsx.writeFile(tempFilePath);
 
-      const fileStream = fs.createReadStream(tempFilePath);
+      const reader = fs.createReadStream(tempFilePath);
 
       await api.files
-        .upload(fileStream, {
+        .upload(reader, {
           spaceId,
           environmentId,
           mode: "export",

@@ -3,13 +3,15 @@ import { FlatfileListener } from "@flatfile/listener";
 import { PluginOptions, run } from "./plugin";
 
 /**
- * Some JSDOC here...
+ * Excel Workbook export plugin for Flatfile.
+ *
+ * @param opts - plugin config options
  */
-export const xlsxSinkPlugin = (config: PluginOptions = {}) => {
+export const xlsxSinkPlugin = (opts: PluginOptions = {}) => {
   return (listener: FlatfileListener) => {
     listener.filter({ job: "workbook:downloadExcelWorkbook" }, (listener_) => {
       listener_.on("job:ready", async (event) => {
-        await run(event, config);
+        await run(event, opts);
       });
     });
   };
