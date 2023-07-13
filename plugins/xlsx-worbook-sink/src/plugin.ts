@@ -62,24 +62,24 @@ export const run = async (
             }
 
             // write header row
-            const headers = R.pipe(data.records, R.first(), ({ values }) =>
+            const headerValues = R.pipe(data.records, R.first(), ({ values }) =>
               Object.keys(values)
             );
 
-            worksheet.addRow(headers);
+            worksheet.addRow(headerValues);
 
             // write data rows
             R.pipe(
               data.records,
               R.map(({ values: rowData }) => {
-                const newRow = R.pipe(
+                const rowValues = R.pipe(
                   Object.keys(rowData),
                   R.reduce((acc, columnName) => {
                     return [...acc, rowData[columnName].value];
                   }, [])
                 );
 
-                worksheet.addRow(newRow);
+                worksheet.addRow(rowValues, "i+");
               })
             );
           } catch (_getRecordsError: unknown) {
