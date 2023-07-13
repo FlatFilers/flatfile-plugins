@@ -49,7 +49,7 @@ export const run = async (
 
       R.pipe(
         sheets,
-        R.map(async (sheet) => {
+        R.map(async (sheet): Promise<void> => {
           // Limit sheet name to 31 characters
           const worksheet = workbook.addWorksheet(sheet.name.substring(0, 31));
 
@@ -113,7 +113,9 @@ export const run = async (
           environmentId,
           mode: "export",
         })
-        .then(async () => {
+        .then(async (): Promise<void> => {
+          reader.close();
+
           if (opts.debug) {
             logInfo(
               `Excel document uploaded. View file at https://spaces.flatfile.com/space/${spaceId}/files?mode=export`
@@ -127,17 +129,17 @@ export const run = async (
                   'Data was successfully written to Excel file and uploaded. You can access the workbook in the "Available Downloads" section of the Files page in Flatfile.',
               },
             })
-            .then(() => {
+            .then((): void => {
               if (opts.debug) {
                 logInfo("Done");
               }
             })
-            .catch(() => {
+            .catch((): void => {
               logError("Failed to complete job");
               return;
             });
         })
-        .catch(async () => {
+        .catch(async (): Promise<void> => {
           logError("Failed to upload file");
 
           await api.jobs.fail(jobId, {
