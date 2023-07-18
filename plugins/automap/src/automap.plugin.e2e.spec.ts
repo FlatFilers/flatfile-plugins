@@ -41,7 +41,7 @@ describe("automap() e2e", () => {
 
       listener.use(
         automap({
-          accuracy: "exact",
+          accuracy: "confident",
           matchFilename: /test.csv$/g,
           defaultTargetSheet: "test",
         })
