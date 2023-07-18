@@ -70,10 +70,15 @@ export class ExcelExtractor extends AbstractExtractor {
    */
   public async runExtraction(): Promise<boolean> {
     const { data: file } = await this.api.files.get(this.fileId);
-
+    
     if (file.ext !== "xlsx") {
       return false;
     }
+
+    if (file.mode !== "import") {
+      return false;
+    }
+
     const job = await this.startJob();
 
     try {
