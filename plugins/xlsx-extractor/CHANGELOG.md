@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.7
+
+### Patch Changes
+
+- 02b9420: fixes issue with extracting export files
+
 ## 1.0.6
 
 ### Patch Changes
