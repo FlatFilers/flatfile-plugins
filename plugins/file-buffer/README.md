@@ -1,6 +1,6 @@
 # Flatfile File Buffer Plugin
 
-This plugin will provide a file buffer for any configured file. It will read the file and return it as a nodejs Buffer object. This is a helpful underlying utility for writing file extractor plugins.
+This plugin will provide a file buffer for any configured file. It will read the file and return it as a [nodejs Buffer object[(https://nodejs.org/api/buffer.html). This is a helpful underlying utility for writing file extractor plugins.
 
 `listener.js`
 
