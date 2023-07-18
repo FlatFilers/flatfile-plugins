@@ -6,6 +6,7 @@ jest.mock("fs");
 
 describe("PsvParser", function () {
   const parser = new PsvExtractor({
+    id: "some_id",
     topic: Flatfile.EventTopic.FileCreated,
     payload: {},
     createdAt: new Date(),
