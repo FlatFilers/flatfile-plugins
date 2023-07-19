@@ -1,8 +1,4 @@
-import {
-  AbstractExtractor,
-  SheetCapture,
-  WorkbookCapture,
-} from './abstract.extractor'
+import { AbstractExtractor, WorkbookCapture } from './abstract.extractor'
 import type { Flatfile } from '@flatfile/api'
 
 export class JSONExtractor extends AbstractExtractor {
