@@ -10,7 +10,7 @@ import {
 describe("recordHook() e2e", () => {
   const listener = setupListener();
 
-  let sheetId;
+  let sheetId: string;
 
   beforeAll(async () => {
     const space = await setupSpace();

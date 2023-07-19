@@ -1,4 +1,4 @@
-import { FlatfileListener, FlatfileEvent } from "@flatfile/listener";
+import { FlatfileListener } from "@flatfile/listener";
 import { ExcelExtractor } from "./excel.extractor";
 import { UploadCompletedEvent } from "@flatfile/api/api";
 

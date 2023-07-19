@@ -91,7 +91,7 @@ export class AbstractExtractor {
    *
    * @param job
    */
-  public async failJob(job: Flatfile.Job, reason) {
+  public async failJob(job: Flatfile.Job, reason: String) {
     try {
       const res = await this.api.jobs.fail(job.id, {
         info: "Extraction failed " + reason,

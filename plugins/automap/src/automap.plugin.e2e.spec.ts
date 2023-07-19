@@ -14,8 +14,8 @@ jest.setTimeout(15_000);
 describe("automap() e2e", () => {
   const listener = setupListener();
 
-  let sheetId;
-  let spaceId;
+  let sheetId: string;
+  let spaceId: string;
 
   beforeAll(async () => {
     const space = await setupSpace();

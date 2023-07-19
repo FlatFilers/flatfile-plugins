@@ -121,7 +121,7 @@ export async function createRecords(
     `https://platform.flatfile.com/api/v1/sheets/${sheetId}/records`,
 
     records.map((r) =>
-      Object.keys(r).reduce((acc, k) => {
+      Object.keys(r).reduce((acc: Record<string, any>, k) => {
         acc[k] = { value: r[k] };
         return acc;
       }, {})
