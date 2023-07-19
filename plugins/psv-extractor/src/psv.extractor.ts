@@ -8,33 +8,57 @@ import Papa, { ParseResult } from 'papaparse'
 
 export class PsvExtractor extends AbstractExtractor {
   private readonly _options: {
-    //add if needed
+    delimiter?: ',' | '\t' | '|' | ';'
+    dynamicTyping?: boolean
+    header?: boolean
+    skipEmptyLines?: boolean | 'greedy'
+    transform?: (value: any) => any | undefined
   }
 
   constructor(
     public event: Flatfile.UploadCompletedEvent,
     public options?: {
-      //add if needed
+      delimiter?: ',' | '\t' | '|' | ';'
+      dynamicTyping?: boolean
+      header?: boolean
+      skipEmptyLines?: boolean | 'greedy'
+      transform?: (value: any) => any | undefined
     }
   ) {
     super(event)
-    this._options = { ...options }
+    this._options = {
+      delimiter: '|',
+      dynamicTyping: false,
+      header: true,
+      skipEmptyLines: 'greedy',
+      transform: (value) => value || '',
+      ...options,
+    }
   }
 
-  public parseBuffer(fileContents: string): WorkbookCapture | undefined {
+  public parseBuffer(buffer: Buffer): WorkbookCapture {
     try {
+      const sheetName = 'Sheet1' // Set the sheet name
+
+      const fileContents = buffer.toString('utf8')
       if (!fileContents) {
         console.log('Invalid file contents')
-        return undefined
+        return {
+          [sheetName]: {
+            headers: [],
+            data: {},
+          },
+        } as WorkbookCapture
       }
 
       const results: ParseResult<Record<string, string>> = Papa.parse(
         fileContents,
         {
-          delimiter: '|',
-          header: true,
-          skipEmptyLines: 'greedy',
-          transform: (value) => value || '',
+          delimiter: this._options.delimiter,
+          header: this._options.header,
+          skipEmptyLines: this._options.skipEmptyLines,
+          transform: this._options.transform,
+          dynamicTyping: this._options.dynamicTyping,
         }
       )
 
@@ -42,10 +66,13 @@ export class PsvExtractor extends AbstractExtractor {
 
       if (!parsedData || !parsedData.length) {
         console.log('No data found in the file')
-        return undefined
+        return {
+          [sheetName]: {
+            headers: [],
+            data: {},
+          },
+        } as WorkbookCapture
       }
-
-      const sheetName = 'Sheet1' // Set the sheet name
 
       const headers = Object.keys(parsedData[0]).filter(
         (header) => header !== ''
@@ -81,8 +108,11 @@ export class PsvExtractor extends AbstractExtractor {
       const parsedSheet: ParseResult<Record<string, string>> = Papa.parse(
         sheet,
         {
-          delimiter: '|',
-          header: true,
+          delimiter: this._options.delimiter,
+          header: this._options.header,
+          skipEmptyLines: this._options.skipEmptyLines,
+          transform: this._options.transform,
+          dynamicTyping: this._options.dynamicTyping,
         }
       )
 
@@ -147,11 +177,10 @@ export class PsvExtractor extends AbstractExtractor {
       })
 
       const buffer = await this.getFileBufferFromApi(job)
-      const fileContents = buffer.toString()
 
       await this.api.jobs.ack(job.id, { progress: 30, info: 'Parsing Sheets' })
 
-      const capture = this.parseBuffer(fileContents)
+      const capture = this.parseBuffer(buffer)
 
       if (!capture) {
         return false
