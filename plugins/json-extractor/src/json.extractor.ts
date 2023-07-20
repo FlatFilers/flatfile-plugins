@@ -18,7 +18,7 @@ export class JSONExtractor extends AbstractExtractor {
 
   public parseBuffer(buffer: Buffer): WorkbookCapture {
     try {
-      const sheetName = 'Sheet1' // Set the sheet name
+      const sheetName = 'Sheet1'
 
       const fileContents = buffer.toString('utf8')
       if (!fileContents) {

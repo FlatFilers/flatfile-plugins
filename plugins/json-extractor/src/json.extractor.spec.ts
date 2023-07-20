@@ -35,14 +35,14 @@ describe('JSONParser', function () {
       const capture = parser.parseBuffer(buffer)
       const headers =
         capture && capture['Sheet1'] ? capture['Sheet1'].headers : []
-      expect(headers).toHaveLength(3) // Assuming there are 3 headers
+      expect(headers).toHaveLength(3)
     })
 
     test('finds values', () => {
       const capture = parser.parseBuffer(buffer)
       const data: Record<string, any> | [] =
         capture && capture['Sheet1'] ? capture['Sheet1'].data : []
-      expect(data.length).toBeGreaterThan(0) // Assuming there's at least one row
+      expect(data.length).toBe(3)
     })
   })
 })
