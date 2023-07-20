@@ -4,27 +4,58 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 describe('PsvParser', function () {
-  const buffer: Buffer = fs.readFileSync(
-    path.join(__dirname, '../ref/test-basic.psv')
-  )
+  describe.each([
+    ['psv', { hasHeader: true }],
+    ['csv', { delimiter: 'comma', hasHeader: true }],
+    ['tsv', { delimiter: 'tab', hasHeader: true }],
+    [
+      'psv',
+      {
+        hasHeader: false,
+        transform: (value: string) => value.toUpperCase(),
+      },
+    ],
+    [
+      'csv',
+      {
+        delimiter: 'comma',
+        hasHeader: false,
+        transform: (value: string) => value.toUpperCase(),
+      },
+    ],
+    [
+      'tsv',
+      {
+        delimiter: 'tab',
+        hasHeader: false,
+        transform: (value: string) => value.toUpperCase(),
+      },
+    ],
+  ])('test-basic.*', function (fileType, options) {
+    const buffer: Buffer = fs.readFileSync(
+      path.join(__dirname, `../ref/test-basic.${fileType}`)
+    )
 
-  const parser = new PsvExtractor({
-    id: 'some_id',
-    topic: Flatfile.EventTopic.FileCreated,
-    payload: {} as Record<string, unknown>,
-    createdAt: new Date(),
-    domain: 'space',
-    name: 'upload:completed',
-    context: {
-      fileId: 'dev_fl_dZNtPPTa',
-      spaceId: 'dev_sp_w2TZIUBE',
-      accountId: 'dev_acc_Iafc9fLm',
-      environmentId: 'dev_env_rH3SeKkh',
-    } as any,
-    api: {} as any,
-  } as Flatfile.UploadCompletedEvent)
-
-  describe('test-basic.psv', function () {
+    const parser = new PsvExtractor(
+      {
+        id: 'some_id',
+        topic: Flatfile.EventTopic.FileCreated,
+        payload: {} as Record<string, unknown>,
+        createdAt: new Date(),
+        domain: 'space',
+        name: 'upload:completed',
+        context: {
+          fileId: 'dev_fl_dZNtPPTa',
+          spaceId: 'dev_sp_w2TZIUBE',
+          accountId: 'dev_acc_Iafc9fLm',
+          environmentId: 'dev_env_rH3SeKkh',
+        } as any,
+        api: {} as any,
+      } as Flatfile.UploadCompletedEvent,
+      {
+        ...options,
+      }
+    )
     test('finds the sheet name', () => {
       const capture = parser.parseBuffer(buffer)
       const sheetNames = Object.keys(capture)
@@ -40,49 +71,15 @@ describe('PsvParser', function () {
     test('finds values', () => {
       const capture = parser.parseBuffer(buffer)
       const data: Record<string, any> = capture['Sheet1'].data
-      expect(data.length).toBe(2)
+      expect(data.length).toBe(options?.hasHeader ? 2 : 3)
     })
-  })
-})
 
-describe('PsvParser transform option', function () {
-  const buffer: Buffer = fs.readFileSync(
-    path.join(__dirname, '../ref/test-basic.psv')
-  )
-
-  const parser = new PsvExtractor(
-    {
-      id: 'some_id',
-      topic: Flatfile.EventTopic.FileCreated,
-      payload: {} as Record<string, unknown>,
-      createdAt: new Date(),
-      domain: 'space',
-      name: 'upload:completed',
-      context: {
-        fileId: 'dev_fl_dZNtPPTa',
-        spaceId: 'dev_sp_w2TZIUBE',
-        accountId: 'dev_acc_Iafc9fLm',
-        environmentId: 'dev_env_rH3SeKkh',
-      } as any,
-      api: {} as any,
-    } as Flatfile.UploadCompletedEvent,
-    {
-      header: false,
-      transform: (value: string) => value.toUpperCase(),
+    if (options.hasOwnProperty('transform')) {
+      test('values transformed', () => {
+        const capture = parser.parseBuffer(buffer)
+        const data: Record<string, any> = capture['Sheet1'].data
+        expect(data[0][0]).toBe('CODE')
+      })
     }
-  )
-
-  describe('test-basic.psv', function () {
-    test('values transformed to uppercase', () => {
-      const capture = parser.parseBuffer(buffer)
-      const data: Record<string, any> = capture['Sheet1'].data
-      expect(data[0][0]).toBe('CODE')
-    })
-
-    test('finds values', () => {
-      const capture = parser.parseBuffer(buffer)
-      const data: Record<string, any> = capture['Sheet1'].data
-      expect(data.length).toBe(3)
-    })
   })
 })

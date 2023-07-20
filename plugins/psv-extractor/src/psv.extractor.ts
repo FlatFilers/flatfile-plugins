@@ -7,10 +7,17 @@ import type { Flatfile } from '@flatfile/api'
 import Papa, { ParseResult } from 'papaparse'
 
 export class PsvExtractor extends AbstractExtractor {
+  private readonly _delimiterMap: Record<string, string> = {
+    comma: ',',
+    tab: '\t',
+    pipe: '|',
+    semicolon: ';',
+  }
+
   private readonly _options: {
-    delimiter?: ',' | '\t' | '|' | ';'
+    delimiter?: string
     dynamicTyping?: boolean
-    header?: boolean
+    hasHeader?: boolean
     skipEmptyLines?: boolean | 'greedy'
     transform?: (value: any) => any | undefined
   }
@@ -18,18 +25,18 @@ export class PsvExtractor extends AbstractExtractor {
   constructor(
     public event: Flatfile.UploadCompletedEvent,
     public options?: {
-      delimiter?: ',' | '\t' | '|' | ';'
+      delimiter?: string
       dynamicTyping?: boolean
-      header?: boolean
+      hasHeader?: boolean
       skipEmptyLines?: boolean | 'greedy'
       transform?: (value: any) => any | undefined
     }
   ) {
     super(event)
     this._options = {
-      delimiter: '|',
+      delimiter: this._delimiterMap['pipe'],
       dynamicTyping: false,
-      header: true,
+      hasHeader: true,
       skipEmptyLines: 'greedy',
       transform: (value) => value || '',
       ...options,
@@ -38,7 +45,7 @@ export class PsvExtractor extends AbstractExtractor {
 
   public parseBuffer(buffer: Buffer): WorkbookCapture {
     try {
-      const sheetName = 'Sheet1' // Set the sheet name
+      const sheetName = 'Sheet1'
 
       const fileContents = buffer.toString('utf8')
       if (!fileContents) {
@@ -54,8 +61,8 @@ export class PsvExtractor extends AbstractExtractor {
       const results: ParseResult<Record<string, string>> = Papa.parse(
         fileContents,
         {
-          delimiter: this._options.delimiter,
-          header: this._options.header,
+          delimiter: this._delimiterMap[this.options?.delimiter || 'pipe'],
+          header: this._options.hasHeader,
           skipEmptyLines: this._options.skipEmptyLines,
           transform: this._options.transform,
           dynamicTyping: this._options.dynamicTyping,
@@ -108,8 +115,8 @@ export class PsvExtractor extends AbstractExtractor {
       const parsedSheet: ParseResult<Record<string, string>> = Papa.parse(
         sheet,
         {
-          delimiter: this._options.delimiter,
-          header: this._options.header,
+          delimiter: this._delimiterMap[this.options.delimiter],
+          header: this._options.hasHeader,
           skipEmptyLines: this._options.skipEmptyLines,
           transform: this._options.transform,
           dynamicTyping: this._options.dynamicTyping,
