@@ -34,13 +34,12 @@ describe('PsvParser', function () {
     test('finds the header names', () => {
       const capture = parser.parseBuffer(buffer)
       const headers = capture['Sheet1'].headers
-      expect(headers).toHaveLength(4) // Assuming there are 4 headers
+      expect(headers).toHaveLength(4)
     })
 
     test('finds values', () => {
       const capture = parser.parseBuffer(buffer)
       const data: Record<string, any> = capture['Sheet1'].data
-      expect(data.length).toBeGreaterThan(0) // Assuming there's at least one row
       expect(data.length).toBe(2)
     })
   })
