@@ -4,11 +4,12 @@ import type { FlatfileRecord } from "@flatfile/hooks";
 
 export const recordHookPlugin = (
   sheetSlug: string,
-  callback: (record: FlatfileRecord, event?: FlatfileEvent) => {}
+  callback: <T = any>(record: FlatfileRecord, event?: FlatfileEvent, extra?: T) => {},
+  setup?: <T = any>(event: FlatfileEvent) => T,
 ) => {
   return (client: FlatfileListener) => {
     client.on("commit:created", { sheetSlug }, (event: FlatfileEvent) => {
-      return RecordHook(event, callback);
+      return RecordHook(event, callback, setup);
     });
   };
 };

@@ -5,9 +5,11 @@ import { RecordTranslater } from "./record.translater";
 
 export const RecordHook = async (
   event: FlatfileEvent,
-  handler: (record: FlatfileRecord, event: FlatfileEvent) => any | Promise<any>
+  handler: <T = any>(record: FlatfileRecord, event: FlatfileEvent, extra?: T) => any | Promise<any>,
+  setup?: <T = any>(event: FlatfileEvent) => T
 ) => {
   try {
+    const extra = setup(event);
     const records = await event.cache.init<Records>(
       "records",
       async () => (await event.data).records
@@ -18,7 +20,7 @@ export const RecordHook = async (
 
     // run client defined data hooks
     for (const x of batch.records) {
-      await handler(x, event);
+      await handler(x, event, extra);
     }
 
     const recordsUpdates = new RecordTranslater<FlatfileRecord>(

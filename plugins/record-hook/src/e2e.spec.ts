@@ -1,4 +1,4 @@
-import { recordHook } from "./index";
+import { FlatfileRecord, recordHook } from "./index";
 import {
   createRecords,
   getRecords,
@@ -6,6 +6,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from "../../../testing/test.helpers";
+import { FlatfileEvent } from "@flatfile/listener";
 
 describe("recordHook() e2e", () => {
   const listener = setupListener();
@@ -24,7 +25,19 @@ describe("recordHook() e2e", () => {
 
   describe("record created", () => {
     beforeEach(async () => {
-      listener.use(recordHook("test", (record) => record.set("name", "daddy")));
+      listener.use(
+        recordHook(
+          "test",
+          <Extra>(
+            record: FlatfileRecord,
+            _event: FlatfileEvent,
+            extra: Extra
+          ) => record.set("name", extra["foo"]),
+          <Extra>(_event: FlatfileEvent): Extra => {
+            return { foo: "daddy" } as Extra;
+          }
+        )
+      );
     });
 
     it("correctly modifies a value", async () => {
