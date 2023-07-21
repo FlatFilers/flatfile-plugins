@@ -51,7 +51,5 @@
     "turbo": "^1.10.2",
     "typescript": "^5.0.4"
   },
-  "dependencies": {
-    "exceljs": "^4.3.0"
-  }
+  "dependencies": {}
 }
