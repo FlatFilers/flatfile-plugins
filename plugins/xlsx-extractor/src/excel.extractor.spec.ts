@@ -10,11 +10,8 @@ describe("ExcelParser", function () {
 
   const parser = new ExcelExtractor({
     topic: Flatfile.EventTopic.FileCreated,
-    // TODO: type should not be in Flatfile.Event
-    type: 'client:init',
-    payload: {} as Record<string, unknown>,
+    payload: {},
     createdAt: new Date(),
-    domain: "space",
     name: "upload:completed",
     id: "dev_ev_45sTvU0GMMNwXmZP",
     context: {
@@ -22,9 +19,8 @@ describe("ExcelParser", function () {
       spaceId: "dev_sp_w2TZIUBE",
       accountId: "dev_acc_Iafc9fLm",
       environmentId: "dev_env_rH3SeKkh",
-    } as any,
-    api: {} as any,
-  } as Flatfile.Event);
+    },
+  });
 
   describe("test-basic.xlsx", function () {
     test("finds all the sheet names", () => {
