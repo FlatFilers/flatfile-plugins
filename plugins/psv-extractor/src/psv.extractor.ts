@@ -2,7 +2,7 @@ import {
   AbstractExtractor,
   SheetCapture,
   WorkbookCapture,
-} from './abstract.extractor'
+} from '../../../utils/abstract.extractor'
 import type { Flatfile } from '@flatfile/api'
 import Papa, { ParseResult } from 'papaparse'
 
@@ -137,7 +137,7 @@ export class PsvExtractor extends AbstractExtractor {
     if (file.ext !== 'psv') {
       return false
     }
-    const job = await this.startJob()
+    const job = await this.startJob('psv-extract')
 
     try {
       await this.api.jobs.update(job.id, { status: 'executing' })
