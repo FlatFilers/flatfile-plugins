@@ -135,3 +135,8 @@ export async function createRecords(
     }
   );
 }
+
+export async function getFiles(): Promise<Flatfile.File_[]> {
+  const { data } = await api.files.list()
+  return data
+}
