@@ -15,7 +15,7 @@ export class AbstractExtractor {
    */
   public api: FlatfileClient;
 
-  constructor(public event: Flatfile.UploadCompletedEvent) {
+  constructor(public event: { [key: string]: any }) {
     this.fileId = event.context.fileId || "";
     this.api = new FlatfileClient();
   }

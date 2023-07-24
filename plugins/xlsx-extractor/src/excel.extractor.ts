@@ -1,14 +1,13 @@
 import * as XLSX from "xlsx";
 import { mapKeys, mapValues } from "remeda";
 import { AbstractExtractor, SheetCapture } from "./abstract.extractor";
-import type { Flatfile } from "@flatfile/api";
 
 export class ExcelExtractor extends AbstractExtractor {
   private readonly _options: {
     rawNumbers?: boolean;
   };
   constructor(
-    public event: Flatfile.UploadCompletedEvent,
+    public event: { [key: string]: any },
     public options?: {
       rawNumbers?: boolean;
     }
