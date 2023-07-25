@@ -1,4 +1,4 @@
-# @flatfile/plugin-json-extractor"
+# @flatfile/plugin-json-extractor
 
 This package parses a JSON file and extracts it into Flatfile.
 
