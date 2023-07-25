@@ -8,7 +8,7 @@ describe('AbstractExtractor', function () {
   let parser: AbstractExtractor
   let fileId: string
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const space = await setupSpace()
     const spaceId = space.id
 
