@@ -1,4 +1,4 @@
-import api from "@flatfile/api";
+import api, { Flatfile } from "@flatfile/api";
 import { FlatfileEvent } from "@flatfile/listener";
 import * as fs from "fs";
 import * as R from "remeda";
@@ -40,6 +40,7 @@ export const run = async (
     }
 
     const workbook = XLSX.utils.book_new();
+    const alphaColumnDesignations = genCyclicPattern();
 
     try {
       await api.jobs.ack(jobId, {
@@ -49,7 +50,9 @@ export const run = async (
 
       for (const sheet of sheets) {
         try {
-          const { data } = await api.records.get(sheet.id);
+          const { data } = await api.records.get(sheet.id, {
+            includeMessages: true,
+          });
 
           const rows = R.pipe(
             data.records,
@@ -67,6 +70,35 @@ export const run = async (
           );
 
           const worksheet = XLSX.utils.json_to_sheet(rows);
+
+          R.pipe(
+            data.records,
+            R.forEach.indexed(({ values: row }, rowIdx) => {
+              R.pipe(
+                Object.keys(row),
+                R.forEach.indexed((colName, colIdx) => {
+                  const messages: Array<Flatfile.ValidationMessage> =
+                    row[colName].messages;
+
+                  if (R.length(messages) > 0) {
+                    // '0' is not a valid accessible index in a worksheet and '1' is the header row
+                    const cell =
+                      worksheet[
+                      `${alphaColumnDesignations[colIdx]}${rowIdx + 2}`
+                      ];
+
+                    cell.c = R.pipe(
+                      messages,
+                      R.map((m) => ({
+                        a: "Flatfile",
+                        t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                      }))
+                    );
+                  }
+                })
+              );
+            })
+          );
 
           XLSX.utils.book_append_sheet(
             workbook,
@@ -156,6 +188,30 @@ export const run = async (
 
     return;
   }
+};
+
+/**
+ * Generates the alpha pattern ["A", ... "AA", ..., "AAA", ...] to help
+ * with accessing cells in a worksheet.
+ *
+ * @param length - multiple of 26
+ */
+const genCyclicPattern = (length: number = 104): Array<string> => {
+  const multiplier: number = Math.ceil(length / 26);
+
+  let alphaPattern: Array<string> = [];
+
+  for (let idx = 1; idx <= multiplier; idx++) {
+    for (let ascii = 65; ascii <= 90; ascii++) {
+      R.pipe(
+        R.times(idx, () => ascii),
+        (alphas: Array<number>) => String.fromCharCode(...alphas),
+        (str: string) => alphaPattern.push(str)
+      );
+    }
+  }
+
+  return alphaPattern;
 };
 
 const currentEpoch = (): string => {
