@@ -219,13 +219,13 @@ const currentEpoch = (): string => {
 };
 
 const logError = (msg: string): void => {
-  console.error("[@flatfile/plugin-xlsx-workbook-sink]:[FATAL] " + msg);
+  console.error("[@flatfile/plugin-export-workbook]:[FATAL] " + msg);
 };
 
 const logInfo = (msg: string): void => {
-  console.log("[@flatfile/plugin-xlsx-workbook-sink]:[INFO] " + msg);
+  console.log("[@flatfile/plugin-export-workbook]:[INFO] " + msg);
 };
 
 const logWarn = (msg: string): void => {
-  console.warn("[@flatfile/plugin-xlsx-workbook-sink]:[WARN] " + msg);
+  console.warn("[@flatfile/plugin-export-workbook]:[WARN] " + msg);
 };
