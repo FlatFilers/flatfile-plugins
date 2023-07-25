@@ -5,7 +5,6 @@ import fs from 'fs'
 import path from 'path'
 
 describe('AbstractExtractor', function () {
-  // const mockFn = jest.fn();
   let parser: AbstractExtractor
   let fileId: string
 
