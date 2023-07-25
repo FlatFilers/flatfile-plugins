@@ -1,17 +1,17 @@
-;[
+[
   {
-    'First Name': 'Tony',
-    'Last Name': 'Lamb',
-    Email: 'me@opbaj.tp',
+    "First Name": "Tony",
+    "Last Name": "Lamb",
+    "Email": "me@opbaj.tp"
   },
   {
-    'First Name': 'Christian',
-    'Last Name': 'Ramos',
-    Email: 'uw@ag.tg',
+    "First Name": "Christian",
+    "Last Name": "Ramos",
+    "Email": "uw@ag.tg"
   },
   {
-    'First Name': 'Frederick',
-    'Last Name': 'Boyd',
-    Email: 'kempur@ascebec.gs',
-  },
+    "First Name": "Frederick",
+    "Last Name": "Boyd",
+    "Email": "kempur@ascebec.gs"
+  }
 ]
