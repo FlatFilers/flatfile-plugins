@@ -2,7 +2,7 @@ import {
   AbstractExtractor,
   SheetCapture,
   WorkbookCapture,
-} from '@flatfile/common-plugin-utils'
+} from '@flatfile/plugin-utils'
 import type { Flatfile } from '@flatfile/api'
 import Papa, { ParseResult } from 'papaparse'
 
