@@ -1,45 +1,45 @@
-import { recordHook } from "./index";
+import { recordHook } from './index'
 import {
   createRecords,
   getRecords,
   setupListener,
   setupSimpleWorkbook,
   setupSpace,
-} from "../../../testing/test.helpers";
+} from '../../../testing/test.helpers'
 
-describe("recordHook() e2e", () => {
-  const listener = setupListener();
+describe('recordHook() e2e', () => {
+  const listener = setupListener()
 
-  let sheetId: string;
+  let sheetId: string
 
   beforeAll(async () => {
-    const space = await setupSpace();
+    const space = await setupSpace()
     const workbook = await setupSimpleWorkbook(space.id, [
-      "name",
-      "email",
-      "notes",
-    ]);
-    sheetId = workbook.sheets[0].id;
-  });
+      'name',
+      'email',
+      'notes',
+    ])
+    sheetId = workbook.sheets[0].id
+  })
 
-  describe("record created", () => {
+  describe('record created', () => {
     beforeEach(async () => {
-      listener.use(recordHook("test", (record) => record.set("name", "daddy")));
-    });
+      listener.use(recordHook('test', (record) => record.set('name', 'daddy')))
+    })
 
-    it("correctly modifies a value", async () => {
+    it('correctly modifies a value', async () => {
       await createRecords(sheetId, [
         {
-          name: "John Doe",
-          email: "john@doe.com",
-          notes: "foobar",
+          name: 'John Doe',
+          email: 'john@doe.com',
+          notes: 'foobar',
         },
-      ]);
+      ])
 
-      await listener.waitFor("commit:created");
-      const records = await getRecords(sheetId);
-      const firstRecord = records[0];
-      expect(firstRecord.values["name"]).toMatchObject({ value: "daddy" });
-    });
-  });
-});
+      await listener.waitFor('commit:created')
+      const records = await getRecords(sheetId)
+      const firstRecord = records[0]
+      expect(firstRecord.values['name']).toMatchObject({ value: 'daddy' })
+    })
+  })
+})

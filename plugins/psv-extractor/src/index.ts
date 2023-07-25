@@ -1,2 +1,2 @@
-export * from "./psv.extractor";
-export * from "./psv.extractor.plugin";
+export * from './psv.extractor'
+export * from './psv.extractor.plugin'

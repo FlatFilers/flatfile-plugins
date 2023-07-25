@@ -1,13 +1,13 @@
-import api, { Flatfile } from "@flatfile/api";
-import { FlatfileEvent, FlatfileListener } from "@flatfile/listener";
-import { asyncMap } from "@flatfile/common-plugin-utils";
-import * as R from "remeda";
-import { AutomapOptions } from "./automap.plugin";
+import api, { Flatfile } from '@flatfile/api'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import { asyncMap } from '@flatfile/common-plugin-utils'
+import * as R from 'remeda'
+import { AutomapOptions } from './automap.plugin'
 
 type SheetSample = Readonly<{
-  sheet: Flatfile.Sheet;
-  records: Flatfile.RecordsWithLinks;
-}>;
+  sheet: Flatfile.Sheet
+  records: Flatfile.RecordsWithLinks
+}>
 
 export class AutomapService {
   constructor(public readonly options: AutomapOptions) {}
@@ -20,15 +20,15 @@ export class AutomapService {
   public assignListeners(listener: FlatfileListener): void {
     listener.on(
       Flatfile.EventTopic.JobCreated,
-      { job: "workbook:map" },
+      { job: 'workbook:map' },
       (event) => this.handleMappingPlanCreated(event)
-    );
+    )
 
     listener.on(
       Flatfile.EventTopic.JobCompleted,
-      { job: "file:extract" },
+      { job: 'file:extract' },
       (event) => this.handleFileExtraction(event)
-    );
+    )
   }
 
   /**
@@ -37,56 +37,56 @@ export class AutomapService {
    * @param event - Flatfile event
    */
   public async handleFileExtraction(event: FlatfileEvent): Promise<void> {
-    const { fileId, spaceId } = event.context;
+    const { fileId, spaceId } = event.context
 
     try {
-      const file = await this.getFileById(fileId);
+      const file = await this.getFileById(fileId)
 
       if (!this.isFileNameMatch(file)) {
-        await this.updateFileName(file.id, `⏸️️ ${file.name}`);
-        return;
+        await this.updateFileName(file.id, `⏸️️ ${file.name}`)
+        return
       } else {
-        await this.updateFileName(file.id, `⚡️ ${file.name}`);
+        await this.updateFileName(file.id, `⚡️ ${file.name}`)
       }
 
       if (R.isNil(file.workbookId)) {
         if (this.options.debug) {
-          this.logError("No Workbook Id found");
+          this.logError('No Workbook Id found')
         }
-        return;
+        return
       }
 
       try {
         const { data: workbooks } = await api.workbooks.list({
           spaceId,
-        });
+        })
 
-        const destinationWorkbook = this.getTargetWorkbook(workbooks);
+        const destinationWorkbook = this.getTargetWorkbook(workbooks)
         if (R.isNil(destinationWorkbook)) {
           if (this.options.debug) {
-            this.logError("Unable to determine destination Workbook");
+            this.logError('Unable to determine destination Workbook')
           }
-          return;
+          return
         }
 
         try {
-          const mappings = await this.getMappingJobs(file);
-          let destinationSheet: Flatfile.Sheet | undefined;
+          const mappings = await this.getMappingJobs(file)
+          let destinationSheet: Flatfile.Sheet | undefined
           const jobs = await asyncMap(mappings, async ({ target, source }) => {
-            if (R.isNil(target)) return;
+            if (R.isNil(target)) return
 
             destinationSheet = R.pipe(
               destinationWorkbook.sheets,
               R.find((s) => s.name === target || s.id === target)
-            );
+            )
 
-            const destinationSheetId = destinationSheet?.id;
-            if (R.isNil(destinationSheetId)) return;
+            const destinationSheetId = destinationSheet?.id
+            if (R.isNil(destinationSheetId)) return
 
             try {
               const { data: job } = await api.jobs.create({
-                type: "workbook",
-                operation: "map",
+                type: 'workbook',
+                operation: 'map',
                 source: file.workbookId!,
                 managed: true,
                 destination: destinationWorkbook.id,
@@ -95,37 +95,37 @@ export class AutomapService {
                   sourceSheetId: source,
                   destinationSheetId,
                 },
-              });
+              })
 
-              return job;
+              return job
             } catch (_jobError: unknown) {
-              this.logError("Unable to create mapping job");
-              return;
+              this.logError('Unable to create mapping job')
+              return
             }
-          });
+          })
 
           const actualJobs = R.pipe(
             jobs,
             R.reject((j) => R.isNil(j))
-          );
+          )
 
           if (R.length(actualJobs) > 0) {
             await this.updateFileName(
               file.id,
               `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`
-            );
+            )
           }
         } catch (_mappingsError: unknown) {
-          this.logError("Unable to fetch mappings");
-          return;
+          this.logError('Unable to fetch mappings')
+          return
         }
       } catch (_workbookError: unknown) {
-        this.logError("Unable to list workbooks");
-        return;
+        this.logError('Unable to list workbooks')
+        return
       }
     } catch (_fileError: unknown) {
-      this.logError(`Unable to fetch file with id: ${fileId}`);
-      return;
+      this.logError(`Unable to fetch file with id: ${fileId}`)
+      return
     }
   }
 
@@ -138,28 +138,28 @@ export class AutomapService {
   private getTargetWorkbook(
     workbooks: Array<Flatfile.Workbook>
   ): Flatfile.Workbook | undefined {
-    const { targetWorkbook } = this.options;
+    const { targetWorkbook } = this.options
     const targets = R.pipe(
       workbooks,
-      R.reject((w) => w.labels?.includes("file"))
-    );
+      R.reject((w) => w.labels?.includes('file'))
+    )
 
     if (R.length(targets) === 0) {
-      return undefined;
+      return undefined
     } else if (!R.isNil(targetWorkbook)) {
       const target = R.pipe(
         targets,
         R.find((w) => w.id === targetWorkbook || w.name === targetWorkbook)
-      );
+      )
 
-      if (!R.isNil(target)) return target;
+      if (!R.isNil(target)) return target
     } else if (R.length(targets) === 1) {
-      return R.first(targets);
+      return R.first(targets)
     } else {
       return R.pipe(
         targets,
-        R.find((w) => w.labels?.includes("primary"))
-      );
+        R.find((w) => w.labels?.includes('primary'))
+      )
     }
   }
 
@@ -171,72 +171,72 @@ export class AutomapService {
    * @private
    */
   private async handleMappingPlanCreated(event: FlatfileEvent): Promise<void> {
-    const { jobId } = event.context;
+    const { jobId } = event.context
 
     try {
       const {
         data: { plan },
-      } = (await api.jobs.getExecutionPlan(jobId)) as any;
+      } = (await api.jobs.getExecutionPlan(jobId)) as any
       // const { plan } = await api.jobs.getExecutionPlan(jobId); // types don't line up... why?
 
-      if (R.isNil(plan)) return;
+      if (R.isNil(plan)) return
 
       if (this.options.debug) {
-        this.logInfo(`Job Execution Plan:\n${JSON.stringify(plan, null, 2)}`);
+        this.logInfo(`Job Execution Plan:\n${JSON.stringify(plan, null, 2)}`)
       }
 
       if (R.length((plan as Flatfile.JobExecutionPlan).fieldMapping) === 0) {
-        this.logWarn("At least one field must be mapped");
+        this.logWarn('At least one field must be mapped')
 
         if (!R.isNil(this.options.onFailure)) {
-          this.options.onFailure(event);
+          this.options.onFailure(event)
         }
-        return;
+        return
       }
 
       try {
         switch (this.options.accuracy) {
-          case "confident":
+          case 'confident':
             if (this.verifyConfidentMatchingStrategy(plan)) {
-              await api.jobs.execute(jobId);
+              await api.jobs.execute(jobId)
             } else {
               if (this.options.debug) {
-                this.logWarn("Skipping automap due to lack of confidence");
+                this.logWarn('Skipping automap due to lack of confidence')
               }
 
               if (!R.isNil(this.options.onFailure)) {
-                this.options.onFailure(event);
+                this.options.onFailure(event)
               }
             }
-            break;
-          case "exact":
+            break
+          case 'exact':
             if (this.verifyAbsoluteMatchingStrategy(plan)) {
-              await api.jobs.execute(jobId);
+              await api.jobs.execute(jobId)
             } else {
               if (this.options.debug) {
-                this.logWarn("Skipping automap due to lack of confidence");
+                this.logWarn('Skipping automap due to lack of confidence')
               }
 
               if (!R.isNil(this.options.onFailure)) {
-                this.options.onFailure(event);
+                this.options.onFailure(event)
               }
             }
-            break;
+            break
         }
       } catch (_jobError: unknown) {
-        this.logError(`Unable to execute job with id: ${jobId}`);
-        return;
+        this.logError(`Unable to execute job with id: ${jobId}`)
+        return
       }
     } catch (_execPlanError: unknown) {
-      this.logError(`Unable to fetch execution plan for job with id: ${jobId}`);
-      return;
+      this.logError(`Unable to fetch execution plan for job with id: ${jobId}`)
+      return
     }
   }
 
   private async getFileById(fileId: string): Promise<Flatfile.File_> {
-    const { data: file } = await api.files.get(fileId);
+    const { data: file } = await api.files.get(fileId)
 
-    return file;
+    return file
   }
 
   /**
@@ -246,13 +246,13 @@ export class AutomapService {
    * @private
    */
   private isFileNameMatch(file: Flatfile.File_): boolean {
-    const { matchFilename: regex } = this.options;
+    const { matchFilename: regex } = this.options
 
     if (R.isNil(regex)) {
       // allow mapping to continue b/c we weren't explicitly told not to
-      return true;
+      return true
     } else {
-      return regex.test(file.name);
+      return regex.test(file.name)
     }
   }
 
@@ -272,9 +272,9 @@ export class AutomapService {
   private async getMappingJobs(
     file: Flatfile.File_
   ): Promise<Array<{ source: string; target: string | boolean }>> {
-    const workbookResponse = await api.workbooks.get(file.workbookId!);
-    const sheets = workbookResponse.data.sheets || [];
-    const { defaultTargetSheet } = this.options;
+    const workbookResponse = await api.workbooks.get(file.workbookId!)
+    const sheets = workbookResponse.data.sheets || []
+    const { defaultTargetSheet } = this.options
 
     // if (!R.isNil(this.options.selectSheets)) {
     //   const sample = await this.getRecordSampleForSheets(sheets);
@@ -291,9 +291,9 @@ export class AutomapService {
     //   );
     // } else
     if (R.length(sheets) === 1 && !R.isNil(defaultTargetSheet)) {
-      return [{ source: R.first(sheets).id, target: defaultTargetSheet }];
+      return [{ source: R.first(sheets).id, target: defaultTargetSheet }]
     } else {
-      return [];
+      return []
     }
   }
 
@@ -314,11 +314,11 @@ export class AutomapService {
     sheets: ReadonlyArray<Flatfile.Sheet>
   ): Promise<ReadonlyArray<SheetSample>> {
     return asyncMap(sheets, async (sheet) => {
-      const response = await api.records.get(sheet.id, { pageSize: 10 });
-      const records = response.data.records;
+      const response = await api.records.get(sheet.id, { pageSize: 10 })
+      const records = response.data.records
 
-      return { sheet, records: records! };
-    });
+      return { sheet, records: records! }
+    })
   }
 
   private verifyAbsoluteMatchingStrategy(
@@ -328,7 +328,7 @@ export class AutomapService {
       p.fieldMapping?.every(
         (edge) => edge.metadata?.certainty === Flatfile.Certainty.Absolute
       )
-    );
+    )
   }
 
   private verifyConfidentMatchingStrategy(
@@ -340,25 +340,25 @@ export class AutomapService {
           edge.metadata?.certainty === Flatfile.Certainty.Strong ||
           edge.metadata?.certainty === Flatfile.Certainty.Absolute
       )
-    );
+    )
   }
 
   private updateFileName(
     fileId: string,
     fileName: string
   ): Promise<Flatfile.FileResponse> {
-    return api.files.update(fileId, { name: fileName });
+    return api.files.update(fileId, { name: fileName })
   }
 
   private logError(msg: string): void {
-    console.error("[@flatfile/plugin-automap]:[FATAL] " + msg);
+    console.error('[@flatfile/plugin-automap]:[FATAL] ' + msg)
   }
 
   private logInfo(msg: string): void {
-    console.log("[@flatfile/plugin-automap]:[INFO] " + msg);
+    console.log('[@flatfile/plugin-automap]:[INFO] ' + msg)
   }
 
   private logWarn(msg: string): void {
-    console.warn("[@flatfile/plugin-automap]:[WARN] " + msg);
+    console.warn('[@flatfile/plugin-automap]:[WARN] ' + msg)
   }
 }

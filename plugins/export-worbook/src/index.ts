@@ -1,6 +1,6 @@
-import { FlatfileListener } from "@flatfile/listener";
+import { FlatfileListener } from '@flatfile/listener'
 
-import { PluginOptions, run } from "./plugin";
+import { PluginOptions, run } from './plugin'
 
 /**
  * Workbook export plugin for Flatfile.
@@ -9,10 +9,10 @@ import { PluginOptions, run } from "./plugin";
  */
 export const exportWorkbookPlugin = (opts: PluginOptions = {}) => {
   return (listener: FlatfileListener) => {
-    listener.filter({ job: "workbook:downloadWorkbook" }, () => {
-      listener.on("job:ready", async (event) => {
-        await run(event, opts);
-      });
-    });
-  };
-};
+    listener.filter({ job: 'workbook:downloadWorkbook' }, () => {
+      listener.on('job:ready', async (event) => {
+        await run(event, opts)
+      })
+    })
+  }
+}

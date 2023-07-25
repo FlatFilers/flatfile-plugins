@@ -1,48 +1,48 @@
-import { asyncMap } from "./async.map";
+import { asyncMap } from './async.map'
 
-describe("asyncMap", () => {
-  const mockArray = ["a", "b", "c"];
+describe('asyncMap', () => {
+  const mockArray = ['a', 'b', 'c']
   const mockCallback = jest
     .fn()
-    .mockImplementation((item) => Promise.resolve(item.toUpperCase()));
+    .mockImplementation((item) => Promise.resolve(item.toUpperCase()))
 
   beforeEach(() => {
-    mockCallback.mockClear();
-  });
+    mockCallback.mockClear()
+  })
 
-  it("maps over an array and calls the callback function on each item", async () => {
-    const result = await asyncMap(mockArray, mockCallback);
-    expect(mockCallback).toHaveBeenCalledTimes(mockArray.length);
-    expect(result).toEqual(["A", "B", "C"]);
-  });
+  it('maps over an array and calls the callback function on each item', async () => {
+    const result = await asyncMap(mockArray, mockCallback)
+    expect(mockCallback).toHaveBeenCalledTimes(mockArray.length)
+    expect(result).toEqual(['A', 'B', 'C'])
+  })
 
-  it("returns an empty array when input array is empty", async () => {
-    const result = await asyncMap([], mockCallback);
-    expect(result).toEqual([]);
-  });
+  it('returns an empty array when input array is empty', async () => {
+    const result = await asyncMap([], mockCallback)
+    expect(result).toEqual([])
+  })
 
-  it("can run callbacks in parallel", async () => {
-    await asyncMap(mockArray, mockCallback, { parallel: true });
-    expect(mockCallback).toHaveBeenCalledTimes(mockArray.length);
-  });
+  it('can run callbacks in parallel', async () => {
+    await asyncMap(mockArray, mockCallback, { parallel: true })
+    expect(mockCallback).toHaveBeenCalledTimes(mockArray.length)
+  })
 
-  it("rejects when any callback function rejects", async () => {
-    const mockError = new Error("Error");
-    const mockCallbackWithError = jest.fn().mockRejectedValueOnce(mockError);
+  it('rejects when any callback function rejects', async () => {
+    const mockError = new Error('Error')
+    const mockCallbackWithError = jest.fn().mockRejectedValueOnce(mockError)
     await expect(
       asyncMap(mockArray, mockCallbackWithError)
-    ).rejects.toBeTruthy();
-  });
+    ).rejects.toBeTruthy()
+  })
 
-  it("times out when any callback function takes too long", async () => {
-    const LONG_TIMEOUT = 100;
+  it('times out when any callback function takes too long', async () => {
+    const LONG_TIMEOUT = 100
     const mockSlowCallback = jest
       .fn()
       .mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, LONG_TIMEOUT + 10))
-      );
+      )
     await expect(
       asyncMap(mockArray, mockSlowCallback, { timeout: LONG_TIMEOUT })
-    ).rejects.toThrow("timed out");
-  });
-});
+    ).rejects.toThrow('timed out')
+  })
+})
