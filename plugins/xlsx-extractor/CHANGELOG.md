@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.8
+
+### Patch Changes
+
+- 3656390: Open up the event typing
+
 ## 1.0.7
 
 ### Patch Changes
