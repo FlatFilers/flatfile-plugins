@@ -1,6 +1,9 @@
 import * as XLSX from 'xlsx'
 import { mapKeys, mapValues } from 'remeda'
-import { AbstractExtractor, SheetCapture } from '@flatfile/plugin-utils'
+import {
+  AbstractExtractor,
+  SheetCapture,
+} from '@flatfile/plugin-extractor-utils'
 
 export class ExcelExtractor extends AbstractExtractor {
   private readonly _options: {

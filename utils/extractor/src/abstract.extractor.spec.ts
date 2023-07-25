@@ -1,6 +1,6 @@
 import api, { Flatfile } from '@flatfile/api'
 import { AbstractExtractor } from './abstract.extractor'
-import { getEnvironmentId, setupSpace } from '../../testing/test.helpers'
+import { getEnvironmentId, setupSpace } from '../../../testing/test.helpers'
 import fs from 'fs'
 import path from 'path'
 
