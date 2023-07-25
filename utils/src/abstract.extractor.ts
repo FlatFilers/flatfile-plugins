@@ -105,7 +105,7 @@ export class AbstractExtractor {
   }
 
   /**
-   * Create workbook on server mactching schema structure and attach to the file
+   * Create workbook on server matching schema structure and attach to the file
    *
    * @param file
    * @param workbookCapture
