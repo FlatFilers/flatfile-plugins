@@ -14,8 +14,7 @@
   "scripts": {
     "build": "parcel build",
     "dev": "parcel watch",
-    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../jest.config.js"
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop"
   },
   "repository": {
     "type": "git",

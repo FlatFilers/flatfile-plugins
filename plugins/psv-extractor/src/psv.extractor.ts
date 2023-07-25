@@ -12,7 +12,7 @@ export class PsvExtractor extends AbstractExtractor {
   }
 
   constructor(
-    public event: Flatfile.UploadCompletedEvent,
+    public event: { [key: string]: any },
     public options?: {
       //add if needed
     }
