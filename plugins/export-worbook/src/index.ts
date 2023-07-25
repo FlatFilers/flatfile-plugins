@@ -1,5 +1,4 @@
 import { FlatfileListener } from '@flatfile/listener'
-
 import { PluginOptions, run } from './plugin'
 
 /**
