@@ -22,7 +22,7 @@ describe('JSONParser', function () {
       environmentId: 'dev_env_rH3SeKkh',
     } as any,
     api: {} as any,
-  } as Flatfile.UploadCompletedEvent)
+  })
 
   describe('test-basic.json', function () {
     test('finds the sheet name', () => {

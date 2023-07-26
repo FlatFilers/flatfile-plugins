@@ -15,7 +15,7 @@ export class AbstractExtractor {
    */
   public api: FlatfileClient
 
-  constructor(public event: Flatfile.UploadCompletedEvent) {
+  constructor(public event: { [key: string]: any }) {
     this.fileId = event.context.fileId || ''
     this.api = new FlatfileClient()
   }
@@ -26,8 +26,9 @@ export class AbstractExtractor {
   public async getFileBufferFromApi(job: Flatfile.Job): Promise<Buffer> {
     try {
       const file = await this.api.files.download(this.fileId)
-      const chunks: Buffer[] = []
 
+      const chunks: Buffer[] = []
+      // node.js readable streams implement the async iterator protocol
       for await (const chunk of file) {
         chunks.push(chunk)
       }
@@ -43,11 +44,11 @@ export class AbstractExtractor {
    * Start a job on the API referencing the extraction. This will all reporting completion
    * to the user when the extraction is completed.
    */
-  public async startJob(): Promise<Flatfile.Job> {
+  public async startJob(operation: string): Promise<Flatfile.Job> {
     try {
       const res = await this.api.jobs.create({
         type: 'file',
-        operation: 'json-extract',
+        operation,
         source: this.fileId,
         // TODO: This should be configurable
         managed: true,
@@ -60,7 +61,7 @@ export class AbstractExtractor {
 
       return res.data
     } catch (e) {
-      console.log(`error ${e}`)
+      console.error(`error ${e}`)
       throw e
     }
   }
@@ -81,7 +82,7 @@ export class AbstractExtractor {
     } catch (e) {
       this.failJob(job, 'when completing Job.')
 
-      console.log(`error ${e}`)
+      console.error(`error ${e}`)
       throw e
     }
   }
@@ -98,13 +99,13 @@ export class AbstractExtractor {
       })
       return res
     } catch (e) {
-      console.log(`error ${e}`)
+      console.error(`error ${e}`)
       throw e
     }
   }
 
   /**
-   * Create workbook on server mactching schema structure and attach to the file
+   * Create workbook on server matching schema structure and attach to the file
    *
    * @param file
    * @param workbookCapture
@@ -135,7 +136,7 @@ export class AbstractExtractor {
       return workbook.data
     } catch (e) {
       await this.failJob(job, 'while creating Workbook.')
-      console.log(`error ${e}`)
+      console.error(`error ${e}`)
       throw e
     }
   }

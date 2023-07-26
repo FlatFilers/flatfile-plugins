@@ -1,5 +1,7 @@
-import { AbstractExtractor, WorkbookCapture } from './abstract.extractor'
-import type { Flatfile } from '@flatfile/api'
+import {
+  AbstractExtractor,
+  WorkbookCapture,
+} from '@flatfile/plugin-extractor-utils'
 
 export class JSONExtractor extends AbstractExtractor {
   private readonly _options: {
@@ -7,7 +9,7 @@ export class JSONExtractor extends AbstractExtractor {
   }
 
   constructor(
-    public event: Flatfile.UploadCompletedEvent,
+    public event: { [key: string]: any },
     public options?: {
       //add if needed
     }
@@ -71,7 +73,7 @@ export class JSONExtractor extends AbstractExtractor {
     if (file.ext !== 'json') {
       return false
     }
-    const job = await this.startJob()
+    const job = await this.startJob('json-extract')
 
     try {
       await this.api.jobs.update(job.id, { status: 'executing' })
