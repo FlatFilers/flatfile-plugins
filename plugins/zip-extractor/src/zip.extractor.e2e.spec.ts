@@ -1,41 +1,54 @@
-import api from "@flatfile/api";
-import * as fs from "fs";
-import * as path from "path";
+import api, { Flatfile } from '@flatfile/api'
+import * as fs from 'fs'
+import * as path from 'path'
 import {
+  deleteSpace,
   getEnvironmentId,
   getFiles,
-  setupListener,
   setupSpace,
-} from "../../../testing/test.helpers";
-import { zipExtractorPlugin } from ".";
+} from '../../../testing/test.helpers'
+import { ZipExtractor } from './zip.extractor'
 
-describe("ZipExtractor e2e", () => {
-  const listener = setupListener();
-
-  let spaceId;
+describe('ZipExtractor e2e', () => {
+  let spaceId
+  let extractor: ZipExtractor
 
   beforeAll(async () => {
-    const space = await setupSpace();
-    spaceId = space.id;
-    zipExtractorPlugin()(listener);
-  });
+    const space = await setupSpace()
+    spaceId = space.id
 
-  describe("test-basic.zip", () => {
-    jest.mock("fs");
-    test("files extracted an uploaded to space", async () => {
-      const files = await getFiles();
-      expect(files.length).toBe(20);
-
-      const stream = fs.createReadStream(
-        path.join(__dirname, "../ref/getting-started-flat.zip")
-      );
-      await api.files.upload(stream, {
+    const stream = fs.createReadStream(
+      path.join(__dirname, '../ref/getting-started-flat.zip')
+    )
+    const fileResponse = await api.files.upload(stream, {
+      spaceId,
+      environmentId: getEnvironmentId(),
+    })
+    const fileId = fileResponse.data.id
+    extractor = new ZipExtractor({
+      topic: Flatfile.EventTopic.FileCreated,
+      payload: {},
+      createdAt: new Date(),
+      context: {
+        fileId,
         spaceId,
         environmentId: getEnvironmentId(),
-      });
+      },
+    })
+  })
 
-      const filesPostUpload = await getFiles();
-      expect(filesPostUpload.length).toBe(24);
-    });
-  });
-});
+  afterAll(async () => {
+    await deleteSpace(spaceId)
+  })
+
+  describe('test-basic.zip', () => {
+    jest.mock('fs')
+    test('files extracted an uploaded to space', async () => {
+      const files = await getFiles(spaceId)
+      expect(files.length).toBe(1)
+      await extractor.runExtraction()
+      const filesPostUpload = await getFiles(spaceId)
+      expect(filesPostUpload.length).toBe(4)
+    })
+  })
+})

@@ -1,6 +1,6 @@
 import api, { Flatfile } from '@flatfile/api'
 import path from 'path'
-import { AbstractExtractor } from './abstract.extractor'
+import { AbstractExtractor } from '@flatfile/plugin-extractor-utils'
 import AdmZip from 'adm-zip'
 import * as fs from 'fs'
 
@@ -10,7 +10,7 @@ export class ZipExtractor extends AbstractExtractor {
   }
 
   constructor(
-    public event: Flatfile.UploadCompletedEvent,
+    public event: { [key: string]: any },
     public options?: {
       //add if needed
     }
@@ -26,7 +26,7 @@ export class ZipExtractor extends AbstractExtractor {
     if (file.ext !== 'zip') {
       return false
     }
-    const job = await this.startJob()
+    const job = await this.startJob('zip-extract')
 
     try {
       await this.api.jobs.update(job.id, { status: 'executing' })
