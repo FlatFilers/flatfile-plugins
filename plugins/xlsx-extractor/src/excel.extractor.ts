@@ -4,7 +4,7 @@ import {
   AbstractExtractor,
   SheetCapture,
   WorkbookCapture,
-} from './abstract.extractor'
+} from '@flatfile/plugin-extractor-utils'
 
 export class ExcelExtractor extends AbstractExtractor {
   private readonly _options: {
@@ -82,7 +82,7 @@ export class ExcelExtractor extends AbstractExtractor {
       return false
     }
 
-    const job = await this.startJob()
+    const job = await this.startJob('xlsx-extract')
 
     try {
       //set status for getFileBuffer()
