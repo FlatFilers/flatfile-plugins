@@ -28,6 +28,10 @@ describe("automap() e2e", () => {
     sheetId = workbook.sheets[0].id;
   });
 
+  afterAll(async () => {
+    await api.spaces.delete(spaceId);
+  });
+
   describe("record created", () => {
     const mockFn = jest.fn();
 
@@ -56,10 +60,10 @@ describe("automap() e2e", () => {
       );
     });
 
-    it("correctly modifies a value", async () => {
-      await listener.waitFor(Flatfile.EventTopic.JobCompleted, 2);
-
-      expect(mockFn).toHaveBeenCalled();
+    it("correctly modifies a value", () => {
+      listener.waitFor(Flatfile.EventTopic.JobCompleted, 2).then(() => {
+        expect(mockFn).toHaveBeenCalled()
+      })
     });
   });
 });
