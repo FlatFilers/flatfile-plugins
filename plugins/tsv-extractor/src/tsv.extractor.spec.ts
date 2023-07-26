@@ -1,9 +1,9 @@
-import { PsvExtractor } from './psv.extractor'
+import { TsvExtractor } from './tsv.extractor'
 import { Flatfile } from '@flatfile/api'
 import * as fs from 'fs'
 import * as path from 'path'
 
-describe('PsvParser', function () {
+describe('TsvParser', function () {
   describe.each([
     { hasHeader: true },
     {
@@ -12,10 +12,10 @@ describe('PsvParser', function () {
     },
   ])('test-basic.*', function (options) {
     const buffer: Buffer = fs.readFileSync(
-      path.join(__dirname, `../ref/test-basic.psv`)
+      path.join(__dirname, `../ref/test-basic.tsv`)
     )
 
-    const parser = new PsvExtractor(
+    const parser = new TsvExtractor(
       {
         id: 'some_id',
         topic: Flatfile.EventTopic.FileCreated,

@@ -1,11 +1,11 @@
 import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
-export class PsvExtractor extends DelimiterExtractor {
+export class TsvExtractor extends DelimiterExtractor {
   constructor(
     public event: { [key: string]: any },
     public options?: {
       //add if needed
     }
   ) {
-    super(event, 'pipe', 'psv', options)
+    super(event, 'tab', 'tsv', options)
   }
 }

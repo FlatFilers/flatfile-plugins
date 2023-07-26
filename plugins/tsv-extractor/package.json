@@ -1,12 +1,12 @@
 {
-  "name": "@flatfile/plugin-psv-extractor",
-  "version": "1.0.0",
-  "description": "A plugin for parsing psv files Flatfile.",
+  "name": "@flatfile/plugin-tsv-extractor",
+  "version": "0.0.1",
+  "description": "A plugin for parsing tsv files Flatfile.",
   "registryMetadata": {
     "category": "extractors"
   },
   "engines": {
-    "node": ">= 12"
+    "node": ">= 16"
   },
   "source": "src/index.ts",
   "main": "dist/main.js",
@@ -19,11 +19,11 @@
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js"
   },
   "keywords": [],
-  "author": "Ashley Mulligan",
+  "author": "Carl Brugger",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/psv-parser"
+    "directory": "plugins/tsv-parser"
   },
   "license": "ISC",
   "dependencies": {
