@@ -43,7 +43,7 @@ describe('ZipExtractor e2e', () => {
 
   describe('test-basic.zip', () => {
     jest.mock('fs')
-    test('files extracted an uploaded to space', async () => {
+    test('files extracted and uploaded to space', async () => {
       const files = await getFiles(spaceId)
       expect(files.length).toBe(1)
       await extractor.runExtraction()
