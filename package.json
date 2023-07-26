@@ -8,11 +8,12 @@
   },
   "workspaces": [
     "plugins/*",
-    "support/*"
+    "support/*",
+    "utils/*"
   ],
   "scripts": {
     "clean": "find ./ '(' -name 'node_modules' -o -name 'dist' -o -name '.turbo' ')' -type d -exec rm -rf {} +",
-    "test": "turbo test",
+    "test": "turbo test --force",
     "build": "turbo build",
     "lint": "prettier --check **/*.ts",
     "changeset": "changeset",
@@ -50,5 +51,6 @@
     "ts-jest": "^29.1.0",
     "turbo": "^1.10.2",
     "typescript": "^5.0.4"
-  }
+  },
+  "dependencies": {}
 }
