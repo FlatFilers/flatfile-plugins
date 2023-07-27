@@ -1,4 +1,4 @@
-import type { Client } from '@flatfile/listener'
+import type { FlatfileListener } from '@flatfile/listener'
 import { fileBuffer } from '@flatfile/plugin-file-buffer'
 import { flatToValues, schemaFromObjectList, xmlToJson } from './parser'
 import api, { Flatfile } from '@flatfile/api'
@@ -8,8 +8,8 @@ export const XMLExtractor = (opts?: {
   attributePrefix?: string
   transform?: (row: Record<string, any>) => Record<string, any>
 }) => {
-  return (client: Client) => {
-    client.use(
+  return (handler: FlatfileListener) => {
+    handler.use(
       fileBuffer('.xml', async (file, buffer, event) => {
         const job = await api.jobs.create({
           type: 'file',
@@ -22,9 +22,8 @@ export const XMLExtractor = (opts?: {
             opts?.transform || ((x) => x)
           )
           const schema = schemaFromObjectList(json)
-          const { data: space } = await api.spaces.get(file.spaceId)
           const workbook = await createWorkbook(
-            space.environmentId,
+            event.context.environmentId,
             file,
             file.name,
             schema
@@ -42,7 +41,6 @@ export const XMLExtractor = (opts?: {
           await api.jobs.update(job.data.id, {
             status: 'failed',
           })
-          // throw e
         }
       })
     )

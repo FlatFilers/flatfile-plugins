@@ -1,5 +1,4 @@
-import type { Client, FlatfileEvent } from '@flatfile/listener'
-import fetch from 'node-fetch'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import api, { Flatfile } from '@flatfile/api'
 
 export const fileBuffer = (
@@ -10,8 +9,8 @@ export const fileBuffer = (
     event: FlatfileEvent
   ) => Promise<void> | void
 ) => {
-  return (client: Client) => {
-    client.on('file:created', async (event) => {
+  return (listener: FlatfileListener) => {
+    listener.on('file:created', async (event) => {
       const { data: file } = await api.files.get(event.context.fileId)
 
       if (typeof matchFile === 'string' && !file.name.endsWith(matchFile)) {
@@ -30,14 +29,13 @@ export const fileBuffer = (
 }
 
 async function getFileBuffer(event: FlatfileEvent): Promise<Buffer> {
-  const file = await fetch(
-    `${process.env.AGENT_INTERNAL_URL}/v1/files/${event.context.fileId}/download`,
-    {
-      method: 'GET',
-      headers: {
-        authorization: `Bearer ${process.env.FLATFILE_BEARER_TOKEN}`,
-      },
-    }
-  )
-  return await file.buffer()
+  const file = await api.files.download(event.context.fileId)
+
+  const chunks: Buffer[] = []
+  // node.js readable streams implement the async iterator protocol
+  for await (const chunk of file) {
+    chunks.push(chunk)
+  }
+
+  return Buffer.concat(chunks)
 }
