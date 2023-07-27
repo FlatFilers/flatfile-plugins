@@ -60,10 +60,10 @@ describe("automap() e2e", () => {
       );
     });
 
-    it("correctly modifies a value", () => {
-      listener.waitFor(Flatfile.EventTopic.JobCompleted, 2).then(() => {
-        expect(mockFn).toHaveBeenCalled()
-      })
+    it("correctly modifies a value", async () => {
+      await listener.waitFor(Flatfile.EventTopic.JobCompleted, 2);
+
+      expect(mockFn).toHaveBeenCalled();
     });
   });
 });
