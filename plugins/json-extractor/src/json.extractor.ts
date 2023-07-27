@@ -1,94 +1,82 @@
-import * as XLSX from 'xlsx'
-import { mapKeys, mapValues } from 'remeda'
 import {
   AbstractExtractor,
-  SheetCapture,
+  WorkbookCapture,
 } from '@flatfile/plugin-extractor-utils'
 
-export class ExcelExtractor extends AbstractExtractor {
+export class JSONExtractor extends AbstractExtractor {
   private readonly _options: {
-    rawNumbers?: boolean
+    //add if needed
   }
+
   constructor(
     public event: { [key: string]: any },
     public options?: {
-      rawNumbers?: boolean
+      //add if needed
     }
   ) {
     super(event)
-    this._options = { rawNumbers: false, ...options }
-  }
-  /**
-   * Parse a file buffer into a captured sheet
-   *
-   * @param buffer
-   */
-  public parseBuffer(buffer: Buffer): Record<string, SheetCapture> {
-    const workbook = XLSX.read(buffer, {
-      type: 'buffer',
-      cellDates: true,
-    })
-
-    return mapValues(workbook.Sheets, (value, key) => {
-      return this.convertSheet(value)
-    })
+    this._options = { ...options }
   }
 
-  /**
-   * Convert a template sheet using a special template format
-   *
-   * @param sheet
-   */
-  convertSheet(sheet: XLSX.WorkSheet): SheetCapture {
-    let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
-      header: 'A',
-      defval: null,
-      rawNumbers: this._options.rawNumbers || false,
-    })
+  public parseBuffer(buffer: Buffer): WorkbookCapture {
+    try {
+      const sheetName = 'Sheet1'
 
-    // use a basic pattern check on the 1st row - should be switched to core header detection
-    const hasHeader = this.isHeaderCandidate(rows[0])
-
-    const colMap: Record<string, string> | null = hasHeader
-      ? (rows.shift() as Record<string, string>)
-      : null
-
-    if (colMap) {
-      const headers = mapValues(colMap, (val) => val?.replace('*', ''))
-      const required = mapValues(colMap, (val) => val?.includes('*'))
-      const data = rows.map((row) => mapKeys(row, (key) => headers[key]))
-      return {
-        headers: Object.values(headers).filter((v) => v),
-        required: mapKeys(required, (k) => headers[k]),
-        data,
+      const fileContents = buffer.toString('utf8')
+      if (!fileContents) {
+        console.log('Invalid file contents')
+        return {
+          [sheetName]: {
+            headers: [],
+            data: {},
+          },
+        } as WorkbookCapture
       }
-    } else {
-      return { headers: Object.keys(rows[0]), data: rows }
+
+      const results: Array<Record<string, string>> = JSON.parse(fileContents)
+
+      if (!results || !results.length) {
+        console.log('No data found in the file')
+        return {
+          [sheetName]: {
+            headers: [],
+            data: {},
+          },
+        } as WorkbookCapture
+      }
+
+      const headers = Object.keys(results[0]).filter((header) => header !== '')
+
+      const filteredData = results.map((row: Record<string, any>) => {
+        const filteredRow: Record<string, any> = {}
+        for (const header of headers) {
+          filteredRow[header] = row[header]
+        }
+        return filteredRow
+      })
+
+      return {
+        [sheetName]: {
+          headers,
+          data: filteredData,
+        },
+      } as WorkbookCapture
+    } catch (error) {
+      console.log('An error occurred:', error)
+      throw error
     }
   }
 
-  /**
-   * Extract the data from an uploaded XLSX file
-   */
   public async runExtraction(): Promise<boolean> {
     const { data: file } = await this.api.files.get(this.fileId)
 
-    if (file.ext !== 'xlsx') {
+    if (file.ext !== 'json') {
       return false
     }
-
-    if (file.mode !== 'import') {
-      return false
-    }
-
-    const job = await this.startJob('xlsx-extract')
+    const job = await this.startJob('json-extract')
 
     try {
-      //set status for getFileBuffer()
-      await this.api.jobs.update(job.id, {
-        status: 'executing',
-      })
-
+      await this.api.jobs.update(job.id, { status: 'executing' })
       await this.api.jobs.ack(job.id, {
         progress: 10,
         info: 'Downloading file',
@@ -96,15 +84,14 @@ export class ExcelExtractor extends AbstractExtractor {
 
       const buffer = await this.getFileBufferFromApi(job)
 
-      //set status for parseBuffer()
-      await this.api.jobs.ack(job.id, {
-        progress: 30,
-        info: 'Parsing Sheets',
-      })
+      await this.api.jobs.ack(job.id, { progress: 30, info: 'Parsing Sheets' })
 
       const capture = this.parseBuffer(buffer)
 
-      //set status for createWorkbook()
+      if (!capture) {
+        return false
+      }
+
       await this.api.jobs.ack(job.id, {
         progress: 50,
         info: 'Creating Workbook',
@@ -116,7 +103,6 @@ export class ExcelExtractor extends AbstractExtractor {
         return false
       }
 
-      //set status for adding records
       await this.api.jobs.ack(job.id, {
         progress: 80,
         info: 'Adding records to Sheets',
@@ -144,23 +130,13 @@ export class ExcelExtractor extends AbstractExtractor {
     }
   }
 
-  /**
-   * This needs to be improved but right now it looks for a pattern unlikely
-   * to be in a header.
-   *
-   * Yes header | foo | bar | baz |
-   * No header  | 99  | asd | 0   |
-   *
-   * @param header
-   */
   isHeaderCandidate(header: Record<string, string | number>): boolean {
     if (!header) {
       return false
     }
 
-    // rule out anything that contains a pure number or non-string
     return !Object.values(header).some((v) =>
-      typeof v === 'string' ? /^[0-9]+$/.test(v) : !!v
+      typeof v === 'string' ? /^\d+$/.test(v) : !!v
     )
   }
 }
@@ -173,33 +149,29 @@ async function asyncBatch<T, R>(
   const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options }
   const results: R[] = []
 
-  // Split the array into chunks
   const chunks: T[][] = []
   for (let i = 0; i < arr.length; i += chunkSize) {
     chunks.push(arr.slice(i, i + chunkSize))
   }
 
-  // Create a helper function to process a chunk
   async function processChunk(chunk: T[]): Promise<void> {
     const result = await callback(chunk)
     results.push(result)
   }
 
-  // Execute the chunks in parallel
   const promises: Promise<void>[] = []
   let running = 0
   let currentIndex = 0
 
   function processNext(): void {
     if (currentIndex >= chunks.length) {
-      // All chunks have been processed
       return
     }
 
     const currentChunk = chunks[currentIndex]
     const promise = processChunk(currentChunk).finally(() => {
       running--
-      processNext() // Process next chunk
+      processNext()
     })
 
     promises.push(promise)
@@ -207,16 +179,14 @@ async function asyncBatch<T, R>(
     running++
 
     if (running < parallel) {
-      processNext() // Process another chunk if available
+      processNext()
     }
   }
 
-  // Start processing the chunks
   for (let i = 0; i < parallel && i < chunks.length; i++) {
     processNext()
   }
 
-  // Wait for all promises to resolve
   await Promise.all(promises)
 
   return results.flat() as R

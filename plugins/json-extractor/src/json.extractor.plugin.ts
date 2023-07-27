@@ -1,11 +1,11 @@
 import { FlatfileListener } from '@flatfile/listener'
-import { ExcelExtractor } from './excel.extractor'
+import { JSONExtractor } from './json.extractor'
 import { UploadCompletedEvent } from '@flatfile/api/api'
 
-export const xlsxExtractorPlugin = (options?: { rawNumbers?: boolean }) => {
+export const jsonExtractorPlugin = (options?: { rawNumbers?: boolean }) => {
   return (client: FlatfileListener) => {
     client.on('file:created', (event) => {
-      return new ExcelExtractor(
+      return new JSONExtractor(
         event as unknown as UploadCompletedEvent,
         options
       ).runExtraction()
