@@ -6,4 +6,12 @@ module.exports = {
     '^.+\\.tsx?$': 'ts-jest',
   },
   setupFiles: [path.join(__dirname, './testing/setup-tests.js')],
+  coverageThreshold: {
+    global: {
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      statements: 100,
+    },
+  },
 }
