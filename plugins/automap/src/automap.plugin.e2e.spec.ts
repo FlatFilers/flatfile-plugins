@@ -28,8 +28,12 @@ describe('automap() e2e', () => {
     sheetId = workbook.sheets[0].id
   })
 
-  describe('record created', () => {
-    const mockFn = jest.fn()
+  afterAll(async () => {
+    await api.spaces.delete(spaceId);
+  });
+
+  describe("record created", () => {
+    const mockFn = jest.fn();
 
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))

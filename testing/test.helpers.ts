@@ -28,6 +28,10 @@ export async function setupSpace(): Promise<Flatfile.spaces.Space> {
   return space
 }
 
+export async function deleteSpace(spaceId: string): Promise<Flatfile.Success> {
+  return await api.spaces.delete(spaceId)
+}
+
 /**
  * Establishes a connection to a PubSub channel and binds a listener to it.
  *
@@ -134,4 +138,9 @@ export async function createRecords(
       },
     }
   )
+}
+
+export async function getFiles(spaceId: string): Promise<Flatfile.File_[]> {
+  const { data } = await api.files.list({ spaceId })
+  return data
 }

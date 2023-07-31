@@ -2,15 +2,20 @@ import { AbstractExtractor } from './abstract.extractor'
 import api, { Flatfile } from '@flatfile/api'
 import * as path from 'path'
 import * as fs from 'fs'
-import { getEnvironmentId, setupSpace } from '../../../testing/test.helpers'
+import {
+  deleteSpace,
+  getEnvironmentId,
+  setupSpace,
+} from '../../../testing/test.helpers'
 
 describe('AbstractExtractor', function () {
   let parser: AbstractExtractor
+  let spaceId: string
   let fileId: string
 
   beforeAll(async () => {
     const space = await setupSpace()
-    const spaceId = space.id
+    spaceId = space.id
     const stream = fs.createReadStream(path.join(__dirname, '../ref/test.csv'))
     const fileResponse = await api.files.upload(stream, {
       spaceId,
@@ -27,6 +32,10 @@ describe('AbstractExtractor', function () {
         environmentId: getEnvironmentId(),
       },
     })
+  })
+
+  afterAll(async () => {
+    await deleteSpace(spaceId)
   })
 
   test('constructor setup', () => {

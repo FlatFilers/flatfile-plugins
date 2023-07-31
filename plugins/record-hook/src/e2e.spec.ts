@@ -1,6 +1,7 @@
 import { recordHook } from './index'
 import {
   createRecords,
+  deleteSpace,
   getRecords,
   setupListener,
   setupSimpleWorkbook,
@@ -10,10 +11,12 @@ import {
 describe('recordHook() e2e', () => {
   const listener = setupListener()
 
-  let sheetId: string
+  let spaceId;
+  let sheetId;
 
   beforeAll(async () => {
-    const space = await setupSpace()
+    const space = await setupSpace();
+    spaceId = space.id;
     const workbook = await setupSimpleWorkbook(space.id, [
       'name',
       'email',
@@ -22,7 +25,11 @@ describe('recordHook() e2e', () => {
     sheetId = workbook.sheets[0].id
   })
 
-  describe('record created', () => {
+  afterAll(async () => {
+    await deleteSpace(spaceId);
+  });
+
+  describe("record created", () => {
     beforeEach(async () => {
       listener.use(recordHook('test', (record) => record.set('name', 'daddy')))
     })
