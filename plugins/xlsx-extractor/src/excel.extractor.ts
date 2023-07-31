@@ -3,6 +3,7 @@ import { mapKeys, mapValues } from 'remeda'
 import {
   AbstractExtractor,
   SheetCapture,
+  WorkbookCapture,
 } from '@flatfile/plugin-extractor-utils'
 
 export class ExcelExtractor extends AbstractExtractor {
@@ -23,7 +24,7 @@ export class ExcelExtractor extends AbstractExtractor {
    *
    * @param buffer
    */
-  public parseBuffer(buffer: Buffer): Record<string, SheetCapture> {
+  public parseBuffer(buffer: Buffer): WorkbookCapture {
     const workbook = XLSX.read(buffer, {
       type: 'buffer',
       cellDates: true,

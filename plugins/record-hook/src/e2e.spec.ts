@@ -1,4 +1,4 @@
-import { recordHook } from "./index";
+import { recordHook } from './index'
 import {
   createRecords,
   deleteSpace,
@@ -6,10 +6,10 @@ import {
   setupListener,
   setupSimpleWorkbook,
   setupSpace,
-} from "../../../testing/test.helpers";
+} from '../../../testing/test.helpers'
 
-describe("recordHook() e2e", () => {
-  const listener = setupListener();
+describe('recordHook() e2e', () => {
+  const listener = setupListener()
 
   let spaceId;
   let sheetId;
@@ -18,12 +18,12 @@ describe("recordHook() e2e", () => {
     const space = await setupSpace();
     spaceId = space.id;
     const workbook = await setupSimpleWorkbook(space.id, [
-      "name",
-      "email",
-      "notes",
-    ]);
-    sheetId = workbook.sheets[0].id;
-  });
+      'name',
+      'email',
+      'notes',
+    ])
+    sheetId = workbook.sheets[0].id
+  })
 
   afterAll(async () => {
     await deleteSpace(spaceId);
@@ -31,22 +31,22 @@ describe("recordHook() e2e", () => {
 
   describe("record created", () => {
     beforeEach(async () => {
-      listener.use(recordHook("test", (record) => record.set("name", "daddy")));
-    });
+      listener.use(recordHook('test', (record) => record.set('name', 'daddy')))
+    })
 
-    it("correctly modifies a value", async () => {
+    it('correctly modifies a value', async () => {
       await createRecords(sheetId, [
         {
-          name: "John Doe",
-          email: "john@doe.com",
-          notes: "foobar",
+          name: 'John Doe',
+          email: 'john@doe.com',
+          notes: 'foobar',
         },
-      ]);
+      ])
 
-      await listener.waitFor("commit:created");
-      const records = await getRecords(sheetId);
-      const firstRecord = records[0];
-      expect(firstRecord.values["name"]).toMatchObject({ value: "daddy" });
-    });
-  });
-});
+      await listener.waitFor('commit:created')
+      const records = await getRecords(sheetId)
+      const firstRecord = records[0]
+      expect(firstRecord.values['name']).toMatchObject({ value: 'daddy' })
+    })
+  })
+})
