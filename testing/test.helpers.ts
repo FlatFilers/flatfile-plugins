@@ -29,7 +29,7 @@ export async function setupSpace(): Promise<Flatfile.spaces.Space> {
 }
 
 export async function deleteSpace(spaceId: string): Promise<Flatfile.Success> {
-  return await api.spaces.delete(spaceId);
+  return await api.spaces.delete(spaceId)
 }
 
 /**
@@ -141,6 +141,6 @@ export async function createRecords(
 }
 
 export async function getFiles(spaceId: string): Promise<Flatfile.File_[]> {
-  const { data } = await api.files.list({ spaceId });
-  return data;
+  const { data } = await api.files.list({ spaceId })
+  return data
 }
