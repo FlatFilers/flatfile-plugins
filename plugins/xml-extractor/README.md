@@ -1,4 +1,4 @@
-# @flatfile/plugin-extractor-xml
+# @flatfile/plugin-xml-extractor
 
 This plugin lets you easily extract data from XML files.
 
@@ -10,7 +10,7 @@ Follow [this guide](https://flatfile.com/docs/plugins/extractors/xml-extractor) 
 `listener.js`
 
 ```js
-import { XMLExtractor } from '@flatfile/plugin-extractor-xml'
+import { XMLExtractor } from '@flatfile/plugin-xml-extractor'
 
 export default (listener) => {
   listener.use(XMLExtractor())
@@ -18,7 +18,7 @@ export default (listener) => {
 ```
 
 ```js
-import { XMLExtractor } from '@flatfile/plugin-extractor-xml'
+import { XMLExtractor } from '@flatfile/plugin-xml-extractor'
 
 export default (listener) => {
   listener.use(
@@ -118,7 +118,7 @@ into Flatfile.
 ```
 
 ```js
-import { XMLExtractor } from '@flatfile/plugin-extractor-xml'
+import { XMLExtractor } from '@flatfile/plugin-xml-extractor'
 
 export default (listener) => {
   listener.use(
