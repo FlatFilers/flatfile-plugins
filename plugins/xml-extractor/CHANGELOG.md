@@ -1,0 +1,1 @@
+# @flatfile/plugin-dxp-config
