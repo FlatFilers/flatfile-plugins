@@ -5,5 +5,5 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest",
   },
-  setupFiles: [path.join(__dirname, "./testing/setup-tests.js")],
+  setupFilesAfterEnv: [path.join(__dirname, "./testing/setup-tests.js")],
 };

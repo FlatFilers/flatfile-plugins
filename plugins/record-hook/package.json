@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@flatfile/listener-driver-pubsub": "^1.0.0",
+    "@flatfile/utils-testing": "*",
     "axios": "^1.4.0"
   }
 }

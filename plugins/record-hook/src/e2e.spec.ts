@@ -5,7 +5,7 @@ import {
   setupListener,
   setupSimpleWorkbook,
   setupSpace,
-} from "../../../testing/test.helpers";
+} from "@flatfile/utils-testing";
 
 describe("recordHook() e2e", () => {
   const listener = setupListener();

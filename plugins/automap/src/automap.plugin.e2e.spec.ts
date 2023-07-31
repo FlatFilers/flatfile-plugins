@@ -7,7 +7,7 @@ import {
   setupListener,
   setupSimpleWorkbook,
   setupSpace,
-} from "../../../testing/test.helpers";
+} from "@flatfile/utils-testing";
 
 jest.setTimeout(15_000);
 

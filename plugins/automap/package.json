@@ -33,5 +33,7 @@
     "@flatfile/utils-debugger": "^0.0.3",
     "remeda": "^1.23.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@flatfile/utils-testing": "*"
+  }
 }

@@ -2,7 +2,7 @@ import { AbstractExtractor } from './abstract.extractor'
 import api, { Flatfile } from '@flatfile/api'
 import * as path from 'path'
 import * as fs from 'fs'
-import { getEnvironmentId, setupSpace } from '../../../testing/test.helpers'
+import { getEnvironmentId, setupSpace } from '@flatfile/utils-testing'
 
 describe('AbstractExtractor', function () {
   let parser: AbstractExtractor
