@@ -21,7 +21,7 @@ Follow these steps to set up your development environment and prepare for releas
 1. **Install Dependencies**: Run the command `npm install` at the root level to install all necessary project dependencies.
 2. **Develop**: Make the necessary changes or additions in the relevant plugin folder.
 3. **Document**: Make sure you update or write a README.md file for the plugin you're contributing to.
-4**Prepare for Release**: Once you've made your changes and are ready to propose them for inclusion (a Pull Request or "PR"), create a changeset to document your updates. Run the command `npm run changeset` at the root level and select the plugin you updated.
+4. **Prepare for Release**: Once you've made your changes and are ready to propose them for inclusion (a Pull Request or "PR"), create a changeset to document your updates. Run the command `npm run changeset` at the root level and select the plugin you updated.
 
 ## Development & Testing
 

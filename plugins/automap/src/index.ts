@@ -1,1 +1,1 @@
-export * from "./automap.plugin";
+export * from './automap.plugin'
