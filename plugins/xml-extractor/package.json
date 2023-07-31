@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-extractor-xml",
+  "name": "@flatfile/plugin-xml-extractor",
   "version": "0.0.2",
   "description": "A plugin for extracting data from XML files.",
   "registryMetadata": {
