@@ -1,9 +1,9 @@
 {
-  "name": "@flatfile/plugin-file-buffer",
+  "name": "@flatfile/util-file-buffer",
   "version": "0.0.2",
-  "description": "A plugin for extracting data from any file and making it available as a buffer",
+  "description": "A utility for extracting data from any file and making it available as a buffer",
   "registryMetadata": {
-    "category": "extractors"
+    "category": "utilities"
   },
   "engines": {
     "node": ">= 16"
@@ -23,7 +23,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/file-buffer"
+    "directory": "utils/file-buffer"
   },
   "license": "ISC",
   "dependencies": {

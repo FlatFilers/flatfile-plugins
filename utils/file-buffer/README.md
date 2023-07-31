@@ -1,11 +1,16 @@
-# Flatfile File Buffer Plugin
+# @flatfile/util-file-buffer
 
-This plugin will provide a file buffer for any configured file. It will read the file and return it as a [nodejs Buffer object[(https://nodejs.org/api/buffer.html). This is a helpful underlying utility for writing file extractor plugins.
+This utility will provide a file buffer for any configured file. It will read the file and return it as a [nodejs Buffer object](https://nodejs.org/api/buffer.html). This is a helpful underlying utility for writing file extractor plugins.
+
+## Get Started
+
+Follow [this guide](https://flatfile.com/docs/plugins/utilities/file-buffer) to learn how to use the utility.
+
 
 `listener.js`
 
 ```js
-import { fileBuffer } from '@flatfile/plugin-file-buffer'
+import { fileBuffer } from '@flatfile/util-file-buffer'
 
 export default (listener) => {
   listener.use(
@@ -26,7 +31,7 @@ export default (listener) => {
 #### Example with Regexp
 
 ```js
-import { fileBuffer } from '@flatfile/plugin-file-buffer'
+import { fileBuffer } from '@flatfile/util-file-buffer'
 
 export default (listener) => {
   listener.use(
