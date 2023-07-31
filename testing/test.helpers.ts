@@ -1,7 +1,7 @@
-import api, { Flatfile } from "@flatfile/api";
-import { PubSubDriver } from "@flatfile/listener-driver-pubsub";
-import { TestListener } from "./test.listener";
-import axios from "axios";
+import api, { Flatfile } from '@flatfile/api'
+import { PubSubDriver } from '@flatfile/listener-driver-pubsub'
+import { TestListener } from './test.listener'
+import axios from 'axios'
 
 /**
  * Retrieves the environment ID from the process environment.
@@ -9,7 +9,7 @@ import axios from "axios";
  * @returns The environment id string.
  */
 export function getEnvironmentId(): string {
-  return process.env.FLATFILE_ENVIRONMENT_ID;
+  return process.env.FLATFILE_ENVIRONMENT_ID
 }
 
 /**
@@ -18,14 +18,14 @@ export function getEnvironmentId(): string {
  * @returns A Promise that resolves to created space data.
  */
 export async function setupSpace(): Promise<Flatfile.spaces.Space> {
-  const environmentId = getEnvironmentId();
+  const environmentId = getEnvironmentId()
 
   const { data: space } = await api.spaces.create({
-    name: "ci-space-" + Date.now(),
+    name: 'ci-space-' + Date.now(),
     environmentId,
-  });
+  })
 
-  return space;
+  return space
 }
 
 /**
@@ -34,18 +34,18 @@ export async function setupSpace(): Promise<Flatfile.spaces.Space> {
  * @param listener - The listener instance to bind to the channel.
  */
 export function streamEvents(listener: TestListener) {
-  const environmentId = getEnvironmentId();
+  const environmentId = getEnvironmentId()
 
-  const driver = new PubSubDriver(environmentId);
+  const driver = new PubSubDriver(environmentId)
 
   beforeAll(async () => {
-    await driver.start();
-    listener.mount(driver);
-  });
+    await driver.start()
+    listener.mount(driver)
+  })
 
   afterAll(() => {
-    driver.shutdown();
-  });
+    driver.shutdown()
+  })
 }
 
 /**
@@ -54,16 +54,16 @@ export function streamEvents(listener: TestListener) {
  * @returns The newly created TestListener object.
  */
 export function setupListener(): TestListener {
-  const listener = new TestListener();
-  streamEvents(listener);
+  const listener = new TestListener()
+  streamEvents(listener)
   beforeEach(() => {
-    listener.resetCount();
-  });
+    listener.resetCount()
+  })
 
   afterEach(() => {
-    listener.reset();
-  });
-  return listener;
+    listener.reset()
+  })
+  return listener
 }
 
 /**
@@ -78,20 +78,20 @@ export async function setupSimpleWorkbook(
   fields: Array<Flatfile.Property | string>
 ): Promise<Flatfile.Workbook> {
   const res = await api.workbooks.create({
-    name: "ci-wb-" + Date.now(),
+    name: 'ci-wb-' + Date.now(),
     spaceId: spaceId,
     environmentId: getEnvironmentId(),
     sheets: [
       {
-        name: "test",
-        slug: "test",
+        name: 'test',
+        slug: 'test',
         fields: fields.map((field) =>
-          typeof field === "string" ? { key: field, type: "string" } : field
+          typeof field === 'string' ? { key: field, type: 'string' } : field
         ),
       },
     ],
-  });
-  return res.data;
+  })
+  return res.data
 }
 
 /**
@@ -103,8 +103,8 @@ export async function setupSimpleWorkbook(
 export async function getRecords(sheetId: string) {
   const {
     data: { records },
-  } = await api.records.get(sheetId);
-  return records;
+  } = await api.records.get(sheetId)
+  return records
 }
 
 /**
@@ -121,17 +121,17 @@ export async function createRecords(
     `https://platform.flatfile.com/api/v1/sheets/${sheetId}/records`,
 
     records.map((r) =>
-      Object.keys(r).reduce((acc, k) => {
-        acc[k] = { value: r[k] };
-        return acc;
+      Object.keys(r).reduce((acc: Record<string, any>, k) => {
+        acc[k] = { value: r[k] }
+        return acc
       }, {})
     ),
 
     {
       headers: {
         Authorization: `Bearer ${process.env.FLATFILE_API_KEY}`,
-        "X-Force-Hooks": "true",
+        'X-Force-Hooks': 'true',
       },
     }
-  );
+  )
 }

@@ -1,2 +1,2 @@
-export * from "./excel.extractor";
-export * from "./xlsx.extractor.plugin";
+export * from './excel.extractor'
+export * from './xlsx.extractor.plugin'

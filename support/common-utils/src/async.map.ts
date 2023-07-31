@@ -5,8 +5,8 @@
  * @property {number} timeout - Timeout duration (in milliseconds) for each callback.
  */
 interface AsyncMapConfig {
-  readonly parallel?: boolean;
-  readonly timeout?: number;
+  readonly parallel?: boolean
+  readonly timeout?: number
 }
 
 /**
@@ -22,39 +22,39 @@ export async function asyncMap<T, U>(
   callback: (item: T) => Promise<U>,
   config: AsyncMapConfig = { parallel: false, timeout: 30_000 }
 ): Promise<ReadonlyArray<U>> {
-  const { parallel, timeout } = config;
+  const { parallel, timeout } = config
 
   const wrapper = (item: T): Promise<U> =>
     new Promise((resolve, reject) => {
       const timer = setTimeout(
-        () => reject(new Error("Operation timed out.")),
+        () => reject(new Error('Operation timed out.')),
         timeout
-      );
+      )
 
       callback(item)
         .then((res) => {
-          clearTimeout(timer);
-          resolve(res);
+          clearTimeout(timer)
+          resolve(res)
         })
         .catch((err) => {
-          clearTimeout(timer);
-          reject(err);
-        });
-    });
+          clearTimeout(timer)
+          reject(err)
+        })
+    })
 
   if (parallel) {
-    return Promise.all(items.map(wrapper));
+    return Promise.all(items.map(wrapper))
   }
 
-  const results: U[] = [];
+  const results: U[] = []
   for (const item of items) {
     try {
-      const result = await wrapper(item);
-      results.push(result);
+      const result = await wrapper(item)
+      results.push(result)
     } catch (error) {
-      throw new Error(`Error processing item. ${error}`);
+      throw new Error(`Error processing item. ${error}`)
     }
   }
 
-  return results;
+  return results
 }
