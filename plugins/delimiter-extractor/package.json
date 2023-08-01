@@ -29,7 +29,7 @@
   "dependencies": {
     "@flatfile/api": "^1.5.13",
     "@flatfile/listener": "^0.3.4",
-    "@flatfile/util-file-buffer": "0.0.2",
+    "@flatfile/util-extractor": "0.1.0",
     "papaparse": "^5.4.1",
     "remeda": "^1.14.0"
   },

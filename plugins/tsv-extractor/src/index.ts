@@ -7,5 +7,5 @@ export const TSVExtractor = (options?: {
   skipEmptyLines?: boolean | 'greedy'
   transform?: (value: any) => Flatfile.CellValueUnion
 }) => {
-  return DelimiterExtractor('\t', 'tsv', options)
+  return DelimiterExtractor('tsv', { delimiter: '\t', ...options })
 }

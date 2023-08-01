@@ -1,4 +1,4 @@
-import { Flatfile } from '@flatfile/api'
+import { WorkbookCapture } from '@flatfile/util-extractor'
 
 export function parseBuffer(buffer: Buffer): WorkbookCapture {
   try {
@@ -37,19 +37,4 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
     console.log('An error occurred:', error)
     throw error
   }
-}
-
-/**
- * Generic structure for capturing a workbook
- */
-export type WorkbookCapture = Record<string, SheetCapture>
-
-/**
- * Generic structure for capturing a sheet
- */
-export type SheetCapture = {
-  headers: string[]
-  required?: Record<string, boolean>
-  descriptions?: Record<string, null | string> | null
-  data: Flatfile.RecordData[]
 }

@@ -1,10 +1,11 @@
 import { Flatfile } from '@flatfile/api'
 import Papa, { ParseResult } from 'papaparse'
+import { WorkbookCapture } from '@flatfile/util-extractor'
 
 export function parseBuffer(
   buffer: Buffer,
-  delimiter: string,
-  options?: {
+  options: {
+    delimiter: string
     dynamicTyping?: boolean
     hasHeader?: boolean
     skipEmptyLines?: boolean | 'greedy'
@@ -16,7 +17,7 @@ export function parseBuffer(
     const results: ParseResult<Record<string, string>> = Papa.parse(
       fileContents,
       {
-        delimiter,
+        delimiter: options.delimiter,
         dynamicTyping: options?.dynamicTyping || false,
         header: options?.hasHeader === false ? false : true,
         skipEmptyLines: options?.skipEmptyLines || 'greedy',
@@ -53,19 +54,4 @@ export function parseBuffer(
     console.log('An error occurred:', error)
     throw error
   }
-}
-
-/**
- * Generic structure for capturing a workbook
- */
-export type WorkbookCapture = Record<string, SheetCapture>
-
-/**
- * Generic structure for capturing a sheet
- */
-export type SheetCapture = {
-  headers: string[]
-  required?: Record<string, boolean>
-  descriptions?: Record<string, null | string> | null
-  data: Flatfile.RecordData[]
 }

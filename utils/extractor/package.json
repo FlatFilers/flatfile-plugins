@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-extractor-utils",
+  "name": "@flatfile/util-extractor",
   "version": "0.1.0",
   "description": "A library containing common utilities and helpers for plugins.",
   "keywords": [],
@@ -24,7 +24,19 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.19",
-    "remeda": "^1.24.0"
+    "@flatfile/api": "^1.5.13",
+    "@flatfile/listener": "^0.3.4",
+    "@flatfile/util-file-buffer": "0.0.2",
+    "remeda": "^1.14.0"
+  },
+  "devDependencies": {
+    "@types/flat": "^5.0.2",
+    "@types/jest": "^29.5.1",
+    "eslint": "^8.19.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "tslib": "^2.4.1",
+    "tsup": "^6.1.3",
+    "typescript": "^5.0.4"
   }
 }
