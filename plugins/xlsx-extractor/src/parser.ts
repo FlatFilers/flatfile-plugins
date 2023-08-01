@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx'
 import { mapKeys, mapValues } from 'remeda'
-import { Flatfile } from '@flatfile/api'
+import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 
 export function parseBuffer(
   buffer: Buffer,
@@ -33,27 +33,47 @@ function convertSheet(
     rawNumbers: rawNumbers || false,
   })
 
-  // use a basic pattern check on the 1st row - should be switched to core header detection
-  const hasHeader = isHeaderCandidate(rows[0])
+  const { headerRow, skip } = detectHeader(rows)
+  rows.splice(0, skip)
 
-  const colMap: Record<string, string> | null = hasHeader
-    ? (rows.shift() as Record<string, string>)
-    : null
-
-  if (colMap) {
-    const headers = mapValues(colMap, (val) => val?.replace('*', ''))
-    const required = mapValues(colMap, (val) => val?.includes('*'))
-    const data = rows.map((row) => mapKeys(row, (key) => headers[key]))
-    return {
-      headers: Object.values(headers).filter((v) => v) as string[],
-      required: mapKeys(required, (k) => headers[k]),
-      data: data.map((row: Record<string, any>) => {
-        return mapValues(row, (value) => ({ value }))
-      }),
-    }
-  } else {
-    return { headers: Object.keys(rows[0]), data: rows }
+  const headers = mapValues(headerRow, (val) =>
+    val?.toString().replace('*', '')
+  )
+  const required = mapValues(headerRow, (val) => val?.toString().includes('*'))
+  const data = rows.map((row) => mapKeys(row, (key) => headers[key]))
+  return {
+    headers: Object.values(headers).filter((v) => v) as string[],
+    required: mapKeys(required, (k) => headers[k]),
+    data: data.map((row: Record<string, any>) => {
+      return mapValues(row, (value) => ({ value }))
+    }),
   }
+}
+
+const detectHeader = (
+  rows: Record<string, any>[]
+): { headerRow: Record<string, string>; skip: number } => {
+  const ROWS_TO_CHECK = 10
+
+  let skip = 0
+  let widestRow: Record<string, string> = {}
+  rows.forEach((row, i) => {
+    if (i > ROWS_TO_CHECK) {
+      return
+    }
+    if (countNonEmptyCells(row) > countNonEmptyCells(widestRow)) {
+      widestRow = row
+      skip = i + 1
+    }
+  })
+
+  return { headerRow: widestRow, skip }
+}
+
+export const countNonEmptyCells = (row: Record<string, string>): number => {
+  return Object.values(row).filter(
+    (cell) => cell && cell.toString().trim() !== ''
+  ).length
 }
 
 /**
@@ -74,19 +94,4 @@ function isHeaderCandidate(header: Record<string, string | number>): boolean {
   return !Object.values(header).some((v) =>
     typeof v === 'string' ? /^[0-9]+$/.test(v) : !!v
   )
-}
-
-/**
- * Generic structure for capturing a workbook
- */
-export type WorkbookCapture = Record<string, SheetCapture>
-
-/**
- * Generic structure for capturing a sheet
- */
-export type SheetCapture = {
-  headers: string[]
-  required?: Record<string, boolean>
-  descriptions?: Record<string, null | string> | null
-  data: Flatfile.RecordData[]
 }

@@ -10,7 +10,7 @@ export const Extractor = (
 ) => {
   return (handler: FlatfileListener) => {
     handler.use(
-      fileBuffer(`.${fileExt}`, async (file, buffer, event) => {
+      fileBuffer(fileExt, async (file, buffer, event) => {
         const job = await api.jobs.create({
           type: 'file',
           operation: 'extract',
