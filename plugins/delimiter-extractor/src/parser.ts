@@ -3,6 +3,7 @@ import Papa, { ParseResult } from 'papaparse'
 
 export function parseBuffer(
   buffer: Buffer,
+  delimiter: string,
   options?: {
     dynamicTyping?: boolean
     hasHeader?: boolean
@@ -15,7 +16,7 @@ export function parseBuffer(
     const results: ParseResult<Record<string, string>> = Papa.parse(
       fileContents,
       {
-        delimiter: '|',
+        delimiter,
         dynamicTyping: options?.dynamicTyping || false,
         header: options?.hasHeader === false ? false : true,
         skipEmptyLines: options?.skipEmptyLines || 'greedy',

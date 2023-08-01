@@ -3,12 +3,12 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 describe('parser', () => {
-  const buffer: Buffer = fs.readFileSync(
+  const psvBuffer: Buffer = fs.readFileSync(
     path.join(__dirname, '../ref/test-basic.psv')
   )
 
   test('PSV to WorkbookCapture', () => {
-    expect(parseBuffer(buffer)).toEqual({
+    expect(parseBuffer(psvBuffer, '|')).toEqual({
       Sheet1: {
         headers: ['Code', 'Details', 'BranchName', 'Tenant'],
         data: [
@@ -35,11 +35,12 @@ describe('parser', () => {
     })
   })
   test('hasHeaders', () => {
-    const headers = parseBuffer(buffer, { hasHeader: false }).Sheet1.headers
+    const headers = parseBuffer(psvBuffer, '|', { hasHeader: false }).Sheet1
+      .headers
     expect(headers).toEqual(['0', '1', '2', '3'])
   })
   test('transform', () => {
-    const data = parseBuffer(buffer, {
+    const data = parseBuffer(psvBuffer, '|', {
       transform: (v: string) => {
         return v.toUpperCase()
       },
@@ -66,7 +67,7 @@ describe('parser', () => {
     ])
   })
   test('dynamicTyping', () => {
-    const data = parseBuffer(buffer, {
+    const data = parseBuffer(psvBuffer, '|', {
       dynamicTyping: true,
     }).Sheet1.data
     expect(data).toEqual([
@@ -91,7 +92,7 @@ describe('parser', () => {
     ])
   })
   test('skipEmptyLines', () => {
-    const data = parseBuffer(buffer, {
+    const data = parseBuffer(psvBuffer, '|', {
       skipEmptyLines: true,
     }).Sheet1.data
     expect(data).toEqual([
@@ -124,8 +125,8 @@ describe('parser', () => {
   test('empty buffer', () => {
     const emptyBuffer = Buffer.from('', 'utf8')
     const logSpy = jest.spyOn(global.console, 'log')
-    parseBuffer(emptyBuffer)
+    parseBuffer(emptyBuffer, '|')
     expect(logSpy).toHaveBeenCalledWith('No data found in the file')
-    expect(parseBuffer(emptyBuffer)).toEqual({})
+    expect(parseBuffer(emptyBuffer, '|')).toEqual({})
   })
 })
