@@ -5,7 +5,7 @@ import { Extractor } from '@flatfile/util-extractor'
 export const DelimiterExtractor = (
   fileExt: string,
   options: {
-    delimiter: string
+    delimiter: ',' | '\t' | '|' | ';' | ':' | '~' | '^' | '#'
     dynamicTyping?: boolean
     hasHeader?: boolean
     skipEmptyLines?: boolean | 'greedy'

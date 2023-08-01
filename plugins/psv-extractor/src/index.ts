@@ -7,5 +7,5 @@ export const PSVExtractor = (options?: {
   skipEmptyLines?: boolean | 'greedy'
   transform?: (value: any) => Flatfile.CellValueUnion
 }) => {
-  return DelimiterExtractor('psv', { delimiter: '|', ...options })
+  return DelimiterExtractor('.psv', { delimiter: '|', ...options })
 }
