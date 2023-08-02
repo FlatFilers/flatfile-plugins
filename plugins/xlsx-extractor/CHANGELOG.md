@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.3.1
+
+### Patch Changes
+
+- 4651120: Add @deprecated comment
+
 ## 1.3.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.3.1
+
+### Patch Changes
+
+- 4651120: Add @deprecated comment
+
 ## 0.3.0
 
 ### Minor Changes
