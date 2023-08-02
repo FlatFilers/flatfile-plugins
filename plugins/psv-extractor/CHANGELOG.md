@@ -1,5 +1,16 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.3.0
+
+### Minor Changes
+
+- 77b9237: Add backwards compatibility for renamed extractors
+
+### Patch Changes
+
+- Updated dependencies [77b9237]
+  - @flatfile/plugin-delimiter-extractor@0.2.0
+
 ## 1.2.0
 
 ### Minor Changes

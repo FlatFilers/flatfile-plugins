@@ -1,5 +1,11 @@
 # @flatfile/plugin-json-extractor
 
+## 0.4.0
+
+### Minor Changes
+
+- 77b9237: Add backwards compatibility for renamed extractors
+
 ## 0.3.0
 
 ### Minor Changes

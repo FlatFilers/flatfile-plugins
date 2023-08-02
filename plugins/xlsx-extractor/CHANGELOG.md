@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.3.0
+
+### Minor Changes
+
+- 77b9237: Add backwards compatibility for renamed extractors
+
 ## 1.2.0
 
 ### Minor Changes
