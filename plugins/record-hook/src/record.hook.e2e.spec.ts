@@ -1,4 +1,4 @@
-import { recordHook } from './index'
+import { bulkRecordHook, recordHook } from './index'
 import {
   createRecords,
   deleteSpace,
@@ -8,15 +8,17 @@ import {
   setupSpace,
 } from '../../../testing/test.helpers'
 
+jest.setTimeout(10_000)
+
 describe('recordHook() e2e', () => {
   const listener = setupListener()
 
-  let spaceId;
-  let sheetId;
+  let spaceId
+  let sheetId
 
   beforeAll(async () => {
-    const space = await setupSpace();
-    spaceId = space.id;
+    const space = await setupSpace()
+    spaceId = space.id
     const workbook = await setupSimpleWorkbook(space.id, [
       'name',
       'email',
@@ -26,12 +28,17 @@ describe('recordHook() e2e', () => {
   })
 
   afterAll(async () => {
-    await deleteSpace(spaceId);
-  });
+    await deleteSpace(spaceId)
+  })
 
-  describe("record created", () => {
+  describe.each([
+    recordHook('test', (record) => record.set('name', 'daddy')),
+    bulkRecordHook('test', (records) =>
+      records.map((record) => record.set('name', 'daddy'))
+    ),
+  ])('record created', (fn) => {
     beforeEach(async () => {
-      listener.use(recordHook('test', (record) => record.set('name', 'daddy')))
+      listener.use(fn)
     })
 
     it('correctly modifies a value', async () => {
@@ -41,12 +48,17 @@ describe('recordHook() e2e', () => {
           email: 'john@doe.com',
           notes: 'foobar',
         },
+        {
+          name: 'Jane Doe',
+          email: 'jane@doe.com',
+          notes: 'foobar',
+        },
       ])
 
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
-      const firstRecord = records[0]
-      expect(firstRecord.values['name']).toMatchObject({ value: 'daddy' })
+      expect(records[0].values['name']).toMatchObject({ value: 'daddy' })
+      expect(records[1].values['name']).toMatchObject({ value: 'daddy' })
     })
   })
 })
