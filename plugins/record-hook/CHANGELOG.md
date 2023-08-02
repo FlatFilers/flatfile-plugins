@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.0
+
+### Major Changes
+
+- fe6e642: Create bulkRecordHook plugin
+
 ## 0.2.0
 
 ### Minor Changes
