@@ -5,4 +5,7 @@ export const ExcelExtractor = (options?: { rawNumbers?: boolean }) => {
   return Extractor(/\.(xlsx?|xlsm|xlsb|xltx?|xltm)$/i, parseBuffer, options)
 }
 
-export const xlmxExtractorPlugin = ExcelExtractor
+/*
+ * @deprecated use `ExcelExtractor` instead
+ */
+export const xlsxExtractorPlugin = ExcelExtractor
