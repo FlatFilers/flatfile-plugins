@@ -70,28 +70,8 @@ const detectHeader = (
   return { headerRow: widestRow, skip }
 }
 
-export const countNonEmptyCells = (row: Record<string, string>): number => {
+const countNonEmptyCells = (row: Record<string, string>): number => {
   return Object.values(row).filter(
     (cell) => cell && cell.toString().trim() !== ''
   ).length
-}
-
-/**
- * This needs to be improved but right now it looks for a pattern unlikely
- * to be in a header.
- *
- * Yes header | foo | bar | baz |
- * No header  | 99  | asd | 0   |
- *
- * @param header
- */
-function isHeaderCandidate(header: Record<string, string | number>): boolean {
-  if (!header) {
-    return false
-  }
-
-  // rule out anything that contains a pure number or non-string
-  return !Object.values(header).some((v) =>
-    typeof v === 'string' ? /^[0-9]+$/.test(v) : !!v
-  )
 }
