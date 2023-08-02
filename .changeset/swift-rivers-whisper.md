@@ -1,5 +1,5 @@
 ---
-'@flatfile/plugin-record-hook': patch
+'@flatfile/plugin-record-hook': major
 ---
 
 Create bulkRecordHook plugin
