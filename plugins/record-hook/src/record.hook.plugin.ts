@@ -26,7 +26,7 @@ export const bulkRecordHookPlugin = (
 ) => {
   return (client: FlatfileListener) => {
     client.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
-      return BulkRecordHook(event, callback)
+      return BulkRecordHook(event, callback, options)
     })
   }
 }
