@@ -2,10 +2,24 @@ import { FlatfileEvent } from '@flatfile/listener'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { Record_, Records } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
+import { asyncBatch } from './async.batch'
 
 export const RecordHook = async (
   event: FlatfileEvent,
-  handler: (record: FlatfileRecord, event: FlatfileEvent) => any | Promise<any>
+  handler: (record: FlatfileRecord, event?: FlatfileEvent) => any | Promise<any>
+) => {
+  return BulkRecordHook(event, async (records, event) => {
+    return records.map((record) => handler(record, event))
+  })
+}
+
+export const BulkRecordHook = async (
+  event: FlatfileEvent,
+  handler: (
+    records: FlatfileRecord[],
+    event?: FlatfileEvent
+  ) => any | Promise<any>,
+  options: { chunkSize?: number; parallel?: number } = {}
 ) => {
   try {
     const records = await event.cache.init<Records>(
@@ -17,9 +31,7 @@ export const RecordHook = async (
     const batch = await prepareXRecords(records)
 
     // run client defined data hooks
-    for (const x of batch.records) {
-      await handler(x, event)
-    }
+    await asyncBatch(batch.records, handler, options)
 
     const recordsUpdates = new RecordTranslater<FlatfileRecord>(
       batch.records
