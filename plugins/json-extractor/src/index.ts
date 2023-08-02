@@ -5,4 +5,7 @@ export const JSONExtractor = () => {
   return Extractor('.json', parseBuffer)
 }
 
+/*
+ * @deprecated use `JSONExtractor` instead
+ */
 export const jsonExtractorPlugin = JSONExtractor

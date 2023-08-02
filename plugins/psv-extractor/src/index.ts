@@ -10,4 +10,7 @@ export const PSVExtractor = (options?: {
   return DelimiterExtractor('.psv', { delimiter: '|', ...options })
 }
 
+/*
+ * @deprecated use `PSVExtractor` instead
+ */
 export const psvExtractorPlugin = PSVExtractor
