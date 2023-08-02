@@ -8,4 +8,4 @@ export const ExcelExtractor = (options?: { rawNumbers?: boolean }) => {
 /*
  * @deprecated use `ExcelExtractor` instead
  */
-export const xlmxExtractorPlugin = ExcelExtractor
+export const xlsxExtractorPlugin = ExcelExtractor
