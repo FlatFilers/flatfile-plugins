@@ -63,3 +63,5 @@ export const ZipExtractor = () => {
     )
   }
 }
+
+export const zipExtractorPlugin = ZipExtractor
