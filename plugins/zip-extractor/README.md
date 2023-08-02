@@ -1,4 +1,4 @@
-# @flatfile/plugin-zip-extractor"
+# @flatfile/plugin-zip-extractor
 
 This package decompresses a zip file and uploads the decompressed files into Flatfile.
 
