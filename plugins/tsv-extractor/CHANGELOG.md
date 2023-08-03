@@ -1,5 +1,12 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.2.2
+
+### Patch Changes
+
+- Updated dependencies [1cd2f31]
+  - @flatfile/plugin-delimiter-extractor@0.3.0
+
 ## 1.2.1
 
 ### Patch Changes

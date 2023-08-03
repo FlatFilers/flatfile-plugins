@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.2.1
+
+### Patch Changes
+
+- c859a10: Extract asyncBatch to a utility package
+- Updated dependencies [c859a10]
+  - @flatfile/util-common@0.0.2
+
 ## 0.2.0
 
 ### Minor Changes

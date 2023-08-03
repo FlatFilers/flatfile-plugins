@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.3.2
+
+### Patch Changes
+
+- 1cd2f31: Add header row auto-detection
+- Updated dependencies [c859a10]
+  - @flatfile/util-extractor@0.2.1
+
 ## 1.3.1
 
 ### Patch Changes
