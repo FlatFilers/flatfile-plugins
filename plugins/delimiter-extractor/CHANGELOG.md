@@ -1,5 +1,16 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.3.0
+
+### Minor Changes
+
+- 1cd2f31: Add header row auto-detection
+
+### Patch Changes
+
+- Updated dependencies [c859a10]
+  - @flatfile/util-extractor@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
