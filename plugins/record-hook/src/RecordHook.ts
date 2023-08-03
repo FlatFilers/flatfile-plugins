@@ -2,7 +2,7 @@ import { FlatfileEvent } from '@flatfile/listener'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { Record_, Records } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
-import { asyncBatch } from './async.batch'
+import { asyncBatch } from '@flatfile/util-common'
 
 export const RecordHook = async (
   event: FlatfileEvent,

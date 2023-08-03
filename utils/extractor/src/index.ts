@@ -2,6 +2,7 @@ import type { FlatfileListener } from '@flatfile/listener'
 import { fileBuffer } from '@flatfile/util-file-buffer'
 import api, { Flatfile } from '@flatfile/api'
 import { mapValues } from 'remeda'
+import { asyncBatch } from '@flatfile/util-common'
 
 export const Extractor = (
   fileExt: string | RegExp,
@@ -117,57 +118,6 @@ function getSheetConfig(
       constraints: required?.[key] ? [{ type: 'required' }] : [],
     })),
   }
-}
-
-async function asyncBatch<T, R>(
-  arr: T[],
-  callback: (chunk: T[]) => Promise<R>,
-  options: { chunkSize?: number; parallel?: number } = {}
-): Promise<R> {
-  const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options }
-  const results: R[] = []
-
-  const chunks: T[][] = []
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    chunks.push(arr.slice(i, i + chunkSize))
-  }
-
-  async function processChunk(chunk: T[]): Promise<void> {
-    const result = await callback(chunk)
-    results.push(result)
-  }
-
-  const promises: Promise<void>[] = []
-  let running = 0
-  let currentIndex = 0
-
-  function processNext(): void {
-    if (currentIndex >= chunks.length) {
-      return
-    }
-
-    const currentChunk = chunks[currentIndex]
-    const promise = processChunk(currentChunk).finally(() => {
-      running--
-      processNext()
-    })
-
-    promises.push(promise)
-    currentIndex++
-    running++
-
-    if (running < parallel) {
-      processNext()
-    }
-  }
-
-  for (let i = 0; i < parallel && i < chunks.length; i++) {
-    processNext()
-  }
-
-  await Promise.all(promises)
-
-  return results.flat() as R
 }
 
 /**
