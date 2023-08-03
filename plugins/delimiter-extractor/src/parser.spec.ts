@@ -11,6 +11,12 @@ describe('parser', () => {
     expect(parseBuffer(psvBuffer, { delimiter: '|' })).toEqual({
       Sheet1: {
         headers: ['Code', 'Details', 'BranchName', 'Tenant'],
+        required: {
+          Code: true,
+          Details: false,
+          BranchName: false,
+          Tenant: false,
+        },
         data: [
           {
             Code: { value: 'Personal Care' },
@@ -22,7 +28,6 @@ describe('parser', () => {
             Code: { value: 'Hospital' },
             Details: { value: 'Hospital' },
             BranchName: { value: 'Department' },
-            Tenant: { value: undefined },
           },
           {
             Code: { value: 'Home Nursing' },
@@ -35,9 +40,8 @@ describe('parser', () => {
     })
   })
   test('hasHeaders', () => {
-    const headers = parseBuffer(psvBuffer, { delimiter: '|', hasHeader: false })
-      .Sheet1.headers
-    expect(headers).toEqual(['0', '1', '2', '3'])
+    const headers = parseBuffer(psvBuffer, { delimiter: '|' }).Sheet1.headers
+    expect(headers).toEqual(['Code', 'Details', 'BranchName', 'Tenant'])
   })
   test('transform', () => {
     const data = parseBuffer(psvBuffer, {
@@ -57,7 +61,6 @@ describe('parser', () => {
         Code: { value: 'HOSPITAL' },
         Details: { value: 'HOSPITAL' },
         BranchName: { value: 'DEPARTMENT' },
-        Tenant: { value: undefined },
       },
       {
         Code: { value: 'HOME NURSING' },
@@ -83,7 +86,6 @@ describe('parser', () => {
         Code: { value: 'Hospital' },
         Details: { value: 'Hospital' },
         BranchName: { value: 'Department' },
-        Tenant: { value: undefined },
       },
       {
         Code: { value: 'Home Nursing' },
@@ -105,17 +107,11 @@ describe('parser', () => {
         BranchName: { value: 'Department' },
         Tenant: { value: 'notdata' },
       },
-      {
-        Code: { value: '        ' },
-        Details: { value: undefined },
-        BranchName: { value: undefined },
-        Tenant: { value: undefined },
-      },
+      { Code: { value: '        ' } },
       {
         Code: { value: 'Hospital' },
         Details: { value: 'Hospital' },
         BranchName: { value: 'Department' },
-        Tenant: { value: undefined },
       },
       {
         Code: { value: 'Home Nursing' },

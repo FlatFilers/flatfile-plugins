@@ -5,9 +5,8 @@ import { Extractor } from '@flatfile/util-extractor'
 export const DelimiterExtractor = (
   fileExt: string,
   options: {
-    delimiter: ',' | '\t' | '|' | ';' | ':' | '~' | '^' | '#'
+    delimiter: '\t' | '|' | ';' | ':' | '~' | '^' | '#'
     dynamicTyping?: boolean
-    hasHeader?: boolean
     skipEmptyLines?: boolean | 'greedy'
     transform?: (value: any) => Flatfile.CellValueUnion
   }
