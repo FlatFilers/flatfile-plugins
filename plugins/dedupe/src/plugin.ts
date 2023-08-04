@@ -9,7 +9,7 @@ import { match } from "ts-pattern";
  * @property {string} on - field key to match on
  * @property {string} keep - "first" | "last"
  * @property {function} custom - custom dedupe function
- * @property {boolean} debug - show helpul messages useful for debugging (usage intended for development)
+ * @property {boolean} debug - show helpful messages useful for debugging (usage intended for development)
  */
 export interface PluginOptions {
   readonly on?: string;
