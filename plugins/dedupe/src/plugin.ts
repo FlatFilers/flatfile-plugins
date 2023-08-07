@@ -104,7 +104,7 @@ export const dedupe = async (
   event: FlatfileEvent,
   opts: PluginOptions
 ): Promise<void> => {
-  const { sheetId } = event.context
+  const { sheetId, jobId } = event.context
 
   try {
     const { data } = await api.records.get(sheetId)
@@ -121,6 +121,7 @@ export const dedupe = async (
       })
 
     if (R.isEmpty(removeThese)) {
+      await api.jobs.ack(jobId, { info: 'No duplicates found' })
       if (opts.debug) {
         logInfo('No duplicates found')
       }
@@ -134,20 +135,24 @@ export const dedupe = async (
       try {
         await api.records.delete(sheetId, { ids: removeThese })
 
+        await api.jobs.ack(jobId, { info: 'Successfully removed records' })
         if (opts.debug) {
           logInfo('Successfully removed records')
         }
       } catch (_removeRecordsError: unknown) {
+        await api.jobs.fail(jobId, { info: 'Failed to remove records' })
         logError('Failed to remove records')
       }
     }
   } catch (_fetchRecordsError: unknown) {
+    await api.jobs.fail(jobId, { info: 'Failed to fetch records' })
     logError('Failed to fetch records')
   }
 
   if (opts.debug) {
     logInfo('Done')
   }
+  await api.jobs.complete(jobId, { info: 'Successfully removed records' })
 }
 
 const logError = (msg: string): void => {
