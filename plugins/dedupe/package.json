@@ -1,9 +1,9 @@
 {
   "name": "@flatfile/plugin-dedupe",
   "version": "0.0.0",
-  "description": "asdf",
+  "description": "Dedupe records in a sheet via a sheet level custom action.",
   "registryMetadata": {
-    "category": "asdf"
+    "category": "automations"
   },
   "engines": {
     "node": ">= 16"
