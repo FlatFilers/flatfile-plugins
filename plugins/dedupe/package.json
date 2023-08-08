@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-dedupe",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Dedupe records in a sheet via a sheet level custom action.",
   "registryMetadata": {
     "category": "transform"
