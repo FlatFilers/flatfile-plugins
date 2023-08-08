@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Dedupe records in a sheet via a sheet level custom action.",
   "registryMetadata": {
-    "category": "automations"
+    "category": "transform"
   },
   "engines": {
     "node": ">= 16"
