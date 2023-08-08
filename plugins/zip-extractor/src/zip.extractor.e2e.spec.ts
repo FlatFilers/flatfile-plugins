@@ -37,7 +37,7 @@ describe('ZipExtractor e2e', () => {
   describe('test-basic.zip', () => {
     jest.mock('fs')
     test('files extracted and uploaded to space', async () => {
-      await listener.waitFor('file:created')
+      await listener.waitFor('file:created', 4)
       const filesPostUpload = await getFiles(spaceId)
       expect(filesPostUpload.length).toBe(4)
     })
