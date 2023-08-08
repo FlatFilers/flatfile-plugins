@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "clean": "find ./ '(' -name 'node_modules' -o -name 'dist' -o -name '.turbo' ')' -type d -exec rm -rf {} +",
-    "test": "turbo test",
+    "test": "turbo test --concurrency=1",
     "build": "turbo build",
     "lint": "prettier --check **/*.ts",
     "changeset": "changeset",
@@ -29,7 +29,7 @@
     "typescript",
     "node.js"
   ],
-  "author": "Alex Hollenbeck",
+  "author": "Flatfile, Inc.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/FlatFilers/flatfile-plugins/issues"
