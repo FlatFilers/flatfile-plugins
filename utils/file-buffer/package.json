@@ -1,0 +1,33 @@
+{
+  "name": "@flatfile/util-file-buffer",
+  "version": "0.0.2",
+  "description": "A utility for extracting data from any file and making it available as a buffer",
+  "registryMetadata": {
+    "category": "utilities"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest --passWithNoTests"
+  },
+  "keywords": [],
+  "author": "David Boskovic",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "utils/file-buffer"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.5.13",
+    "@flatfile/listener": "^0.3.11"
+  }
+}

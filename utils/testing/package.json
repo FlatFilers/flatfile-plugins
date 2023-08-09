@@ -13,7 +13,7 @@
     "build": "parcel build",
     "dev": "parcel watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js  --passWithNoTests"
+    "test": "jest --passWithNoTests"
   },
   "author": "Carl Brugger",
   "repository": {

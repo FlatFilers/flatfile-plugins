@@ -1,12 +1,12 @@
 {
   "name": "@flatfile/plugin-psv-extractor",
-  "version": "1.0.0",
-  "description": "A plugin for parsing psv files Flatfile.",
+  "version": "1.3.3",
+  "description": "A plugin for parsing a psv file and extracting it into Flatfile.",
   "registryMetadata": {
     "category": "extractors"
   },
   "engines": {
-    "node": ">= 12"
+    "node": ">= 16"
   },
   "source": "src/index.ts",
   "main": "dist/main.js",
@@ -16,7 +16,7 @@
     "build": "parcel build",
     "dev": "parcel watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js"
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [],
   "author": "Ashley Mulligan",
@@ -27,22 +27,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.4.9",
-    "@flatfile/hooks": "^1.3.0",
-    "@flatfile/listener": "^0.3.4",
-    "@flatfile/plugin-extractor-utils": "0.0.1",
-    "papaparse": "^5.4.1",
-    "remeda": "^1.14.0"
-  },
-  "devDependencies": {
-    "@types/flat": "^5.0.2",
-    "@types/jest": "^29.5.1",
-    "@types/papaparse": "^5.3.7",
-    "eslint": "^8.19.0",
-    "jest": "^29.5.0",
-    "ts-jest": "^29.1.0",
-    "tslib": "^2.4.1",
-    "tsup": "^6.1.3",
-    "typescript": "^5.0.4"
+    "@flatfile/api": "^1.5.13",
+    "@flatfile/plugin-delimiter-extractor": "^0.3.0"
   }
 }

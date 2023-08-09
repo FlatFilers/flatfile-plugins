@@ -1,4 +1,4 @@
-import { FlatfileListener } from "@flatfile/listener";
+import { FlatfileListener } from '@flatfile/listener'
 
 /**
  * TestListener class extending from FlatfileListener.
@@ -6,10 +6,10 @@ import { FlatfileListener } from "@flatfile/listener";
  */
 export class TestListener extends FlatfileListener {
   // Mapping of event names to their invocation counts
-  public invocations: Map<string, number> = new Map();
+  public invocations: Map<string, number> = new Map()
 
   // List of watchers for event invocations
-  private invocationWatchers: [number, (num: number) => void, string][] = [];
+  private invocationWatchers: [number, (num: number) => void, string][] = []
 
   /**
    * Overridden method from FlatfileListener to handle event dispatch.
@@ -17,16 +17,16 @@ export class TestListener extends FlatfileListener {
    * @param event The event being dispatched
    */
   async dispatchEvent(event: any): Promise<void> {
-    const currentCount = this.invocations.get(event.topic) || 0;
-    this.invocations.set(event.topic, currentCount + 1);
+    const currentCount = this.invocations.get(event.topic) || 0
+    this.invocations.set(event.topic, currentCount + 1)
 
-    await super.dispatchEvent(event);
+    await super.dispatchEvent(event)
 
     for (let [count, resolver, eventName] of this.invocationWatchers) {
-      const eventCount = this.invocations.get(eventName);
+      const eventCount = this.invocations.get(eventName)
 
       if (event.topic === eventName && eventCount && eventCount >= count) {
-        resolver(eventCount);
+        resolver(eventCount)
       }
     }
   }
@@ -40,19 +40,19 @@ export class TestListener extends FlatfileListener {
    */
   waitFor(event: string, count: number = 1): Promise<number> {
     return new Promise((resolve) => {
-      this.invocationWatchers.push([count, resolve, event]);
+      this.invocationWatchers.push([count, resolve, event])
 
       if (this.invocations.get(event) >= count) {
-        resolve(this.invocations.get(event));
+        resolve(this.invocations.get(event))
       }
-    });
+    })
   }
 
   /**
    * Reset the count of invocations for all events.
    */
   resetCount(): void {
-    this.invocations = new Map();
+    this.invocations = new Map()
   }
 
   /**
@@ -60,9 +60,9 @@ export class TestListener extends FlatfileListener {
    */
   reset(): void {
     // @ts-ignore
-    this.listeners = [];
-    this.invocations = new Map();
+    this.listeners = []
+    this.invocations = new Map()
     // @ts-ignore
-    this.nodes.forEach((n) => n.reset());
+    this.nodes.forEach((n) => n.reset())
   }
 }

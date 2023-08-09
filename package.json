@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "description": "A library of open-source plugins for developers working with the Flatfile Platform.",
   "engines": {
-    "node": ">=16 || >=18",
-    "pnpm": ">=7"
+    "node": ">=16"
   },
   "workspaces": [
     "plugins/*",
@@ -13,7 +12,7 @@
   ],
   "scripts": {
     "clean": "find ./ '(' -name 'node_modules' -o -name 'dist' -o -name '.turbo' ')' -type d -exec rm -rf {} +",
-    "test": "turbo test --force",
+    "test": "turbo test --concurrency=1",
     "build": "turbo build",
     "lint": "prettier --check **/*.ts",
     "changeset": "changeset",
@@ -30,7 +29,7 @@
     "typescript",
     "node.js"
   ],
-  "author": "Alex Hollenbeck",
+  "author": "Flatfile, Inc.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/FlatFilers/flatfile-plugins/issues"
@@ -38,7 +37,7 @@
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
-    "@flatfile/listener": "^0.3.10",
+    "@flatfile/listener": "^0.3.11",
     "@parcel/packager-ts": "^2.9.1",
     "@parcel/transformer-typescript-types": "^2.9.1",
     "@types/jest": "^29.5.0",
@@ -51,6 +50,5 @@
     "ts-jest": "^29.1.0",
     "turbo": "^1.10.2",
     "typescript": "^5.0.4"
-  },
-  "dependencies": {}
+  }
 }

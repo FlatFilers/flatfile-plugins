@@ -1,5 +1,5 @@
-import { FlatfileEvent, FlatfileListener } from "@flatfile/listener";
-import { AutomapService } from "./automap.service";
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import { AutomapService } from './automap.service'
 
 /**
  * Automap plugin for Flatfile.
@@ -7,11 +7,11 @@ import { AutomapService } from "./automap.service";
  * @param options - config options
  */
 export function automap(options: AutomapOptions) {
-  const automapper = new AutomapService(options);
+  const automapper = new AutomapService(options)
 
   return (listener: FlatfileListener): void => {
-    automapper.assignListeners(listener);
-  };
+    automapper.assignListeners(listener)
+  }
 }
 
 /**
@@ -25,10 +25,10 @@ export function automap(options: AutomapOptions) {
  * @property {string} targetWorkbook - specify destination Workbook id or name.
  */
 export interface AutomapOptions {
-  readonly accuracy: "confident" | "exact";
-  readonly debug?: boolean;
-  readonly defaultTargetSheet?: string;
-  readonly matchFilename?: RegExp;
-  readonly onFailure?: (event: FlatfileEvent) => void;
-  readonly targetWorkbook?: string;
+  readonly accuracy: 'confident' | 'exact'
+  readonly debug?: boolean
+  readonly defaultTargetSheet?: string
+  readonly matchFilename?: RegExp
+  readonly onFailure?: (event: FlatfileEvent) => void
+  readonly targetWorkbook?: string
 }

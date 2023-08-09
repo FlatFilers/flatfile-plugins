@@ -16,7 +16,7 @@
     "build": "parcel build",
     "dev": "parcel watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js"
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [],
   "author": "Flatfile",
@@ -34,6 +34,6 @@
     "remeda": "^1.23.0"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "*"
+    "@flatfile/utils-testing": "^0.0.1"
   }
 }
