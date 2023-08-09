@@ -70,11 +70,13 @@ const isNullOrWhitespace = (value: any) =>
 const detectHeader = (
   rows: Record<string, any>[]
 ): { headerRow: Record<string, string>; skip: number } => {
+  const ROWS_TO_CHECK = 10
+
+  let skip = 0
   let widestRow: Record<string, string> = {}
   let widestRowCount = 0
-  let skip = 0
 
-  for (let i = 0; i < Math.min(rows.length, 10); i++) {
+  for (let i = 0; i < Math.min(rows.length, ROWS_TO_CHECK); i++) {
     const row = rows[i]
     const rowCount = countNonEmptyCells(row)
     if (rowCount > widestRowCount) {
