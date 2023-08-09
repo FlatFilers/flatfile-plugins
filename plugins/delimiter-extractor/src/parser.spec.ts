@@ -39,7 +39,7 @@ describe('parser', () => {
       },
     })
   })
-  test('hasHeaders', () => {
+  it('has headers', () => {
     const headers = parseBuffer(psvBuffer, { delimiter: '|' }).Sheet1.headers
     expect(headers).toEqual(['Code', 'Details', 'BranchName', 'Tenant'])
   })

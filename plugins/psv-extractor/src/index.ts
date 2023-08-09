@@ -3,7 +3,6 @@ import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
 
 export const PSVExtractor = (options?: {
   dynamicTyping?: boolean
-  hasHeader?: boolean
   skipEmptyLines?: boolean | 'greedy'
   transform?: (value: any) => Flatfile.CellValueUnion
 }) => {
