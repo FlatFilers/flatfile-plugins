@@ -32,7 +32,7 @@ describe('parser', function () {
       },
     })
   })
-  test('hasHeaders', () => {
+  it('has headers', () => {
     const headers = parseBuffer(buffer).Sheet1.headers
     expect(headers).toEqual(['First Name', 'Last Name', 'Email'])
   })
