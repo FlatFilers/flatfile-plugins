@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.4.0
+
+### Minor Changes
+
+- 6189d31: Fix for ghost rows in Excel files
+
 ## 1.3.2
 
 ### Patch Changes

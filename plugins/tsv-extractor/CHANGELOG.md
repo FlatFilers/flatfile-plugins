@@ -1,5 +1,11 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.2.3
+
+### Patch Changes
+
+- 2e7fce8: Remove unsupported parameter
+
 ## 1.2.2
 
 ### Patch Changes

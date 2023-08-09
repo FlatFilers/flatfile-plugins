@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.3.3
+
+### Patch Changes
+
+- 2e7fce8: Remove unsupported parameter
+
 ## 1.3.2
 
 ### Patch Changes
