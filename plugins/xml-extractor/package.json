@@ -1,0 +1,35 @@
+{
+  "name": "@flatfile/plugin-xml-extractor",
+  "version": "0.1.0",
+  "description": "A plugin for extracting data from XML files.",
+  "registryMetadata": {
+    "category": "extractors"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [],
+  "author": "David Boskovic",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/xml-extractor"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.5.13",
+    "@flatfile/listener": "^0.3.11",
+    "@flatfile/util-file-buffer": "0.0.2",
+    "xml-json-format": "^1.0.8"
+  }
+}
