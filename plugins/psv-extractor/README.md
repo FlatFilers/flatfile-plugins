@@ -1,4 +1,4 @@
-# @flatfile/plugin-psv-extractor"
+# @flatfile/plugin-psv-extractor
 
 This plugin parses a PSV file and extracts it into Flatfile.
 
