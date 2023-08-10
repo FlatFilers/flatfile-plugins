@@ -29,6 +29,7 @@
   "dependencies": {
     "@flatfile/api": "^1.5.13",
     "@flatfile/listener": "^0.3.11",
+    "@flatfile/util-extractor": "0.2.1",
     "@flatfile/util-file-buffer": "0.0.2",
     "xml-json-format": "^1.0.8"
   }
