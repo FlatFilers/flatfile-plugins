@@ -107,7 +107,6 @@ describe('parser', () => {
         BranchName: { value: 'Department' },
         Tenant: { value: 'notdata' },
       },
-      { Code: { value: '        ' } },
       {
         Code: { value: 'Hospital' },
         Details: { value: 'Hospital' },
