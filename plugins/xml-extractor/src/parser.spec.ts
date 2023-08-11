@@ -127,7 +127,6 @@ describe('parser', function () {
 
   describe('parser', () => {
     test('test duplicate header', () => {
-      parseBuffer(Buffer.from(XMLWithDupHeader)) //?
       expect(parseBuffer(Buffer.from(XMLWithDupHeader))).toEqual({
         Sheet1: {
           headers: ['firstName', 'lastName', 'email', 'email/0', 'email/1'],
