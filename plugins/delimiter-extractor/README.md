@@ -1,4 +1,4 @@
-# @flatfile/plugin-delimiter-extractor"
+# @flatfile/plugin-delimiter-extractor
 
 This plugin parses a delimited file and extracts it into Flatfile.
 
