@@ -1,5 +1,12 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.3.4
+
+### Patch Changes
+
+- Updated dependencies [c0b8d8d]
+  - @flatfile/plugin-delimiter-extractor@0.4.0
+
 ## 1.3.3
 
 ### Patch Changes
