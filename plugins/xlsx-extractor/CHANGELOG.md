@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.5.0
+
+### Minor Changes
+
+- c0b8d8d: Support duplicate headers with non-unique header keys
+
 ## 1.4.0
 
 ### Minor Changes

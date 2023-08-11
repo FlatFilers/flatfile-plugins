@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.4.0
+
+### Minor Changes
+
+- c0b8d8d: Support duplicate headers with non-unique header keys
+
 ## 0.3.0
 
 ### Minor Changes
