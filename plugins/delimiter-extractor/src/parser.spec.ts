@@ -3,12 +3,16 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 describe('parser', () => {
-  const psvBuffer: Buffer = fs.readFileSync(
+  const psvBasicBuffer: Buffer = fs.readFileSync(
     path.join(__dirname, '../ref/test-basic.psv')
   )
 
+  const psvComplexBuffer: Buffer = fs.readFileSync(
+    path.join(__dirname, '../ref/test-complex.psv')
+  )
+
   test('PSV to WorkbookCapture', () => {
-    expect(parseBuffer(psvBuffer, { delimiter: '|' })).toEqual({
+    expect(parseBuffer(psvBasicBuffer, { delimiter: '|' })).toEqual({
       Sheet1: {
         headers: ['Code', 'Details', 'BranchName', 'Tenant'],
         required: {
@@ -40,11 +44,12 @@ describe('parser', () => {
     })
   })
   it('has headers', () => {
-    const headers = parseBuffer(psvBuffer, { delimiter: '|' }).Sheet1.headers
+    const headers = parseBuffer(psvBasicBuffer, { delimiter: '|' }).Sheet1
+      .headers
     expect(headers).toEqual(['Code', 'Details', 'BranchName', 'Tenant'])
   })
   test('transform', () => {
-    const data = parseBuffer(psvBuffer, {
+    const data = parseBuffer(psvBasicBuffer, {
       delimiter: '|',
       transform: (v: string) => {
         return v.toUpperCase()
@@ -71,7 +76,7 @@ describe('parser', () => {
     ])
   })
   test('dynamicTyping', () => {
-    const data = parseBuffer(psvBuffer, {
+    const data = parseBuffer(psvBasicBuffer, {
       delimiter: '|',
       dynamicTyping: true,
     }).Sheet1.data
@@ -96,7 +101,7 @@ describe('parser', () => {
     ])
   })
   test('skipEmptyLines', () => {
-    const data = parseBuffer(psvBuffer, {
+    const data = parseBuffer(psvBasicBuffer, {
       delimiter: '|',
       skipEmptyLines: true,
     }).Sheet1.data
@@ -107,7 +112,6 @@ describe('parser', () => {
         BranchName: { value: 'Department' },
         Tenant: { value: 'notdata' },
       },
-      { Code: { value: '        ' } },
       {
         Code: { value: 'Hospital' },
         Details: { value: 'Hospital' },
@@ -127,5 +131,10 @@ describe('parser', () => {
     parseBuffer(emptyBuffer, { delimiter: '|' })
     expect(logSpy).toHaveBeenCalledWith('No data found in the file')
     expect(parseBuffer(emptyBuffer, { delimiter: '|' })).toEqual({})
+  })
+  test('parsing of basic equals parsing of complex', () => {
+    expect(parseBuffer(psvComplexBuffer, { delimiter: '|' })).toEqual(
+      parseBuffer(psvBasicBuffer, { delimiter: '|' })
+    )
   })
 })
