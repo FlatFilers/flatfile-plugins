@@ -1,4 +1,4 @@
-# @flatfile/plugin-xlsx-extractor"
+# @flatfile/plugin-xlsx-extractor
 
 This package parses all Sheets in an XLSX file and extracts them into Flatfile.
 
