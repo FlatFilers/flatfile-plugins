@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.3.0
+
+### Minor Changes
+
+- 38cf251: Fixes bug introduced in PR #172
+
 ## 0.2.0
 
 ### Minor Changes
