@@ -1,4 +1,26 @@
 import toJSON from 'xml-json-format'
+import { WorkbookCapture } from '@flatfile/util-extractor'
+
+export function parseBuffer(
+  buffer: Buffer,
+  options?: {
+    separator?: string
+    attributePrefix?: string
+    transform?: (row: Record<string, any>) => Record<string, any>
+  }
+): WorkbookCapture {
+  const transform = options?.transform || ((value) => value)
+  const data = xmlToJson(buffer.toString()).map(transform)
+  const headers = headersFromObjectList(data)
+
+  const sheetName = 'Sheet1'
+  return {
+    [sheetName]: {
+      headers,
+      data,
+    },
+  } as WorkbookCapture
+}
 
 export function flatToValues(
   obj: Record<string, any>[]
@@ -13,32 +35,23 @@ export function xmlToJson(xml: string): Array<Record<string, any>> {
   return json.map((obj) => flattenObject(obj))
 }
 
-export function schemaFromObjectList(
+export function headersFromObjectList(
   arr: Array<Record<string, any>>
-): Array<{ key: string; type: 'string' }> {
-  const keys = arr.reduce((acc, o) => {
-    return {
-      ...acc,
-      ...Object.keys(o).reduce((acc, k) => ({ ...acc, [k]: true }), {}),
-    }
-  }, {})
-  const obj = Object.keys(keys).reduce(
-    (acc, k) => ({ ...acc, [k]: { key: k, type: 'string' } }),
-    {}
-  )
-  return Object.values(obj)
+): Array<string> {
+  const keys: Record<string, true> = {}
+  arr.forEach((obj) => {
+    Object.keys(obj).forEach((key) => {
+      keys[key] = true
+    })
+  })
+  return Object.keys(keys)
 }
 
 function flattenAttributes(obj: Record<string, any>): Record<string, any> {
   if ('_attributes' in obj) {
     const attributes = mapObject(obj._attributes, (k, v) => [`#${k}`, v])
-    const out = {
-      ...obj,
-      ...attributes,
-      _attributes: undefined,
-    }
-    delete out._attributes
-    return out
+    delete obj._attributes
+    return { ...obj, ...attributes }
   }
   return obj
 }
@@ -46,11 +59,13 @@ function flattenAttributes(obj: Record<string, any>): Record<string, any> {
 function mapObject(
   obj: Record<string, any>,
   fn: (k: string, v: any) => [string, any]
-) {
-  return Object.keys(obj).reduce((acc, k) => {
+): Record<string, any> {
+  const result: Record<string, any> = {}
+  Object.keys(obj).forEach((k) => {
     const [key, value] = fn(k, obj[k])
-    return { ...acc, [key]: value }
-  }, {})
+    result[key] = value
+  })
+  return result
 }
 
 function flattenObject(
@@ -58,16 +73,18 @@ function flattenObject(
   prefix = ''
 ): Record<string, any> {
   const obj = flattenAttributes(input)
-  return Object.keys(obj).reduce((acc, k) => {
+  const result: Record<string, any> = {}
+  Object.keys(obj).forEach((k) => {
     const pre = prefix
       ? prefix + (k.startsWith('#') || k === '_text' ? '' : '/')
       : ''
     if (typeof obj[k] === 'object') {
-      return { ...acc, ...flattenObject(obj[k], pre + k) }
+      Object.assign(result, flattenObject(obj[k], pre + k))
     } else {
-      return { ...acc, [pre + (k === '_text' && pre ? '' : k)]: obj[k] }
+      result[pre + (k === '_text' && pre ? '' : k)] = obj[k]
     }
-  }, {})
+  })
+  return result
 }
 
 export function findRoot(json: Record<string, any>): Array<any> {

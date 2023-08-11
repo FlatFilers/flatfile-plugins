@@ -1,4 +1,4 @@
-import { findRoot, schemaFromObjectList, xmlToJson } from './parser'
+import { findRoot, headersFromObjectList, xmlToJson } from './parser'
 
 const XML = `<?xml version="1.0" encoding="UTF-8"?>
 <root>
@@ -75,33 +75,15 @@ describe('parser', function () {
     })
   })
 
-  test('schemaFromObjectList', function () {
+  test('headersFromObjectList', function () {
     const json = xmlToJson(XML)
-    expect(schemaFromObjectList(json)).toEqual([
-      {
-        key: 'street',
-        type: 'string',
-      },
-      {
-        key: 'country/name',
-        type: 'string',
-      },
-      {
-        key: 'country/iso',
-        type: 'string',
-      },
-      {
-        key: 'zip',
-        type: 'string',
-      },
-      {
-        key: 'zip#format',
-        type: 'string',
-      },
-      {
-        key: '#active',
-        type: 'string',
-      },
+    expect(headersFromObjectList(json)).toEqual([
+      'street',
+      'country/name',
+      'country/iso',
+      'zip',
+      'zip#format',
+      '#active',
     ])
   })
 
