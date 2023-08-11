@@ -7,7 +7,7 @@ import {
   getFiles,
   setupListener,
   setupSpace,
-} from '../../../testing/test.helpers'
+} from '@flatfile/utils-testing'
 import { ZipExtractor } from '.'
 
 describe('ZipExtractor e2e', () => {

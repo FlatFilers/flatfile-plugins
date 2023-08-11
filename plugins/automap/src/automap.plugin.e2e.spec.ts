@@ -7,7 +7,7 @@ import {
   setupListener,
   setupSimpleWorkbook,
   setupSpace,
-} from '../../../testing/test.helpers'
+} from '@flatfile/utils-testing'
 
 jest.setTimeout(15_000)
 
@@ -29,11 +29,11 @@ describe('automap() e2e', () => {
   })
 
   afterAll(async () => {
-    await api.spaces.delete(spaceId);
-  });
+    await api.spaces.delete(spaceId)
+  })
 
-  describe("record created", () => {
-    const mockFn = jest.fn();
+  describe('record created', () => {
+    const mockFn = jest.fn()
 
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))
