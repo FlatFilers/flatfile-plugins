@@ -30,6 +30,7 @@ export const ZipExtractor = () => {
           })
           zipEntries.forEach(async (zipEntry) => {
             if (
+              !zipEntry.entryName.startsWith('__MACOSX') &&
               !zipEntry.entryName.startsWith('.') &&
               !zipEntry.entryName.match('.DS_Store') &&
               !zipEntry.isDirectory
