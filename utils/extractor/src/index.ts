@@ -34,6 +34,8 @@ export const Extractor = (
             progress: 50,
             info: 'Adding records to Sheets',
           })
+          const { chunkSize = 1000, parallel = 1 } = options
+          console.log(chunkSize, parallel)
           for (const sheet of workbook.sheets) {
             if (!capture[sheet.name]) {
               continue
@@ -43,7 +45,7 @@ export const Extractor = (
               async (chunk) => {
                 await api.records.insert(sheet.id, chunk)
               },
-              { chunkSize: 10000, parallel: 1 }
+              { chunkSize, parallel }
             )
           }
           await api.files.update(file.id, {

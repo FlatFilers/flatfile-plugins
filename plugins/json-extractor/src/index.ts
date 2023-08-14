@@ -1,8 +1,11 @@
 import { parseBuffer } from './parser'
 import { Extractor } from '@flatfile/util-extractor'
 
-export const JSONExtractor = () => {
-  return Extractor('.json', parseBuffer)
+export const JSONExtractor = (options: {
+  chunkSize?: number
+  parallel?: number
+}) => {
+  return Extractor('.json', parseBuffer, options)
 }
 
 /*
