@@ -28,10 +28,10 @@ export const ZipExtractor = () => {
             progress: 50,
             info: 'Uploading files',
           })
-          zipEntries.forEach(async (zipEntry) => {
+          const uploadPromises = zipEntries.map(async (zipEntry) => {
             if (
-              !zipEntry.entryName.startsWith('.') &&
-              !zipEntry.entryName.match('.DS_Store') &&
+              !zipEntry.name.startsWith('.') &&
+              !zipEntry.entryName.startsWith('__MACOSX') &&
               !zipEntry.isDirectory
             ) {
               zip.extractEntryTo(
@@ -40,16 +40,16 @@ export const ZipExtractor = () => {
                 false,
                 true
               )
-
               const filePath = path.join(__dirname, '../', zipEntry.name)
               const stream = fs.createReadStream(filePath)
               await api.files.upload(stream, {
                 spaceId,
                 environmentId,
               })
-              fs.unlinkSync(filePath)
+              await fs.promises.unlink(filePath)
             }
           })
+          await Promise.all(uploadPromises)
           await api.jobs.complete(job.data.id, {
             info: 'Extraction complete',
           })
