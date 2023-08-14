@@ -30,9 +30,8 @@ export const ZipExtractor = () => {
           })
           const uploadPromises = zipEntries.map(async (zipEntry) => {
             if (
+              !zipEntry.name.startsWith('.') &&
               !zipEntry.entryName.startsWith('__MACOSX') &&
-              !zipEntry.entryName.startsWith('.') &&
-              !zipEntry.entryName.match('.DS_Store') &&
               !zipEntry.isDirectory
             ) {
               zip.extractEntryTo(
