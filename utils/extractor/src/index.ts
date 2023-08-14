@@ -35,7 +35,6 @@ export const Extractor = (
             info: 'Adding records to Sheets',
           })
           const { chunkSize = 1000, parallel = 1 } = options
-          console.log(chunkSize, parallel)
           for (const sheet of workbook.sheets) {
             if (!capture[sheet.name]) {
               continue
