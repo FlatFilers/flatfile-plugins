@@ -9,13 +9,20 @@ export const action = (
   return (client: Client) => {
     client.on('job:created', async (event: FlatfileEvent) => {
       const { jobId } = event.context
-      if (event.payload.operation === operation) {
+      try {
+        if (event.payload.operation === operation) {
+          await api.jobs.update(jobId, {
+            status: 'executing',
+          })
+          await fn(event, api, jobId)
+          await api.jobs.update(jobId, {
+            status: 'complete',
+          })
+        }
+      } catch (e) {
+        console.log(`error ${e}`)
         await api.jobs.update(jobId, {
-          status: 'executing',
-        })
-        await fn(event, api, jobId)
-        await api.jobs.update(jobId, {
-          status: 'complete',
+          status: 'failed',
         })
       }
     })
