@@ -1,0 +1,1 @@
+# @flatfile/plugin-pdf-extractor
