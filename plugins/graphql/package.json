@@ -1,17 +1,10 @@
 {
   "name": "@flatfile/plugin-graphql",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A plugin for converting Graphql to Flatfile blueprint.",
   "registryMetadata": {
     "status": "Coming soon",
     "category": "schema"
-  },
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
-    "test": "jest"
   },
   "keywords": [],
   "author": "Alex Hollenbeck",
@@ -20,12 +13,5 @@
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
     "directory": "plugins/graphql"
   },
-  "license": "ISC",
-  "devDependencies": {
-    "@types/jest": "^29.5.0",
-    "jest": "^29.5.0",
-    "ts-jest": "^29.1.0",
-    "tsup": "^6.7.0",
-    "typescript": "^5.0.4"
-  }
+  "license": "ISC"
 }

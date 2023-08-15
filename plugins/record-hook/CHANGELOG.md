@@ -1,5 +1,101 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.1
+
+### Patch Changes
+
+- c859a10: Extract asyncBatch to a utility package
+- Updated dependencies [c859a10]
+  - @flatfile/util-common@0.0.2
+
+## 1.0.0
+
+### Major Changes
+
+- fe6e642: Create bulkRecordHook plugin
+
+## 0.2.0
+
+### Minor Changes
+
+- 2b15b32: Refactor extractors to share a common extractor and use custom parsers. Add .tsv file extractor and a generic delimiter extractor. Add header row detection to the Excel extractor.
+
+## 0.1.11
+
+### Patch Changes
+
+- 8a87451: Updates record-hook dependencies
+
+## 0.1.10
+
+### Patch Changes
+
+- 7fa7925: updating readmes
+
+## 0.1.9
+
+### Patch Changes
+
+- 8e41b36: Add FlatfileRecord as export
+
+## 0.1.8
+
+### Patch Changes
+
+- 83c4c98: Update internals to use the dataUrl for updating records
+
+## 0.1.7
+
+### Patch Changes
+
+- 41261d0: Build tooling refactor
+
+## 0.1.6
+
+### Patch Changes
+
+- d589b7c: Update @flatfile/api to latest 1.5.6
+
+## 0.1.5
+
+### Patch Changes
+
+- c2310c0: Add event to RecordHook Handler
+
+## 0.1.4
+
+### Patch Changes
+
+- ab27fa9: Export both recordHook and RecordHook
+
+## 0.1.3
+
+### Patch Changes
+
+- b925834: Fix messages being set on record properly
+
+## 0.1.2
+
+### Patch Changes
+
+- e8a114f: Update version of listener
+
+## 0.1.1
+
+### Patch Changes
+
+- 42bbefd: Add lifecycle methods and update packages
+
+## 0.1.0
+
+### Minor Changes
+
+- a377336: Move RecordHook functionality into this package and remove configure dependency.
+
+### Patch Changes
+
+- 41e7f5a: upped the listener version
+
 ## 0.0.7
 
 ### Patch Changes

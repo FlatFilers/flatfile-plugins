@@ -1,7 +1,7 @@
 # @flatfile/plugin-graphql
 
-## 0.0.1
+## 0.0.2
 
 ### Patch Changes
 
-- 8ed9bb3: Add four new plugin skeletons; add category metadata to existing
+- 7fa7925: updating readmes
