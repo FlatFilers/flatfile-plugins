@@ -98,7 +98,7 @@ import { action } from '@flatfile/plugin-action'
 
 export default function (listener) {
   listener.use(
-    action('duplicateSheet', (event, api, jobId) => {
+    action('duplicateSheet', async (event, api, jobId) => {
       await api.jobs.update(jobId, {
         progress: 25,
       })
