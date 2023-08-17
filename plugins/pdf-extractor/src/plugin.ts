@@ -28,7 +28,7 @@ export const run = async (
   }
 
   if (R.isEmpty(opts.apiKey) && opts.debug) {
-    logWarn("Found invalid API key")
+    logWarn('Found invalid API key')
 
     return
   }
@@ -46,7 +46,7 @@ export const run = async (
     const response = await axios.postForm(url, formData)
 
     if (response.status !== 200) {
-      logError("Failed to convert PDF on files.com")
+      logError('Failed to convert PDF on files.com')
 
       return
     }
