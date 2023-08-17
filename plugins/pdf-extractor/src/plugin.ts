@@ -28,9 +28,7 @@ export const run = async (
   }
 
   if (R.isEmpty(opts.apiKey)) {
-    if (opts.debug) {
-      logWarn('Found invalid API key')
-    }
+    logError('Found invalid API key')
 
     return
   }
