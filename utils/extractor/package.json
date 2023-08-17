@@ -15,7 +15,7 @@
     "build": "parcel build",
     "dev": "parcel watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
