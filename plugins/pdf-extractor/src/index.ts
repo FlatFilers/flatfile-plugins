@@ -1,5 +1,5 @@
 import { FlatfileListener } from '@flatfile/listener'
-import { fileBuffer } from '@flatfile/plugin-file-buffer'
+import { fileBuffer } from '@flatfile/util-file-buffer'
 
 import { PluginOptions, run } from './plugin'
 
