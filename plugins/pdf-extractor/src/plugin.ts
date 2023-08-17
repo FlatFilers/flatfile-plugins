@@ -27,8 +27,10 @@ export const run = async (
     return
   }
 
-  if (R.isEmpty(opts.apiKey) && opts.debug) {
-    logWarn('Found invalid API key')
+  if (R.isEmpty(opts.apiKey)) {
+    if (opts.debug) {
+      logWarn('Found invalid API key')
+    }
 
     return
   }
@@ -52,8 +54,10 @@ export const run = async (
     }
 
     fs.writeFile(fileName, response.data, async (err: unknown) => {
-      if (err && opts.debug) {
-        logError('Error writing file to disk')
+      if (err) {
+        if (opts.debug) {
+          logError('Error writing file to disk')
+        }
 
         return
       }
