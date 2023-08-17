@@ -142,6 +142,14 @@ export const dedupe = async (
       } catch (_removeRecordsError: unknown) {
         await api.jobs.fail(jobId, { info: 'Failed to remove records' })
         logError('Failed to remove records')
+
+        return
+      }
+
+      try {
+        await api.jobs.complete(jobId, { info: 'Successfully removed records' })
+      } catch (_jobCompleteError: unknown) {
+        logError('Failed to set job as `complete`')
       }
     }
   } catch (_fetchRecordsError: unknown) {
@@ -152,7 +160,6 @@ export const dedupe = async (
   if (opts.debug) {
     logInfo('Done')
   }
-  await api.jobs.complete(jobId, { info: 'Successfully removed records' })
 }
 
 const logError = (msg: string): void => {
