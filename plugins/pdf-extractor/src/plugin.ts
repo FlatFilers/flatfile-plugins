@@ -27,7 +27,9 @@ export const run = async (
     return
   }
 
-  if (R.isEmpty(opts.apiKey)) {
+  if (R.isEmpty(opts.apiKey) && opts.debug) {
+    logWarn("Found invalid API key")
+
     return
   }
 
@@ -36,18 +38,24 @@ export const run = async (
     const fileName: string = `${file.name.replace(
       '.pdf',
       ''
-    )}(Converted PDF)-${currentEpoch()}.csv`
+    )} (Converted PDF)-${currentEpoch()}.csv`
 
     const formData = new FormData()
     formData.append('file', new Blob([buffer]))
 
     const response = await axios.postForm(url, formData)
 
-    if (response.status !== 200) return
+    if (response.status !== 200) {
+      logError("Failed to convert PDF on files.com")
+
+      return
+    }
 
     fs.writeFile(fileName, response.data, async (err: unknown) => {
-      if (err) {
+      if (err && opts.debug) {
         logError('Error writing file to disk')
+
+        return
       }
 
       try {
@@ -61,12 +69,15 @@ export const run = async (
 
         reader.close()
       } catch (uploadError: unknown) {
-        logError('Failed to upload PDF->CSV file')
+        if (opts.debug) {
+          logError('Failed to upload PDF->CSV file')
+        }
+
         logError(JSON.stringify(uploadError, null, 2))
       }
     })
   } catch (convertError: unknown) {
-    logError(JSON.stringify(convertError))
+    logError(JSON.stringify(convertError, null, 2))
   }
 
   if (opts.debug) {
