@@ -148,13 +148,21 @@ export const dedupe = async (
 
       try {
         await api.jobs.complete(jobId, { info: 'Successfully removed records' })
-      } catch (_jobCompleteError: unknown) {
-        logError('Failed to set job as `complete`')
+      } catch (jobCompleteError: unknown) {
+        logError(
+          'Failed to set job as `complete`' +
+            '\n' +
+            JSON.stringify(jobCompleteError, null, 2)
+        )
       }
     }
-  } catch (_fetchRecordsError: unknown) {
+  } catch (fetchRecordsError: unknown) {
     await api.jobs.fail(jobId, { info: 'Failed to fetch records' })
-    logError('Failed to fetch records')
+    logError(
+      'Failed to fetch records' +
+        '\n' +
+        JSON.stringify(fetchRecordsError, null, 2)
+    )
   }
 
   if (opts.debug) {
