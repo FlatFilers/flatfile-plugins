@@ -1,7 +1,9 @@
+type LogType = 'log' | 'warn' | 'error'
+
 export const log = (
   packageName: string,
   msg: string,
-  type: 'log' | 'warn' | 'error' = 'log'
+  type: LogType = 'log'
 ): void => {
   const status = {
     log: 'INFO',

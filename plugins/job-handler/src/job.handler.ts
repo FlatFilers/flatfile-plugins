@@ -1,6 +1,6 @@
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import api, { Flatfile } from '@flatfile/api'
-import { logError } from '@flatfile/util-common'
+import { log, logError } from '@flatfile/util-common'
 
 export interface PluginOptions {
   readonly debug?: boolean
@@ -17,6 +17,10 @@ export interface PluginOptions {
  * a promise that resolves to either void or a JobOutcome object. This function will be
  * used to process the job when the "job:ready" event is emitted.
  *
+ * @param {PluginOptions} opts - An optional object containing plugin options.
+ * @param {boolean} opts.debug - An optional boolean that will enable debug logging.
+ * Defaults to false.
+ *
  * @returns {Function} Returns a function that takes a FlatfileListener, adding an event
  * listener for the "job:ready" event and processing the job with the provided handler.
  */
@@ -25,14 +29,10 @@ export function jobHandler(
   handler: (event: FlatfileEvent) => Promise<void | Flatfile.JobOutcome>,
   opts: PluginOptions = {}
 ) {
-  // Returns a function which will configure a listener
   return function (listener: FlatfileListener) {
-    // Adding an event listener for "job:ready" event
     listener.on('job:ready', { job }, async (e) => {
-      // Extracting the jobId from the event context
       const { jobId } = e.context
 
-      // Acknowledging the job to Flatfile API with progress of 10% and an info message
       await api.jobs.ack(jobId, {
         info: 'Accepted',
         progress: 10,
@@ -41,10 +41,11 @@ export function jobHandler(
       let outcome
 
       try {
-        // Passing job data and the event to the provided handler function and storing the outcome
         outcome = await handler(e)
 
-        // Completing the job with the outcome from the handler, or a default message if the outcome is undefined
+        if (opts.debug) {
+          log('@flatfile/plugin-job-handler', 'Job complete')
+        }
         await api.jobs.complete(
           jobId,
           outcome ?? {
@@ -54,7 +55,6 @@ export function jobHandler(
           }
         )
       } catch (error) {
-        // Logging the error and reporting a failure to the Flatfile API if the handler throws an error
         logError('@flatfile/plugin-job-handler', error)
         await api.jobs.fail(
           jobId,

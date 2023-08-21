@@ -19,31 +19,27 @@ export interface PluginOptions {
  * @param {SetupFactory} setup - The setup factory used to create the configuration for the workbook.
  * This can either be a static Setup object or a function that creates a Setup object given a FlatfileEvent.
  *
+ * @param {PluginOptions} opts - An optional object containing plugin options.
+ * @param {boolean} opts.debug - An optional boolean that will enable debug logging.
+ * Defaults to false.
+ *
  * @returns {Function} Returns a function that takes a FlatfileListener, adding a "space:configure" event listener
  * and configuring the space when the event is emitted.
  */
 export function configureSpace(setup: SetupFactory, opts: PluginOptions = {}) {
-  // Returns a function which will configure a listener
   return function (listener: FlatfileListener) {
     listener.use(
       jobHandler('space:configure', async (event) => {
-        // Extracting the spaceId and environmentId from the event context
         const { spaceId, environmentId } = event.context
-
-        // Creating a configuration using the setup factory
         const config = typeof setup === 'function' ? await setup(event) : setup
-
-        // Creating a workbook with the created configuration
         const workbook = await api.workbooks.create({
           spaceId,
           environmentId,
           name: 'Workbook',
           ...config.workbook,
         })
-        // Extracting the workbookId from the created workbook
         const workbookId = workbook.data.id
 
-        // If a workbookId was created, updating the space to use the workbookId as the primary workbook ID
         if (workbookId) {
           await api.spaces.update(spaceId, {
             environmentId: environmentId,
@@ -57,7 +53,6 @@ export function configureSpace(setup: SetupFactory, opts: PluginOptions = {}) {
   }
 }
 
-// Defining types used in the configureSpace function
 type SetupFactory = Setup | ((event: FlatfileEvent) => Setup | Promise<Setup>)
 type Setup = {
   workbook: PartialWb
