@@ -1,5 +1,10 @@
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import api, { Flatfile } from '@flatfile/api'
+import { logError } from '@flatfile/util-common'
+
+export interface PluginOptions {
+  readonly debug?: boolean
+}
 
 /**
  * `jobHandler` is a factory function that constructs a job configuration plugin for
@@ -17,7 +22,8 @@ import api, { Flatfile } from '@flatfile/api'
  */
 export function jobHandler(
   job: string,
-  handler: (event: FlatfileEvent) => Promise<void | Flatfile.JobOutcome>
+  handler: (event: FlatfileEvent) => Promise<void | Flatfile.JobOutcome>,
+  opts: PluginOptions = {}
 ) {
   // Returns a function which will configure a listener
   return function (listener: FlatfileListener) {
@@ -39,20 +45,26 @@ export function jobHandler(
         outcome = await handler(e)
 
         // Completing the job with the outcome from the handler, or a default message if the outcome is undefined
-        await api.jobs.complete(jobId, {
-          outcome: outcome ?? {
-            message: 'Job complete',
-          },
-        })
+        await api.jobs.complete(
+          jobId,
+          outcome ?? {
+            outcome: {
+              message: 'Job complete',
+            },
+          }
+        )
       } catch (error) {
         // Logging the error and reporting a failure to the Flatfile API if the handler throws an error
-        console.error(error)
-        await api.jobs.fail(jobId, {
-          info: String(error),
-          outcome: {
-            message: String(error),
-          },
-        })
+        logError('@flatfile/plugin-job-handler', error)
+        await api.jobs.fail(
+          jobId,
+          outcome ?? {
+            info: String(error),
+            outcome: {
+              message: String(error),
+            },
+          }
+        )
       }
     })
   }

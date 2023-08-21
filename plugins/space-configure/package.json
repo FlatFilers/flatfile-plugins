@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "A plugin for configuring a Flatfile Space.",
   "registryMetadata": {
-    "category": "utilities"
+    "category": "configure"
   },
   "engines": {
     "node": ">= 16"

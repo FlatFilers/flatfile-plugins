@@ -2,6 +2,10 @@ import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import api, { Flatfile } from '@flatfile/api'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 
+export interface PluginOptions {
+  readonly debug?: boolean
+}
+
 /**
  * `configureSpace` is a higher-order function that creates a plugin to configure a
  * workspace using the Flatfile API. This function takes a setup factory that may either
@@ -18,7 +22,7 @@ import { jobHandler } from '@flatfile/plugin-job-handler'
  * @returns {Function} Returns a function that takes a FlatfileListener, adding a "space:configure" event listener
  * and configuring the space when the event is emitted.
  */
-export function configureSpace(setup: SetupFactory) {
+export function configureSpace(setup: SetupFactory, opts: PluginOptions = {}) {
   // Returns a function which will configure a listener
   return function (listener: FlatfileListener) {
     listener.use(
