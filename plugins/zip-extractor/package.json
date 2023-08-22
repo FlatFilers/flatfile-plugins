@@ -35,7 +35,6 @@
     "remeda": "^1.14.0"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.0.1",
     "@types/adm-zip": "^0.4.3",
     "@types/flat": "^5.0.2",
     "@types/jest": "^29.5.1",

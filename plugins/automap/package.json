@@ -32,8 +32,5 @@
     "@flatfile/listener": "^0.3.10",
     "@flatfile/utils-debugger": "^0.0.3",
     "remeda": "^1.23.0"
-  },
-  "devDependencies": {
-    "@flatfile/utils-testing": "^0.0.1"
   }
 }
