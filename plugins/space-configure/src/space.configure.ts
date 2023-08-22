@@ -29,7 +29,7 @@ export interface PluginOptions {
 export function configureSpace(setup: SetupFactory, opts: PluginOptions = {}) {
   return function (listener: FlatfileListener) {
     listener.use(
-      jobHandler('space:configure', async (event) => {
+      jobHandler('space:configure', async (event, tick) => {
         const { spaceId, environmentId } = event.context
         const config = typeof setup === 'function' ? await setup(event) : setup
         const workbook = await api.workbooks.create({
@@ -39,6 +39,7 @@ export function configureSpace(setup: SetupFactory, opts: PluginOptions = {}) {
           ...config.workbook,
         })
         const workbookId = workbook.data.id
+        tick(50, 'Workbook created')
 
         if (workbookId) {
           await api.spaces.update(spaceId, {

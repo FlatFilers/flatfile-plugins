@@ -13,9 +13,10 @@ export interface PluginOptions {
  *
  * @param {string} job - The job name.
  *
- * @param {Function} handler - A function that takes a job and an event, returning
- * a promise that resolves to either void or a JobOutcome object. This function will be
- * used to process the job when the "job:ready" event is emitted.
+ * @param {Function} handler - A function that takes an `event` and a `tick()` callback to
+ * allow updating of the job's progress, returning a promise that resolves to either
+ * void or a JobOutcome object. This function will be used to process the job when the
+ * "job:ready" event is emitted.
  *
  * @param {PluginOptions} opts - An optional object containing plugin options.
  * @param {boolean} opts.debug - An optional boolean that will enable debug logging.
@@ -26,22 +27,31 @@ export interface PluginOptions {
  */
 export function jobHandler(
   job: string,
-  handler: (event: FlatfileEvent) => Promise<void | Flatfile.JobOutcome>,
+  handler: (
+    event: FlatfileEvent,
+    tick: (progress: number, message: string) => Promise<Flatfile.JobResponse>
+  ) => Promise<void | Flatfile.JobOutcome>,
   opts: PluginOptions = {}
 ) {
   return function (listener: FlatfileListener) {
-    listener.on('job:ready', { job }, async (e) => {
-      const { jobId } = e.context
+    listener.on('job:ready', { job }, async (event) => {
+      const { jobId } = event.context
 
       await api.jobs.ack(jobId, {
         info: 'Accepted',
         progress: 10,
       })
 
-      let outcome
+      const tick = async (progress: number, info: string) => {
+        return await api.jobs.ack(jobId, {
+          info,
+          progress,
+        })
+      }
 
+      let outcome
       try {
-        outcome = await handler(e)
+        outcome = await handler(event, tick)
 
         if (opts.debug) {
           log('@flatfile/plugin-job-handler', 'Job complete')
