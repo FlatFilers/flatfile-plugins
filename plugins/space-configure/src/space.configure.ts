@@ -53,7 +53,9 @@ export function configureSpace(setup: SetupFactory, opts: PluginOptions = {}) {
   }
 }
 
-type SetupFactory = Setup | ((event: FlatfileEvent) => Setup | Promise<Setup>)
+export type SetupFactory =
+  | Setup
+  | ((event: FlatfileEvent) => Setup | Promise<Setup>)
 type Setup = {
   workbook: PartialWb
   space?: Partial<Flatfile.spaces.SpaceConfig>
