@@ -35,7 +35,6 @@
     "@flatfile/api": "^1.5.7"
   },
   "devDependencies": {
-    "@flatfile/configure": "^0.5.32",
-    "@flatfile/listener": "^0.3.4"
+    "@flatfile/configure": "^0.5.32"
   }
 }
