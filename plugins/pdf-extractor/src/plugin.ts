@@ -70,6 +70,8 @@ export const run = async (
         })
 
         reader.close()
+
+        await api.files.update(file.id, { name: `⚡️ ${file.name}` })
       } catch (uploadError: unknown) {
         if (opts.debug) {
           logError('Failed to upload PDF->CSV file')
