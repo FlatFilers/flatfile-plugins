@@ -33,7 +33,7 @@ export function jobHandler(
   ) => Promise<void | Flatfile.JobOutcome>,
   opts: PluginOptions = {}
 ) {
-  return function (listener: FlatfileListener) {
+  return (listener: FlatfileListener) => {
     listener.on('job:ready', { job }, async (event) => {
       const { jobId } = event.context
 

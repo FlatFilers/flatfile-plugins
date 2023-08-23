@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "A plugin for handling Flatfile Jobs.",
   "registryMetadata": {
-    "category": "handlers"
+    "category": "core"
   },
   "engines": {
     "node": ">= 16"
