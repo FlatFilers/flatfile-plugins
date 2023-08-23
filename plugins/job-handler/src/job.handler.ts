@@ -29,7 +29,7 @@ export function jobHandler(
   job: string,
   handler: (
     event: FlatfileEvent,
-    tick: (progress: number, message: string) => Promise<Flatfile.JobResponse>
+    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => Promise<void | Flatfile.JobOutcome>,
   opts: PluginOptions = {}
 ) {
