@@ -12,10 +12,7 @@ export function autocast(sheetId: string, options?: Record<string, any>) {
 }
 
 async function callback(records: FlatfileRecord[], event: FlatfileEvent) {
-  console.log(records)
   const { sheetId } = event.context
-  console.log(`Retrieved sheetId from event: ${sheetId}`)
-
   const sheet = await api.sheets.get(sheetId)
   if (!sheet) {
     console.log(`Failed to fetch sheet with id: ${sheetId}`)
