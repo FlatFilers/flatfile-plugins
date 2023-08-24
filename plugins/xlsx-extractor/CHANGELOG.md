@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.5.1
+
+### Patch Changes
+
+- @flatfile/util-extractor@0.2.2
+
 ## 1.5.0
 
 ### Minor Changes
