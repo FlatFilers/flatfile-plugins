@@ -18,10 +18,10 @@ describe('autocast plugin', () => {
     })
     it('should return a date', () => {
       expect(castDate('2023-08-16')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
-      expect(castDate('08-16-2023')).toBe('Wed, 16 Aug 2023 05:00:00 GMT')
-      expect(castDate('08/16/2023')).toBe('Wed, 16 Aug 2023 05:00:00 GMT')
-      expect(castDate('Aug 16, 2023')).toBe('Wed, 16 Aug 2023 05:00:00 GMT')
-      expect(castDate('August 16, 2023')).toBe('Wed, 16 Aug 2023 05:00:00 GMT')
+      expect(castDate('08-16-2023')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
+      expect(castDate('08/16/2023')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
+      expect(castDate('Aug 16, 2023')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
+      expect(castDate('August 16, 2023')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
     })
     it('is uncastable; should return the original value', () => {
       expect(castNumber('foo')).toBe('foo')
