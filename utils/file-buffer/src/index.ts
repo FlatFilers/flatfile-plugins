@@ -12,6 +12,9 @@ export const fileBuffer = (
   return (listener: FlatfileListener) => {
     listener.on('file:created', async (event) => {
       const { data: file } = await api.files.get(event.context.fileId)
+      if (file.mode === 'export') {
+        return false
+      }
 
       if (typeof matchFile === 'string' && !file.name.endsWith(matchFile)) {
         return false

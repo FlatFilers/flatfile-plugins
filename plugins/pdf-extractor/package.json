@@ -1,12 +1,12 @@
 {
-  "name": "@flatfile/plugin-xlsx-extractor",
-  "version": "1.5.1",
-  "description": "A plugin for parsing xlsx files in Flatfile.",
+  "name": "@flatfile/plugin-pdf-extractor",
+  "version": "0.0.2",
+  "description": "A plugin for parsing PDF files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
   },
   "engines": {
-    "node": ">= 12"
+    "node": ">= 16"
   },
   "source": "src/index.ts",
   "main": "dist/main.js",
@@ -16,22 +16,26 @@
     "build": "parcel build",
     "dev": "parcel watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest --passWithNoTests"
   },
   "keywords": [],
-  "author": "David Boskovic",
+  "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/xlsx-extractor"
+    "directory": "plugins/pdf-extractor"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.4.9",
-    "@flatfile/hooks": "^1.3.0",
+    "@flatfile/api": "^1.5.14",
+    "@flatfile/hooks": "^1.3.1",
     "@flatfile/listener": "^0.3.4",
-    "@flatfile/util-extractor": "0.2.2",
-    "remeda": "^1.14.0",
-    "xlsx": "^0.18.5"
+    "@flatfile/util-file-buffer": "0.0.3",
+    "axios": "^1.4.0",
+    "fs-extra": "^11.1.1",
+    "remeda": "^1.14.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1"
   }
 }
