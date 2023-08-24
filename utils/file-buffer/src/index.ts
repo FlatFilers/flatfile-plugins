@@ -10,7 +10,7 @@ export const fileBuffer = (
   ) => Promise<void> | void
 ) => {
   return (listener: FlatfileListener) => {
-    listener.on('file:created', async (event) => {
+    listener.on('upload:completed', async (event) => {
       const { data: file } = await api.files.get(event.context.fileId)
 
       if (typeof matchFile === 'string' && !file.name.endsWith(matchFile)) {
