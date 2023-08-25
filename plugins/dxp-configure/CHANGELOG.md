@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.0.6
+
+### Patch Changes
+
+- f5efd60: Update @flatfile/listener dependency
+
 ## 0.0.5
 
 ### Patch Changes

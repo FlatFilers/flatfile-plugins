@@ -1,5 +1,13 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.0.3
+
+### Patch Changes
+
+- f5efd60: Update @flatfile/listener dependency
+- Updated dependencies [f5efd60]
+  - @flatfile/util-file-buffer@0.0.4
+
 ## 0.0.2
 
 ### Patch Changes

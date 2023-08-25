@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.2
+
+### Patch Changes
+
+- f5efd60: Update @flatfile/listener dependency
+
 ## 1.0.1
 
 ### Patch Changes

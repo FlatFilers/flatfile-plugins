@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.0.2
+
+### Patch Changes
+
+- f5efd60: Update @flatfile/listener dependency
+
 ## 0.0.1
 
 ### Patch Changes

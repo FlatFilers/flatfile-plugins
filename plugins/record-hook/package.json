@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-record-hook",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A plugin for writing custom record-level hooks in Flatfile.",
   "registryMetadata": {
     "category": "records"
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@flatfile/listener-driver-pubsub": "^1.0.0",
-    "@flatfile/utils-testing": "^0.0.1",
+    "@flatfile/utils-testing": "^0.0.2",
     "axios": "^1.4.0"
   }
 }
