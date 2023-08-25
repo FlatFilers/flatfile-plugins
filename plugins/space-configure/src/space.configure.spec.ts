@@ -27,11 +27,12 @@ const setup: SetupFactory = {
 }
 
 describe('SpaceConfigure plugin e2e tests', () => {
+  const mockFn = jest.fn()
   const listener = setupListener()
   let spaceId: string
 
   beforeAll(async () => {
-    listener.use(configureSpace(setup))
+    listener.use(configureSpace(setup, mockFn))
 
     const space = await setupSpace()
     spaceId = space.id
@@ -41,9 +42,9 @@ describe('SpaceConfigure plugin e2e tests', () => {
     await deleteSpace(spaceId)
   })
 
-  it('should configure a space', async () => {
+  it('should configure a space & run callback', async () => {
     await listener.waitFor('job:ready', 1, 'space:configure')
 
-    expect(true).toBe(true)
+    expect(mockFn).toHaveBeenCalled()
   })
 })
