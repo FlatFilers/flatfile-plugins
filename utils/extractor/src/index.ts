@@ -34,7 +34,7 @@ export const Extractor = (
             progress: 50,
             info: 'Adding records to Sheets',
           })
-          const { chunkSize = 1000, parallel = 1 } = options
+          const { chunkSize = 10000, parallel = 1 } = options
           for (const sheet of workbook.sheets) {
             if (!capture[sheet.name]) {
               continue
