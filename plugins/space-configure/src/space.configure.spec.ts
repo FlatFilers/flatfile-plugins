@@ -1,3 +1,4 @@
+import api from '@flatfile/api'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 import { gettingStartedSheet } from '../ref/getting_started'
 import { SetupFactory, configureSpace } from '.'
@@ -45,6 +46,16 @@ describe('SpaceConfigure plugin e2e tests', () => {
   it('should configure a space & run callback', async () => {
     await listener.waitFor('job:ready', 1, 'space:configure')
 
+    const space = await api.spaces.get(spaceId)
+    const workspace = await api.workbooks.get(space.data.primaryWorkbookId)
+
+    expect(workspace.data.name).toBe(setup.workbook.name)
+    expect(workspace.data.labels).toMatchObject(setup.workbook.labels)
+    expect(workspace.data.sheets[0].name).toBe(setup.workbook.sheets[0].name)
+    expect(workspace.data.sheets[0].config).toMatchObject(
+      setup.workbook.sheets[0]
+    )
+    expect(workspace.data.actions).toMatchObject(setup.workbook.actions)
     expect(mockFn).toHaveBeenCalled()
   })
 })
