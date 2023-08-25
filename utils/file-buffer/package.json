@@ -28,6 +28,6 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.5.13",
-    "@flatfile/listener": "^0.3.11"
+    "@flatfile/listener": "^0.3.15"
   }
 }
