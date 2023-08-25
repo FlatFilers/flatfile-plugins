@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.2.3
+
+### Patch Changes
+
+- f5efd60: Update @flatfile/listener dependency
+- Updated dependencies [f5efd60]
+  - @flatfile/util-file-buffer@0.0.4
+
 ## 0.2.2
 
 ### Patch Changes
