@@ -7,10 +7,10 @@ import { asyncBatch } from '@flatfile/util-common'
 export const RecordHook = async (
   event: FlatfileEvent,
   handler: (record: FlatfileRecord, event?: FlatfileEvent) => any | Promise<any>
-) => {
-  return BulkRecordHook(event, async (records, event) => {
-    return await Promise.all(records.map((record) => handler(record, event)))
-  })
+): Promise<any> => {
+  return BulkRecordHook(event, (records, event) =>
+    Promise.all(records.map((record) => handler(record, event)))
+  )
 }
 
 export const BulkRecordHook = async (
@@ -20,7 +20,7 @@ export const BulkRecordHook = async (
     event?: FlatfileEvent
   ) => any | Promise<any>,
   options: { chunkSize?: number; parallel?: number } = {}
-) => {
+): Promise<any> => {
   try {
     const recordsData = await event.data
     const records = await event.cache.init<Records>(
@@ -43,7 +43,7 @@ export const BulkRecordHook = async (
     event.afterAll(async () => {
       try {
         const records = event.cache.get<Records>('records')
-        return await event.update(records)
+        await event.update(records)
       } catch (e) {
         console.error(`Error updating records: ${e}`)
       }
