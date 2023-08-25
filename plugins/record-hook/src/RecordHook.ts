@@ -8,8 +8,10 @@ export const RecordHook = async (
   event: FlatfileEvent,
   handler: (record: FlatfileRecord, event?: FlatfileEvent) => any | Promise<any>
 ) => {
-  return BulkRecordHook(event, (records, event) =>
-    Promise.all(records.map((record) => handler(record, event)))
+  return BulkRecordHook(
+    event,
+    async (records, event) =>
+      await mapAsync(records, async (record) => await handler(record, event))
   )
 }
 
@@ -22,10 +24,9 @@ export const BulkRecordHook = async (
   options: { chunkSize?: number; parallel?: number } = {}
 ) => {
   try {
-    const recordsData = await event.data
     const records = await event.cache.init<Records>(
       'records',
-      () => recordsData.records
+      async () => (await event.data).records
     )
     if (!records) return
 
@@ -67,4 +68,15 @@ const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
   )
   const fromX = new RecordTranslater<Record_>(clearedMessages)
   return fromX.toFlatFileRecords()
+}
+
+async function mapAsync<T, U>(
+  array: T[],
+  callbackfn: (value: T, index: number, array: T[]) => Promise<U>
+): Promise<U[]> {
+  const result: U[] = []
+  for (let i = 0; i < array.length; i++) {
+    result[i] = await callbackfn(array[i], i, array)
+  }
+  return result
 }
