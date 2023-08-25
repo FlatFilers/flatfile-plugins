@@ -2,10 +2,6 @@ import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import api, { Flatfile } from '@flatfile/api'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 
-export interface PluginOptions {
-  readonly debug?: boolean
-}
-
 /**
  * `configureSpace` is a higher-order function that creates a plugin to configure a
  * workspace using the Flatfile API. This function takes a setup factory that may either
@@ -19,14 +15,19 @@ export interface PluginOptions {
  * @param {SetupFactory} setup - The setup factory used to create the configuration for the workbook.
  * This can either be a static Setup object or a function that creates a Setup object given a FlatfileEvent.
  *
- * @param {PluginOptions} opts - An optional object containing plugin options.
- * @param {boolean} opts.debug - An optional boolean that will enable debug logging.
- * Defaults to false.
+ * @param {Function} callback - A callback function that is called after the workbook is created.
  *
  * @returns {Function} Returns a function that takes a FlatfileListener, adding a "space:configure" event listener
  * and configuring the space when the event is emitted.
  */
-export function configureSpace(setup: SetupFactory, opts: PluginOptions = {}) {
+export function configureSpace(
+  setup: SetupFactory,
+  callback?: (
+    event: FlatfileEvent,
+    workbookId: string,
+    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
+  ) => any | Promise<any>
+) {
   return function (listener: FlatfileListener) {
     listener.use(
       jobHandler('space:configure', async (event, tick) => {
@@ -47,6 +48,9 @@ export function configureSpace(setup: SetupFactory, opts: PluginOptions = {}) {
             primaryWorkbookId: workbookId,
             ...config.space,
           })
+        }
+        if (callback) {
+          await callback(event, workbookId, tick)
         }
         return { info: 'Space configured' }
       })
