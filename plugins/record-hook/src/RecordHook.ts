@@ -9,7 +9,7 @@ export const RecordHook = async (
   handler: (record: FlatfileRecord, event?: FlatfileEvent) => any | Promise<any>
 ) => {
   return BulkRecordHook(event, async (records, event) => {
-    return records.map((record) => handler(record, event))
+    return await Promise.all(records.map((record) => handler(record, event)))
   })
 }
 
@@ -22,9 +22,10 @@ export const BulkRecordHook = async (
   options: { chunkSize?: number; parallel?: number } = {}
 ) => {
   try {
+    const recordsData = await event.data
     const records = await event.cache.init<Records>(
       'records',
-      async () => (await event.data).records
+      () => recordsData.records
     )
     if (!records) return
 
@@ -40,15 +41,15 @@ export const BulkRecordHook = async (
     await event.cache.set('records', async () => recordsUpdates)
 
     event.afterAll(async () => {
-      const records = event.cache.get<Records>('records')
       try {
+        const records = event.cache.get<Records>('records')
         return await event.update(records)
       } catch (e) {
-        console.log(`Error updating records: ${e}`)
+        console.error(`Error updating records: ${e}`)
       }
     })
   } catch (e) {
-    console.log(`Error getting records: ${e}`)
+    console.error(`Error getting records: ${e}`)
   }
 
   return handler
