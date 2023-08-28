@@ -7,11 +7,12 @@ export const recordHookPlugin = (
   callback: (
     record: FlatfileRecord,
     event?: FlatfileEvent
-  ) => any | Promise<any>
+  ) => any | Promise<any>,
+  options: { chunkSize?: number; parallel?: number } = {}
 ) => {
   return (client: FlatfileListener) => {
     client.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
-      return RecordHook(event, callback)
+      return RecordHook(event, callback, options)
     })
   }
 }

@@ -6,12 +6,17 @@ import { asyncBatch } from '@flatfile/util-common'
 
 export const RecordHook = async (
   event: FlatfileEvent,
-  handler: (record: FlatfileRecord, event?: FlatfileEvent) => any | Promise<any>
+  handler: (
+    record: FlatfileRecord,
+    event?: FlatfileEvent
+  ) => any | Promise<any>,
+  options: { chunkSize?: number; parallel?: number } = {}
 ) => {
   return BulkRecordHook(
     event,
     async (records, event) =>
-      await mapAsync(records, async (record) => await handler(record, event))
+      await mapAsync(records, async (record) => await handler(record, event)),
+    options
   )
 }
 
