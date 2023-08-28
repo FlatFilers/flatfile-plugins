@@ -46,11 +46,11 @@ export const BulkRecordHook = async (
         const records = event.cache.get<Records>('records')
         await event.update(records)
       } catch (e) {
-        console.error(`Error updating records: ${e}`)
+        console.log(`Error updating records: ${e}`)
       }
     })
   } catch (e) {
-    console.error(`Error getting records: ${e}`)
+    console.log(`Error getting records: ${e}`)
   }
 
   return handler
