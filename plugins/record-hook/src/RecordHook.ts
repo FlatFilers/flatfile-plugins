@@ -12,10 +12,14 @@ export const RecordHook = async (
   ) => any | Promise<any>,
   options: { chunkSize?: number; parallel?: number } = {}
 ) => {
-  return BulkRecordHook(
+  await BulkRecordHook(
     event,
-    async (records, event) =>
-      await mapAsync(records, async (record) => await handler(record, event)),
+    async (records, bulkEvent) => {
+      // Process records sequentially here, and let BulkRecordHook handle parallelism
+      for (const record of records) {
+        await handler(record, bulkEvent)
+      }
+    },
     options
   )
 }
@@ -73,15 +77,4 @@ const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
   )
   const fromX = new RecordTranslater<Record_>(clearedMessages)
   return fromX.toFlatFileRecords()
-}
-
-async function mapAsync<T, U>(
-  array: T[],
-  callbackfn: (value: T, index: number, array: T[]) => Promise<U>
-): Promise<U[]> {
-  const result: U[] = []
-  for (let i = 0; i < array.length; i++) {
-    result[i] = await callbackfn(array[i], i, array)
-  }
-  return result
 }
