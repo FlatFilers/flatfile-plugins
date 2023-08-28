@@ -24,7 +24,7 @@ export function configureSpace(
   setup: SetupFactory,
   callback?: (
     event: FlatfileEvent,
-    workbookId: string,
+    workbookIds: string[],
     tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => any | Promise<any>
 ) {
@@ -33,24 +33,29 @@ export function configureSpace(
       jobHandler('space:configure', async (event, tick) => {
         const { spaceId, environmentId } = event.context
         const config = typeof setup === 'function' ? await setup(event) : setup
-        const workbook = await api.workbooks.create({
-          spaceId,
-          environmentId,
-          name: 'Workbook',
-          ...config.workbook,
-        })
-        const workbookId = workbook.data.id
+        const workbookIds = await Promise.all(
+          config.workbooks.map(async (workbookConfig) => {
+            const workbook = await api.workbooks.create({
+              spaceId,
+              environmentId,
+              name: 'Workbook',
+              ...workbookConfig,
+            })
+            return workbook.data.id
+          })
+        )
         tick(50, 'Workbook created')
+        console.log(workbookIds)
 
-        if (workbookId) {
+        if (workbookIds) {
           await api.spaces.update(spaceId, {
             environmentId: environmentId,
-            primaryWorkbookId: workbookId,
+            primaryWorkbookId: workbookIds[0],
             ...config.space,
           })
         }
         if (callback) {
-          await callback(event, workbookId, tick)
+          await callback(event, workbookIds, tick)
         }
         return { info: 'Space configured' }
       })
@@ -62,7 +67,7 @@ export type SetupFactory =
   | Setup
   | ((event: FlatfileEvent) => Setup | Promise<Setup>)
 type Setup = {
-  workbook: PartialWb
+  workbooks: PartialWb[]
   space?: Partial<Flatfile.spaces.SpaceConfig>
 }
 type PartialWb = Partial<Flatfile.CreateWorkbookConfig>

@@ -4,27 +4,29 @@ import { gettingStartedSheet } from '../ref/getting_started'
 import { SetupFactory, configureSpace } from '.'
 
 const setup: SetupFactory = {
-  workbook: {
-    name: 'Playground',
-    labels: ['Swingset', 'Slide', 'See Saw', 'Monkey Bars'],
-    sheets: [gettingStartedSheet],
-    actions: [
-      {
-        operation: 'submitActionFg',
-        mode: 'foreground',
-        label: 'Submit data',
-        type: 'string',
-        description: 'Submit this data to a webhook.',
-        primary: true,
-      },
-      {
-        operation: 'duplicateWorkbook',
-        mode: 'foreground',
-        label: 'Duplicate',
-        description: 'Duplicate this workbook.',
-      },
-    ],
-  },
+  workbooks: [
+    {
+      name: 'Playground',
+      labels: ['Swingset', 'Slide', 'See Saw', 'Monkey Bars'],
+      sheets: [gettingStartedSheet],
+      actions: [
+        {
+          operation: 'submitActionFg',
+          mode: 'foreground',
+          label: 'Submit data',
+          type: 'string',
+          description: 'Submit this data to a webhook.',
+          primary: true,
+        },
+        {
+          operation: 'duplicateWorkbook',
+          mode: 'foreground',
+          label: 'Duplicate',
+          description: 'Duplicate this workbook.',
+        },
+      ],
+    },
+  ],
 }
 
 describe('SpaceConfigure plugin e2e tests', () => {
@@ -49,13 +51,15 @@ describe('SpaceConfigure plugin e2e tests', () => {
     const space = await api.spaces.get(spaceId)
     const workspace = await api.workbooks.get(space.data.primaryWorkbookId)
 
-    expect(workspace.data.name).toBe(setup.workbook.name)
-    expect(workspace.data.labels).toMatchObject(setup.workbook.labels)
-    expect(workspace.data.sheets[0].name).toBe(setup.workbook.sheets[0].name)
-    expect(workspace.data.sheets[0].config).toMatchObject(
-      setup.workbook.sheets[0]
+    expect(workspace.data.name).toBe(setup.workbooks[0].name)
+    expect(workspace.data.labels).toMatchObject(setup.workbooks[0].labels)
+    expect(workspace.data.sheets[0].name).toBe(
+      setup.workbooks[0].sheets[0].name
     )
-    expect(workspace.data.actions).toMatchObject(setup.workbook.actions)
+    expect(workspace.data.sheets[0].config).toMatchObject(
+      setup.workbooks[0].sheets[0]
+    )
+    expect(workspace.data.actions).toMatchObject(setup.workbooks[0].actions)
     expect(mockFn).toHaveBeenCalled()
   })
 })
