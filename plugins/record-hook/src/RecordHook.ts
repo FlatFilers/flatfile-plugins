@@ -3,7 +3,7 @@ import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { Record_, Records } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
 import { asyncBatch } from '@flatfile/util-common'
-import { Effect, Duration } from 'effect'
+import { Effect } from 'effect'
 
 export const RecordHook = async (
   event: FlatfileEvent,
