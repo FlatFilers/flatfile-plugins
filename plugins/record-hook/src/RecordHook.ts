@@ -3,6 +3,7 @@ import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { Record_, Records } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
 import { asyncBatch } from '@flatfile/util-common'
+import Queue from 'queue-promise'
 
 export const RecordHook = async (
   event: FlatfileEvent,
@@ -10,18 +11,18 @@ export const RecordHook = async (
     record: FlatfileRecord,
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { chunkSize?: number; parallel?: number } = {}
+  options: { concurrent?: number } = {}
 ) => {
-  await BulkRecordHook(
-    event,
-    async (records, bulkEvent) => {
-      // Process records sequentially here, and let BulkRecordHook handle parallelism
-      for (const record of records) {
-        await handler(record, bulkEvent)
-      }
-    },
-    options
-  )
+  const { concurrent } = { concurrent: 10, ...options }
+  await BulkRecordHook(event, async (records, bulkEvent) => {
+    const queue = new Queue({
+      concurrent,
+    })
+    for (const record of records) {
+      queue.add(async () => await handler(record, bulkEvent))
+    }
+    queue.start()
+  })
 }
 
 export const BulkRecordHook = async (
