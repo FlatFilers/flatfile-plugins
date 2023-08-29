@@ -33,8 +33,14 @@ describe('recordHook() e2e', () => {
 
   describe.each([
     recordHook('test', (record) => record.set('name', 'daddy')),
+    recordHook('test', async (record) => await record.set('name', 'daddy')),
     bulkRecordHook('test', (records) =>
       records.map((record) => record.set('name', 'daddy'))
+    ),
+    bulkRecordHook(
+      'test',
+      async (records) =>
+        await records.map((record) => record.set('name', 'daddy'))
     ),
   ])('record created', (fn) => {
     beforeEach(async () => {

@@ -3,7 +3,7 @@ import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { Record_, Records } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
 import { asyncBatch } from '@flatfile/util-common'
-import Queue from 'queue-promise'
+import { Effect, Duration } from 'effect'
 
 export const RecordHook = async (
   event: FlatfileEvent,
@@ -11,17 +11,20 @@ export const RecordHook = async (
     record: FlatfileRecord,
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { concurrent?: number } = {}
+  options: { concurrency?: number } = {}
 ) => {
-  const { concurrent } = { concurrent: 10, ...options }
-  await BulkRecordHook(event, async (records, bulkEvent) => {
-    const queue = new Queue({
-      concurrent,
-    })
-    for (const record of records) {
-      queue.add(async () => await handler(record, bulkEvent))
-    }
-    queue.start()
+  await BulkRecordHook(event, async (records, event) => {
+    const { concurrency } = { concurrency: 10, ...options }
+    const handlers = records.map((record: FlatfileRecord) =>
+      Effect.promise(async () => {
+        await handler(record, event)
+      })
+    )
+    Effect.runPromise(
+      Effect.all(handlers, {
+        concurrency,
+      })
+    )
   })
 }
 
@@ -62,8 +65,6 @@ export const BulkRecordHook = async (
   } catch (e) {
     console.log(`Error getting records: ${e}`)
   }
-
-  return handler
 }
 
 const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {

@@ -8,11 +8,11 @@ export const recordHookPlugin = (
     record: FlatfileRecord,
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { concurrent?: number } = {}
+  options: { concurrency?: number } = {}
 ) => {
-  return (client: FlatfileListener) => {
-    client.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
-      return RecordHook(event, callback, options)
+  return (listener: FlatfileListener) => {
+    listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
+      RecordHook(event, callback, options)
     })
   }
 }
@@ -25,9 +25,9 @@ export const bulkRecordHookPlugin = (
   ) => any | Promise<any>,
   options: { chunkSize?: number; parallel?: number } = {}
 ) => {
-  return (client: FlatfileListener) => {
-    client.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
-      return BulkRecordHook(event, callback, options)
+  return (listener: FlatfileListener) => {
+    listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
+      BulkRecordHook(event, callback, options)
     })
   }
 }
