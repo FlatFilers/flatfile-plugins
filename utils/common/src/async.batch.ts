@@ -3,7 +3,7 @@ export async function asyncBatch<T, R>(
   callback: (chunk: T[]) => Promise<R>,
   options: { chunkSize?: number; parallel?: number } = {}
 ): Promise<R[]> {
-  const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options }
+  const { chunkSize, parallel } = { chunkSize: 3000, parallel: 1, ...options }
   const results: R[] = []
 
   // Split the array into chunks
