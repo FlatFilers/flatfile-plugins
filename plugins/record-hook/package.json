@@ -38,8 +38,6 @@
     "@flatfile/util-common": "^0.0.2"
   },
   "devDependencies": {
-    "@flatfile/listener-driver-pubsub": "^1.0.0",
-    "@flatfile/utils-testing": "^0.0.2",
     "axios": "^1.4.0"
   }
 }
