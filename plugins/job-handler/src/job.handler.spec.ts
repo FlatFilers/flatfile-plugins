@@ -32,7 +32,7 @@ describe('JobHandler plugin e2e tests', () => {
     const logErrorSpy = jest.spyOn(global.console, 'error')
     const listener = setupListener()
     const mockErrorFn = jest.fn(() => {
-      throw new Error('error')
+      throw new Error('trigger job:failed')
     })
     let spaceId: string
 
@@ -54,7 +54,7 @@ describe('JobHandler plugin e2e tests', () => {
       await listener.waitFor('job:failed', 1, 'space:configure')
 
       expect(logErrorSpy).toHaveBeenCalledWith(
-        '[@flatfile/plugin-job-handler]:[FATAL] Error: error'
+        '[@flatfile/plugin-job-handler]:[FATAL] Error: trigger job:failed'
       )
       expect(mockErrorFn).toThrow()
     })
