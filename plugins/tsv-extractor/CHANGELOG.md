@@ -1,5 +1,16 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.3.0
+
+### Minor Changes
+
+- 447691a: Add configurable batch options
+
+### Patch Changes
+
+- Updated dependencies [447691a]
+  - @flatfile/plugin-delimiter-extractor@0.5.0
+
 ## 1.2.4
 
 ### Patch Changes
