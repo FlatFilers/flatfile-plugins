@@ -1,5 +1,20 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.3.4
+
+### Patch Changes
+
+- f5efd60: Update @flatfile/listener dependency
+- Updated dependencies [f5efd60]
+  - @flatfile/util-file-buffer@0.0.4
+
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies [490e8f1]
+  - @flatfile/util-file-buffer@0.0.3
+
 ## 0.3.2
 
 ### Patch Changes

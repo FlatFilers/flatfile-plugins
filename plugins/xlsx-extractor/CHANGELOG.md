@@ -1,5 +1,25 @@
 # @flatfile/plugin-record-hook
 
+## 1.5.3
+
+### Patch Changes
+
+- @flatfile/util-extractor@0.2.4
+
+## 1.5.2
+
+### Patch Changes
+
+- f5efd60: Update @flatfile/listener dependency
+- Updated dependencies [f5efd60]
+  - @flatfile/util-extractor@0.2.3
+
+## 1.5.1
+
+### Patch Changes
+
+- @flatfile/util-extractor@0.2.2
+
 ## 1.5.0
 
 ### Minor Changes

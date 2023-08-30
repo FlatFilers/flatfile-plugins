@@ -9,7 +9,12 @@ export class TestListener extends FlatfileListener {
   public invocations: Map<string, number> = new Map()
 
   // List of watchers for event invocations
-  private invocationWatchers: [number, (num: number) => void, string][] = []
+  private invocationWatchers: [
+    number,
+    (num: number) => void,
+    string,
+    string
+  ][] = []
 
   /**
    * Overridden method from FlatfileListener to handle event dispatch.
@@ -22,11 +27,13 @@ export class TestListener extends FlatfileListener {
 
     await super.dispatchEvent(event)
 
-    for (let [count, resolver, eventName] of this.invocationWatchers) {
+    for (let [count, resolver, eventName, job] of this.invocationWatchers) {
       const eventCount = this.invocations.get(eventName)
 
       if (event.topic === eventName && eventCount && eventCount >= count) {
-        resolver(eventCount)
+        if (!job || event.payload.job === job) {
+          resolver(eventCount)
+        }
       }
     }
   }
@@ -38,9 +45,9 @@ export class TestListener extends FlatfileListener {
    * @param count The count of the event
    * @returns A promise that resolves when the count of the event has been reached
    */
-  waitFor(event: string, count: number = 1): Promise<number> {
+  waitFor(event: string, count: number = 1, job?: string): Promise<number> {
     return new Promise((resolve) => {
-      this.invocationWatchers.push([count, resolve, event])
+      this.invocationWatchers.push([count, resolve, event, job])
 
       if (this.invocations.get(event) >= count) {
         resolve(this.invocations.get(event))

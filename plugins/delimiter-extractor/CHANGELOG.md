@@ -1,5 +1,25 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.4.3
+
+### Patch Changes
+
+- @flatfile/util-extractor@0.2.4
+
+## 0.4.2
+
+### Patch Changes
+
+- f5efd60: Update @flatfile/listener dependency
+- Updated dependencies [f5efd60]
+  - @flatfile/util-extractor@0.2.3
+
+## 0.4.1
+
+### Patch Changes
+
+- @flatfile/util-extractor@0.2.2
+
 ## 0.4.0
 
 ### Minor Changes
