@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.3.0
+
+### Minor Changes
+
+- 447691a: Add configurable batch options
+
 ## 0.2.4
 
 ### Patch Changes
