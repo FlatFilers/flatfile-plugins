@@ -54,7 +54,7 @@ describe('JobHandler plugin e2e tests', () => {
       await listener.waitFor('job:failed', 1, 'space:configure')
 
       expect(logErrorSpy).toHaveBeenCalledWith(
-        '[@flatfile/plugin-job-handler]:[FATAL] Error: trigger job:failed'
+        '[@flatfile/plugin-job-handler]:[FATAL] trigger job:failed'
       )
       expect(mockErrorFn).toThrow()
     })
