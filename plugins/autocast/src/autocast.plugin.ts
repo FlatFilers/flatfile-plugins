@@ -52,29 +52,35 @@ const CASTING_FUNCTIONS: {
 
 export function castNumber(value: TPrimitive): TPrimitive {
   if (typeof value === 'string' && !isNaN(Number(value))) {
-    return Number(value)
+    const strippedValue = value.replace(/,/g, '')
+    const num = Number(strippedValue)
+    if (isFinite(num)) {
+      return num
+    }
   }
   return value
 }
 
+export const TRUTHY_VALUES = ['1', 'yes', 'true', 'on', 't', 'y', 1]
+export const FALSY_VALUES = ['-1', '0', 'no', 'false', 'off', 'f', 'n', 0, -1]
 export function castBoolean(value: TPrimitive): TPrimitive {
-  if (typeof value === 'string') {
-    const lowercasedValue = value.toLowerCase()
-    if (lowercasedValue === 'true' || value === '1') {
+  if (typeof value === 'string' || typeof value === 'number') {
+    if (value === '') {
+      return null
+    }
+    const normValue = typeof value === 'string' ? value.toLowerCase() : value
+    if (TRUTHY_VALUES.includes(normValue)) {
       return true
-    } else if (lowercasedValue === 'false' || value === '0') {
+    }
+    if (FALSY_VALUES.includes(normValue)) {
       return false
     }
-  } else if (value === 1) {
-    return true
-  } else if (value === 0) {
-    return false
   }
   return value
 }
 
 export function castDate(value: TPrimitive): TPrimitive {
-  if (typeof value === 'string') {
+  if (typeof value === 'string' || typeof value === 'number') {
     const date = new Date(value)
     if (!isNaN(date.getTime())) {
       return date.toUTCString()

@@ -1,32 +1,44 @@
-import { castNumber, castBoolean, castDate } from './autocast.plugin'
+import {
+  castNumber,
+  castBoolean,
+  castDate,
+  TRUTHY_VALUES,
+  FALSY_VALUES,
+} from './autocast.plugin'
 
 describe('autocast plugin', () => {
   describe('cast functions', () => {
+    describe.each(['1', 1])('should return a number', (num) => {
+      expect(castNumber(num)).toBe(1)
+    })
+    describe.each(['1.1', 1.1])('should return a decimal', (num) => {
+      expect(castNumber(num)).toBe(1.1)
+    })
     it('should return a number', () => {
-      expect(castNumber('1')).toBe(1)
-      expect(castNumber('1.1')).toBe(1.1)
-      expect(castNumber(1)).toBe(1)
-      expect(castNumber(1.1)).toBe(1.1)
+      expect(castNumber('1,100')).toBe(1100)
     })
-    it('should return a boolean', () => {
-      expect(castBoolean('true')).toBe(true)
-      expect(castBoolean('false')).toBe(false)
-      expect(castBoolean('1')).toBe(true)
-      expect(castBoolean('0')).toBe(false)
-      expect(castBoolean(1)).toBe(true)
-      expect(castBoolean(0)).toBe(false)
+    describe.each(TRUTHY_VALUES)('should return a truthy boolean', (truthy) => {
+      expect(castBoolean(truthy)).toBe(true)
     })
-    it('should return a date', () => {
-      expect(castDate('2023-08-16')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
-      expect(castDate('08-16-2023')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
-      expect(castDate('08/16/2023')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
-      expect(castDate('Aug 16, 2023')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
-      expect(castDate('August 16, 2023')).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
+    describe.each(FALSY_VALUES)('should return a falsy boolean', (falsy) => {
+      expect(castBoolean(falsy)).toBe(false)
     })
-    it('is uncastable; should return the original value', () => {
-      expect(castNumber('foo')).toBe('foo')
-      expect(castBoolean('foo')).toBe('foo')
-      expect(castDate('foo')).toBe('foo')
+    describe.each([
+      '2023-08-16',
+      '08-16-2023',
+      '08/16/2023',
+      'Aug 16, 2023',
+      'August 16, 2023',
+      '2023-08-16T00:00:00.000Z',
+      1692144000000,
+    ])('should return a date', (date) => {
+      expect(castDate(date)).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
     })
+    describe.each([castNumber('foo'), castBoolean('foo'), castDate('foo')])(
+      'is uncastable; should return the original value',
+      (castFn) => {
+        expect(castFn).toBe('foo')
+      }
+    )
   })
 })
