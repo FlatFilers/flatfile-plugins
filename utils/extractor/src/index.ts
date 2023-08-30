@@ -34,11 +34,6 @@ export const Extractor = (
             progress: 50,
             info: 'Adding records to Sheets',
           })
-          const { chunkSize = 10000, parallel = 1 } = options
-          const totalLength = workbook.sheets.reduce(
-            (sum, sheet) => sum + capture[sheet.name].data.length,
-            0
-          )
           for (const sheet of workbook.sheets) {
             if (!capture[sheet.name]) {
               continue
@@ -47,14 +42,6 @@ export const Extractor = (
               capture[sheet.name].data,
               async (chunk) => {
                 await api.records.insert(sheet.id, chunk)
-                const progress = Math.min(
-                  99,
-                  50 + Math.round((chunk.length / totalLength) * 50)
-                )
-                await api.jobs.ack(job.data.id, {
-                  progress,
-                  info: 'Adding records to Sheets',
-                })
               },
               { chunkSize: 10000, parallel: 1 }
             )
