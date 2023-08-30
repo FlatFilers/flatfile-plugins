@@ -5,6 +5,8 @@ export const PSVExtractor = (options?: {
   dynamicTyping?: boolean
   skipEmptyLines?: boolean | 'greedy'
   transform?: (value: any) => Flatfile.CellValueUnion
+  chunkSize?: number
+  parallel?: number
 }) => {
   return DelimiterExtractor('.psv', { delimiter: '|', ...options })
 }

@@ -6,7 +6,7 @@ export async function asyncBatch<T, R>(
   options: { chunkSize?: number; parallel?: number } = {},
   event?: FlatfileEvent
 ): Promise<R[]> {
-  const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options }
+  const { chunkSize, parallel } = { chunkSize: 3000, parallel: 1, ...options }
   const results: R[] = []
 
   // Split the array into chunks

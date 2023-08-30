@@ -1,5 +1,16 @@
 # @flatfile/plugin-record-hook
 
+## 1.6.0
+
+### Minor Changes
+
+- 447691a: Add configurable batch options
+
+### Patch Changes
+
+- Updated dependencies [447691a]
+  - @flatfile/util-extractor@0.3.0
+
 ## 1.5.3
 
 ### Patch Changes
