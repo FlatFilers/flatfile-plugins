@@ -2,27 +2,61 @@ import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 import { jobHandler } from '.'
 
 describe('JobHandler plugin e2e tests', () => {
-  const listener = setupListener()
-  const mockFn = jest.fn()
-  let spaceId: string
+  describe('jobHandler() successful', () => {
+    const listener = setupListener()
+    const mockFn = jest.fn()
+    let spaceId: string
 
-  beforeAll(async () => {
-    listener.on('**', (event) => {
-      console.log(event.topic, event.payload.job)
+    beforeAll(async () => {
+      listener.on('**', (event) => {
+        console.log(event.topic, event.payload.job)
+      })
+      listener.use(jobHandler('space:configure', mockFn))
+
+      const space = await setupSpace()
+      spaceId = space.id
     })
-    listener.use(jobHandler('space:configure', mockFn))
 
-    const space = await setupSpace()
-    spaceId = space.id
+    afterAll(async () => {
+      await deleteSpace(spaceId)
+    })
+
+    test('jobHandler()', async () => {
+      await listener.waitFor('job:ready', 1, 'space:configure')
+
+      expect(mockFn).toHaveBeenCalled()
+    })
   })
 
-  afterAll(async () => {
-    await deleteSpace(spaceId)
-  })
+  describe('jobHandler() failure', () => {
+    const logErrorSpy = jest.spyOn(global.console, 'error')
+    const listener = setupListener()
+    const mockErrorFn = jest.fn(() => {
+      throw new Error('error')
+    })
+    let spaceId: string
 
-  test('jobHandler()', async () => {
-    await listener.waitFor('job:ready', 1, 'space:configure')
+    beforeAll(async () => {
+      listener.on('**', (event) => {
+        console.log(event.topic, event.payload.job)
+      })
+      listener.use(jobHandler('space:configure', mockErrorFn))
 
-    expect(mockFn).toHaveBeenCalled()
+      const space = await setupSpace()
+      spaceId = space.id
+    })
+
+    afterAll(async () => {
+      await deleteSpace(spaceId)
+    })
+
+    test('job:failed', async () => {
+      await listener.waitFor('job:failed', 1, 'space:configure')
+
+      expect(logErrorSpy).toHaveBeenCalledWith(
+        '[@flatfile/plugin-job-handler]:[FATAL] Error: error'
+      )
+      expect(mockErrorFn).toThrow()
+    })
   })
 })
