@@ -3,7 +3,13 @@ import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
 import { BulkRecordHook } from '@flatfile/plugin-record-hook'
 import { FlatfileRecord, TPrimitive } from '@flatfile/hooks'
 
-export function autocast(sheetId: string, options?: Record<string, any>) {
+export function autocast(
+  sheetId: string,
+  options?: {
+    chunkSize?: number
+    parallel?: number
+  }
+) {
   return async (client: FlatfileListener) => {
     client.on('commit:created', { sheetId }, async (event: FlatfileEvent) => {
       return BulkRecordHook(event, callback, options)
@@ -51,11 +57,13 @@ const CASTING_FUNCTIONS: {
 }
 
 export function castNumber(value: TPrimitive): TPrimitive {
-  if (typeof value === 'string' && !isNaN(Number(value))) {
+  if (typeof value === 'string') {
     const strippedValue = value.replace(/,/g, '')
-    const num = Number(strippedValue)
-    if (isFinite(num)) {
-      return num
+    if (!isNaN(Number(strippedValue))) {
+      const num = Number(strippedValue)
+      if (isFinite(num)) {
+        return num
+      }
     }
   }
   return value
