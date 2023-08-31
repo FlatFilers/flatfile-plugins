@@ -1,6 +1,6 @@
 # @flatfile/autocast
 
-This package automatically converts the intial user-inputted data to the correct type needed for that field so it can be processed.
+This package automatically converts the initial user-inputted data to the correct type needed for that field so it can be processed.
 
 ## Get Started
 
