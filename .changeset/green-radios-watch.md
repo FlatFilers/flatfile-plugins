@@ -1,7 +1,7 @@
 ---
-'@flatfile/plugin-record-hook': minor
+'@flatfile/plugin-record-hook': patch
 '@flatfile/plugin-autocast': minor
-'@flatfile/util-common': minor
+'@flatfile/util-common': patch
 ---
 
 Introduction of the autocast plugin!
