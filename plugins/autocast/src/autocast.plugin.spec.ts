@@ -14,7 +14,7 @@ describe('autocast plugin', () => {
     describe.each(['1.1', 1.1])('should return a decimal', (num) => {
       expect(castNumber(num)).toBe(1.1)
     })
-    it('should return a number', () => {
+    it('string numbers with commas should return a number', () => {
       expect(castNumber('1,100')).toBe(1100)
     })
     describe.each(TRUTHY_VALUES)('should return a truthy boolean', (truthy) => {
