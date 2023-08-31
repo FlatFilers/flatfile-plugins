@@ -30,7 +30,7 @@
     "@flatfile/api": "^1.4.9",
     "@flatfile/listener": "^0.3.11",
     "@flatfile/plugin-job-handler": "*",
-    "@flatfile/util-common": "^0.0.2",
+    "@flatfile/util-common": "^0.1.1",
     "axios": "^1.4.0"
   }
 }
