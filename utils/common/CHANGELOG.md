@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 0.1.1
+
+### Patch Changes
+
+- 15dc4fe: Introduction of the autocast plugin!
+
 ## 0.1.0
 
 ### Minor Changes

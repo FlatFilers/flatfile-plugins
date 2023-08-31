@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.0.4
+
+### Patch Changes
+
+- 15dc4fe: Introduction of the autocast plugin!
+- Updated dependencies [15dc4fe]
+  - @flatfile/util-common@0.1.1
+
 ## 1.0.3
 
 ### Patch Changes
