@@ -1,5 +1,22 @@
 # @flatfile/plugin-json-extractor
 
+## 0.5.0
+
+### Minor Changes
+
+- 447691a: Add configurable batch options
+
+### Patch Changes
+
+- Updated dependencies [447691a]
+  - @flatfile/util-extractor@0.3.0
+
+## 0.4.5
+
+### Patch Changes
+
+- @flatfile/util-extractor@0.2.4
+
 ## 0.4.4
 
 ### Patch Changes

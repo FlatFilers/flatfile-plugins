@@ -1,10 +1,22 @@
 {
   "name": "@flatfile/plugin-autocast",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "A plugin for automatically casting values in Flatfile.",
   "registryMetadata": {
-    "status": "Coming soon",
     "category": "transform"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "TZ=GMT jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [],
   "author": "Alex Hollenbeck",
@@ -13,5 +25,10 @@
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
     "directory": "plugins/autocast"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.4.9",
+    "@flatfile/listener": "^0.3.10",
+    "@flatfile/plugin-record-hook": "^1.0.4"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-space-configure",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A plugin for configuring a Flatfile Space.",
   "registryMetadata": {
     "category": "core"
