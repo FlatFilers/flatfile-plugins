@@ -2,61 +2,64 @@ import api from '@flatfile/api'
 import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
 import { BulkRecordHook } from '@flatfile/plugin-record-hook'
 import { FlatfileRecord, TPrimitive } from '@flatfile/hooks'
+import { logInfo } from '@flatfile/util-common'
 
 export function autocast(
-  sheetSlug: string,
+  sheetFilter: { sheetSlug?: string; sheetId?: string },
   fieldFilter?: string[],
   options?: {
     chunkSize?: number
     parallel?: number
   }
 ) {
+  if (!sheetFilter.sheetSlug && !sheetFilter.sheetId) {
+    throw new Error('You must provide either a sheetSlug or sheetId')
+  }
+  if (sheetFilter.sheetSlug && sheetFilter.sheetId) {
+    throw new Error('You must provide either a sheetSlug or sheetId, not both')
+  }
   return async (listener: FlatfileListener) => {
-    listener.on(
-      'commit:created',
-      { sheetSlug },
-      async (event: FlatfileEvent) => {
-        return await BulkRecordHook(
-          event,
-          async (records: FlatfileRecord[]) => {
-            const sheetId = event.context.sheetId
-            const sheet = await api.sheets.get(sheetId)
-            if (!sheet) {
-              console.log(`Failed to fetch sheet with slug: ${sheetSlug}`)
-              return
-            }
+    listener.on('commit:created', sheetFilter, async (event: FlatfileEvent) => {
+      return await BulkRecordHook(
+        event,
+        async (records: FlatfileRecord[]) => {
+          const sheetId = event.context.sheetId
+          const sheet = await api.sheets.get(sheetId)
+          if (!sheet) {
+            logInfo('@flatfile/plugin-autocast', 'Failed to fetch sheet')
+            return
+          }
 
-            const castableFields = sheet.data.config.fields.filter((field) =>
-              fieldFilter
-                ? fieldFilter.includes(field.key)
-                : field.type !== 'string'
-            )
-            records.forEach((record) => {
-              castableFields.forEach((field) => {
-                const originalValue = record.get(field.key)
-                const caster = CASTING_FUNCTIONS[field.type]
+          const castableFields = sheet.data.config.fields.filter((field) =>
+            fieldFilter
+              ? fieldFilter.includes(field.key)
+              : field.type !== 'string'
+          )
+          records.forEach((record) => {
+            castableFields.forEach((field) => {
+              const originalValue = record.get(field.key)
+              const caster = CASTING_FUNCTIONS[field.type]
 
-                if (
-                  originalValue &&
-                  caster &&
-                  typeof originalValue !== field.type
-                ) {
-                  record.computeIfPresent(field.key, caster)
+              if (
+                originalValue &&
+                caster &&
+                typeof originalValue !== field.type
+              ) {
+                record.computeIfPresent(field.key, caster)
 
-                  if (originalValue === record.get(field.key)) {
-                    record.addError(
-                      field.key,
-                      `Failed to cast '${originalValue}' to '${field.type}'`
-                    )
-                  }
+                if (originalValue === record.get(field.key)) {
+                  record.addError(
+                    field.key,
+                    `Failed to cast '${originalValue}' to '${field.type}'`
+                  )
                 }
-              })
+              }
             })
-          },
-          options
-        )
-      }
-    )
+          })
+        },
+        options
+      )
+    })
   }
 }
 
