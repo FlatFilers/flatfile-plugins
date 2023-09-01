@@ -41,12 +41,15 @@ export function webhookEgress(job: string, webhookUrl?: string) {
             }
           } else {
             logError(
-              '@flatfile/webhook-egress',
+              '@flatfile/plugin-webhook-egress',
               `Failed to submit data to ${webhookReceiver}. Status: ${response.status} ${response.statusText}`
             )
           }
         } catch (error) {
-          logError('@flatfile/webhook-egress', JSON.stringify(error, null, 2))
+          logError(
+            '@flatfile/plugin-webhook-egress',
+            JSON.stringify(error, null, 2)
+          )
 
           return {
             outcome: {

@@ -43,6 +43,7 @@ export class TestListener extends FlatfileListener {
    *
    * @param event The event to wait for
    * @param count The count of the event
+   * @param job The job to wait for
    * @returns A promise that resolves when the count of the event has been reached
    */
   waitFor(event: string, count: number = 1, job?: string): Promise<number> {
