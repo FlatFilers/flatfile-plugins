@@ -4,48 +4,60 @@ import { BulkRecordHook } from '@flatfile/plugin-record-hook'
 import { FlatfileRecord, TPrimitive } from '@flatfile/hooks'
 
 export function autocast(
-  sheetId: string,
+  sheetSlug: string,
+  fieldFilter?: string[],
   options?: {
     chunkSize?: number
     parallel?: number
   }
 ) {
-  return async (client: FlatfileListener) => {
-    client.on('commit:created', { sheetId }, async (event: FlatfileEvent) => {
-      return BulkRecordHook(event, callback, options)
-    })
-  }
-}
+  return async (listener: FlatfileListener) => {
+    listener.on(
+      'commit:created',
+      { sheetSlug },
+      async (event: FlatfileEvent) => {
+        return await BulkRecordHook(
+          event,
+          async (records: FlatfileRecord[]) => {
+            const sheetId = event.context.sheetId
+            const sheet = await api.sheets.get(sheetId)
+            if (!sheet) {
+              console.log(`Failed to fetch sheet with slug: ${sheetSlug}`)
+              return
+            }
 
-async function callback(records: FlatfileRecord[], event: FlatfileEvent) {
-  const { sheetId } = event.context
-  const sheet = await api.sheets.get(sheetId)
-  if (!sheet) {
-    console.log(`Failed to fetch sheet with id: ${sheetId}`)
-    return
-  }
+            const castableFields = sheet.data.config.fields.filter((field) =>
+              fieldFilter
+                ? fieldFilter.includes(field.key)
+                : field.type !== 'string'
+            )
+            records.forEach((record) => {
+              castableFields.forEach((field) => {
+                const originalValue = record.get(field.key)
+                const caster = CASTING_FUNCTIONS[field.type]
 
-  const castableFields = sheet.data.config.fields.filter(
-    (field) => field.type !== 'string'
-  )
+                if (
+                  originalValue &&
+                  caster &&
+                  typeof originalValue !== field.type
+                ) {
+                  record.computeIfPresent(field.key, caster)
 
-  records.forEach((record) => {
-    castableFields.forEach((field) => {
-      const originalValue = record.get(field.key)
-      const caster = CASTING_FUNCTIONS[field.type]
-
-      if (originalValue && caster && typeof originalValue !== field.type) {
-        record.computeIfPresent(field.key, caster)
-
-        if (originalValue === record.get(field.key)) {
-          record.addError(
-            field.key,
-            `Failed to cast '${originalValue}' to '${field.type}'`
-          )
-        }
+                  if (originalValue === record.get(field.key)) {
+                    record.addError(
+                      field.key,
+                      `Failed to cast '${originalValue}' to '${field.type}'`
+                    )
+                  }
+                }
+              })
+            })
+          },
+          options
+        )
       }
-    })
-  })
+    )
+  }
 }
 
 const CASTING_FUNCTIONS: {
