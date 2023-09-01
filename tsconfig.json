@@ -3,6 +3,6 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "lib": [ "es2015", "dom" ],
-    "moduleResolution": "nodenext"
+    "moduleResolution": "node"
   }
 }
