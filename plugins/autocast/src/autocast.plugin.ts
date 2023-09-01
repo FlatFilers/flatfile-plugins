@@ -6,7 +6,7 @@ import { logInfo } from '@flatfile/util-common'
 
 export function autocast(
   sheetFilter: { sheetSlug?: string; sheetId?: string },
-  fieldFilter?: string[],
+  fieldFilters?: string[],
   options?: {
     chunkSize?: number
     parallel?: number
@@ -31,8 +31,8 @@ export function autocast(
           }
 
           const castableFields = sheet.data.config.fields.filter((field) =>
-            fieldFilter
-              ? fieldFilter.includes(field.key)
+            fieldFilters
+              ? fieldFilters.includes(field.key)
               : field.type !== 'string'
           )
           records.forEach((record) => {
