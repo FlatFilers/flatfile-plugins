@@ -1,5 +1,11 @@
 # @flatfile/plugin-autocast
 
+## 0.2.0
+
+### Minor Changes
+
+- 966cf91: This release introduces field filters, and enables filtering by either sheetId or sheetSlug.
+
 ## 0.1.0
 
 ### Minor Changes
