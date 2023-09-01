@@ -2,4 +2,4 @@
 '@flatfile/plugin-autocast': minor
 ---
 
-This release introduces field filters, and replaces sheetId with sheetSlug as a sheet identifier.
+This release introduces field filters, and enables filtering by either sheetId or sheetSlug.
