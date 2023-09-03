@@ -1,5 +1,11 @@
 # @flatfile/plugin-autocast
 
+## 0.2.1
+
+### Patch Changes
+
+- ccbbbc9: Fix sheet filtering options to require sheetSlug.
+
 ## 0.2.0
 
 ### Minor Changes
