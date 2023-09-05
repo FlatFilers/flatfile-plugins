@@ -3,7 +3,7 @@ import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { Record_, Records } from '@flatfile/api/api'
 import { RecordTranslater } from './record.translater'
 import { asyncBatch } from '@flatfile/util-common'
-import { Effect } from 'effect'
+import PQueue from 'p-queue'
 
 export const RecordHook = async (
   event: FlatfileEvent,
@@ -13,16 +13,12 @@ export const RecordHook = async (
   ) => any | Promise<any>,
   options: { concurrency?: number } = {}
 ) => {
-  await BulkRecordHook(event, async (records, event) => {
+  await BulkRecordHook(event, async (records, bulkEvent) => {
     const { concurrency } = { concurrency: 10, ...options }
-    const handlers = records.map((record: FlatfileRecord) =>
-      Effect.promise(async () => {
-        await handler(record, event)
-      })
-    )
-    Effect.runPromise(
-      Effect.all(handlers, {
-        concurrency,
+    const queue = new PQueue({ concurrency })
+    await Promise.all(
+      records.map(async (record) => {
+        queue.add(() => handler(record, bulkEvent))
       })
     )
   })
@@ -54,14 +50,14 @@ export const BulkRecordHook = async (
 
     await event.cache.set('records', async () => recordsUpdates)
 
-    event.afterAll(async () => {
-      try {
-        const records = event.cache.get<Records>('records')
-        await event.update(records)
-      } catch (e) {
-        console.log(`Error updating records: ${e}`)
-      }
-    })
+    // event.afterAll(async () => {
+    try {
+      const records = event.cache.get<Records>('records')
+      await event.update(records)
+    } catch (e) {
+      console.log(`Error updating records: ${e}`)
+    }
+    // })
   } catch (e) {
     console.log(`Error getting records: ${e}`)
   }
