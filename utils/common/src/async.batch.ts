@@ -1,9 +1,12 @@
+import { FlatfileEvent } from '@flatfile/listener'
+
 export async function asyncBatch<T, R>(
   arr: T[],
-  callback: (chunk: T[]) => Promise<R>,
-  options: { chunkSize?: number; parallel?: number } = {}
+  callback: (chunk: T[], event?: FlatfileEvent) => Promise<R>,
+  options: { chunkSize?: number; parallel?: number } = {},
+  event?: FlatfileEvent
 ): Promise<R[]> {
-  const { chunkSize, parallel } = { chunkSize: 1000, parallel: 1, ...options }
+  const { chunkSize, parallel } = { chunkSize: 3000, parallel: 1, ...options }
   const results: R[] = []
 
   // Split the array into chunks
@@ -14,7 +17,7 @@ export async function asyncBatch<T, R>(
 
   // Create a helper function to process a chunk
   async function processChunk(chunk: T[]): Promise<void> {
-    const result = await callback(chunk)
+    const result = await callback(chunk, event)
     results.push(result)
   }
 

@@ -46,7 +46,7 @@ export const BulkRecordHook = async (
     const batch = await prepareXRecords(records)
 
     // run client defined data hooks
-    await asyncBatch(batch.records, handler, options)
+    await asyncBatch(batch.records, handler, options, event)
 
     const recordsUpdates = new RecordTranslater<FlatfileRecord>(
       batch.records

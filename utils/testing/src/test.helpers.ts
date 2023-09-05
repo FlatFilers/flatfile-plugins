@@ -23,6 +23,7 @@ export async function setupSpace(): Promise<Flatfile.spaces.Space> {
   const { data: space } = await api.spaces.create({
     name: 'ci-space-' + Date.now(),
     environmentId,
+    autoConfigure: true,
   })
 
   return space

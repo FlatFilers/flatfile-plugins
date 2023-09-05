@@ -9,6 +9,8 @@ export const DelimiterExtractor = (
     dynamicTyping?: boolean
     skipEmptyLines?: boolean | 'greedy'
     transform?: (value: any) => Flatfile.CellValueUnion
+    chunkSize?: number
+    parallel?: number
   }
 ) => {
   return Extractor(fileExt, parseBuffer, options)

@@ -1,5 +1,16 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.4.0
+
+### Minor Changes
+
+- 447691a: Add configurable batch options
+
+### Patch Changes
+
+- Updated dependencies [447691a]
+  - @flatfile/plugin-delimiter-extractor@0.5.0
+
 ## 1.3.4
 
 ### Patch Changes

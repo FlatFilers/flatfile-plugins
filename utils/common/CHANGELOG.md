@@ -1,5 +1,17 @@
 # @flatfile/util-common
 
+## 0.1.1
+
+### Patch Changes
+
+- 15dc4fe: Introduction of the autocast plugin!
+
+## 0.1.0
+
+### Minor Changes
+
+- 69fd41c: Introducing the new JobHandler plugin and the new SpaceConfigure plugin, as well as a new utilities for log message formatting.
+
 ## 0.0.2
 
 ### Patch Changes

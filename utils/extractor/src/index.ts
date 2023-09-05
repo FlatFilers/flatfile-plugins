@@ -30,10 +30,18 @@ export const Extractor = (
             file,
             capture
           )
+          if (!workbook.sheets || workbook.sheets.length === 0) {
+            throw new Error('because no Sheets found')
+          }
           await api.jobs.ack(job.data.id, {
             progress: 50,
             info: 'Adding records to Sheets',
           })
+          const { chunkSize, parallel } = {
+            chunkSize: 3000,
+            parallel: 1,
+            ...options,
+          }
           for (const sheet of workbook.sheets) {
             if (!capture[sheet.name]) {
               continue
@@ -43,7 +51,7 @@ export const Extractor = (
               async (chunk) => {
                 await api.records.insert(sheet.id, chunk)
               },
-              { chunkSize: 10000, parallel: 1 }
+              { chunkSize, parallel }
             )
           }
           await api.files.update(file.id, {
@@ -77,7 +85,7 @@ async function createWorkbook(
   )
   const workbook = await api.workbooks.create(workbookConfig)
 
-  if (workbook.data.sheets.length === 0) {
+  if (!workbook.data.sheets || workbook.data.sheets.length === 0) {
     throw new Error('because no Sheets found')
   }
 

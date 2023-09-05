@@ -1,5 +1,22 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.5.0
+
+### Minor Changes
+
+- 447691a: Add configurable batch options
+
+### Patch Changes
+
+- Updated dependencies [447691a]
+  - @flatfile/util-extractor@0.3.0
+
+## 0.4.3
+
+### Patch Changes
+
+- @flatfile/util-extractor@0.2.4
+
 ## 0.4.2
 
 ### Patch Changes
