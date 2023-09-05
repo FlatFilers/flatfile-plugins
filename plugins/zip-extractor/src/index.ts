@@ -4,8 +4,14 @@ import api from '@flatfile/api'
 import * as fs from 'fs'
 import path from 'path'
 import AdmZip from 'adm-zip'
+import { tmpdir } from 'os'
+import { logInfo } from '@flatfile/util-common'
 
-export const ZipExtractor = () => {
+export interface PluginOptions {
+  readonly debug?: boolean
+}
+
+export const ZipExtractor = (options: PluginOptions = {}) => {
   return (handler: FlatfileListener) => {
     handler.use(
       fileBuffer('.zip', async (file, buffer, event) => {
@@ -23,6 +29,9 @@ export const ZipExtractor = () => {
             info: 'Unzipping file',
           })
           const zip = new AdmZip(buffer)
+          if (options.debug) {
+            logInfo('@flatfile/plugin-zip-extractor', `tmpdir ${tmpdir()}`)
+          }
           const zipEntries = zip.getEntries()
           await api.jobs.ack(job.data.id, {
             progress: 50,
@@ -34,13 +43,14 @@ export const ZipExtractor = () => {
               !zipEntry.entryName.startsWith('__MACOSX') &&
               !zipEntry.isDirectory
             ) {
-              zip.extractEntryTo(
-                zipEntry,
-                path.join(__dirname, '../'),
-                false,
-                true
-              )
-              const filePath = path.join(__dirname, '../', zipEntry.name)
+              zip.extractEntryTo(zipEntry, tmpdir(), false, true)
+              const filePath = path.join(tmpdir(), zipEntry.name)
+              if (options.debug) {
+                logInfo(
+                  '@flatfile/plugin-zip-extractor',
+                  `filePath ${filePath}`
+                )
+              }
               const stream = fs.createReadStream(filePath)
               await api.files.upload(stream, {
                 spaceId,
@@ -54,7 +64,7 @@ export const ZipExtractor = () => {
             info: 'Extraction complete',
           })
         } catch (e) {
-          console.log(`error ${e}`)
+          logInfo('@flatfile/plugin-zip-extractor', `error ${e}`)
           await api.jobs.fail(job.data.id, {
             info: `Extraction failed ${e.message}`,
           })
