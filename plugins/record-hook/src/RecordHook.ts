@@ -13,13 +13,11 @@ export const RecordHook = async (
   ) => any | Promise<any>,
   options: { concurrency?: number } = {}
 ) => {
-  return BulkRecordHook(event, async (records, bulkEvent) => {
-    const { concurrency } = { concurrency: 10, ...options }
+  const { concurrency } = { concurrency: 10, ...options }
+  return BulkRecordHook(event, async (records, event) => {
     const queue = new PQueue({ concurrency })
-
-    // Add tasks to the queue and wait for them to finish
     const tasks = records.map((record) =>
-      queue.add(() => handler(record, bulkEvent))
+      queue.add(() => handler(record, event))
     )
     return await Promise.all(tasks)
   })
