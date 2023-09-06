@@ -1,5 +1,11 @@
 # @flatfile/plugin-autocast
 
+## 0.2.2
+
+### Patch Changes
+
+- 3e28c51: Fix for date casting
+
 ## 0.2.1
 
 ### Patch Changes

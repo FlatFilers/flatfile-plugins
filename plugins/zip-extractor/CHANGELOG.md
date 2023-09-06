@@ -1,5 +1,11 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.3.5
+
+### Patch Changes
+
+- 9786771: Use system's tmp directory for unzipping
+
 ## 0.3.4
 
 ### Patch Changes
