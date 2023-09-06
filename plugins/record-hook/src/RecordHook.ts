@@ -52,9 +52,9 @@ export const BulkRecordHook = async (
     await event.cache.set('records', async () => recordsUpdates)
 
     event.afterAll(async () => {
-      const updatedRecords = event.cache.get<Records>('records')
+      const records = event.cache.get<Records>('records')
       try {
-        return await event.update(updatedRecords)
+        return await event.update(records)
       } catch (e) {
         console.log(`Error updating records: ${e}`)
       }
