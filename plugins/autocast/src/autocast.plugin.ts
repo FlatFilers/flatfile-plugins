@@ -70,7 +70,9 @@ const CASTING_FUNCTIONS: {
 }
 
 export function castNumber(value: TPrimitive): TPrimitive {
-  if (typeof value === 'string') {
+  if (typeof value === 'number') {
+    return value
+  } else if (typeof value === 'string') {
     const strippedValue = value.replace(/,/g, '')
     if (!isNaN(Number(strippedValue))) {
       const num = Number(strippedValue)
@@ -85,7 +87,9 @@ export function castNumber(value: TPrimitive): TPrimitive {
 export const TRUTHY_VALUES = ['1', 'yes', 'true', 'on', 't', 'y', 1]
 export const FALSY_VALUES = ['-1', '0', 'no', 'false', 'off', 'f', 'n', 0, -1]
 export function castBoolean(value: TPrimitive): TPrimitive {
-  if (typeof value === 'string' || typeof value === 'number') {
+  if (typeof value === 'boolean') {
+    return value
+  } else if (typeof value === 'string' || typeof value === 'number') {
     if (value === '') {
       return null
     }
