@@ -1,9 +1,9 @@
-import { FlatfileEvent } from '@flatfile/listener'
-import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { Record_, Records } from '@flatfile/api/api'
-import { RecordTranslater } from './record.translater'
+import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
+import { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
 import PQueue from 'p-queue'
+import { RecordTranslater } from './record.translater'
 
 export const RecordHook = async (
   event: FlatfileEvent,
@@ -13,14 +13,15 @@ export const RecordHook = async (
   ) => any | Promise<any>,
   options: { concurrency?: number } = {}
 ) => {
-  await BulkRecordHook(event, async (records, bulkEvent) => {
+  return BulkRecordHook(event, async (records, bulkEvent) => {
     const { concurrency } = { concurrency: 10, ...options }
     const queue = new PQueue({ concurrency })
-    await Promise.all(
-      records.map(async (record) => {
-        queue.add(() => handler(record, bulkEvent))
-      })
+
+    // Add tasks to the queue and wait for them to finish
+    const tasks = records.map((record) =>
+      queue.add(() => handler(record, bulkEvent))
     )
+    return await Promise.all(tasks)
   })
 }
 
@@ -50,17 +51,19 @@ export const BulkRecordHook = async (
 
     await event.cache.set('records', async () => recordsUpdates)
 
-    // event.afterAll(async () => {
-    try {
-      const records = event.cache.get<Records>('records')
-      await event.update(records)
-    } catch (e) {
-      console.log(`Error updating records: ${e}`)
-    }
-    // })
+    event.afterAll(async () => {
+      const updatedRecords = event.cache.get<Records>('records')
+      try {
+        return await event.update(updatedRecords)
+      } catch (e) {
+        console.log(`Error updating records: ${e}`)
+      }
+    })
   } catch (e) {
     console.log(`Error getting records: ${e}`)
   }
+
+  return handler
 }
 
 const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
