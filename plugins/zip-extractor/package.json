@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-zip-extractor",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A plugin for unzipping zip files and uploading content back in Flatfile.",
   "registryMetadata": {
     "category": "extractors"

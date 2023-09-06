@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-autocast",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A plugin for automatically casting values in Flatfile.",
   "registryMetadata": {
     "category": "transform"
