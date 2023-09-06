@@ -1,7 +1,7 @@
 import api from '@flatfile/api'
-import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
-import { BulkRecordHook } from '@flatfile/plugin-record-hook'
 import { FlatfileRecord, TPrimitive } from '@flatfile/hooks'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import { BulkRecordHook } from '@flatfile/plugin-record-hook'
 import { logInfo } from '@flatfile/util-common'
 
 export function autocast(
@@ -42,12 +42,12 @@ export function autocast(
                   caster &&
                   typeof originalValue !== field.type
                 ) {
-                  record.computeIfPresent(field.key, caster)
-
-                  if (originalValue === record.get(field.key)) {
+                  try {
+                    record.computeIfPresent(field.key, caster)
+                  } catch (e) {
                     record.addError(
                       field.key,
-                      `Failed to cast '${originalValue}' to '${field.type}'`
+                      e.message || 'Failed to cast value'
                     )
                   }
                 }
@@ -79,7 +79,7 @@ export function castNumber(value: TPrimitive): TPrimitive {
       }
     }
   }
-  return value
+  throw new Error(`Failed to cast '${value}' to 'number'`)
 }
 
 export const TRUTHY_VALUES = ['1', 'yes', 'true', 'on', 't', 'y', 1]
@@ -97,7 +97,7 @@ export function castBoolean(value: TPrimitive): TPrimitive {
       return false
     }
   }
-  return value
+  throw new Error(`Failed to cast '${value}' to 'boolean'`)
 }
 
 export function castDate(value: TPrimitive): TPrimitive {
@@ -107,5 +107,5 @@ export function castDate(value: TPrimitive): TPrimitive {
       return date.toUTCString()
     }
   }
-  return value
+  throw new Error(`Failed to cast '${value}' to 'date'`)
 }
