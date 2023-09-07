@@ -2,7 +2,7 @@ import { Record_, Records } from '@flatfile/api/api'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
-import PQueue from 'p-queue'
+import Queue from 'queue'
 import { RecordTranslater } from './record.translater'
 
 export const RecordHook = async (
@@ -15,10 +15,11 @@ export const RecordHook = async (
 ) => {
   const { concurrency } = { concurrency: 10, ...options }
   return BulkRecordHook(event, async (records, event) => {
-    const queue = new PQueue({ concurrency })
+    const queue = new Queue({ concurrency })
     const tasks = records.map((record) =>
-      queue.add(() => handler(record, event))
+      queue.push(() => handler(record, event))
     )
+    queue.start()
     return await Promise.all(tasks)
   })
 }
