@@ -1,5 +1,5 @@
-import { parseBuffer } from './parser'
 import { Extractor } from '@flatfile/util-extractor'
+import { parseBuffer } from './parser'
 
 export const XMLExtractor = (options?: {
   separator?: string
@@ -8,5 +8,5 @@ export const XMLExtractor = (options?: {
   chunkSize?: number
   parallel?: number
 }) => {
-  return Extractor('.xml', parseBuffer, options)
+  return Extractor('.xml', 'xml', parseBuffer, options)
 }
