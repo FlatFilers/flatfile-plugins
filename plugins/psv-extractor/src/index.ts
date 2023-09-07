@@ -1,6 +1,9 @@
 import { Flatfile } from '@flatfile/api'
 import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
 
+/*
+ * @deprecated
+ */
 export const PSVExtractor = (options?: {
   dynamicTyping?: boolean
   skipEmptyLines?: boolean | 'greedy'
@@ -12,6 +15,6 @@ export const PSVExtractor = (options?: {
 }
 
 /*
- * @deprecated use `PSVExtractor` instead
+ * @deprecated
  */
 export const psvExtractorPlugin = PSVExtractor

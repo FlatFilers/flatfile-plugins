@@ -1,6 +1,9 @@
 import { Flatfile } from '@flatfile/api'
 import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
 
+/*
+ * @deprecated
+ */
 export const TSVExtractor = (options?: {
   dynamicTyping?: boolean
   skipEmptyLines?: boolean | 'greedy'
