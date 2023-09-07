@@ -1,4 +1,3 @@
-import { bulkRecordHook, recordHook } from './index'
 import {
   createRecords,
   deleteSpace,
@@ -7,6 +6,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
+import { bulkRecordHook, recordHook } from './index'
 
 jest.setTimeout(10_000)
 
