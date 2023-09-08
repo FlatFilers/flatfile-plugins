@@ -2,7 +2,7 @@ import { Record_, Records } from '@flatfile/api/api'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
-import pMap from 'p-map'
+import { Duration, Effect } from 'effect'
 import { RecordTranslater } from './record.translater'
 
 export const RecordHook = async (
@@ -17,8 +17,16 @@ export const RecordHook = async (
   return BulkRecordHook(
     event,
     async (records, event) => {
-      const mapper = async (record: FlatfileRecord) => handler(record, event)
-      return await pMap(records, mapper, { concurrency })
+      const handlers = await records.map((record: FlatfileRecord) =>
+        Effect.promise(async () => {
+          await handler(record, event)
+        })
+      )
+      return Effect.runPromise(
+        Effect.all(handlers, {
+          concurrency,
+        })
+      )
     },
     options
   )
