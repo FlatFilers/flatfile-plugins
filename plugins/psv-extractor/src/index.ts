@@ -7,6 +7,7 @@ export const PSVExtractor = (options?: {
   transform?: (value: any) => Flatfile.CellValueUnion
   chunkSize?: number
   parallel?: number
+  debug?: boolean
 }) => {
   return DelimiterExtractor('.psv', { delimiter: '|', ...options })
 }

@@ -1,26 +1,48 @@
-import type { FlatfileListener } from '@flatfile/listener'
-import { fileBuffer } from '@flatfile/util-file-buffer'
 import api, { Flatfile } from '@flatfile/api'
-import { mapValues } from 'remeda'
+import { JobStatus, JobType, Trigger } from '@flatfile/api/api'
+import type { FlatfileListener } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
+import { getFileBuffer } from '@flatfile/util-file-buffer'
+import { mapValues } from 'remeda'
 
 export const Extractor = (
   fileExt: string | RegExp,
+  extractorType: string,
   parseBuffer: (buffer: Buffer, options: any) => WorkbookCapture,
   options?: Record<string, any>
 ) => {
-  return (handler: FlatfileListener) => {
-    handler.use(
-      fileBuffer(fileExt, async (file, buffer, event) => {
-        const job = await api.jobs.create({
-          type: 'file',
-          operation: 'extract',
-          status: 'ready',
-          source: event.context.fileId,
-        })
+  return (listener: FlatfileListener) => {
+    listener.on('file:created', async (event) => {
+      const { data: file } = await api.files.get(event.context.fileId)
+      if (file.mode === 'export') {
+        return false
+      }
+
+      if (typeof fileExt === 'string' && !file.name.endsWith(fileExt)) {
+        return false
+      }
+
+      if (fileExt instanceof RegExp && !fileExt.test(file.name)) {
+        return false
+      }
+
+      const jobs = await api.jobs.create({
+        type: JobType.File,
+        operation: `extract-plugin-${extractorType}`,
+        status: JobStatus.Ready,
+        source: event.context.fileId,
+      })
+      await api.jobs.execute(jobs.data.id)
+    })
+    listener.on(
+      'job:ready',
+      { operation: `extract-plugin-${extractorType}` },
+      async (event) => {
+        const { data: file } = await api.files.get(event.context.fileId)
+        const buffer = await getFileBuffer(event)
+        const { jobId } = event.context
         try {
-          await api.jobs.update(job.data.id, { status: 'executing' })
-          await api.jobs.ack(job.data.id, {
+          await api.jobs.ack(jobId, {
             progress: 10,
             info: 'Parsing Sheets',
           })
@@ -33,13 +55,14 @@ export const Extractor = (
           if (!workbook.sheets || workbook.sheets.length === 0) {
             throw new Error('because no Sheets found')
           }
-          await api.jobs.ack(job.data.id, {
+          await api.jobs.ack(jobId, {
             progress: 50,
             info: 'Adding records to Sheets',
           })
-          const { chunkSize, parallel } = {
+          const { chunkSize, parallel, debug } = {
             chunkSize: 3000,
             parallel: 1,
+            debug: false,
             ...options,
           }
           for (const sheet of workbook.sheets) {
@@ -51,23 +74,26 @@ export const Extractor = (
               async (chunk) => {
                 await api.records.insert(sheet.id, chunk)
               },
-              { chunkSize, parallel }
+              { chunkSize, parallel, debug }
             )
           }
           await api.files.update(file.id, {
             workbookId: workbook.id,
           })
-          await api.jobs.complete(job.data.id, {
+          await api.jobs.complete(jobId, {
             info: 'Extraction complete',
+            outcome: {
+              message: 'Extracted file',
+            },
           })
           console.log(workbook)
         } catch (e) {
           console.log(`error ${e}`)
-          await api.jobs.fail(job.data.id, {
+          await api.jobs.fail(jobId, {
             info: `Extraction failed ${e.message}`,
           })
         }
-      })
+      }
     )
   }
 }

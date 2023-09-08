@@ -7,6 +7,7 @@ export const TSVExtractor = (options?: {
   transform?: (value: any) => Flatfile.CellValueUnion
   chunkSize?: number
   parallel?: number
+  debug?: boolean
 }) => {
   return DelimiterExtractor('.tsv', { delimiter: '\t', ...options })
 }
