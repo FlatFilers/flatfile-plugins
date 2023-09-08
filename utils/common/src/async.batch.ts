@@ -3,57 +3,50 @@ import { FlatfileEvent } from '@flatfile/listener'
 export async function asyncBatch<T, R>(
   arr: T[],
   callback: (chunk: T[], event?: FlatfileEvent) => Promise<R>,
-  options: { chunkSize?: number; parallel?: number } = {},
+  options: { chunkSize?: number; parallel?: number; debug?: boolean } = {},
   event?: FlatfileEvent
 ): Promise<R[]> {
-  const { chunkSize, parallel } = { chunkSize: 3000, parallel: 1, ...options }
-  const results: R[] = []
+  const { chunkSize = 3000, parallel = 1, debug = false } = options
+  const chunks = Array.from(
+    { length: Math.ceil(arr.length / chunkSize) },
+    (_, i) => arr.slice(i * chunkSize, i * chunkSize + chunkSize)
+  )
 
-  // Split the array into chunks
-  const chunks: T[][] = []
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    chunks.push(arr.slice(i, i + chunkSize))
+  if (debug) {
+    console.log(`${chunks.length} chunks to be processed`)
   }
 
-  // Create a helper function to process a chunk
-  async function processChunk(chunk: T[]): Promise<void> {
-    const result = await callback(chunk, event)
-    results.push(result)
+  const results: Map<number, R> = new Map()
+
+  async function processChunk(
+    chunkIndex: number,
+    threadId: number
+  ): Promise<void> {
+    if (debug) {
+      console.log(`Thread ${threadId} processing chunk ${chunkIndex}`)
+    }
+
+    const result = await callback(chunks[chunkIndex], event)
+    results.set(chunkIndex, result)
   }
 
-  // Execute the chunks in parallel
-  const promises: Promise<void>[] = []
-  let running = 0
   let currentIndex = 0
-
-  function processNext(): void {
-    if (currentIndex >= chunks.length) {
-      // All chunks have been processed
-      return
-    }
-
-    const currentChunk = chunks[currentIndex]
-    const promise = processChunk(currentChunk).finally(() => {
-      running--
-      processNext() // Process next chunk
-    })
-
-    promises.push(promise)
-    currentIndex++
-    running++
-
-    if (running < parallel) {
-      processNext() // Process another chunk if available
+  async function processChunks(threadId: number): Promise<void> {
+    while (currentIndex < chunks.length) {
+      const chunkIndex = currentIndex++
+      await processChunk(chunkIndex, threadId)
     }
   }
 
-  // Start processing the chunks
-  for (let i = 0; i < parallel && i < chunks.length; i++) {
-    processNext()
-  }
+  const promises: Promise<void>[] = Array.from({ length: parallel }, (_, i) =>
+    processChunks(i)
+  )
 
-  // Wait for all promises to resolve
   await Promise.all(promises)
 
-  return results
+  if (debug) {
+    console.log('All chunks processed')
+  }
+
+  return Array.from(results.values())
 }

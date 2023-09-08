@@ -1,9 +1,9 @@
 import {
-  castNumber,
+  FALSY_VALUES,
+  TRUTHY_VALUES,
   castBoolean,
   castDate,
-  TRUTHY_VALUES,
-  FALSY_VALUES,
+  castNumber,
 } from './autocast.plugin'
 
 describe('autocast plugin', () => {
@@ -34,11 +34,14 @@ describe('autocast plugin', () => {
     ])('should return a date', (date) => {
       expect(castDate(date)).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
     })
-    describe.each([castNumber('foo'), castBoolean('foo'), castDate('foo')])(
-      'is uncastable; should return the original value',
-      (castFn) => {
-        expect(castFn).toBe('foo')
-      }
-    )
+    describe.each([
+      [castNumber, 'number'],
+      [castBoolean, 'boolean'],
+      [castDate, 'date'],
+    ])('is uncastable; should throw error', (castFn, type) => {
+      expect(() => castFn('foo')).toThrowError(
+        `Failed to cast 'foo' to '${type}'`
+      )
+    })
   })
 })

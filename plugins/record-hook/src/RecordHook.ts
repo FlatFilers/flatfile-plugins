@@ -11,13 +11,17 @@ export const RecordHook = async (
     record: FlatfileRecord,
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { concurrency?: number } = {}
+  options: { concurrency?: number; debug?: boolean } = {}
 ) => {
   const { concurrency } = { concurrency: 10, ...options }
-  return BulkRecordHook(event, async (records, event) => {
-    const mapper = async (record: FlatfileRecord) => handler(record, event)
-    return await pMap(records, mapper, { concurrency })
-  })
+  return BulkRecordHook(
+    event,
+    async (records, event) => {
+      const mapper = async (record: FlatfileRecord) => handler(record, event)
+      return await pMap(records, mapper, { concurrency })
+    },
+    options
+  )
 }
 
 export const BulkRecordHook = async (
@@ -26,7 +30,7 @@ export const BulkRecordHook = async (
     records: FlatfileRecord[],
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { chunkSize?: number; parallel?: number } = {}
+  options: { chunkSize?: number; parallel?: number; debug?: boolean } = {}
 ) => {
   try {
     const records = await event.cache.init<Records>(
