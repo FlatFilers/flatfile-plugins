@@ -1,5 +1,16 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.0
+
+### Minor Changes
+
+- b399623: Refactor extractors to handle extraction on job:ready, add debug option, fix asyncBatching
+
+### Patch Changes
+
+- Updated dependencies [b399623]
+  - @flatfile/util-common@0.2.0
+
 ## 1.0.4
 
 ### Patch Changes
