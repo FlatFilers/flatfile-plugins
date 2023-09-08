@@ -1,5 +1,5 @@
-import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import api, { Flatfile } from '@flatfile/api'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 
 export const fileBuffer = (
   matchFile: string | RegExp,
@@ -31,7 +31,7 @@ export const fileBuffer = (
   }
 }
 
-async function getFileBuffer(event: FlatfileEvent): Promise<Buffer> {
+export async function getFileBuffer(event: FlatfileEvent): Promise<Buffer> {
   const file = await api.files.download(event.context.fileId)
 
   const chunks: Buffer[] = []
