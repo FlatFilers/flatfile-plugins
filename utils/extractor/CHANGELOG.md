@@ -1,5 +1,17 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.0
+
+### Minor Changes
+
+- b399623: Refactor extractors to handle extraction on job:ready, add debug option, fix asyncBatching
+
+### Patch Changes
+
+- Updated dependencies [b399623]
+  - @flatfile/util-file-buffer@0.1.0
+  - @flatfile/util-common@0.2.0
+
 ## 0.3.0
 
 ### Minor Changes
