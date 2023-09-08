@@ -59,9 +59,10 @@ export const Extractor = (
             progress: 50,
             info: 'Adding records to Sheets',
           })
-          const { chunkSize, parallel } = {
+          const { chunkSize, parallel, debug } = {
             chunkSize: 3000,
             parallel: 1,
+            debug: false,
             ...options,
           }
           for (const sheet of workbook.sheets) {
@@ -73,7 +74,7 @@ export const Extractor = (
               async (chunk) => {
                 await api.records.insert(sheet.id, chunk)
               },
-              { chunkSize, parallel }
+              { chunkSize, parallel, debug }
             )
           }
           await api.files.update(file.id, {

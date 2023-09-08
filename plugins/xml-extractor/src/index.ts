@@ -7,6 +7,7 @@ export const XMLExtractor = (options?: {
   transform?: (row: Record<string, any>) => Record<string, any>
   chunkSize?: number
   parallel?: number
+  debug?: boolean
 }) => {
   return Extractor('.xml', 'xml', parseBuffer, options)
 }

@@ -5,6 +5,7 @@ export const ExcelExtractor = (options?: {
   rawNumbers?: boolean
   chunkSize?: number
   parallel?: number
+  debug?: boolean
 }) => {
   return Extractor(
     /\.(xlsx?|xlsm|xlsb|xltx?|xltm)$/i,

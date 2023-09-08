@@ -22,6 +22,7 @@ interface DelimiterOptions {
   transform?: (value: any) => Flatfile.CellValueUnion
   chunkSize?: number
   parallel?: number
+  debug?: boolean
 }
 
 export const DelimiterExtractor = (

@@ -4,6 +4,7 @@ import { parseBuffer } from './parser'
 export const JSONExtractor = (options?: {
   chunkSize?: number
   parallel?: number
+  debug?: boolean
 }) => {
   return Extractor('.json', 'json', parseBuffer, options)
 }
