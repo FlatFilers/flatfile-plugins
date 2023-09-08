@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.1.0
+
+### Minor Changes
+
+- b399623: Refactor extractors to handle extraction on job:ready, add debug option, fix asyncBatching
+
 ## 0.0.4
 
 ### Patch Changes

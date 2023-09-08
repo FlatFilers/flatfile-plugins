@@ -1,5 +1,13 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.3.6
+
+### Patch Changes
+
+- Updated dependencies [b399623]
+  - @flatfile/util-file-buffer@0.1.0
+  - @flatfile/util-common@0.2.0
+
 ## 0.3.5
 
 ### Patch Changes

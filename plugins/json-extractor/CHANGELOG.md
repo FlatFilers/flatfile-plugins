@@ -1,5 +1,16 @@
 # @flatfile/plugin-json-extractor
 
+## 0.6.0
+
+### Minor Changes
+
+- b399623: Refactor extractors to handle extraction on job:ready, add debug option, fix asyncBatching
+
+### Patch Changes
+
+- Updated dependencies [b399623]
+  - @flatfile/util-extractor@0.4.0
+
 ## 0.5.0
 
 ### Minor Changes
