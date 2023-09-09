@@ -1,13 +1,13 @@
 import api from '@flatfile/api'
-import axios from 'axios'
 import { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
+import axios from 'axios'
 
 export function webhookEgress(job: string, webhookUrl?: string) {
   return function (listener: FlatfileListener) {
     listener.use(
-      jobHandler(`workbook:${job}`, async (event) => {
+      jobHandler(job, async (event) => {
         const { workbookId, payload } = event.context
         const { data: sheets } = await api.sheets.list({ workbookId })
 
