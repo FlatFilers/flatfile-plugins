@@ -40,7 +40,7 @@ describe('recordHook() e2e', () => {
     bulkRecordHook(
       'test',
       async (records) =>
-        await records.map((record) => record.set('name', 'daddy'))
+        await Promise.all(records.map((record) => record.set('name', 'daddy')))
     ),
   ])('record created', (fn) => {
     beforeEach(async () => {
