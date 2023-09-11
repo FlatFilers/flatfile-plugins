@@ -24,6 +24,7 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.5.13",
+    "@jest/globals": "^29.6.4",
     "@flatfile/listener": "^0.3.15",
     "@flatfile/listener-driver-pubsub": "^1.0.0",
     "axios": "^1.4.0"
