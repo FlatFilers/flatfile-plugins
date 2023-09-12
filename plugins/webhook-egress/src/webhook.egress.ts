@@ -17,7 +17,7 @@ export function webhookEgress(job: string, webhookUrl?: string) {
         }
 
         try {
-          const webhookReceiver = process.env.WEBHOOK_SITE_URL || webhookUrl
+          const webhookReceiver = webhookUrl || process.env.WEBHOOK_SITE_URL
           const response = await axios.post(
             webhookReceiver,
             {

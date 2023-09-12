@@ -1,5 +1,4 @@
 import api from '@flatfile/api'
-import { FlatfileEvent } from '@flatfile/listener'
 import {
   createRecords,
   deleteSpace,
@@ -47,8 +46,7 @@ describe('webhookEgress() e2e', () => {
   })
 
   it('returns successful outcome message', async () => {
-    const webhookUrl =
-      'https://webhook.site/077ab8ee-8570-48b0-82d7-f7561ae75dc2'
+    const webhookUrl = process.env.WEBHOOK_SITE_URL
     listener.use(webhookEgress('workbook:egressTestSuccess', webhookUrl))
 
     const { data: successfulJob } = await api.jobs.create({
@@ -70,7 +68,6 @@ describe('webhookEgress() e2e', () => {
   it('returns failure outcome message', async () => {
     const logErrorSpy = jest.spyOn(global.console, 'error')
 
-    const operationFailure = 'egressTestFailure'
     const invalidWebhookUrl = 'https://webhook.site'
     listener.use(webhookEgress('workbook:egressTestFailure', invalidWebhookUrl))
 
