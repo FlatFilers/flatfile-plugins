@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.1
+
+### Patch Changes
+
+- 59a8b18: Bug fix to handle asynchronous handlers
+
 ## 1.1.0
 
 ### Minor Changes
