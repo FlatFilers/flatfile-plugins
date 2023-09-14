@@ -1,6 +1,7 @@
 import api from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
+import { partialRejectionHandler } from '@flatfile/plugin-partial-rejection-handler'
 import { logError } from '@flatfile/util-common'
 import axios from 'axios'
 
@@ -9,11 +10,16 @@ export function webhookEgress(job: string, webhookUrl?: string) {
     listener.use(
       jobHandler(job, async (event) => {
         const { workbookId, payload } = event.context
-        const { data: sheets } = await api.sheets.list({ workbookId })
+        const { data: workbook } = await api.workbooks.get(workbookId)
+        const { data: workbookSheets } = await api.sheets.list({ workbookId })
 
-        const records: { [name: string]: any } = {}
-        for (const [index, element] of sheets.entries()) {
-          records[`Sheet[${index}]`] = await api.records.get(element.id)
+        const sheets = []
+        for (const [_, element] of workbookSheets.entries()) {
+          const { data: records } = await api.records.get(element.id)
+          sheets.push({
+            ...element,
+            ...records,
+          })
         }
 
         try {
@@ -22,9 +28,10 @@ export function webhookEgress(job: string, webhookUrl?: string) {
             webhookReceiver,
             {
               ...payload,
-              method: 'axios',
-              sheets,
-              records,
+              workbook: {
+                ...workbook,
+                sheets,
+              },
             },
             {
               headers: {
@@ -34,6 +41,17 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           )
 
           if (response.status === 200) {
+            const rejections = response.data.rejections
+            if (rejections) {
+              const totalRejectedRecords = await partialRejectionHandler(
+                rejections
+              )
+              return {
+                outcome: {
+                  message: `Data was submission was partially successful. A partial rejection was returned with ${totalRejectedRecords} rejected record(s). Go check it out at ${webhookReceiver}.`,
+                },
+              }
+            }
             return {
               outcome: {
                 message: `Data was successfully submitted to the provided webhook. Go check it out at ${webhookReceiver}.`,

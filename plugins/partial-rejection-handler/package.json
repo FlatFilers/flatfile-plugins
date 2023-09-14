@@ -1,0 +1,11 @@
+{
+  "name": "@flatfile/plugin-partial-rejection-handler",
+  "version": "0.0.0",
+  "description": "This plugin handles partial rejections returned from an external source.",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Carl Brugger",
+  "license": "ISC"
+}

@@ -30,6 +30,7 @@
     "@flatfile/api": "^1.5.14",
     "@flatfile/listener": "^0.3.15",
     "@flatfile/plugin-job-handler": "^0.1.1",
+    "@flatfile/plugin-partial-rejection-handler": "^0.0.0",
     "@flatfile/util-common": "^0.1.1",
     "axios": "^1.4.0"
   }
