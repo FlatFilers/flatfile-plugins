@@ -1,7 +1,7 @@
 {
-  "name": "@flatfile/plugin-partial-rejection-handler",
+  "name": "@flatfile/util-response-rejection",
   "version": "0.0.0",
-  "description": "This plugin handles partial rejections returned from an external source.",
+  "description": "This plugin handles response rejections returned from an external source.",
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

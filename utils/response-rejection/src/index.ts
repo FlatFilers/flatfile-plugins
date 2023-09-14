@@ -1,22 +1,22 @@
 import api, { Flatfile } from '@flatfile/api'
 
-export interface PartialRejection {
-  sheets: PartialRejectionSheet[]
+export interface ResponseRejection {
+  sheets: ResponseRejectionSheet[]
 }
 
-export interface PartialRejectionSheet {
+export interface ResponseRejectionSheet {
   id: string
   name?: string
-  rejectedRecords: PartialRejectionRecord[]
+  rejectedRecords: ResponseRejectionRecord[]
 }
 
-export interface PartialRejectionRecord {
+export interface ResponseRejectionRecord {
   id: string
   values: { field: string; message: string }[]
 }
 
-export async function partialRejectionHandler(
-  partialRejection: PartialRejection
+export async function responseRejectionHandler(
+  partialRejection: ResponseRejection
 ): Promise<number> {
   let totalRejectedRecords = 0
 
@@ -28,7 +28,7 @@ export async function partialRejectionHandler(
   return totalRejectedRecords
 }
 
-async function updateSheet(sheet: PartialRejectionSheet): Promise<number> {
+async function updateSheet(sheet: ResponseRejectionSheet): Promise<number> {
   if (!sheet.rejectedRecords?.length) {
     return 0
   }
@@ -42,7 +42,7 @@ async function updateSheet(sheet: PartialRejectionSheet): Promise<number> {
     )
 
   for (const record of rejectedSheetRecords || []) {
-    const rejectedRecord: PartialRejectionRecord = sheet.rejectedRecords.find(
+    const rejectedRecord: ResponseRejectionRecord = sheet.rejectedRecords.find(
       (item) => item.id === record.id
     )
     for (const value of rejectedRecord.values) {
