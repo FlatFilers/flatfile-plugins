@@ -8,10 +8,12 @@ import axios from 'axios'
 export function webhookEgress(job: string, webhookUrl?: string) {
   return function (listener: FlatfileListener) {
     listener.use(
-      jobHandler(job, async (event) => {
+      jobHandler(job, async (event, tick) => {
         const { workbookId, payload } = event.context
         const { data: workbook } = await api.workbooks.get(workbookId)
         const { data: workbookSheets } = await api.sheets.list({ workbookId })
+
+        tick(30, 'Getting workbook data')
 
         const sheets = []
         for (const [_, element] of workbookSheets.entries()) {
@@ -21,6 +23,8 @@ export function webhookEgress(job: string, webhookUrl?: string) {
             ...records,
           })
         }
+
+        tick(60, 'Posting data to webhook')
 
         try {
           const webhookReceiver = webhookUrl || process.env.WEBHOOK_SITE_URL
@@ -41,6 +45,7 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           )
 
           if (response.status === 200) {
+            tick(90, 'Successfully posted data to webhook')
             const rejections = response.data.rejections
             if (rejections) {
               const totalRejectedRecords = await responseRejectionHandler(
@@ -62,6 +67,11 @@ export function webhookEgress(job: string, webhookUrl?: string) {
               '@flatfile/plugin-webhook-egress',
               `Failed to submit data to ${webhookReceiver}. Status: ${response.status} ${response.statusText}`
             )
+            return {
+              outcome: {
+                message: `Data was not successfully submitted to the provided webhook. Status: ${response.status} ${response.statusText}`,
+              },
+            }
           }
         } catch (error) {
           logError(

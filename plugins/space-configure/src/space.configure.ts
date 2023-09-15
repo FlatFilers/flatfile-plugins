@@ -1,5 +1,5 @@
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import api, { Flatfile } from '@flatfile/api'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 
 /**
@@ -45,7 +45,6 @@ export function configureSpace(
           })
         )
         tick(50, 'Workbook created')
-        console.log(workbookIds)
 
         if (workbookIds) {
           await api.spaces.update(spaceId, {
