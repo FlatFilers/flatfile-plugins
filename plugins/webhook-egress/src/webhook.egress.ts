@@ -45,7 +45,6 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           )
 
           if (response.status === 200) {
-            tick(90, 'Successfully posted data to webhook')
             const rejections = response.data.rejections
             if (rejections) {
               const totalRejectedRecords = await responseRejectionHandler(
