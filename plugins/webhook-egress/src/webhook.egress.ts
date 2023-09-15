@@ -2,7 +2,10 @@ import api from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
-import { responseRejectionHandler } from '@flatfile/util-response-rejection'
+import {
+  ResponseRejection,
+  responseRejectionHandler,
+} from '@flatfile/util-response-rejection'
 import axios from 'axios'
 
 export function webhookEgress(job: string, webhookUrl?: string) {
@@ -45,14 +48,19 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           )
 
           if (response.status === 200) {
-            const rejections = response.data.rejections
+            const rejections: ResponseRejection = response.data.rejections
             if (rejections) {
               const totalRejectedRecords = await responseRejectionHandler(
                 rejections
               )
               return {
                 outcome: {
-                  message: `Data was submission was partially successful. A partial rejection was returned with ${totalRejectedRecords} rejected record(s). Go check it out at ${webhookReceiver}.`,
+                  next: {
+                    type: 'id',
+                    id: rejections.id,
+                    label: 'See rejections...',
+                  },
+                  message: `Data was submission was partially successful. ${totalRejectedRecords} record(s) were rejected.`,
                 },
               }
             }

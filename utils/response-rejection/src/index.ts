@@ -1,6 +1,7 @@
 import api, { Flatfile } from '@flatfile/api'
 
 export interface ResponseRejection {
+  id: string
   sheets: ResponseRejectionSheet[]
 }
 
