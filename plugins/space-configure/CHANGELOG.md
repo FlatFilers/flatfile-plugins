@@ -1,5 +1,13 @@
 # @flatfile/plugin-space-configure
 
+## 0.1.1
+
+### Patch Changes
+
+- 6259301: Introducing the response rejection utility! Webhook egress plugin returns a more usable data structure. Minor bug fixes included.
+- Updated dependencies [6259301]
+  - @flatfile/plugin-job-handler@0.1.2
+
 ## 0.1.0
 
 ### Minor Changes
