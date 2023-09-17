@@ -2,19 +2,32 @@ import api from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
+import {
+  ResponseRejection,
+  responseRejectionHandler,
+} from '@flatfile/util-response-rejection'
 import axios from 'axios'
 
 export function webhookEgress(job: string, webhookUrl?: string) {
   return function (listener: FlatfileListener) {
     listener.use(
-      jobHandler(job, async (event) => {
+      jobHandler(job, async (event, tick) => {
         const { workbookId, payload } = event.context
-        const { data: sheets } = await api.sheets.list({ workbookId })
+        const { data: workbook } = await api.workbooks.get(workbookId)
+        const { data: workbookSheets } = await api.sheets.list({ workbookId })
 
-        const records: { [name: string]: any } = {}
-        for (const [index, element] of sheets.entries()) {
-          records[`Sheet[${index}]`] = await api.records.get(element.id)
+        tick(30, 'Getting workbook data')
+
+        const sheets = []
+        for (const [_, element] of workbookSheets.entries()) {
+          const { data: records } = await api.records.get(element.id)
+          sheets.push({
+            ...element,
+            ...records,
+          })
         }
+
+        tick(60, 'Posting data to webhook')
 
         try {
           const webhookReceiver = webhookUrl || process.env.WEBHOOK_SITE_URL
@@ -22,9 +35,10 @@ export function webhookEgress(job: string, webhookUrl?: string) {
             webhookReceiver,
             {
               ...payload,
-              method: 'axios',
-              sheets,
-              records,
+              workbook: {
+                ...workbook,
+                sheets,
+              },
             },
             {
               headers: {
@@ -34,6 +48,22 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           )
 
           if (response.status === 200) {
+            const rejections: ResponseRejection = response.data.rejections
+            if (rejections) {
+              const totalRejectedRecords = await responseRejectionHandler(
+                rejections
+              )
+              return {
+                outcome: {
+                  next: {
+                    type: 'id',
+                    id: rejections.id,
+                    label: 'See rejections...',
+                  },
+                  message: `Data was submission was partially successful. ${totalRejectedRecords} record(s) were rejected.`,
+                },
+              }
+            }
             return {
               outcome: {
                 message: `Data was successfully submitted to the provided webhook. Go check it out at ${webhookReceiver}.`,
@@ -44,6 +74,11 @@ export function webhookEgress(job: string, webhookUrl?: string) {
               '@flatfile/plugin-webhook-egress',
               `Failed to submit data to ${webhookReceiver}. Status: ${response.status} ${response.statusText}`
             )
+            return {
+              outcome: {
+                message: `Data was not successfully submitted to the provided webhook. Status: ${response.status} ${response.statusText}`,
+              },
+            }
           }
         } catch (error) {
           logError(
