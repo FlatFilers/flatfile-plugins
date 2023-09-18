@@ -58,9 +58,9 @@ export function webhookEgress(job: string, webhookUrl?: string) {
                   next: {
                     type: 'id',
                     id: rejections.id,
-                    label: 'See rejections...',
+                    label: 'See rejections',
                   },
-                  message: `Data was submission was partially successful. ${totalRejectedRecords} record(s) were rejected.`,
+                  message: `${totalRejectedRecords} record(s) were rejected during data submission. Review the rejection notes, fix, then resubmit.`,
                 },
               }
             }
