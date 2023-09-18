@@ -1,4 +1,5 @@
 ---
+'@flatfile/plugin-delimiter-extractor': minor
 '@flatfile/plugin-psv-extractor': minor
 '@flatfile/plugin-tsv-extractor': minor
 ---
