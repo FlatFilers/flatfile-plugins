@@ -17,12 +17,12 @@ export interface ResponseRejectionRecord {
 }
 
 export async function responseRejectionHandler(
-  partialRejection: ResponseRejection
+  responseRejection: ResponseRejection
 ): Promise<number> {
   let totalRejectedRecords = 0
 
   const results = await Promise.all(
-    partialRejection.sheets.map((sheet) => updateSheet(sheet))
+    responseRejection.sheets.map((sheet) => updateSheet(sheet))
   )
   totalRejectedRecords = results.reduce((acc, val) => acc + val, 0)
 
