@@ -56,10 +56,7 @@ export const Extractor = (
             }
           }
 
-          await api.jobs.ack(jobId, {
-            progress: 10,
-            info: 'Parsing Sheets',
-          })
+          tick(10, 'Parsing Sheets')
           const capture = parseBuffer(buffer, options)
           const workbook = await createWorkbook(
             event.context.environmentId,
@@ -69,10 +66,7 @@ export const Extractor = (
           if (!workbook.sheets || workbook.sheets.length === 0) {
             throw new Error('because no Sheets found')
           }
-          await api.jobs.ack(jobId, {
-            progress: 50,
-            info: 'Adding records to Sheets',
-          })
+          tick(50, 'Adding records to Sheets')
 
           let processedRecords = 0
           const totalLength = Object.values(capture).reduce(
