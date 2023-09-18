@@ -27,7 +27,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.13",
-    "@flatfile/plugin-delimiter-extractor": "0.5.0"
+    "@flatfile/api": "^1.5.13"
   }
 }

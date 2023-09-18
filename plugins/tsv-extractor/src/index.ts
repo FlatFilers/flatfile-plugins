@@ -1,5 +1,4 @@
 import { Flatfile } from '@flatfile/api'
-import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
 
 /*
  * @deprecated
@@ -11,5 +10,7 @@ export const TSVExtractor = (options?: {
   chunkSize?: number
   parallel?: number
 }) => {
-  return DelimiterExtractor('.tsv', { delimiter: '\t', ...options })
+  console.log(
+    'This plugin is deprecated. PSV extraction is now natively supported by the Flatfile Platform.'
+  )
 }

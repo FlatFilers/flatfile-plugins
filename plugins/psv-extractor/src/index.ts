@@ -1,5 +1,4 @@
 import { Flatfile } from '@flatfile/api'
-import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
 
 /*
  * @deprecated
@@ -11,7 +10,9 @@ export const PSVExtractor = (options?: {
   chunkSize?: number
   parallel?: number
 }) => {
-  return DelimiterExtractor('.psv', { delimiter: '|', ...options })
+  console.log(
+    'This plugin is deprecated. PSV extraction is now natively supported by the Flatfile Platform.'
+  )
 }
 
 /*
