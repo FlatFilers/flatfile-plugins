@@ -1,9 +1,9 @@
 {
-  "name": "@flatfile/plugin-space-configure",
-  "version": "0.1.1",
-  "description": "A plugin for configuring a Flatfile Space.",
+  "name": "@flatfile/plugin-webhook-egress",
+  "version": "0.1.0",
+  "description": "A plugin for egressing a Flatfile Workbook via a webhook.",
   "registryMetadata": {
-    "category": "core"
+    "category": "egress"
   },
   "engines": {
     "node": ">= 16"
@@ -23,12 +23,15 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/space-configure"
+    "directory": "plugins/webhook-egress"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.4.9",
+    "@flatfile/api": "^1.5.14",
     "@flatfile/listener": "^0.3.15",
-    "@flatfile/plugin-job-handler": "^0.1.2"
+    "@flatfile/plugin-job-handler": "^0.1.2",
+    "@flatfile/util-response-rejection": "^0.1.0",
+    "@flatfile/util-common": "^0.1.1",
+    "axios": "^1.4.0"
   }
 }

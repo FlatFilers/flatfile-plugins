@@ -1,5 +1,5 @@
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import api, { Flatfile } from '@flatfile/api'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { log, logError } from '@flatfile/util-common'
 
 export interface PluginOptions {
@@ -30,7 +30,7 @@ export function jobHandler(
   handler: (
     event: FlatfileEvent,
     tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
-  ) => Promise<void | Flatfile.JobOutcome>,
+  ) => Promise<void | Flatfile.JobCompleteDetails>,
   opts: PluginOptions = {}
 ) {
   return (listener: FlatfileListener) => {

@@ -1,4 +1,3 @@
-import { bulkRecordHook, recordHook } from './index'
 import {
   createRecords,
   deleteSpace,
@@ -7,6 +6,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
+import { bulkRecordHook, recordHook } from './index'
 
 jest.setTimeout(10_000)
 
@@ -33,8 +33,14 @@ describe('recordHook() e2e', () => {
 
   describe.each([
     recordHook('test', (record) => record.set('name', 'daddy')),
+    recordHook('test', async (record) => await record.set('name', 'daddy')),
     bulkRecordHook('test', (records) =>
       records.map((record) => record.set('name', 'daddy'))
+    ),
+    bulkRecordHook(
+      'test',
+      async (records) =>
+        await Promise.all(records.map((record) => record.set('name', 'daddy')))
     ),
   ])('record created', (fn) => {
     beforeEach(async () => {

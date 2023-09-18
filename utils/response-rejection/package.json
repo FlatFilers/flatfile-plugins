@@ -1,7 +1,7 @@
 {
-  "name": "@flatfile/util-file-buffer",
+  "name": "@flatfile/util-response-rejection",
   "version": "0.1.0",
-  "description": "A utility for extracting data from any file and making it available as a buffer",
+  "description": "This plugin handles response rejections returned from an external source.",
   "registryMetadata": {
     "category": "utilities"
   },
@@ -19,15 +19,14 @@
     "test": "jest --passWithNoTests"
   },
   "keywords": [],
-  "author": "David Boskovic",
+  "author": "Carl Brugger",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "utils/file-buffer"
+    "directory": "utils/response-rejection"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.13",
-    "@flatfile/listener": "^0.3.15"
+    "@flatfile/api": "^1.5.25"
   }
 }

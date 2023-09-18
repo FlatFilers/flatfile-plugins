@@ -10,6 +10,7 @@ export function autocast(
   options?: {
     chunkSize?: number
     parallel?: number
+    debug?: boolean
   }
 ) {
   return async (listener: FlatfileListener) => {
