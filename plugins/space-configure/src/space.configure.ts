@@ -44,7 +44,7 @@ export function configureSpace(
             return workbook.data.id
           })
         )
-        tick(50, 'Workbook created')
+        await tick(50, 'Workbook created')
 
         if (workbookIds) {
           await api.spaces.update(spaceId, {
