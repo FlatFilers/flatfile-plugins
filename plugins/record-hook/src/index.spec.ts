@@ -1,15 +1,15 @@
-import { recordHook } from '.'
-import { Client } from '@flatfile/listener'
 import { FlatfileRecord } from '@flatfile/hooks'
+import { FlatfileListener } from '@flatfile/listener'
+import { recordHook } from '.'
 
 describe('recordHook', () => {
   test('it registers a records:* listener to the client', () => {
-    const testClient = Client.create((client) => {})
-    const clientOnSpy = jest.spyOn(testClient, 'on')
+    const testListener = FlatfileListener.create((listener) => {})
+    const listenerOnSpy = jest.spyOn(testListener, 'on')
     const testCallback = (record: FlatfileRecord) => {
       return record
     }
-    testClient.use(recordHook('my-sheet-slug', testCallback))
-    expect(clientOnSpy).toHaveBeenCalled()
+    testListener.use(recordHook('my-sheet-slug', testCallback))
+    expect(listenerOnSpy).toHaveBeenCalled()
   })
 })

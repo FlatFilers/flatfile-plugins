@@ -1,18 +1,18 @@
-import type { Workbook } from '@flatfile/configure'
-import type { Client } from '@flatfile/listener'
 import api from '@flatfile/api'
+import type { Workbook } from '@flatfile/configure'
+import type { FlatfileListener } from '@flatfile/listener'
 import { shimTarget } from './shim.target'
 
 export const dxpConfigure = (workbook: Workbook) => {
-  return (client: Client) => {
-    client.on('**', (event) => {
+  return (listener: FlatfileListener) => {
+    listener.on('**', (event) => {
       // @ts-ignore
       const newEvent = { ...event.src, target: shimTarget(event.src) }
       // @ts-ignore
       return workbook.routeEvent(newEvent) // event.src is a private property but js doesn't care
     })
 
-    client.on('job:ready', { job: 'space:configure' }, async (event) => {
+    listener.on('job:ready', { job: 'space:configure' }, async (event) => {
       const { spaceId, environmentId, jobId } = event.context
       await api.jobs.ack(jobId, {
         info: 'Configuring...',
