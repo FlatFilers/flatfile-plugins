@@ -1,5 +1,13 @@
 # @flatfile/plugin-webhook-egress
 
+## 0.1.1
+
+### Patch Changes
+
+- 3fbf53a: Update response rejection message
+- Updated dependencies [3fbf53a]
+  - @flatfile/util-response-rejection@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
