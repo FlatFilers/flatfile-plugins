@@ -1,5 +1,5 @@
 import api, { Flatfile } from '@flatfile/api'
-import { JobStatus, JobType, Trigger } from '@flatfile/api/api'
+import { JobStatus, JobType } from '@flatfile/api/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
@@ -38,14 +38,25 @@ export const Extractor = (
       'job:ready',
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
+        const { chunkSize, parallel, debug } = {
+          chunkSize: 3000,
+          parallel: 1,
+          debug: false,
+          ...options,
+        }
+
         const { data: file } = await api.files.get(event.context.fileId)
         const buffer = await getFileBuffer(event)
         const { jobId } = event.context
         try {
-          await api.jobs.ack(jobId, {
-            progress: 10,
-            info: 'Parsing Sheets',
-          })
+          const tick = async (progress: number, info: string) => {
+            await api.jobs.ack(jobId, { progress, info })
+            if (debug) {
+              console.log(`Job progress: ${progress}, Info: ${info}`)
+            }
+          }
+
+          await tick(10, 'Parsing Sheets')
           const capture = parseBuffer(buffer, options)
           const workbook = await createWorkbook(
             event.context.environmentId,
@@ -55,16 +66,13 @@ export const Extractor = (
           if (!workbook.sheets || workbook.sheets.length === 0) {
             throw new Error('because no Sheets found')
           }
-          await api.jobs.ack(jobId, {
-            progress: 50,
-            info: 'Adding records to Sheets',
-          })
-          const { chunkSize, parallel, debug } = {
-            chunkSize: 3000,
-            parallel: 1,
-            debug: false,
-            ...options,
-          }
+          await tick(50, 'Adding records to Sheets')
+
+          let processedRecords = 0
+          const totalLength = Object.values(capture).reduce(
+            (acc: number, sheet: any) => acc + (sheet?.data?.length || 0),
+            0
+          )
           for (const sheet of workbook.sheets) {
             if (!capture[sheet.name]) {
               continue
@@ -73,6 +81,12 @@ export const Extractor = (
               capture[sheet.name].data,
               async (chunk) => {
                 await api.records.insert(sheet.id, chunk)
+                processedRecords += chunk.length
+                const progress = Math.min(
+                  99,
+                  Math.round(50 + (50 * processedRecords) / totalLength)
+                )
+                await tick(progress, 'Adding records to Sheets')
               },
               { chunkSize, parallel, debug }
             )
