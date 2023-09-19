@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.7.0
+
+### Minor Changes
+
+- cbf391e: Deprecate PSV/TSV extractors since PSV/TSV files are now natively supported by the Flatfile Platform.
+
 ## 0.6.1
 
 ### Patch Changes
