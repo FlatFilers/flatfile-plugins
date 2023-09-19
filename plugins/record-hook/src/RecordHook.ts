@@ -41,7 +41,7 @@ export const BulkRecordHook = async (
   options: { chunkSize?: number; parallel?: number; debug?: boolean } = {}
 ) => {
   try {
-    const batch = await event.cache.init<FlatfileRecords>(
+    const batch = await event.cache.init<FlatfileRecords<any>>(
       'records',
       async () => {
         const data = await event.data
@@ -49,14 +49,13 @@ export const BulkRecordHook = async (
       }
     )
 
-    // todo: this should also look for array length
-    if (!batch) return
+    if (!batch || batch.records.length === 0) return
 
     // run client defined data hooks
     await asyncBatch(batch.records, handler, options, event)
 
     event.afterAll(async () => {
-      const batch = event.cache.get<FlatfileRecords>('records')
+      const batch = event.cache.get<FlatfileRecords<any>>('records')
 
       const recordsUpdates = new RecordTranslater<FlatfileRecord>(
         batch.records
