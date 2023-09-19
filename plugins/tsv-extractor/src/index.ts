@@ -1,6 +1,9 @@
 import { Flatfile } from '@flatfile/api'
-import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
+import { FlatfileListener } from '@flatfile/listener'
 
+/*
+ * @deprecated
+ */
 export const TSVExtractor = (options?: {
   dynamicTyping?: boolean
   skipEmptyLines?: boolean | 'greedy'
@@ -9,5 +12,9 @@ export const TSVExtractor = (options?: {
   parallel?: number
   debug?: boolean
 }) => {
-  return DelimiterExtractor('.tsv', { delimiter: '\t', ...options })
+  return (listener: FlatfileListener) => {
+    console.log(
+      'The TSVExtractor plugin is deprecated. TSV extraction is now natively supported by the Flatfile Platform.'
+    )
+  }
 }

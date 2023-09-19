@@ -3,8 +3,6 @@ import { Extractor } from '@flatfile/util-extractor'
 import { parseBuffer } from './parser'
 
 const delimiterMap = {
-  '\t': 'tsv',
-  '|': 'pipe',
   ',': 'csv',
   ';': 'ssv',
   ':': 'dsv',
