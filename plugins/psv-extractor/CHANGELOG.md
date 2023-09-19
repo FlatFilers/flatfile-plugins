@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.6.0
+
+### Minor Changes
+
+- cbf391e: Deprecate PSV/TSV extractors since PSV/TSV files are now natively supported by the Flatfile Platform.
+
 ## 1.5.0
 
 ### Minor Changes
