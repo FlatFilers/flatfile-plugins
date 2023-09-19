@@ -1,4 +1,5 @@
 import { Flatfile } from '@flatfile/api'
+import { FlatfileListener } from '@flatfile/listener'
 
 /*
  * @deprecated
@@ -11,7 +12,9 @@ export const TSVExtractor = (options?: {
   parallel?: number
   debug?: boolean
 }) => {
-  console.log(
-    'This plugin is deprecated. PSV extraction is now natively supported by the Flatfile Platform.'
-  )
+  return (listener: FlatfileListener) => {
+    console.log(
+      'The TSVExtractor plugin is deprecated. TSV extraction is now natively supported by the Flatfile Platform.'
+    )
+  }
 }
