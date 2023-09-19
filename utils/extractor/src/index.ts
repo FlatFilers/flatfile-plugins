@@ -39,7 +39,7 @@ export const Extractor = (
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
         const { chunkSize, parallel, debug } = {
-          chunkSize: 3000,
+          chunkSize: 10_000,
           parallel: 1,
           debug: false,
           ...options,
