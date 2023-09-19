@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.1
+
+### Patch Changes
+
+- 7019e58: Add job progress to extractors
+
 ## 0.4.0
 
 ### Minor Changes

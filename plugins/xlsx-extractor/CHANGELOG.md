@@ -1,5 +1,12 @@
 # @flatfile/plugin-record-hook
 
+## 1.7.1
+
+### Patch Changes
+
+- Updated dependencies [7019e58]
+  - @flatfile/util-extractor@0.4.1
+
 ## 1.7.0
 
 ### Minor Changes
