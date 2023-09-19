@@ -10,10 +10,8 @@ import { PluginOptions, dedupe } from './plugin'
  */
 export const dedupePlugin = (jobOperation: string, opts: PluginOptions) => {
   return (listener: FlatfileListener) => {
-    listener.filter({ operation: jobOperation }, (listener_) => {
-      listener_.on('job:ready', async (event) => {
-        await dedupe(event, opts)
-      })
+    listener.on('job:ready', { operation: jobOperation }, async (event) => {
+      await dedupe(event, opts)
     })
   }
 }

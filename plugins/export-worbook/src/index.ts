@@ -8,10 +8,12 @@ import { PluginOptions, run } from './plugin'
  */
 export const exportWorkbookPlugin = (opts: PluginOptions = {}) => {
   return (listener: FlatfileListener) => {
-    listener.filter({ job: 'workbook:downloadWorkbook' }, () => {
-      listener.on('job:ready', async (event) => {
+    listener.on(
+      'job:ready',
+      { job: 'workbook:downloadWorkbook' },
+      async (event) => {
         await run(event, opts)
-      })
-    })
+      }
+    )
   }
 }
