@@ -41,28 +41,29 @@ export const BulkRecordHook = async (
   options: { chunkSize?: number; parallel?: number; debug?: boolean } = {}
 ) => {
   try {
-    const records = await event.cache.init<Records>(
+    const batch = await event.cache.init<FlatfileRecords>(
       'records',
-      async () => (await event.data).records
+      async () => {
+        const data = await event.data
+        return prepareXRecords(data.records)
+      }
     )
-    if (!records) return
+
+    // todo: this should also look for array length
+    if (!batch) return
+
+    // run client defined data hooks
+    await asyncBatch(batch.records, handler, options, event)
 
     event.afterAll(async () => {
-      const records = event.cache.get<Records>('records')
-
-      const batch = await prepareXRecords(records)
-
-      // run client defined data hooks
-      await asyncBatch(batch.records, handler, options, event)
+      const batch = event.cache.get<FlatfileRecords>('records')
 
       const recordsUpdates = new RecordTranslater<FlatfileRecord>(
         batch.records
       ).toXRecords()
 
-      await event.cache.set('records', async () => recordsUpdates)
-      const updatedRecords = event.cache.get<Records>('records')
       try {
-        return await event.update(updatedRecords)
+        return await event.update(recordsUpdates)
       } catch (e) {
         console.log(`Error updating records: ${e}`)
       }
