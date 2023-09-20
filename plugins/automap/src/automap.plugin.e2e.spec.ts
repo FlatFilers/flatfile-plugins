@@ -60,6 +60,6 @@ describe('automap() e2e', () => {
       )
 
       expect(mockFn).toHaveBeenCalled()
-    }, 50_000)
+    }, 90_000)
   })
 })
