@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.2
+
+### Patch Changes
+
+- b057912: Bug fix for bulkRecordhook caching
+
 ## 1.1.1
 
 ### Patch Changes
