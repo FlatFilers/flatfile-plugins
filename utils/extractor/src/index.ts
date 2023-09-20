@@ -4,6 +4,8 @@ import type { FlatfileListener } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
 import { mapValues } from 'remeda'
+import axios from "axios";
+import * as zlib from "zlib";
 
 export const Extractor = (
   fileExt: string | RegExp,
@@ -38,9 +40,10 @@ export const Extractor = (
       'job:ready',
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
+        console.log(`VERSION 6`)
         const { chunkSize, parallel, debug } = {
-          chunkSize: 3000,
-          parallel: 1,
+          chunkSize: 10_000,
+          parallel: 2,
           debug: false,
           ...options,
         }
@@ -80,7 +83,16 @@ export const Extractor = (
             await asyncBatch(
               capture[sheet.name].data,
               async (chunk) => {
-                await api.records.insert(sheet.id, chunk)
+                const body = zlib.gzipSync(JSON.stringify(chunk))
+                await axios.post(`${process.env.FLATFILE_API_URL}/v1/sheets/${sheet.id}/records`, body,
+                  { headers: {
+                    'Authorization': `Bearer ${process.env.FLATFILE_API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Content-Length': body.length,
+                    'Content-Encoding': 'gzip',
+                  } }
+                )
+                // await api.records.insert(sheet.id, chunk)
                 processedRecords += chunk.length
                 const progress = Math.min(
                   99,
