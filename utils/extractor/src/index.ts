@@ -83,8 +83,9 @@ export const Extractor = (
               capture[sheet.name].data,
               async (chunk) => {
                 const body = zlib.gzipSync(JSON.stringify(chunk))
+                const baseUrl = process.env.FLATFILE_API_URL ?? 'https://platform.flatfile.com'
                 await axios.post(
-                  `${process.env.FLATFILE_API_URL}/v1/sheets/${sheet.id}/records`,
+                  `${baseUrl}/v1/sheets/${sheet.id}/records`,
                   body,
                   {
                     headers: {
