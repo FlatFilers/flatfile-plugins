@@ -40,7 +40,6 @@ export const Extractor = (
       'job:ready',
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
-        console.log(`VERSION 6`)
         const { chunkSize, parallel, debug } = {
           chunkSize: 10_000,
           parallel: 2,
@@ -92,7 +91,6 @@ export const Extractor = (
                     'Content-Encoding': 'gzip',
                   } }
                 )
-                // await api.records.insert(sheet.id, chunk)
                 processedRecords += chunk.length
                 const progress = Math.min(
                   99,
