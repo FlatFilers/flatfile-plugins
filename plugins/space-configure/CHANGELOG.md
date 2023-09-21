@@ -1,5 +1,11 @@
 # @flatfile/plugin-space-configure
 
+## 0.1.2
+
+### Patch Changes
+
+- 134cf31: Minor bug fixes
+
 ## 0.1.1
 
 ### Patch Changes

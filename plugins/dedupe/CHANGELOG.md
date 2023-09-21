@@ -1,5 +1,11 @@
 # @flatfile/plugin-dedupe
 
+## 0.0.4
+
+### Patch Changes
+
+- 134cf31: Minor bug fixes
+
 ## 0.0.3
 
 ### Patch Changes

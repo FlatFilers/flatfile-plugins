@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.0.7
+
+### Patch Changes
+
+- 134cf31: Minor bug fixes
+
 ## 0.0.6
 
 ### Patch Changes

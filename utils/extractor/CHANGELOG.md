@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.2
+
+### Patch Changes
+
+- 134cf31: Minor bug fixes
+- Updated dependencies [134cf31]
+  - @flatfile/util-common@0.2.1
+
 ## 0.4.1
 
 ### Patch Changes

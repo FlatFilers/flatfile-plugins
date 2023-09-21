@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 0.2.1
+
+### Patch Changes
+
+- 134cf31: Minor bug fixes
+
 ## 0.2.0
 
 ### Minor Changes
