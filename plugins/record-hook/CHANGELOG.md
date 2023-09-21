@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.3
+
+### Patch Changes
+
+- 134cf31: Minor bug fixes
+- Updated dependencies [134cf31]
+  - @flatfile/util-common@0.2.1
+
 ## 1.1.2
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @flatfile/plugin-webhook-egress
 
+## 0.1.2
+
+### Patch Changes
+
+- 134cf31: Minor bug fixes
+- Updated dependencies [134cf31]
+  - @flatfile/util-common@0.2.1
+
 ## 0.1.1
 
 ### Patch Changes
