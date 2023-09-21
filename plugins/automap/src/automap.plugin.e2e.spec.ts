@@ -1,31 +1,23 @@
 import api, { Flatfile } from '@flatfile/api'
-import fs from 'fs'
-import path from 'path'
-import { automap } from './automap.plugin'
 import {
   getEnvironmentId,
   setupListener,
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-
-jest.setTimeout(15_000)
+import fs from 'fs'
+import path from 'path'
+import { automap } from './automap.plugin'
 
 describe('automap() e2e', () => {
   const listener = setupListener()
 
-  let sheetId: string
   let spaceId: string
 
   beforeAll(async () => {
     const space = await setupSpace()
     spaceId = space.id
-    const workbook = await setupSimpleWorkbook(spaceId, [
-      'name',
-      'email',
-      'notes',
-    ])
-    sheetId = workbook.sheets[0].id
+    await setupSimpleWorkbook(spaceId, ['name', 'email', 'notes'])
   })
 
   afterAll(async () => {
@@ -61,9 +53,13 @@ describe('automap() e2e', () => {
     })
 
     it('correctly modifies a value', async () => {
-      await listener.waitFor(Flatfile.EventTopic.JobCompleted, 2)
+      await listener.waitFor(
+        Flatfile.EventTopic.JobCompleted,
+        1,
+        'workbook:map'
+      )
 
       expect(mockFn).toHaveBeenCalled()
-    })
+    }, 90_000)
   })
 })

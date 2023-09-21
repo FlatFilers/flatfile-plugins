@@ -16,7 +16,7 @@ export function webhookEgress(job: string, webhookUrl?: string) {
         const { data: workbook } = await api.workbooks.get(workbookId)
         const { data: workbookSheets } = await api.sheets.list({ workbookId })
 
-        tick(30, 'Getting workbook data')
+        await tick(30, 'Getting workbook data')
 
         const sheets = []
         for (const [_, element] of workbookSheets.entries()) {
@@ -27,7 +27,7 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           })
         }
 
-        tick(60, 'Posting data to webhook')
+        await tick(60, 'Posting data to webhook')
 
         try {
           const webhookReceiver = webhookUrl || process.env.WEBHOOK_SITE_URL

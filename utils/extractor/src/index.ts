@@ -39,7 +39,7 @@ export const Extractor = (
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
         const { chunkSize, parallel, debug } = {
-          chunkSize: 3000,
+          chunkSize: 10_000,
           parallel: 1,
           debug: false,
           ...options,
@@ -56,7 +56,7 @@ export const Extractor = (
             }
           }
 
-          await tick(10, 'Parsing Sheets')
+          await tick(3, 'Parsing Sheets')
           const capture = parseBuffer(buffer, options)
           const workbook = await createWorkbook(
             event.context.environmentId,
@@ -66,7 +66,7 @@ export const Extractor = (
           if (!workbook.sheets || workbook.sheets.length === 0) {
             throw new Error('because no Sheets found')
           }
-          await tick(50, 'Adding records to Sheets')
+          await tick(10, 'Adding records to Sheets')
 
           let processedRecords = 0
           const totalLength = Object.values(capture).reduce(
@@ -84,7 +84,7 @@ export const Extractor = (
                 processedRecords += chunk.length
                 const progress = Math.min(
                   99,
-                  Math.round(50 + (50 * processedRecords) / totalLength)
+                  Math.round(10 + (10 * processedRecords) / totalLength)
                 )
                 await tick(progress, 'Adding records to Sheets')
               },
