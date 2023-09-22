@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.3
+
+### Patch Changes
+
+- 0195166: Fix job progress bug
+
 ## 0.4.2
 
 ### Patch Changes
