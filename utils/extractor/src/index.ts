@@ -84,7 +84,7 @@ export const Extractor = (
                 processedRecords += chunk.length
                 const progress = Math.min(
                   99,
-                  Math.round(10 + (10 * processedRecords) / totalLength)
+                  Math.round(10 + (90 * processedRecords) / totalLength)
                 )
                 await tick(progress, 'Adding records to Sheets')
               },
