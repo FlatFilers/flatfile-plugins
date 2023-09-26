@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.7.4
+
+### Patch Changes
+
+- e111565: Update XLSX dependency version
+
 ## 1.7.3
 
 ### Patch Changes
