@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.1.1
+
+### Patch Changes
+
+- f2b2f59: @flatfile/api dependency updated to latest version
+
 ## 0.1.0
 
 ### Minor Changes

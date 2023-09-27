@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-xml-extractor",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "A plugin for extracting data from XML files.",
   "registryMetadata": {
     "category": "extractors"
@@ -29,8 +29,8 @@
   "dependencies": {
     "@flatfile/api": "^1.5.26",
     "@flatfile/listener": "^0.3.15",
-    "@flatfile/util-extractor": "0.4.3",
-    "@flatfile/util-file-buffer": "0.1.0",
+    "@flatfile/util-extractor": "0.4.4",
+    "@flatfile/util-file-buffer": "0.1.1",
     "remeda": "^1.24.0",
     "xml-json-format": "^1.0.8"
   }

@@ -1,5 +1,13 @@
 # @flatfile/plugin-space-configure
 
+## 0.1.3
+
+### Patch Changes
+
+- f2b2f59: @flatfile/api dependency updated to latest version
+- Updated dependencies [f2b2f59]
+  - @flatfile/plugin-job-handler@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes

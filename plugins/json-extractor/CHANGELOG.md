@@ -1,5 +1,13 @@
 # @flatfile/plugin-json-extractor
 
+## 0.6.4
+
+### Patch Changes
+
+- f2b2f59: @flatfile/api dependency updated to latest version
+- Updated dependencies [f2b2f59]
+  - @flatfile/util-extractor@0.4.4
+
 ## 0.6.3
 
 ### Patch Changes
