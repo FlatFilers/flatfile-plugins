@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.4
+
+### Patch Changes
+
+- f2b2f59: @flatfile/api dependency updated to latest version
+
 ## 1.1.3
 
 ### Patch Changes

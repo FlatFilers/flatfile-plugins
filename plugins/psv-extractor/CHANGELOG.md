@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.6.1
+
+### Patch Changes
+
+- f2b2f59: @flatfile/api dependency updated to latest version
+
 ## 1.6.0
 
 ### Minor Changes
