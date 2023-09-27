@@ -2,80 +2,155 @@ import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { MergeClient, MergeEnvironment } from '@mergeapi/merge-node-client'
+import { items } from './blueprint'
 
-type MergeCategory =
-  | 'hris'
-  | 'ats'
-  | 'accounting'
-  | 'ticketing'
-  | 'crm'
-  | 'marketing_automation'
-  | 'file_storage'
+const MERGE_ACCESS_KEY = 'MERGE_TEST_ACCESS_KEY'
+const MERGE_X_ACCOUNT_TOKEN = 'MERGE_X_ACCOUNT_TOKEN'
 
-export default function mergePlugin(category: MergeCategory) {
-  return async (listener: FlatfileListener) => {
+export default function mergePlugin() {
+  return (listener: FlatfileListener) => {
+    listener.use(
+      jobHandler('workbook:retrieveAccountToken', retrieveAccountTokenHandler())
+    )
+    listener.use(
+      //workbook:createConnectedWorkbook
+      jobHandler('workbook:submitActionFg', handleSyncAction())
+    )
     listener.use(
       jobHandler(
-        'workbook:syncActionFg',
-        async (event: FlatfileEvent, tick) => {
-          const { spaceId, environmentId } = event.context
-
-          const merge = await getMergeClient(spaceId, environmentId)
-          const sheetConfig = await getSheets(category, merge)
-          const config: Flatfile.CreateWorkbookConfig = {
-            name: 'Merge.dev',
-            sheets: sheetConfig,
-          }
-
-          const {
-            data: { sheets },
-          } = await api.workbooks.create({
-            spaceId,
-            environmentId,
-            ...config,
-          })
-
-          const employeeSheet = sheets.find(
-            (sheet) => sheet.name === 'Employees'
-          )
-          if (!employeeSheet) {
-            throw new Error('Employees sheet not found')
-          }
-
-          let employees
-          do {
-            employees = await merge.hris.employees.list({
-              cursor: employees?.next,
-            })
-            await api.records.insert(
-              employeeSheet.id,
-              mapRecords(employees.results)
-            )
-          } while (employees.next)
-
-          return { info: 'Synced!' }
-        }
+        'workbook:syncConnectedWorkbook',
+        handleConnectedWorkbookSync()
       )
     )
   }
+}
+
+function retrieveAccountTokenHandler() {
+  return async (event: FlatfileEvent) => {
+    const { spaceId, environmentId, publicToken } = event.context
+    const apiKey = await getSpaceEnvSecret(
+      spaceId,
+      environmentId,
+      MERGE_ACCESS_KEY
+    )
+    const mergeClient = new MergeClient({
+      environment: MergeEnvironment.Production,
+      apiKey,
+    })
+    const { accountToken } = await mergeClient.accounting.accountToken.retrieve(
+      publicToken
+    )
+    await api.secrets.upsert({
+      name: MERGE_X_ACCOUNT_TOKEN,
+      value: accountToken,
+      environmentId,
+      spaceId,
+    })
+    return { info: 'Account token retrieved!' }
+  }
+}
+
+function handleSyncAction() {
+  return async (event: FlatfileEvent) => {
+    const { spaceId, environmentId } = event.context
+    const merge = await getMergeClient(spaceId, environmentId)
+    let sheetConfig = await getSheets(merge)
+    sheetConfig = sheetConfig.filter(
+      (sheet) => sheet && Array.isArray(sheet.fields)
+    )
+    sheetConfig.push(
+      // accountingPeriod,
+      // addresses,
+      // balanceSheets,
+      // cashFlowStatements,
+      // companyInfo,
+      // creditNotes,
+      // incomeStatements,
+      items
+      // taxRates,
+      // trackingCategories,
+      // transactions,
+      // vendorCredits
+    )
+
+    const { data: workbook } = await api.workbooks.create({
+      spaceId,
+      environmentId,
+      name: 'Merge.dev',
+      sheets: sheetConfig,
+      // Todo: set metadata/connection
+    })
+
+    await api.jobs.create({
+      type: 'workbook',
+      operation: 'syncConnectedWorkbook',
+      status: 'ready',
+      source: workbook.id,
+      trigger: 'immediate',
+    })
+
+    return { info: 'Merge workbook created!' }
+  }
+}
+
+function handleConnectedWorkbookSync() {
+  return async (event: FlatfileEvent) => {
+    const { spaceId, workbookId, environmentId } = event.context
+    const merge = await getMergeClient(spaceId, environmentId)
+    // const { data: workbook } = await api.workbooks.get(workbookId)
+    // const workbookMetadata = workbook.metadata
+    const { data: sheets } = await api.sheets.list({ workbookId })
+
+    for (const sheet of sheets) {
+      await syncData(
+        merge.accounting[sheet.config.slug],
+        sheet.id,
+        'todo: last_synced_at' //TODO: get last_synced_at from workbook metadata
+      )
+    }
+    // TODO: update workbook/metadata/connection/last_synced_at
+
+    return { info: 'Synced!' }
+  }
+}
+
+async function syncData(model, sheetId: string, lastSyncedAt: string) {
+  let paginatedList
+  do {
+    paginatedList = await model.list({ cursor: paginatedList?.next }) // TODO: pass modified_after:last_synced_at
+    const records = mapRecords(paginatedList.results)
+    if (records.length > 0) {
+      await api.records.insert(sheetId, records)
+    }
+  } while (paginatedList.next)
+}
+
+const getSpaceEnvSecret = async (
+  spaceId: string,
+  environmentId: string,
+  name: string
+): Promise<string | undefined> => {
+  const secrets: Flatfile.SecretsResponse = await api.secrets.list({
+    spaceId,
+    environmentId,
+  })
+  return secrets.data.find((secret) => secret.name === name)?.value
 }
 
 async function getMergeClient(
   spaceId: string,
   environmentId: string
 ): Promise<MergeClient> {
-  const getSpaceEnvSecret = async (
-    name: string
-  ): Promise<string | undefined> => {
-    const secrets: Flatfile.SecretsResponse = await api.secrets.list({
-      spaceId,
-      environmentId,
-    })
-    return secrets.data.find((secret) => secret.name === name)?.value
-  }
-
-  const apiKey = await getSpaceEnvSecret('MERGE_TEST_ACCESS_KEY')
-  const accountToken = await getSpaceEnvSecret('MERGE_X_ACCOUNT_TOKEN')
+  const apiKey = await getSpaceEnvSecret(
+    spaceId,
+    environmentId,
+    MERGE_ACCESS_KEY
+  )
+  const accountToken = await getSpaceEnvSecret(
+    spaceId,
+    environmentId,
+    MERGE_X_ACCOUNT_TOKEN
+  )
 
   if (!apiKey || !accountToken) {
     throw new Error('Missing Merge API key or account token')
@@ -88,40 +163,19 @@ async function getMergeClient(
   })
 }
 
-const mergeTables = {
-  hris: [
-    {
-      slug: 'employees',
-      name: 'Employees',
-    },
-    // {
-    //   slug: 'companies',
-    //   name: 'Companies',
-    // },
-    // {
-    //   slug: 'locations',
-    //   name: 'Locations',
-    // },
-  ],
-  ats: [],
-  accounting: [],
-  ticketing: [],
-  crm: [],
-  marketing_automation: [],
-  file_storage: [],
-}
+async function getSheets(merge: MergeClient): Promise<Flatfile.SheetConfig[]> {
+  const toTitleCase = (str) =>
+    str
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/^./, (char) => char.toUpperCase())
 
-async function getSheets(
-  category: string,
-  merge: MergeClient
-): Promise<Flatfile.SheetConfig[]> {
   return await Promise.all(
-    mergeTables[category].map(async (table) => {
-      if (typeof merge[category][table.slug].metaPostRetrieve === 'function') {
-        const meta = await merge[category][table.slug].metaPostRetrieve()
-        const model = meta.requestSchema.properties['model']
-        const sheetConfig = getSheetConfig(table.name, model)
-        return sheetConfig
+    accountingModels.map(async (model) => {
+      if (typeof merge.accounting[model].metaPostRetrieve === 'function') {
+        const meta = await merge.accounting[model].metaPostRetrieve()
+        const modelProperties = meta.requestSchema.properties['model']
+        const modelName = toTitleCase(model)
+        return getSheetConfig(modelName, modelProperties)
       }
     })
   )
@@ -134,6 +188,11 @@ function getSheetConfig(
   const requiredFields: string[] = schema.required
   const properties: Record<string, any> = schema.properties
   const fields: Flatfile.Property[] = []
+
+  const toCamelCase = (str) =>
+    str
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase())
 
   for (const [key, value] of Object.entries(properties)) {
     let field: Flatfile.BaseProperty = {
@@ -177,6 +236,7 @@ function getSheetConfig(
 
   return {
     name: name,
+    slug: toCamelCase(name),
     fields: fields,
   }
 }
@@ -193,8 +253,32 @@ function mapRecords(records: Record<string, any>): Flatfile.RecordData[] {
   return Object.values(records).map((record) => {
     const mappedRecord: Flatfile.RecordData = {}
     for (let key in record) {
-      mappedRecord[key] = { value: record[key]?.toString() }
+      if (record[key]) {
+        mappedRecord[key] = { value: record[key]?.toString() }
+      }
     }
     return mappedRecord
   })
 }
+
+const accountingModels = [
+  'accounts',
+  'addresses',
+  'attachments',
+  'balanceSheets',
+  'cashFlowStatements',
+  'companyInfo',
+  'creditNotes',
+  'expenses',
+  'incomeStatements',
+  'invoices',
+  'items',
+  'journalEntries',
+  'payments',
+  'phoneNumbers',
+  'purchaseOrders',
+  'taxRates',
+  'trackingCategories',
+  'transactions',
+  'vendorCredits',
+]
