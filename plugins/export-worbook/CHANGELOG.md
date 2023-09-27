@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.0.4
+
+### Patch Changes
+
+- f2b2f59: @flatfile/api dependency updated to latest version
+
 ## 0.0.3
 
 ### Patch Changes

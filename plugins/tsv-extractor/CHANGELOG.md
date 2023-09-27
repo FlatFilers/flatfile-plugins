@@ -1,5 +1,11 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.5.1
+
+### Patch Changes
+
+- f2b2f59: @flatfile/api dependency updated to latest version
+
 ## 1.5.0
 
 ### Minor Changes

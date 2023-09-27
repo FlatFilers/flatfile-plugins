@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.4
+
+### Patch Changes
+
+- f2b2f59: @flatfile/api dependency updated to latest version
+- Updated dependencies [f2b2f59]
+  - @flatfile/util-file-buffer@0.1.1
+
 ## 0.4.3
 
 ### Patch Changes
