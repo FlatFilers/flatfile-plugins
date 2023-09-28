@@ -76,7 +76,16 @@ function handleSyncAction(category: string) {
       trigger: 'immediate',
     })
 
-    return { info: 'Merge workbook created!' }
+    return {
+      outcome: {
+        next: {
+          type: 'id',
+          id: workbook.id,
+          label: 'Go to workbook...',
+        },
+        message: `Connected workbook created for ${accountDetails.integration}.`,
+      },
+    } as Flatfile.JobCompleteDetails
   }
 }
 
