@@ -65,6 +65,16 @@ function handleSyncAction(category: string) {
       environmentId,
       name: accountDetails.integration,
       sheets,
+      actions: [
+        {
+          operation: 'submitActionFg',
+          mode: 'foreground',
+          label: 'Sync',
+          type: 'string',
+          description: `Sync data from ${accountDetails.integration}.`,
+          primary: true,
+        },
+      ],
       // Todo: set metadata/connection
     })
 
@@ -101,10 +111,10 @@ function handleConnectedWorkbookSync(category: string) {
       await syncData(
         merge[category][sheet.config.slug],
         sheet.id,
-        'todo: last_synced_at' //TODO: get last_synced_at from workbook metadata
+        'todo: lastSyncedAt' //TODO: get lastSyncedAt from workbook metadata
       )
     }
-    // TODO: update workbook/metadata/connection/last_synced_at
+    // TODO: update workbook/metadata/connection/lastSyncedAt
 
     return { info: 'Synced!' }
   }
@@ -113,7 +123,7 @@ function handleConnectedWorkbookSync(category: string) {
 async function syncData(model, sheetId: string, lastSyncedAt: string) {
   let paginatedList
   do {
-    paginatedList = await model.list({ cursor: paginatedList?.next }) // TODO: pass modified_after:last_synced_at
+    paginatedList = await model.list({ cursor: paginatedList?.next }) // TODO: pass modified_after:lastSyncedAt
     const records = mapRecords(paginatedList.results)
     if (records.length > 0) {
       await api.records.insert(sheetId, records)
