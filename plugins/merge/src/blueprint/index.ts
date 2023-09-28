@@ -1,18 +1,55 @@
-export * from './accounting/accountingPeriod'
-export * from './accounting/accounts'
-export * from './accounting/addresses'
-export * from './accounting/attachments'
-export * from './accounting/balanceSheets'
-export * from './accounting/cashFlowStatements'
-export * from './accounting/companyInfo'
-export * from './accounting/contacts'
-export * from './accounting/creditNotes'
-export * from './accounting/expenses'
-export * from './accounting/incomeStatements'
-export * from './accounting/invoices'
-export * from './accounting/items'
+import { accounts } from './accounting/accounts'
+import { addresses } from './accounting/addresses'
+import { attachments } from './accounting/attachments'
+import { balanceSheets } from './accounting/balanceSheets'
+import { cashFlowStatements } from './accounting/cashFlowStatements'
+import { companyInfo } from './accounting/companyInfo'
+import { creditNotes } from './accounting/creditNotes'
+import { expenses } from './accounting/expenses'
+import { incomeStatements } from './accounting/incomeStatements'
+import { invoices } from './accounting/invoices'
+import { items } from './accounting/items'
+import { companies } from './hris/companies'
+import { employees } from './hris/employees'
+import { locations } from './hris/locations'
+import { payGroups } from './hris/paygroups'
 
-export * from './hris/companies'
-export * from './hris/employees'
-export * from './hris/locations'
-export * from './hris/paygroups'
+export const mergeSheets = {
+  accounting: [
+    accounts,
+    addresses,
+    attachments,
+    balanceSheets,
+    cashFlowStatements,
+    companyInfo,
+    creditNotes,
+    expenses,
+    incomeStatements,
+    invoices,
+    items,
+    // journalEntries,
+    // payments,
+    // phoneNumbers,
+    // purchaseOrders,
+    // taxRates,
+    // trackingCategories,
+    // transactions,
+    // vendorCredits,
+  ],
+  hris: [
+    // bankInfo,
+    // benefits,
+    companies,
+    // dependents,
+    // employeePayrollRuns,
+    employees,
+    // employerBenefits,
+    // employments,
+    // groups,
+    locations,
+    payGroups,
+    // payrollRuns,
+    // timeOff,
+    // timeOffBalances,
+  ],
+}

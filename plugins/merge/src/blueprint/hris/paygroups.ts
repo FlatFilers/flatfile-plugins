@@ -1,6 +1,6 @@
 import { Flatfile } from '@flatfile/api'
 
-export const paygroups: Flatfile.SheetConfig = {
+export const payGroups: Flatfile.SheetConfig = {
   name: 'Pay Groups',
   slug: 'payGroups',
   fields: [
