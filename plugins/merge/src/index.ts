@@ -1,11 +1,12 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
+import { asyncBatch } from '@flatfile/util-common'
 import { MergeClient, MergeEnvironment } from '@mergeapi/merge-node-client'
 import { mergeSheets } from './blueprint'
 
-const MERGE_ACCESS_KEY = 'MERGE_TEST_ACCESS_KEY'
-const MERGE_X_ACCOUNT_TOKEN = 'MERGE_X_ACCOUNT_TOKEN'
+const MERGE_ACCESS_KEY = 'MERGE_ACCESS_KEY'
+const MERGE_X_ACCOUNT_TOKEN = 'MERGE_WORKDAY_ACCOUNT_TOKEN'
 
 export default function mergePlugin(category: string) {
   return (listener: FlatfileListener) => {
@@ -63,11 +64,12 @@ function handleSyncAction(category: string) {
     const { data: workbook } = await api.workbooks.create({
       spaceId,
       environmentId,
-      name: accountDetails.integration,
+      name: `[connection] ${accountDetails.integration}`,
       sheets,
+      labels: ['connection'],
       actions: [
         {
-          operation: 'submitActionFg',
+          operation: 'syncConnectedWorkbook',
           mode: 'foreground',
           label: 'Sync',
           type: 'string',
@@ -120,7 +122,27 @@ function handleConnectedWorkbookSync(category: string) {
   }
 }
 
+async function deleteSheetRecords(sheetId: string) {
+  const { data: records } = await api.records.get(sheetId)
+  if (records.records.length > 0) {
+    const recordIds = records.records.map((record) => {
+      return record.id
+    })
+
+    const options = { chunkSize: 100, parallel: 5, debug: true }
+    await asyncBatch(
+      recordIds,
+      async (chunk) => {
+        await api.records.delete(sheetId, { ids: chunk })
+      },
+      options
+    )
+  }
+}
+
 async function syncData(model, sheetId: string, lastSyncedAt: string) {
+  await deleteSheetRecords(sheetId)
+
   let paginatedList
   do {
     paginatedList = await model.list({ cursor: paginatedList?.next }) // TODO: pass modified_after:lastSyncedAt
