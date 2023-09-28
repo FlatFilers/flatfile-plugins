@@ -3,6 +3,7 @@ import { Flatfile } from '@flatfile/api'
 export const expenses: Flatfile.SheetConfig = {
   name: 'Expenses',
   slug: 'expenses',
+  readonly: true,
   fields: [
     {
       key: 'transaction_date',
@@ -386,7 +387,7 @@ export const expenses: Flatfile.SheetConfig = {
       key: 'id',
       label: 'ID',
       type: 'string',
-      constraints: [{ type: 'required' }],
+      // constraints: [{ type: 'required' }],
     },
     {
       key: 'remote_id',
@@ -397,7 +398,7 @@ export const expenses: Flatfile.SheetConfig = {
       key: 'modified_at',
       label: 'Modified at',
       type: 'string',
-      constraints: [{ type: 'required' }],
+      // constraints: [{ type: 'required' }],
     },
     // field_mappings: Object
     // remote_data: RemoteData[]

@@ -3,6 +3,7 @@ import { Flatfile } from '@flatfile/api'
 export const addresses: Flatfile.SheetConfig = {
   name: 'Addresses',
   slug: 'addresses',
+  readonly: true,
   fields: [
     {
       key: 'type',
@@ -307,7 +308,7 @@ export const addresses: Flatfile.SheetConfig = {
       key: 'modified_at',
       label: 'Modified at',
       type: 'string',
-      constraints: [{ type: 'required' }],
+      // constraints: [{ type: 'required' }],
     },
   ],
   actions: [],

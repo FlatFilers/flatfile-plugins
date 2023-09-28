@@ -3,6 +3,7 @@ import { Flatfile } from '@flatfile/api'
 export const accountingPeriod: Flatfile.SheetConfig = {
   name: 'Accounting Period',
   slug: 'accountingPeriods',
+  readonly: true,
   fields: [
     {
       key: 'start_date',
@@ -34,13 +35,13 @@ export const accountingPeriod: Flatfile.SheetConfig = {
       key: 'id',
       label: 'ID',
       type: 'string',
-      constraints: [{ type: 'required' }],
+      // constraints: [{ type: 'required' }],
     },
     {
       key: 'modified_at',
       label: 'Modified at',
       type: 'string',
-      constraints: [{ type: 'required' }],
+      // constraints: [{ type: 'required' }],
     },
   ],
   actions: [],

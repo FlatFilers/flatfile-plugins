@@ -3,6 +3,7 @@ import { Flatfile } from '@flatfile/api'
 export const payGroups: Flatfile.SheetConfig = {
   name: 'Pay Groups',
   slug: 'payGroups',
+  readonly: true,
   fields: [
     {
       key: 'id',
@@ -22,12 +23,14 @@ export const payGroups: Flatfile.SheetConfig = {
     {
       key: 'remote_was_deleted',
       label: 'Remote was deleted',
-      type: 'string',
+      type: 'boolean',
+      // constraints: [{ type: 'required' }],
     },
     {
       key: 'modified_at',
       label: 'Modified at',
       type: 'string',
+      // constraints: [{ type: 'required' }],
     },
   ],
   actions: [],

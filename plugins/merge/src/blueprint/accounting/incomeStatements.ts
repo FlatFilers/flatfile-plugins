@@ -3,12 +3,13 @@ import { Flatfile } from '@flatfile/api'
 export const incomeStatements: Flatfile.SheetConfig = {
   name: 'Income Statements',
   slug: 'incomeStatements',
+  readonly: true,
   fields: [
     {
       key: 'id',
       label: 'ID',
       type: 'string',
-      constraints: [{ type: 'required' }],
+      // constraints: [{ type: 'required' }],
     },
     {
       key: 'remote_id',
@@ -373,13 +374,13 @@ export const incomeStatements: Flatfile.SheetConfig = {
       key: 'remote_was_deleted',
       label: 'Remote was deleted',
       type: 'boolean',
-      constraints: [{ type: 'required' }],
+      // constraints: [{ type: 'required' }],
     },
     {
       key: 'modified_at',
       label: 'Modified at',
       type: 'string',
-      constraints: [{ type: 'required' }],
+      // constraints: [{ type: 'required' }],
     },
     // field_mappings: Object
     // remote_data: RemoteData[]
