@@ -11,3 +11,8 @@ export * from './accounting/expenses'
 export * from './accounting/incomeStatements'
 export * from './accounting/invoices'
 export * from './accounting/items'
+
+export * from './hris/companies'
+export * from './hris/employees'
+export * from './hris/locations'
+export * from './hris/paygroups'

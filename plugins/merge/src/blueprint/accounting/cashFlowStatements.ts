@@ -2,7 +2,7 @@ import { Flatfile } from '@flatfile/api'
 
 export const cashFlowStatements: Flatfile.SheetConfig = {
   name: 'Cash Flow Statements',
-  slug: 'cash-flow-statements',
+  slug: 'cashFlowStatements',
   fields: [
     {
       key: 'id',

@@ -2,30 +2,33 @@ import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { MergeClient, MergeEnvironment } from '@mergeapi/merge-node-client'
-import { items } from './blueprint'
+import { companies, employees, items } from './blueprint'
 
 const MERGE_ACCESS_KEY = 'MERGE_TEST_ACCESS_KEY'
 const MERGE_X_ACCOUNT_TOKEN = 'MERGE_X_ACCOUNT_TOKEN'
 
-export default function mergePlugin() {
+export default function mergePlugin(category: string) {
   return (listener: FlatfileListener) => {
     listener.use(
-      jobHandler('workbook:retrieveAccountToken', retrieveAccountTokenHandler())
+      jobHandler(
+        'workbook:retrieveAccountToken',
+        retrieveAccountTokenHandler(category)
+      )
     )
     listener.use(
       //workbook:createConnectedWorkbook
-      jobHandler('workbook:submitActionFg', handleSyncAction())
+      jobHandler('workbook:submitActionFg', handleSyncAction(category))
     )
     listener.use(
       jobHandler(
         'workbook:syncConnectedWorkbook',
-        handleConnectedWorkbookSync()
+        handleConnectedWorkbookSync(category)
       )
     )
   }
 }
 
-function retrieveAccountTokenHandler() {
+function retrieveAccountTokenHandler(category: string) {
   return async (event: FlatfileEvent) => {
     const { spaceId, environmentId, publicToken } = event.context
     const apiKey = await getSpaceEnvSecret(
@@ -37,7 +40,7 @@ function retrieveAccountTokenHandler() {
       environment: MergeEnvironment.Production,
       apiKey,
     })
-    const { accountToken } = await mergeClient.accounting.accountToken.retrieve(
+    const { accountToken } = await mergeClient[category].accountToken.retrieve(
       publicToken
     )
     await api.secrets.upsert({
@@ -50,34 +53,26 @@ function retrieveAccountTokenHandler() {
   }
 }
 
-function handleSyncAction() {
+function handleSyncAction(category: string) {
   return async (event: FlatfileEvent) => {
     const { spaceId, environmentId } = event.context
     const merge = await getMergeClient(spaceId, environmentId)
-    let sheetConfig = await getSheets(merge)
-    sheetConfig = sheetConfig.filter(
-      (sheet) => sheet && Array.isArray(sheet.fields)
-    )
-    sheetConfig.push(
-      // accountingPeriod,
-      // addresses,
-      // balanceSheets,
-      // cashFlowStatements,
-      // companyInfo,
-      // creditNotes,
-      // incomeStatements,
-      items
-      // taxRates,
-      // trackingCategories,
-      // transactions,
-      // vendorCredits
-    )
+    let sheets = await getSheets(merge, category)
+    sheets = sheets.filter((sheet) => sheet && Array.isArray(sheet.fields))
+    if (category === 'accounting') {
+      sheets.push(items)
+    }
+    if (category === 'hris') {
+      sheets.push(companies, employees)
+    }
+
+    const accountDetails = await merge[category].accountDetails.retrieve()
 
     const { data: workbook } = await api.workbooks.create({
       spaceId,
       environmentId,
-      name: 'Merge.dev',
-      sheets: sheetConfig,
+      name: accountDetails.integration,
+      sheets,
       // Todo: set metadata/connection
     })
 
@@ -93,7 +88,7 @@ function handleSyncAction() {
   }
 }
 
-function handleConnectedWorkbookSync() {
+function handleConnectedWorkbookSync(category: string) {
   return async (event: FlatfileEvent) => {
     const { spaceId, workbookId, environmentId } = event.context
     const merge = await getMergeClient(spaceId, environmentId)
@@ -103,7 +98,7 @@ function handleConnectedWorkbookSync() {
 
     for (const sheet of sheets) {
       await syncData(
-        merge.accounting[sheet.config.slug],
+        merge[category][sheet.config.slug],
         sheet.id,
         'todo: last_synced_at' //TODO: get last_synced_at from workbook metadata
       )
@@ -163,36 +158,32 @@ async function getMergeClient(
   })
 }
 
-async function getSheets(merge: MergeClient): Promise<Flatfile.SheetConfig[]> {
-  const toTitleCase = (str) =>
-    str
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/^./, (char) => char.toUpperCase())
-
+async function getSheets(
+  merge: MergeClient,
+  category: string
+): Promise<Flatfile.SheetConfig[]> {
   return await Promise.all(
-    accountingModels.map(async (model) => {
-      if (typeof merge.accounting[model].metaPostRetrieve === 'function') {
-        const meta = await merge.accounting[model].metaPostRetrieve()
+    models[category].map(async (model) => {
+      if (
+        model !== 'employees' &&
+        typeof merge[category][model].metaPostRetrieve === 'function'
+      ) {
+        const meta = await merge[category][model].metaPostRetrieve()
         const modelProperties = meta.requestSchema.properties['model']
-        const modelName = toTitleCase(model)
-        return getSheetConfig(modelName, modelProperties)
+        return getSheetConfig(model, modelProperties)
       }
     })
   )
 }
 
 function getSheetConfig(
-  name: string,
+  slug: string,
   schema: Record<string, any>
 ): Flatfile.SheetConfig {
+  const name = toTitleCase(slug)
   const requiredFields: string[] = schema.required
   const properties: Record<string, any> = schema.properties
   const fields: Flatfile.Property[] = []
-
-  const toCamelCase = (str) =>
-    str
-      .toLowerCase()
-      .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase())
 
   for (const [key, value] of Object.entries(properties)) {
     let field: Flatfile.BaseProperty = {
@@ -215,7 +206,7 @@ function getSheetConfig(
           type: 'enum',
           config: {
             options: value.enum.map((e: string) => ({
-              label: formatString(e),
+              label: toTitleCase(e),
               value: e,
             })),
           },
@@ -235,18 +226,10 @@ function getSheetConfig(
   }
 
   return {
-    name: name,
-    slug: toCamelCase(name),
-    fields: fields,
+    name,
+    slug,
+    fields,
   }
-}
-
-function formatString(str) {
-  return str
-    .toLowerCase()
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
 }
 
 function mapRecords(records: Record<string, any>): Flatfile.RecordData[] {
@@ -261,24 +244,51 @@ function mapRecords(records: Record<string, any>): Flatfile.RecordData[] {
   })
 }
 
-const accountingModels = [
-  'accounts',
-  'addresses',
-  'attachments',
-  'balanceSheets',
-  'cashFlowStatements',
-  'companyInfo',
-  'creditNotes',
-  'expenses',
-  'incomeStatements',
-  'invoices',
-  'items',
-  'journalEntries',
-  'payments',
-  'phoneNumbers',
-  'purchaseOrders',
-  'taxRates',
-  'trackingCategories',
-  'transactions',
-  'vendorCredits',
-]
+const toTitleCase = (str) => {
+  const spacedStr = str.replace(/_|(?<=[a-z])([A-Z])/g, ' $1')
+  const words = spacedStr.split(' ')
+  const capitalizedWords = words.map((word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  })
+  return capitalizedWords.join(' ')
+}
+
+const models = {
+  accounting: [
+    'accounts',
+    'addresses',
+    'attachments',
+    'balanceSheets',
+    'cashFlowStatements',
+    'companyInfo',
+    'creditNotes',
+    'expenses',
+    'incomeStatements',
+    'invoices',
+    'items',
+    'journalEntries',
+    'payments',
+    'phoneNumbers',
+    'purchaseOrders',
+    'taxRates',
+    'trackingCategories',
+    'transactions',
+    'vendorCredits',
+  ],
+  hris: [
+    'bankInfo',
+    'benefits',
+    'companies',
+    'dependents',
+    'employeePayrollRuns',
+    'employees',
+    'employerBenefits',
+    'employments',
+    'groups',
+    'locations',
+    'payGroups',
+    'payrollRuns',
+    'timeOff',
+    'timeOffBalances',
+  ],
+}

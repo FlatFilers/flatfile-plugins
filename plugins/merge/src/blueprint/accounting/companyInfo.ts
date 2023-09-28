@@ -2,7 +2,7 @@ import { Flatfile } from '@flatfile/api'
 
 export const companyInfo: Flatfile.SheetConfig = {
   name: 'Company Info',
-  slug: 'company-info',
+  slug: 'companyInfo',
   fields: [
     {
       key: 'id',

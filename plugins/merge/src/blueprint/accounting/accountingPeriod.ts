@@ -2,7 +2,7 @@ import { Flatfile } from '@flatfile/api'
 
 export const accountingPeriod: Flatfile.SheetConfig = {
   name: 'Accounting Period',
-  slug: 'accounting-periods',
+  slug: 'accountingPeriods',
   fields: [
     {
       key: 'start_date',
