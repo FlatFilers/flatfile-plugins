@@ -1,5 +1,4 @@
 import { accounts } from './accounting/accounts'
-import { addresses } from './accounting/addresses'
 import { attachments } from './accounting/attachments'
 import { balanceSheets } from './accounting/balanceSheets'
 import { cashFlowStatements } from './accounting/cashFlowStatements'
@@ -17,7 +16,6 @@ import { payGroups } from './hris/paygroups'
 export const mergeSheets = {
   accounting: [
     accounts,
-    addresses,
     attachments,
     balanceSheets,
     cashFlowStatements,

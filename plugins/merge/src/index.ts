@@ -2,23 +2,22 @@ import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { asyncBatch } from '@flatfile/util-common'
-import { MergeClient, MergeEnvironment } from '@mergeapi/merge-node-client'
+import {
+  Merge,
+  MergeClient,
+  MergeEnvironment,
+} from '@mergeapi/merge-node-client'
 import { mergeSheets } from './blueprint'
 
 const MERGE_ACCESS_KEY = 'MERGE_ACCESS_KEY'
-const MERGE_X_ACCOUNT_TOKEN = 'MERGE_WORKDAY_ACCOUNT_TOKEN'
 
 export default function mergePlugin(category: string) {
   return (listener: FlatfileListener) => {
     listener.use(
       jobHandler(
-        'workbook:retrieveAccountToken',
-        retrieveAccountTokenHandler(category)
+        'space:createConnectedWorkbook',
+        handleCreateConnectedWorkbooks(category)
       )
-    )
-    listener.use(
-      //workbook:createConnectedWorkbook
-      jobHandler('workbook:submitActionFg', handleSyncAction(category))
     )
     listener.use(
       jobHandler(
@@ -29,9 +28,13 @@ export default function mergePlugin(category: string) {
   }
 }
 
-function retrieveAccountTokenHandler(category: string) {
+function handleCreateConnectedWorkbooks(category: string) {
   return async (event: FlatfileEvent) => {
-    const { spaceId, environmentId, publicToken } = event.context
+    const { spaceId, environmentId, jobId } = event.context
+
+    const job = await api.jobs.get(jobId)
+    const jobInput = job.data.input
+    const publicToken = jobInput.publicToken
     const apiKey = await getSpaceEnvSecret(
       spaceId,
       environmentId,
@@ -41,43 +44,34 @@ function retrieveAccountTokenHandler(category: string) {
       environment: MergeEnvironment.Production,
       apiKey,
     })
-    const { accountToken } = await mergeClient[category].accountToken.retrieve(
-      publicToken
-    )
-    await api.secrets.upsert({
-      name: MERGE_X_ACCOUNT_TOKEN,
-      value: accountToken,
-      environmentId,
-      spaceId,
-    })
-    return { info: 'Account token retrieved!' }
-  }
-}
+    const { accountToken, integration }: Merge.accounting.AccountToken =
+      await mergeClient[category].accountToken.retrieve(publicToken)
 
-function handleSyncAction(category: string) {
-  return async (event: FlatfileEvent) => {
-    const { spaceId, environmentId } = event.context
-    const merge = await getMergeClient(spaceId, environmentId)
     const sheets = mergeSheets[category]
-    const accountDetails = await merge[category].accountDetails.retrieve()
-
     const { data: workbook } = await api.workbooks.create({
       spaceId,
       environmentId,
-      name: `[connection] ${accountDetails.integration}`,
-      sheets,
+      name: `[connection] ${integration.name}`,
       labels: ['connection'],
+      sheets,
       actions: [
         {
           operation: 'syncConnectedWorkbook',
           mode: 'foreground',
           label: 'Sync',
           type: 'string',
-          description: `Sync data from ${accountDetails.integration}.`,
+          description: `Sync data from ${integration.name}.`,
           primary: true,
         },
       ],
       // Todo: set metadata/connection
+    })
+
+    await api.secrets.upsert({
+      name: `${workbook.id}:MERGE_X_ACCOUNT_TOKEN`,
+      value: accountToken,
+      environmentId,
+      spaceId,
     })
 
     await api.jobs.create({
@@ -95,7 +89,7 @@ function handleSyncAction(category: string) {
           id: workbook.id,
           label: 'Go to workbook...',
         },
-        message: `Connected workbook created for ${accountDetails.integration}.`,
+        message: `Connected workbook created for ${integration.name}.`,
       },
     } as Flatfile.JobCompleteDetails
   }
@@ -104,21 +98,46 @@ function handleSyncAction(category: string) {
 function handleConnectedWorkbookSync(category: string) {
   return async (event: FlatfileEvent) => {
     const { spaceId, workbookId, environmentId } = event.context
-    const merge = await getMergeClient(spaceId, environmentId)
+    const apiKey = await getSpaceEnvSecret(
+      spaceId,
+      environmentId,
+      MERGE_ACCESS_KEY
+    )
+    const accountToken = await getSpaceEnvSecret(
+      spaceId,
+      environmentId,
+      `${workbookId}:MERGE_X_ACCOUNT_TOKEN`
+    )
+
+    if (!apiKey || !accountToken) {
+      throw new Error('Missing Merge API key or account token')
+    }
+
+    const mergeClient = new MergeClient({
+      environment: MergeEnvironment.Production,
+      apiKey,
+      accountToken,
+    })
     // const { data: workbook } = await api.workbooks.get(workbookId)
     // const workbookMetadata = workbook.metadata
     const { data: sheets } = await api.sheets.list({ workbookId })
 
     for (const sheet of sheets) {
       await syncData(
-        merge[category][sheet.config.slug],
+        mergeClient,
         sheet.id,
+        category,
+        sheet.config.slug,
         'todo: lastSyncedAt' //TODO: get lastSyncedAt from workbook metadata
       )
     }
     // TODO: update workbook/metadata/connection/lastSyncedAt
 
-    return { info: 'Synced!' }
+    return {
+      outcome: {
+        message: 'Connected workbook synced.',
+      },
+    } as Flatfile.JobCompleteDetails
   }
 }
 
@@ -140,17 +159,30 @@ async function deleteSheetRecords(sheetId: string) {
   }
 }
 
-async function syncData(model, sheetId: string, lastSyncedAt: string) {
-  await deleteSheetRecords(sheetId)
+async function syncData(
+  mergeClient: MergeClient,
+  sheetId: string,
+  category: string,
+  slug: string,
+  lastSyncedAt: string
+) {
+  try {
+    await deleteSheetRecords(sheetId)
 
-  let paginatedList
-  do {
-    paginatedList = await model.list({ cursor: paginatedList?.next }) // TODO: pass modified_after:lastSyncedAt
-    const records = mapRecords(paginatedList.results)
-    if (records.length > 0) {
-      await api.records.insert(sheetId, records)
-    }
-  } while (paginatedList.next)
+    const model = mergeClient[category][slug]
+    let paginatedList
+    do {
+      paginatedList = await model.list({ cursor: paginatedList?.next }) // TODO: pass modified_after:lastSyncedAt
+      const records = mapRecords(paginatedList.results)
+      console.log(slug, records.length)
+      if (records.length > 0) {
+        await api.records.insert(sheetId, records)
+      }
+    } while (paginatedList.next)
+  } catch (e) {
+    console.error(e)
+    throw new Error(`Error syncing ${slug} sheet`)
+  }
 }
 
 const getSpaceEnvSecret = async (
@@ -163,32 +195,6 @@ const getSpaceEnvSecret = async (
     environmentId,
   })
   return secrets.data.find((secret) => secret.name === name)?.value
-}
-
-async function getMergeClient(
-  spaceId: string,
-  environmentId: string
-): Promise<MergeClient> {
-  const apiKey = await getSpaceEnvSecret(
-    spaceId,
-    environmentId,
-    MERGE_ACCESS_KEY
-  )
-  const accountToken = await getSpaceEnvSecret(
-    spaceId,
-    environmentId,
-    MERGE_X_ACCOUNT_TOKEN
-  )
-
-  if (!apiKey || !accountToken) {
-    throw new Error('Missing Merge API key or account token')
-  }
-
-  return new MergeClient({
-    environment: MergeEnvironment.Production,
-    apiKey,
-    accountToken,
-  })
 }
 
 function mapRecords(records: Record<string, any>): Flatfile.RecordData[] {
