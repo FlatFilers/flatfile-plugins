@@ -46,13 +46,13 @@ export function configureSpace(
         )
         await tick(50, 'Workbook created')
 
-        if (workbookIds) {
-          await api.spaces.update(spaceId, {
-            environmentId: environmentId,
-            primaryWorkbookId: workbookIds[0],
-            ...config.space,
-          })
-        }
+        await api.spaces.update(spaceId, {
+          environmentId: environmentId,
+          primaryWorkbookId:
+            workbookIds && workbookIds.length > 0 ? workbookIds[0] : '',
+          ...config.space,
+        })
+
         if (callback) {
           await callback(event, workbookIds, tick)
         }
