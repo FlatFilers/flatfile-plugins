@@ -64,7 +64,7 @@ function handleCreateConnectedWorkbooks(category: string) {
       const { data: workbook } = await api.workbooks.create({
         spaceId,
         environmentId,
-        name: `[connection] ${integration.name}`,
+        name: integration.name,
         labels: ['connection'],
         sheets,
         actions: [
@@ -105,6 +105,7 @@ function handleCreateConnectedWorkbooks(category: string) {
         status: 'ready',
         source: workbook.id,
         trigger: 'immediate',
+        mode: 'foreground',
       })
 
       await tick(90, 'Created workbook sync job...')
@@ -116,7 +117,7 @@ function handleCreateConnectedWorkbooks(category: string) {
             id: workbook.id,
             label: 'Go to workbook...',
           },
-          message: `Connected workbook created for ${integration.name}.`,
+          message: `We've created a connected Workbook that perfectly matches the Merge.dev schema for ${integration.name}, ensuring a seamless connection and easy synchronization going forward.`,
         },
       } as Flatfile.JobCompleteDetails
     } catch (e) {
@@ -156,6 +157,7 @@ function handleConnectedWorkbookSync() {
       const category = connections[0].category // TODO: handle multiple connections
       const { data: sheets } = await api.sheets.list({ workbookId })
 
+      await tick(10, `${workbook.name} syncing to Merge...}`)
       await waitForMergeSync(mergeClient)
       await tick(30, 'Syncing data from Merge...')
 
@@ -183,7 +185,7 @@ function handleConnectedWorkbookSync() {
 
       return {
         outcome: {
-          message: 'Connected workbook synced.',
+          message: `${workbook.name} data has been successfully synced from ${workbook.name} to Merge.dev and from Merge.dev to Flatfile.`,
         },
       } as Flatfile.JobCompleteDetails
     } catch (e) {

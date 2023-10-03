@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-merge",
+  "name": "@flatfile/plugin-connect-via-merge",
   "version": "0.0.0",
   "description": "A connect plugin for Merge.dev",
   "registryMetadata": {
