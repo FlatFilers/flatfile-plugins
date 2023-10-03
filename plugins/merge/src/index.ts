@@ -31,7 +31,7 @@ export default function mergePlugin(category: string) {
 }
 
 function handleCreateConnectedWorkbooks(category: string) {
-  return async (event: FlatfileEvent) => {
+  return async (event: FlatfileEvent, tick) => {
     try {
       const { spaceId, environmentId, jobId } = event.context
 
@@ -50,7 +50,12 @@ function handleCreateConnectedWorkbooks(category: string) {
       const { accountToken, integration }: Merge.accounting.AccountToken =
         await mergeClient[category].accountToken.retrieve(publicToken)
 
+      await tick(20, 'Retrieved account token...')
+
       const sheets = await openApiSchemaToSheetConfig(category)
+
+      await tick(40, 'Retrieved sheet config...')
+
       const { data: workbook } = await api.workbooks.create({
         spaceId,
         environmentId,
@@ -79,12 +84,16 @@ function handleCreateConnectedWorkbooks(category: string) {
         },
       })
 
+      await tick(60, 'Created connected workbook...')
+
       await api.secrets.upsert({
         name: `${workbook.id}:MERGE_X_ACCOUNT_TOKEN`,
         value: accountToken,
         environmentId,
         spaceId,
       })
+
+      await tick(80, 'Created account token secret...')
 
       await api.jobs.create({
         type: 'workbook',
@@ -93,6 +102,8 @@ function handleCreateConnectedWorkbooks(category: string) {
         source: workbook.id,
         trigger: 'immediate',
       })
+
+      await tick(90, 'Created workbook sync job...')
 
       return {
         outcome: {
@@ -142,13 +153,13 @@ function handleConnectedWorkbookSync() {
       const { data: sheets } = await api.sheets.list({ workbookId })
 
       await waitForMergeSync(mergeClient)
-      tick(30, 'Syncing data from Merge...')
+      await tick(30, 'Syncing data from Merge...')
 
       let processedSheets = 0
       for (const sheet of sheets) {
         await syncData(mergeClient, sheet.id, category, sheet.config.slug)
         processedSheets++
-        tick(
+        await tick(
           Math.min(90, Math.round(30 + (60 * processedSheets) / sheets.length)),
           `Synced ${sheet.config.name}`
         )
@@ -164,7 +175,7 @@ function handleConnectedWorkbookSync() {
           ],
         },
       })
-      tick(95, 'Workbook updated')
+      await tick(95, 'Updating workbook...')
 
       return {
         outcome: {
