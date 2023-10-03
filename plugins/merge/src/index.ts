@@ -43,6 +43,11 @@ function handleCreateConnectedWorkbooks(category: string) {
         environmentId,
         MERGE_ACCESS_KEY
       )
+
+      if (!apiKey) {
+        throw new Error('Missing Merge API key')
+      }
+
       const mergeClient = new MergeClient({
         environment: MergeEnvironment.Production,
         apiKey,
@@ -69,7 +74,6 @@ function handleCreateConnectedWorkbooks(category: string) {
             label: 'Sync',
             type: 'string',
             description: `Sync data from ${integration.name}.`,
-            primary: true,
           },
         ],
         metadata: {
