@@ -50,6 +50,7 @@ const CATEGORY_MODELS = {
     TimeOff: 'timeOff',
     TimeOffBalance: 'timeOffBalances',
   },
+  // TODO: add the other categories & models
 }
 
 export default function mergePlugin() {
