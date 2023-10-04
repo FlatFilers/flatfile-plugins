@@ -1,5 +1,11 @@
 # @flatfile/plugin-space-configure
 
+## 0.1.4
+
+### Patch Changes
+
+- d944bfb: Allow configuring spaces with no workbooks
+
 ## 0.1.3
 
 ### Patch Changes
