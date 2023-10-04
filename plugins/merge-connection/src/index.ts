@@ -13,12 +13,12 @@ const MERGE_ACCESS_KEY = 'MERGE_ACCESS_KEY'
 const MAX_SYNC_ATTEMPTS = 30 // 5 minutes
 const SYNC_RETRY_INTERVAL_MS = 10000 // 10 seconds
 
-export default function mergePlugin(category: string) {
+export default function mergePlugin() {
   return (listener: FlatfileListener) => {
     listener.use(
       jobHandler(
         'space:createConnectedWorkbook',
-        handleCreateConnectedWorkbooks(category)
+        handleCreateConnectedWorkbooks()
       )
     )
     listener.use(
@@ -30,8 +30,11 @@ export default function mergePlugin(category: string) {
   }
 }
 
-function handleCreateConnectedWorkbooks(category: string) {
-  return async (event: FlatfileEvent, tick) => {
+function handleCreateConnectedWorkbooks() {
+  return async (
+    event: FlatfileEvent,
+    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
+  ) => {
     try {
       const { spaceId, environmentId, jobId } = event.context
 
@@ -52,8 +55,29 @@ function handleCreateConnectedWorkbooks(category: string) {
         environment: MergeEnvironment.Production,
         apiKey,
       })
-      const { accountToken, integration }: Merge.accounting.AccountToken =
-        await mergeClient[category].accountToken.retrieve(publicToken)
+
+      let accountTokenObj
+      let category
+
+      const categories = Object.keys(categoryModels)
+      for (let categoryAttempt of categories) {
+        try {
+          accountTokenObj = await mergeClient[
+            categoryAttempt
+          ].accountToken.retrieve(publicToken)
+          if (accountTokenObj) {
+            category = categoryAttempt
+            break // break out of the loop as soon as a valid category is found
+          }
+        } catch (e) {
+          // ignore and keep trying
+        }
+      }
+      if (!category || !accountTokenObj) {
+        throw new Error('Error retrieving account token')
+      }
+
+      const { accountToken, integration } = accountTokenObj
 
       await tick(20, 'Retrieved account token...')
 
@@ -128,7 +152,10 @@ function handleCreateConnectedWorkbooks(category: string) {
 }
 
 function handleConnectedWorkbookSync() {
-  return async (event: FlatfileEvent, tick) => {
+  return async (
+    event: FlatfileEvent,
+    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
+  ) => {
     try {
       const { spaceId, workbookId, environmentId } = event.context
       const apiKey = await getSpaceEnvSecret(
@@ -158,15 +185,15 @@ function handleConnectedWorkbookSync() {
       const { data: sheets } = await api.sheets.list({ workbookId })
 
       await tick(10, `${workbook.name} syncing to Merge...}`)
-      await waitForMergeSync(mergeClient)
-      await tick(30, 'Syncing data from Merge...')
+      await waitForMergeSync(mergeClient, category, tick)
+      await tick(40, 'Syncing data from Merge...')
 
       let processedSheets = 0
       for (const sheet of sheets) {
         await syncData(mergeClient, sheet.id, category, sheet.config.slug)
         processedSheets++
         await tick(
-          Math.min(90, Math.round(30 + (60 * processedSheets) / sheets.length)),
+          Math.min(90, Math.round(40 + (50 * processedSheets) / sheets.length)),
           `Synced ${sheet.config.name}`
         )
       }
@@ -195,43 +222,65 @@ function handleConnectedWorkbookSync() {
   }
 }
 
-const checkAllSyncsComplete = async (
-  mergeClient: MergeClient
-): Promise<boolean> => {
+async function fetchAllSyncStatuses(
+  mergeClient: MergeClient,
+  category: string
+) {
+  let cursor: string | undefined
+  const allResults = []
+
+  do {
+    const paginatedSyncList = await mergeClient[category].syncStatus.list({
+      cursor,
+    })
+    allResults.push(...paginatedSyncList.results)
+    cursor = paginatedSyncList.next
+  } while (cursor)
+
+  return allResults
+}
+
+async function checkAllSyncsComplete(
+  mergeClient: MergeClient,
+  category: string
+) {
   try {
-    let cursor: string | undefined
+    const allSyncs = await fetchAllSyncStatuses(mergeClient, category)
+    const completedSyncs = allSyncs.filter(
+      (syncStatus) =>
+        syncStatus.status === Merge[category].SyncStatusStatusEnum.Done
+    ).length
+    const totalModels = allSyncs.length
 
-    do {
-      const paginatedSyncList = await mergeClient.accounting.syncStatus.list({
-        cursor,
-      })
-
-      const allSyncsComplete = paginatedSyncList.results.every(
-        (syncStatus) =>
-          syncStatus.status === Merge.accounting.SyncStatusStatusEnum.Done
-      )
-
-      if (!allSyncsComplete) {
-        return false
-      }
-
-      cursor = paginatedSyncList.next
-    } while (cursor)
-
-    return true
+    return {
+      allComplete: completedSyncs === totalModels,
+      completedSyncs,
+      totalModels,
+    }
   } catch (e) {
     console.error(e)
     throw new Error(`Error checking sync status: ${e.message}`)
   }
 }
 
-async function waitForMergeSync(mergeClient: MergeClient): Promise<void> {
+async function waitForMergeSync(
+  mergeClient: MergeClient,
+  category: string,
+  tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
+): Promise<void> {
   try {
     let attempts = 0
     let syncStatusComplete = false
 
     while (attempts <= MAX_SYNC_ATTEMPTS && !syncStatusComplete) {
-      syncStatusComplete = await checkAllSyncsComplete(mergeClient)
+      const { allComplete, completedSyncs, totalModels } =
+        await checkAllSyncsComplete(mergeClient, category)
+      syncStatusComplete = allComplete
+
+      await tick(
+        Math.min(40, Math.round(10 + (30 * completedSyncs) / totalModels)),
+        'Merge syncing with Integration...'
+      )
 
       if (!syncStatusComplete) {
         attempts++
