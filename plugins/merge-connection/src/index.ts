@@ -10,7 +10,7 @@ import {
 import axios from 'axios'
 
 const MERGE_ACCESS_KEY = 'MERGE_ACCESS_KEY'
-const MAX_SYNC_ATTEMPTS = 30 // 5 minutes
+const MAX_SYNC_ATTEMPTS = 30 // Thirty cycles is equates to approx. 5 minutes
 const SYNC_RETRY_INTERVAL_MS = 10000 // 10 seconds
 const CATEGORY_MODELS = {
   accounting: {
@@ -55,12 +55,14 @@ const CATEGORY_MODELS = {
 
 export default function mergePlugin() {
   return (listener: FlatfileListener) => {
+    // The `space:createConnectedWorkbook` job is fired when a Merge connection has been made in the UI. `handleCreateConnectedWorkbooks()` creates the connected workbook mirroring the Merge schema.
     listener.use(
       jobHandler(
         'space:createConnectedWorkbook',
         handleCreateConnectedWorkbooks()
       )
     )
+    // The `workbook:syncConnectedWorkbook` job syncs the connected workbook and can be triggered by clicking the sync button.
     listener.use(
       jobHandler(
         'workbook:syncConnectedWorkbook',
@@ -92,6 +94,7 @@ function handleCreateConnectedWorkbooks() {
       let accountTokenObj
       let category
 
+      // Since we don't know what category the connection belongs to, we need to try each one
       const categories = Object.keys(CATEGORY_MODELS)
       for (let categoryAttempt of categories) {
         try {
@@ -112,6 +115,7 @@ function handleCreateConnectedWorkbooks() {
 
       await tick(20, 'Retrieved account token...')
 
+      // Using the category, we can fetch Merge's schema provided through their OpenAPI spec and convert it to a Flatfile sheet config
       const sheets = await openApiSchemaToSheetConfig(category)
 
       await tick(40, 'Retrieved sheet config...')
@@ -136,7 +140,7 @@ function handleCreateConnectedWorkbooks() {
             {
               source: 'Merge',
               service: category,
-              lastSyncedAt: new Date().toISOString(),
+              lastSyncedAt: new Date().toISOString(), // TODO: is set for UI purposes, but should be updated after sync
               category,
             },
           ],
@@ -154,6 +158,7 @@ function handleCreateConnectedWorkbooks() {
 
       await tick(80, 'Created account token secret...')
 
+      // Create a job to sync the workbook immediately
       await api.jobs.create({
         type: 'workbook',
         operation: 'syncConnectedWorkbook',
@@ -203,13 +208,15 @@ function handleConnectedWorkbookSync() {
       const { data: workbook }: Flatfile.WorkbookResponse =
         await api.workbooks.get(workbookId)
       const connections = workbook.metadata.connections
-      const category = connections[0].category // TODO: handle multiple connections
+      const category = connections[0].category // TODO: handle multiple connections???
       const { data: sheets } = await api.sheets.list({ workbookId })
 
       await tick(10, `${workbook.name} syncing to Merge...}`)
+      // Merge may not have synced with the integration, so we need to check and wait for Merge's sync to complete
       await waitForMergeSync(mergeClient, category, tick)
       await tick(40, 'Syncing data from Merge...')
 
+      // Sync data from Merge to Flatfile
       let processedSheets = 0
       for (const sheet of sheets) {
         await syncData(mergeClient, sheet.id, category, sheet.config.slug)
@@ -220,6 +227,7 @@ function handleConnectedWorkbookSync() {
         )
       }
 
+      // Finally, update the lastSyncedAt date
       await api.workbooks.update(workbookId, {
         metadata: {
           connections: [
@@ -361,6 +369,7 @@ async function syncData(
     } while (paginatedList.next)
   } catch (e) {
     console.error(e)
+    // Don't fail here, this will fail the entire sync
     // throw new Error(`Error syncing ${slug} sheet`)
   }
 }
