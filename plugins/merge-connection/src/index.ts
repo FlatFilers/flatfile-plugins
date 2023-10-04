@@ -441,8 +441,8 @@ async function openApiSchemaToSheetConfig(
       let field: Flatfile.BaseProperty = {
         key: key,
         label: property.title || key,
-        // description: property.description,
-        // readonly: property.readOnly || false,
+        description: `${property.description}`,
+        readonly: property.readOnly || false,
       }
 
       if (property.$ref) {
@@ -488,7 +488,9 @@ async function openApiSchemaToSheetConfig(
             type: 'boolean',
           } as Flatfile.Property.Boolean
         default:
-          console.log('Unhandled property type:', property.type)
+          console.log(
+            `Unhandled field '${field.label}' with property type '${property.type}'.`
+          )
       }
     }
 
