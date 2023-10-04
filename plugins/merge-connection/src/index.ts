@@ -12,6 +12,45 @@ import axios from 'axios'
 const MERGE_ACCESS_KEY = 'MERGE_ACCESS_KEY'
 const MAX_SYNC_ATTEMPTS = 30 // 5 minutes
 const SYNC_RETRY_INTERVAL_MS = 10000 // 10 seconds
+const CATEGORY_MODELS = {
+  accounting: {
+    Account: 'accounts',
+    Address: 'addresses',
+    Attachment: 'attachments',
+    BalanceSheet: 'balanceSheets',
+    CashFlowStatement: 'cashFlowStatements',
+    CompanyInfo: 'companyInfo',
+    CreditNote: 'creditNotes',
+    Expense: 'expenses',
+    IncomeStatement: 'incomeStatements',
+    Invoice: 'invoices',
+    Item: 'items',
+    JournalEntry: 'journalEntries',
+    Payment: 'payments',
+    PhoneNumber: 'phoneNumbers',
+    PurchaseOrder: 'purchaseOrders',
+    TaxRate: 'taxRates',
+    TrackingCategory: 'trackingCategories',
+    Transaction: 'transactions',
+    VendorCredit: 'vendorCredits',
+  },
+  hris: {
+    BankInfo: 'bankInfo',
+    Benefit: 'benefits',
+    Company: 'companies',
+    Dependent: 'dependents',
+    EmployeePayrollRun: 'employeePayrollRuns',
+    Employee: 'employees',
+    EmployerBenefit: 'employerBenefits',
+    Employment: 'employments',
+    Group: 'groups',
+    Location: 'locations',
+    PayGroup: 'payGroups',
+    PayrollRun: 'payrollRuns',
+    TimeOff: 'timeOff',
+    TimeOffBalance: 'timeOffBalances',
+  },
+}
 
 export default function mergePlugin() {
   return (listener: FlatfileListener) => {
@@ -41,25 +80,18 @@ function handleCreateConnectedWorkbooks() {
       const job = await api.jobs.get(jobId)
       const jobInput = job.data.input
       const publicToken = jobInput.publicToken
-      const apiKey = await getSpaceEnvSecret(
-        spaceId,
-        environmentId,
-        MERGE_ACCESS_KEY
-      )
+      const apiKey = await getSecret(spaceId, environmentId, MERGE_ACCESS_KEY)
 
       if (!apiKey) {
         throw new Error('Missing Merge API key')
       }
 
-      const mergeClient = new MergeClient({
-        environment: MergeEnvironment.Production,
-        apiKey,
-      })
+      const mergeClient = getMergeClient(apiKey)
 
       let accountTokenObj
       let category
 
-      const categories = Object.keys(categoryModels)
+      const categories = Object.keys(CATEGORY_MODELS)
       for (let categoryAttempt of categories) {
         try {
           accountTokenObj = await mergeClient[
@@ -69,9 +101,7 @@ function handleCreateConnectedWorkbooks() {
             category = categoryAttempt
             break // break out of the loop as soon as a valid category is found
           }
-        } catch (e) {
-          // ignore and keep trying
-        }
+        } catch (e) {} // ignore and keep trying
       }
       if (!category || !accountTokenObj) {
         throw new Error('Error retrieving account token')
@@ -145,8 +175,7 @@ function handleCreateConnectedWorkbooks() {
         },
       } as Flatfile.JobCompleteDetails
     } catch (e) {
-      console.error(e)
-      throw new Error(`Error creating connected workbook: ${e.message}`)
+      handleError(e, 'Error creating connected workbook')
     }
   }
 }
@@ -158,12 +187,8 @@ function handleConnectedWorkbookSync() {
   ) => {
     try {
       const { spaceId, workbookId, environmentId } = event.context
-      const apiKey = await getSpaceEnvSecret(
-        spaceId,
-        environmentId,
-        MERGE_ACCESS_KEY
-      )
-      const accountToken = await getSpaceEnvSecret(
+      const apiKey = await getSecret(spaceId, environmentId, MERGE_ACCESS_KEY)
+      const accountToken = await getSecret(
         spaceId,
         environmentId,
         `${workbookId}:MERGE_X_ACCOUNT_TOKEN`
@@ -173,11 +198,7 @@ function handleConnectedWorkbookSync() {
         throw new Error('Missing Merge API key or account token')
       }
 
-      const mergeClient = new MergeClient({
-        environment: MergeEnvironment.Production,
-        apiKey,
-        accountToken,
-      })
+      const mergeClient = getMergeClient(apiKey, accountToken)
       const { data: workbook }: Flatfile.WorkbookResponse =
         await api.workbooks.get(workbookId)
       const connections = workbook.metadata.connections
@@ -216,8 +237,7 @@ function handleConnectedWorkbookSync() {
         },
       } as Flatfile.JobCompleteDetails
     } catch (e) {
-      console.error(e)
-      throw new Error(`Error syncing connected workbook: ${e.message}`)
+      handleError(e, 'Error syncing connected workbook')
     }
   }
 }
@@ -258,8 +278,7 @@ async function checkAllSyncsComplete(
       totalModels,
     }
   } catch (e) {
-    console.error(e)
-    throw new Error(`Error checking sync status: ${e.message}`)
+    handleError(e, 'Error checking sync status')
   }
 }
 
@@ -295,8 +314,7 @@ async function waitForMergeSync(
       throw new Error('Merge sync timed out')
     }
   } catch (e) {
-    console.error(e)
-    throw new Error(`Error waiting for Merge sync: ${e.message}`)
+    handleError(e, 'Error waiting for Merge sync')
   }
 }
 
@@ -318,8 +336,7 @@ async function deleteSheetRecords(sheetId: string) {
       )
     }
   } catch (e) {
-    console.error(e)
-    throw new Error(`Error deleting records from sheet ${sheetId}`)
+    handleError(e, `Error deleting records from sheet ${sheetId}`)
   }
 }
 
@@ -337,7 +354,6 @@ async function syncData(
     do {
       paginatedList = await model.list({ cursor: paginatedList?.next })
       const records = mapRecords(paginatedList.results)
-
       if (records.length > 0) {
         await api.records.insert(sheetId, records)
       }
@@ -348,20 +364,29 @@ async function syncData(
   }
 }
 
-const getSpaceEnvSecret = async (
+function handleError(error: any, message: string) {
+  console.error(error)
+  throw new Error(`${message}: ${error.message}`)
+}
+
+function getMergeClient(apiKey: string, accountToken?: string) {
+  return new MergeClient({
+    environment: MergeEnvironment.Production,
+    apiKey,
+    ...(accountToken ? { accountToken } : {}),
+  })
+}
+
+async function getSecret(
   spaceId: string,
   environmentId: string,
   name: string
-): Promise<string | undefined> => {
+): Promise<string | undefined> {
   try {
-    const secrets: Flatfile.SecretsResponse = await api.secrets.list({
-      spaceId,
-      environmentId,
-    })
+    const secrets = await api.secrets.list({ spaceId, environmentId })
     return secrets.data.find((secret) => secret.name === name)?.value
   } catch (e) {
-    console.error(e)
-    throw new Error(`Error fetching secret ${name}`)
+    handleError(e, `Error fetching secret ${name}`)
   }
 }
 
@@ -470,8 +495,8 @@ async function openApiSchemaToSheetConfig(
     const sheetConfigs: Flatfile.SheetConfig[] = []
     for (const [name, schema] of Object.entries(schemas)) {
       if (
-        categoryModels[category] &&
-        categoryModels[category].hasOwnProperty(name)
+        CATEGORY_MODELS[category] &&
+        CATEGORY_MODELS[category].hasOwnProperty(name)
       ) {
         const fields: Flatfile.Property[] = []
 
@@ -487,7 +512,7 @@ async function openApiSchemaToSheetConfig(
 
         sheetConfigs.push({
           name: name,
-          slug: categoryModels[category][name],
+          slug: CATEGORY_MODELS[category][name],
           fields: fields,
         })
       }
@@ -495,47 +520,6 @@ async function openApiSchemaToSheetConfig(
 
     return sheetConfigs
   } catch (error) {
-    console.error('Error fetching or processing schema:', error.message)
-    throw new Error("Couldn't fetch or process schema")
+    handleError(error, 'Error fetching or processing schema')
   }
-}
-
-const categoryModels = {
-  accounting: {
-    Account: 'accounts',
-    Address: 'addresses',
-    Attachment: 'attachments',
-    BalanceSheet: 'balanceSheets',
-    CashFlowStatement: 'cashFlowStatements',
-    CompanyInfo: 'companyInfo',
-    CreditNote: 'creditNotes',
-    Expense: 'expenses',
-    IncomeStatement: 'incomeStatements',
-    Invoice: 'invoices',
-    Item: 'items',
-    JournalEntry: 'journalEntries',
-    Payment: 'payments',
-    PhoneNumber: 'phoneNumbers',
-    PurchaseOrder: 'purchaseOrders',
-    TaxRate: 'taxRates',
-    TrackingCategory: 'trackingCategories',
-    Transaction: 'transactions',
-    VendorCredit: 'vendorCredits',
-  },
-  hris: {
-    BankInfo: 'bankInfo',
-    Benefit: 'benefits',
-    Company: 'companies',
-    Dependent: 'dependents',
-    EmployeePayrollRun: 'employeePayrollRuns',
-    Employee: 'employees',
-    EmployerBenefit: 'employerBenefits',
-    Employment: 'employments',
-    Group: 'groups',
-    Location: 'locations',
-    PayGroup: 'payGroups',
-    PayrollRun: 'payrollRuns',
-    TimeOff: 'timeOff',
-    TimeOffBalance: 'timeOffBalances',
-  },
 }
