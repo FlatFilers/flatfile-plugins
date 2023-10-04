@@ -12,6 +12,7 @@ import axios from 'axios'
 const MERGE_ACCESS_KEY = 'MERGE_ACCESS_KEY'
 const MAX_SYNC_ATTEMPTS = 30 // Thirty cycles is equates to approx. 5 minutes
 const SYNC_RETRY_INTERVAL_MS = 10000 // 10 seconds
+// TODO: add common models to all categories
 const CATEGORY_MODELS = {
   accounting: {
     Account: 'accounts',
@@ -34,6 +35,9 @@ const CATEGORY_MODELS = {
     Transaction: 'transactions',
     VendorCredit: 'vendorCredits',
   },
+  ats: [],
+  crm: [],
+  filestorage: [],
   hris: {
     BankInfo: 'bankInfo',
     Benefit: 'benefits',
@@ -50,7 +54,7 @@ const CATEGORY_MODELS = {
     TimeOff: 'timeOff',
     TimeOffBalance: 'timeOffBalances',
   },
-  // TODO: add the other categories & models
+  ticketing: [],
 }
 
 export default function mergePlugin() {
