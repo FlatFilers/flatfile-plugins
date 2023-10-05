@@ -98,7 +98,7 @@ function handleCreateConnectedWorkbooks() {
       let accountTokenObj
       let category
 
-      // Since we don't know what category the connection belongs to, we need to try each one
+      // Since we don't know what category the Merge integration belongs to, we need to try each one
       const categories = Object.keys(CATEGORY_MODELS)
       for (let categoryAttempt of categories) {
         try {
@@ -333,6 +333,7 @@ async function waitForMergeSync(
 
 async function deleteSheetRecords(sheetId: string) {
   try {
+    // TODO: change this to a bulk delete job. `api.records.get` only gets 10k records at a time
     const { data: records } = await api.records.get(sheetId)
     if (records.records.length > 0) {
       const recordIds = records.records.map((record) => {
