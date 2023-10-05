@@ -1,5 +1,4 @@
 import api, { Flatfile } from '@flatfile/api'
-import { JobStatus, JobType } from '@flatfile/api/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
@@ -27,9 +26,9 @@ export const Extractor = (
       }
 
       const jobs = await api.jobs.create({
-        type: JobType.File,
+        type: Flatfile.JobType.File,
         operation: `extract-plugin-${extractorType}`,
-        status: JobStatus.Ready,
+        status: Flatfile.JobStatus.Ready,
         source: event.context.fileId,
       })
       await api.jobs.execute(jobs.data.id)

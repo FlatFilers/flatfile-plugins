@@ -1,15 +1,17 @@
 import {
   FlatfileRecord,
-  TPrimitive,
   FlatfileRecords,
   IRawRecord,
+  TPrimitive,
   TRecordData,
   TRecordDataWithLinks,
 } from '@flatfile/hooks'
 
-import type { RecordWithLinks, Record_ } from '@flatfile/api/api'
+import type { Flatfile } from '@flatfile/api'
 
-export class RecordTranslater<T extends FlatfileRecord | RecordWithLinks> {
+export class RecordTranslater<
+  T extends FlatfileRecord | Flatfile.RecordWithLinks
+> {
   constructor(private readonly records: T[]) {
     this.records = records
   }
@@ -18,10 +20,10 @@ export class RecordTranslater<T extends FlatfileRecord | RecordWithLinks> {
     if (this.records instanceof FlatfileRecords) {
       return this.records as FlatfileRecords<any>
     } else {
-      const XRecords = this.records as RecordWithLinks[]
+      const XRecords = this.records as Flatfile.RecordWithLinks[]
 
       const FFRecords = new FlatfileRecords(
-        XRecords.map((record: RecordWithLinks) => {
+        XRecords.map((record: Flatfile.RecordWithLinks) => {
           let rawData: TRecordDataWithLinks = {}
           for (let [k, v] of Object.entries(record.values)) {
             if (!!v.links?.length && v.value) {
@@ -79,7 +81,7 @@ export class RecordTranslater<T extends FlatfileRecord | RecordWithLinks> {
         }
       })
     } else {
-      return this.records as Record_[]
+      return this.records as Flatfile.Record_[]
     }
   }
 }
