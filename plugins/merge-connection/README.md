@@ -1,10 +1,15 @@
 # @flatfile/plugin-connect-via-merge
 
-This is a connect plugin for Merge.dev. Using this plugin will enable you to sync data from hundreds of integrations (connected through Merge.dev) with Flatfile.
+This is an **alpha release** connect plugin for Merge.dev. Using this plugin will enable you to sync data from hundreds of integrations (connected through Merge.dev) with Flatfile.
 
-## Get Started
+## Before you begin...
 
-To use this plugin, you'll need to create a [Merge.dev](https://www.merge.dev) account. Then create a new [Flatfile secret](https://platform.flatfile.com) (either an environment secret or space secret) named `MERGE_ACCESS_KEY` containing your [Merge.dev API key](https://app.merge.dev/keys).
+1. Email support@flatfile.com to request that the `connections` flag be enabled for your account.
+2. Create a [Merge.dev](https://www.merge.dev) account.
+4. Create and configure a [Flatfile Space](https://platform.flatfile.com).
+3. Create a new secret named `MERGE_ACCESS_KEY` in your space containing your [Merge.dev API key](https://app.merge.dev/keys).
+
+## Getting started
 
 First, install the plugin:
 ```bash
@@ -37,3 +42,5 @@ And finally, deploy it to Flatfile:
 ```bash
 npx flatfile@latest deploy
 ```
+
+With the `connections` feature flag enabled, you will see a new item in your space's sidebar labeled "Add Connection". Clicking this will open a modal where you can select the Merge.dev integration you want to connect to Flatfile. After you've made your selection, Merge.dev will since your selected integration with their system and your Flatfile listener will create a Workbook with Sheets to match Merge.dev's schema. Once the Merge.dev sync is complete, your Flatfile listener will complete the process by syncing with Merge.dev.
