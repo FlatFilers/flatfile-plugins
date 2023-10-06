@@ -77,7 +77,12 @@ export class AutomapService {
 
             destinationSheet = R.pipe(
               destinationWorkbook.sheets,
-              R.find((s) => s.name === target || s.id === target)
+              R.find(
+                (s) =>
+                  s.name === target ||
+                  s.id === target ||
+                  s.config.slug === target
+              )
             )
 
             const destinationSheetId = destinationSheet?.id
