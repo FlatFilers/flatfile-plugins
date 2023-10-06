@@ -12,8 +12,14 @@ import axios from 'axios'
 const MERGE_ACCESS_KEY = 'MERGE_ACCESS_KEY'
 const MAX_SYNC_ATTEMPTS = 30 // Thirty cycles is equates to approx. 5 minutes
 const SYNC_RETRY_INTERVAL_MS = 10000 // 10 seconds
+
+type CategoryModels = {
+  [key: string]: {
+    [key: string]: string
+  }
+}
 // TODO: add common models to all categories
-const CATEGORY_MODELS = {
+const CATEGORY_MODELS: CategoryModels = {
   accounting: {
     Account: 'accounts',
     Address: 'addresses',
@@ -35,9 +41,9 @@ const CATEGORY_MODELS = {
     Transaction: 'transactions',
     VendorCredit: 'vendorCredits',
   },
-  ats: [],
-  crm: [],
-  filestorage: [],
+  ats: {},
+  crm: {},
+  filestorage: {},
   hris: {
     BankInfo: 'bankInfo',
     Benefit: 'benefits',
@@ -54,7 +60,7 @@ const CATEGORY_MODELS = {
     TimeOff: 'timeOff',
     TimeOffBalance: 'timeOffBalances',
   },
-  ticketing: [],
+  ticketing: {},
 }
 
 export default function mergePlugin() {
@@ -86,7 +92,7 @@ function handleCreateConnectedWorkbooks() {
 
       const job = await api.jobs.get(jobId)
       const jobInput = job.data.input
-      const publicToken = jobInput.publicToken
+      const publicToken = jobInput?.publicToken
       const apiKey = await getSecret(spaceId, environmentId, MERGE_ACCESS_KEY)
 
       if (!apiKey) {
@@ -103,7 +109,7 @@ function handleCreateConnectedWorkbooks() {
       for (let categoryAttempt of categories) {
         try {
           accountTokenObj = await mergeClient[
-            categoryAttempt
+            categoryAttempt as keyof typeof mergeClient
           ].accountToken.retrieve(publicToken)
           if (accountTokenObj) {
             category = categoryAttempt
@@ -172,6 +178,8 @@ function handleCreateConnectedWorkbooks() {
         mode: 'foreground',
       })
 
+      await tick(90, 'Created workbook sync job...')
+
       return {
         outcome: {
           next: {
@@ -221,7 +229,8 @@ function handleConnectedWorkbookSync() {
       // Sync data from Merge to Flatfile
       let processedSheets = 0
       for (const sheet of sheets) {
-        await syncData(mergeClient, sheet.id, category, sheet.config.slug)
+        const slug = sheet.config.slug!
+        await syncData(mergeClient, sheet.id, category, slug)
         processedSheets++
         await tick(
           Math.min(90, Math.round(40 + (50 * processedSheets) / sheets.length)),
@@ -261,14 +270,19 @@ async function fetchAllSyncStatuses(
   const allResults = []
 
   do {
-    const paginatedSyncList = await mergeClient[category].syncStatus.list({
+    const paginatedSyncList = await mergeClient[
+      category as keyof typeof mergeClient
+    ].syncStatus.list({
       cursor,
     })
+    if (!paginatedSyncList.results) {
+      return allResults
+    }
     allResults.push(...paginatedSyncList.results)
     cursor = paginatedSyncList.next
   } while (cursor)
 
-  return allResults
+  return allResults || []
 }
 
 async function checkAllSyncsComplete(
@@ -279,7 +293,8 @@ async function checkAllSyncsComplete(
     const allSyncs = await fetchAllSyncStatuses(mergeClient, category)
     const completedSyncs = allSyncs.filter(
       (syncStatus) =>
-        syncStatus.status === Merge[category].SyncStatusStatusEnum.Done
+        syncStatus.status ===
+        Merge[category as keyof typeof Merge].SyncStatusStatusEnum.Done
     ).length
     const totalModels = allSyncs.length
 
@@ -303,14 +318,18 @@ async function waitForMergeSync(
     let syncStatusComplete = false
 
     while (attempts <= MAX_SYNC_ATTEMPTS && !syncStatusComplete) {
-      const { allComplete, completedSyncs, totalModels } =
-        await checkAllSyncsComplete(mergeClient, category)
-      syncStatusComplete = allComplete
+      const syncStatus = await checkAllSyncsComplete(mergeClient, category)
+      if (syncStatus) {
+        const { allComplete, completedSyncs, totalModels } = syncStatus
 
-      await tick(
-        Math.min(40, Math.round(10 + (30 * completedSyncs) / totalModels)),
-        'Merge syncing with Integration...'
-      )
+        await checkAllSyncsComplete(mergeClient, category)
+        syncStatusComplete = allComplete
+
+        await tick(
+          Math.min(40, Math.round(10 + (30 * completedSyncs) / totalModels)),
+          'Merge syncing with Integration...'
+        )
+      }
 
       if (!syncStatusComplete) {
         attempts++
@@ -341,7 +360,7 @@ async function deleteSheetRecords(sheetId: string) {
       const options = { chunkSize: 100, parallel: 5, debug: true }
       await asyncBatch(
         recordIds,
-        async (chunk) => {
+        async (chunk: string[]) => {
           await api.records.delete(sheetId, { ids: chunk })
         },
         options
@@ -361,17 +380,19 @@ async function syncData(
   try {
     await deleteSheetRecords(sheetId)
 
-    const model = mergeClient[category][slug]
-    let paginatedList
+    const model = mergeClient[category as keyof typeof mergeClient]
+    let paginatedList: { results: any[]; next?: string } | null = null
     do {
-      paginatedList = await model.list({ cursor: paginatedList?.next })
+      paginatedList = (await (model[slug as keyof typeof model] as any).list({
+        cursor: paginatedList?.next,
+      })) as { results: any[]; next?: string }
       const records = mapRecords(paginatedList.results)
       if (records.length > 0) {
         await api.records.insert(sheetId, records, {
           compressRequestBody: true,
         })
       }
-    } while (paginatedList.next)
+    } while (paginatedList?.next)
   } catch (e) {
     console.error(e)
     // Don't fail here, this will fail the entire sync
@@ -433,7 +454,7 @@ interface ApiSchemas {
 
 async function openApiSchemaToSheetConfig(
   category: string
-): Promise<Flatfile.SheetConfig[]> {
+): Promise<Flatfile.SheetConfig[] | undefined> {
   try {
     const response = await axios({
       url: `https://api.merge.dev/api/${category}/v1/schema`,
@@ -452,7 +473,7 @@ async function openApiSchemaToSheetConfig(
     function convertPropertyToField(
       key: string,
       property: OpenApiSchema
-    ): Flatfile.BaseProperty | Flatfile.Property {
+    ): Flatfile.BaseProperty | Flatfile.Property | undefined {
       let field: Flatfile.BaseProperty = {
         key: key,
         label: property.title || key,
