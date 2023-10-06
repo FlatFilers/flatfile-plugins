@@ -1,4 +1,4 @@
-import { Record_, Records } from '@flatfile/api/api'
+import { Flatfile } from '@flatfile/api'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
@@ -75,7 +75,7 @@ export const BulkRecordHook = async (
 }
 
 const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
-  const clearedMessages: Record_[] = records.map(
+  const clearedMessages: Flatfile.Record_[] = records.map(
     (record: { values: { [x: string]: { messages: never[] } } }) => {
       // clear existing cell validation messages
       Object.keys(record.values).forEach((k) => {
@@ -84,6 +84,6 @@ const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
       return record
     }
   )
-  const fromX = new RecordTranslater<Record_>(clearedMessages)
+  const fromX = new RecordTranslater<Flatfile.Record_>(clearedMessages)
   return fromX.toFlatFileRecords()
 }
