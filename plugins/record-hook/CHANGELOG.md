@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.5
+
+### Patch Changes
+
+- f5cfe69: Change import method
+
 ## 1.1.4
 
 ### Patch Changes
