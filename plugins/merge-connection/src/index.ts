@@ -172,8 +172,6 @@ function handleCreateConnectedWorkbooks() {
         mode: 'foreground',
       })
 
-      await tick(90, 'Created workbook sync job...')
-
       return {
         outcome: {
           next: {
