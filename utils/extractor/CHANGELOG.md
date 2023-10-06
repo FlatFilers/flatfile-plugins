@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.5
+
+### Patch Changes
+
+- f5cfe69: Change import method
+
 ## 0.4.4
 
 ### Patch Changes
