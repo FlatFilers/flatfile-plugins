@@ -11,7 +11,7 @@ export const RecordHook = async (
     record: FlatfileRecord,
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { concurrency?: number; debug?: boolean } = {}
+  options: { concurrency?: number; cacheless?: boolean; debug?: boolean } = {}
 ) => {
   const { concurrency } = { concurrency: 10, ...options }
   return BulkRecordHook(
@@ -38,25 +38,29 @@ export const BulkRecordHook = async (
     records: FlatfileRecord[],
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { chunkSize?: number; parallel?: number; debug?: boolean } = {}
+  options: {
+    chunkSize?: number
+    parallel?: number
+    cacheless?: boolean
+    debug?: boolean
+  } = {}
 ) => {
   try {
-    const batch = await event.cache.init<FlatfileRecords<any>>(
-      'records',
-      async () => {
-        const data = await event.data
-        return prepareXRecords(data.records)
-      }
-    )
+    const fetchBatch = async (): Promise<FlatfileRecords<any>> => {
+      const data = await event.data
+      return prepareXRecords(data.records)
+    }
+
+    const batch = options?.cacheless
+      ? await fetchBatch()
+      : await event.cache.init<FlatfileRecords<any>>('records', fetchBatch)
 
     if (!batch || batch.records.length === 0) return
 
     // run client defined data hooks
     await asyncBatch(batch.records, handler, options, event)
 
-    event.afterAll(async () => {
-      const batch = event.cache.get<FlatfileRecords<any>>('records')
-
+    const updateEvent = async (batch: FlatfileRecords<any>) => {
       const recordsUpdates = new RecordTranslater<FlatfileRecord>(
         batch.records
       ).toXRecords()
@@ -66,7 +70,14 @@ export const BulkRecordHook = async (
       } catch (e) {
         console.log(`Error updating records: ${e}`)
       }
-    })
+    }
+    options?.cacheless
+      ? await updateEvent(batch)
+      : event.afterAll(async () => {
+          const batch = event.cache.get<FlatfileRecords<any>>('records')
+
+          return updateEvent(batch)
+        })
   } catch (e) {
     console.log(`Error getting records: ${e}`)
   }
