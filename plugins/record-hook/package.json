@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-record-hook",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A plugin for writing custom record-level hooks in Flatfile.",
   "registryMetadata": {
     "category": "records"

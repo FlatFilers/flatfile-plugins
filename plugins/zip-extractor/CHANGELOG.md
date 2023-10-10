@@ -1,5 +1,13 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.3.8
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+- Updated dependencies [cb25574]
+  - @flatfile/util-file-buffer@0.1.2
+
 ## 0.3.7
 
 ### Patch Changes

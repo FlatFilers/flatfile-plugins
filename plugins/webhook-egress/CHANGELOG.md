@@ -1,5 +1,14 @@
 # @flatfile/plugin-webhook-egress
 
+## 0.1.4
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+- Updated dependencies [cb25574]
+  - @flatfile/util-response-rejection@0.1.3
+  - @flatfile/plugin-job-handler@0.1.4
+
 ## 0.1.3
 
 ### Patch Changes

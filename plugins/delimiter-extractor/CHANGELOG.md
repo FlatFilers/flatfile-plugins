@@ -1,5 +1,13 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.7.5
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+- Updated dependencies [cb25574]
+  - @flatfile/util-extractor@0.4.6
+
 ## 0.7.4
 
 ### Patch Changes

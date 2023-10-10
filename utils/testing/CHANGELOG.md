@@ -1,5 +1,11 @@
 # @flatfile/utils-testing
 
+## 0.0.4
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+
 ## 0.0.3
 
 ### Patch Changes
