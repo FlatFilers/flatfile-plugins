@@ -43,7 +43,6 @@ export class AutomapService {
       const file = await this.getFileById(fileId)
 
       if (!this.isFileNameMatch(file)) {
-        await this.updateFileName(file.id, `⏸️️ ${file.name}`)
         return
       } else {
         await this.updateFileName(file.id, `⚡️ ${file.name}`)
@@ -257,6 +256,9 @@ export class AutomapService {
       // allow mapping to continue b/c we weren't explicitly told not to
       return true
     } else {
+      if (regex.global) {
+        regex.lastIndex = 0
+      }
       return regex.test(file.name)
     }
   }
