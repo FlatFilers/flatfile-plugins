@@ -367,7 +367,9 @@ async function syncData(
       paginatedList = await model.list({ cursor: paginatedList?.next })
       const records = mapRecords(paginatedList.results)
       if (records.length > 0) {
-        await api.records.insert(sheetId, records)
+        await api.records.insert(sheetId, records, {
+          compressRequestBody: true,
+        })
       }
     } while (paginatedList.next)
   } catch (e) {
