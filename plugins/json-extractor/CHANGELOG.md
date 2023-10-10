@@ -1,5 +1,13 @@
 # @flatfile/plugin-json-extractor
 
+## 0.6.6
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+- Updated dependencies [cb25574]
+  - @flatfile/util-extractor@0.4.6
+
 ## 0.6.5
 
 ### Patch Changes

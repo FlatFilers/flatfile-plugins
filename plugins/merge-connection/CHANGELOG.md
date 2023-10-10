@@ -1,5 +1,14 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.0.2
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+- Updated dependencies [cb25574]
+  - @flatfile/plugin-space-configure@0.1.5
+  - @flatfile/plugin-job-handler@0.1.4
+
 ## 0.0.1
 
 ### Patch Changes

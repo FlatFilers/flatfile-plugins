@@ -1,5 +1,15 @@
 # @flatfile/plugin-automap
 
+## 0.1.0
+
+### Minor Changes
+
+- 972c7a2: Match on sheet slug (in addition to sheet name & id)
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+
 ## 0.0.4
 
 ### Patch Changes

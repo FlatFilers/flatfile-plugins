@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.6.2
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+
 ## 1.6.1
 
 ### Patch Changes

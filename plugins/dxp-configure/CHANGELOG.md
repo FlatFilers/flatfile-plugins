@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.0.9
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+
 ## 0.0.8
 
 ### Patch Changes

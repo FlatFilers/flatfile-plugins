@@ -1,5 +1,13 @@
 # @flatfile/plugin-space-configure
 
+## 0.1.5
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+- Updated dependencies [cb25574]
+  - @flatfile/plugin-job-handler@0.1.4
+
 ## 0.1.4
 
 ### Patch Changes

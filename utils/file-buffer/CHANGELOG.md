@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.1.2
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+
 ## 0.1.1
 
 ### Patch Changes

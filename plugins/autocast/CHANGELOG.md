@@ -1,5 +1,13 @@
 # @flatfile/plugin-autocast
 
+## 0.3.2
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+- Updated dependencies [cb25574]
+  - @flatfile/plugin-record-hook@1.1.6
+
 ## 0.3.1
 
 ### Patch Changes
