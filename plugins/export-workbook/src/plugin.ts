@@ -56,8 +56,8 @@ export const run = async (
 
           const rows = R.pipe(
             data.records,
-            R.map(({ values: row }) => {
-              return R.pipe(
+            R.map(({ id, values: row }) => {
+              const rowValue = R.pipe(
                 Object.keys(row),
                 R.reduce((acc, colName) => {
                   return {
@@ -66,6 +66,10 @@ export const run = async (
                   }
                 }, {})
               )
+              return {
+                id,
+                ...rowValue,
+              }
             })
           )
 
