@@ -1,5 +1,11 @@
 # @flatfile/plugin-job-handler
 
+## 0.1.4
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+
 ## 0.1.3
 
 ### Patch Changes
