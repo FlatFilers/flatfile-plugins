@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.1.1
+
+### Patch Changes
+
+- 8bfd065: Ignore `workbook:map` jobs that weren't created by the automap plugin
+
 ## 0.1.0
 
 ### Minor Changes
