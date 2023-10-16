@@ -48,6 +48,7 @@ export const BulkRecordHook = async (
   try {
     const fetchBatch = async (): Promise<FlatfileRecords<any>> => {
       const data = await event.data
+      if (!data.records || data.records === 0) return
       return prepareXRecords(data.records)
     }
 
@@ -61,8 +62,16 @@ export const BulkRecordHook = async (
     await asyncBatch(batch.records, handler, options, event)
 
     const updateEvent = async (batch: FlatfileRecords<any>) => {
+      const modifiedRecords = batch.records.filter((record) => {
+        const messageCount = record.toJSON().info.length // no known value for original messages, so we can't compare
+        return (
+          JSON.stringify(record.originalValue) !==
+            JSON.stringify(record.value) || messageCount > 0
+        )
+      })
+
       const recordsUpdates = new RecordTranslater<FlatfileRecord>(
-        batch.records
+        modifiedRecords
       ).toXRecords()
 
       try {
