@@ -43,7 +43,6 @@ export class AutomapService {
       const file = await this.getFileById(fileId)
 
       if (!this.isFileNameMatch(file)) {
-        await this.updateFileName(file.id, `⏸️️ ${file.name}`)
         return
       } else {
         await this.updateFileName(file.id, `⚡️ ${file.name}`)
@@ -73,11 +72,23 @@ export class AutomapService {
           const mappings = await this.getMappingJobs(file)
           let destinationSheet: Flatfile.Sheet | undefined
           const jobs = await asyncMap(mappings, async ({ target, source }) => {
-            if (R.isNil(target)) return
+            if (R.isNil(target)) {
+              if (this.options.debug) {
+                this.logInfo(
+                  `Unable to determine destination sheet for source sheet with id: ${source}`
+                )
+              }
+              return
+            }
 
             destinationSheet = R.pipe(
               destinationWorkbook.sheets,
-              R.find((s) => s.name === target || s.id === target)
+              R.find(
+                (s) =>
+                  s.name === target ||
+                  s.id === target ||
+                  s.config.slug === target
+              )
             )
 
             const destinationSheetId = destinationSheet?.id
@@ -94,6 +105,9 @@ export class AutomapService {
                 config: {
                   sourceSheetId: source,
                   destinationSheetId,
+                },
+                input: {
+                  isAutomap: true,
                 },
               })
 
@@ -173,13 +187,25 @@ export class AutomapService {
   private async handleMappingPlanCreated(event: FlatfileEvent): Promise<void> {
     const { jobId } = event.context
 
+    const job = await api.jobs.get(jobId)
+    if (!job.data.input?.isAutomap) {
+      if (this.options.debug) {
+        this.logInfo(`Not an automap job: ${jobId}`)
+      }
+      return
+    }
+
     try {
       const {
         data: { plan },
-      } = (await api.jobs.getExecutionPlan(jobId)) as any
-      // const { plan } = await api.jobs.getExecutionPlan(jobId); // types don't line up... why?
+      }: Flatfile.JobPlanResponse = await api.jobs.getExecutionPlan(jobId)
 
-      if (R.isNil(plan)) return
+      if (R.isNil(plan)) {
+        if (this.options.debug) {
+          this.logInfo('No job execution plan found')
+        }
+        return
+      }
 
       if (this.options.debug) {
         this.logInfo(`Job Execution Plan:\n${JSON.stringify(plan, null, 2)}`)
@@ -252,6 +278,9 @@ export class AutomapService {
       // allow mapping to continue b/c we weren't explicitly told not to
       return true
     } else {
+      if (regex.global) {
+        regex.lastIndex = 0
+      }
       return regex.test(file.name)
     }
   }

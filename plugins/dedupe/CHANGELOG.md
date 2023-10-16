@@ -1,5 +1,11 @@
 # @flatfile/plugin-dedupe
 
+## 0.0.6
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+
 ## 0.0.5
 
 ### Patch Changes

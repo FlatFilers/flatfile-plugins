@@ -79,7 +79,9 @@ export const Extractor = (
             await asyncBatch(
               capture[sheet.name].data,
               async (chunk) => {
-                await api.records.insert(sheet.id, chunk)
+                await api.records.insert(sheet.id, chunk, {
+                  compressRequestBody: true,
+                })
                 processedRecords += chunk.length
                 const progress = Math.min(
                   99,

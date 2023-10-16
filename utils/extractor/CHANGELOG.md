@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.6
+
+### Patch Changes
+
+- cb25574: Update @flatfile/api dependency
+- Updated dependencies [cb25574]
+  - @flatfile/util-file-buffer@0.1.2
+
 ## 0.4.5
 
 ### Patch Changes
