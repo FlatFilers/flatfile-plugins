@@ -1,4 +1,4 @@
-# @flatfile/plugin-json-schema
+# @flatfile/plugin-convert-json-schema
 
 ## 0.0.2
 

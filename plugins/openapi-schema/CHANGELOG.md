@@ -1,4 +1,4 @@
-# @flatfile/plugin-openapi
+# @flatfile/plugin-convert-openapi-schema
 
 ## 0.0.2
 

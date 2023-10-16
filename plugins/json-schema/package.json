@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-json-schema",
+  "name": "@flatfile/plugin-convert-json-schema",
   "version": "0.0.2",
   "description": "A plugin for converting json schema to Flatfile blueprint.",
   "registryMetadata": {
