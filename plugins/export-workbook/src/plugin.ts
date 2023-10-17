@@ -7,9 +7,11 @@ import * as XLSX from 'xlsx'
 /**
  * Plugin config options.
  *
+ * @property {boolean} includeRecordIds - include record ids in the exported data.
  * @property {boolean} debug - show helpul messages useful for debugging (use intended for development).
  */
 export interface PluginOptions {
+  readonly includeRecordIds?: boolean
   readonly debug?: boolean
 }
 
@@ -17,18 +19,18 @@ export interface PluginOptions {
  * Runs extractor and creates an `.xlsx` file with all Flatfile Workbook data.
  *
  * @param event - Flatfile event
- * @param opts - plugin config options
+ * @param options - plugin config options
  */
 export const run = async (
   event: FlatfileEvent,
-  opts: PluginOptions
+  options: PluginOptions
 ): Promise<void> => {
   const { environmentId, jobId, spaceId, workbookId } = event.context
 
   try {
     const { data: sheets } = await api.sheets.list({ workbookId })
 
-    if (opts.debug) {
+    if (options.debug) {
       const meta = R.pipe(
         sheets,
         R.reduce((acc, sheet) => {
@@ -66,10 +68,12 @@ export const run = async (
                   }
                 }, {})
               )
-              return {
-                id,
-                ...rowValue,
-              }
+              return options?.includeRecordIds
+                ? {
+                    id,
+                    ...rowValue,
+                  }
+                : rowValue
             })
           )
 
@@ -127,7 +131,7 @@ export const run = async (
     try {
       XLSX.writeFileXLSX(workbook, fileName)
 
-      if (opts.debug) {
+      if (options.debug) {
         logInfo('File written to disk')
       }
     } catch (_writeError: unknown) {
@@ -154,7 +158,7 @@ export const run = async (
 
       reader.close()
 
-      if (opts.debug) {
+      if (options.debug) {
         logInfo(
           `Excel document uploaded. View file at https://spaces.flatfile.com/space/${spaceId}/files?mode=export`
         )
@@ -179,7 +183,7 @@ export const run = async (
         },
       })
 
-      if (opts.debug) {
+      if (options.debug) {
         logInfo('Done')
       }
     } catch (_jobError: unknown) {
