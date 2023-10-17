@@ -16,7 +16,10 @@ interface ApiSchemas {
   [key: string]: OpenApiSchema
 }
 
-export async function generateSetupFactory(url: string): Promise<SetupFactory> {
+export async function generateSetupFactory(
+  url: string,
+  models?: Record<string, string>
+): Promise<SetupFactory> {
   try {
     const response = await axios({
       url,
@@ -94,6 +97,9 @@ export async function generateSetupFactory(url: string): Promise<SetupFactory> {
 
     const sheetConfigs: Flatfile.SheetConfig[] = []
     for (const [key, schema] of Object.entries(schemas)) {
+      if (models && !models.hasOwnProperty(key)) {
+        continue
+      }
       const fields: Flatfile.Property[] = []
 
       for (const [key, property] of Object.entries(schema.properties || {})) {
