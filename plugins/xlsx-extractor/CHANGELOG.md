@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.8.0
+
+### Minor Changes
+
+- 2aaae2f: Expose `raw` option to display raw data. Default to formatted text.
+
 ## 1.7.7
 
 ### Patch Changes

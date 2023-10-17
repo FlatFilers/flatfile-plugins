@@ -6,6 +6,7 @@ import { Flatfile } from '@flatfile/api'
 export function parseBuffer(
   buffer: Buffer,
   options?: {
+    raw?: boolean
     rawNumbers?: boolean
   }
 ): WorkbookCapture {
@@ -15,7 +16,11 @@ export function parseBuffer(
   })
 
   return mapValues(workbook.Sheets, (value, key) => {
-    return convertSheet(value, options?.rawNumbers || false)
+    return convertSheet(
+      value,
+      options?.rawNumbers || false,
+      options?.raw || false
+    )
   })
 }
 
@@ -26,12 +31,14 @@ export function parseBuffer(
  */
 function convertSheet(
   sheet: XLSX.WorkSheet,
-  rawNumbers: boolean
+  rawNumbers: boolean,
+  raw: boolean
 ): SheetCapture {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
     defval: null,
     rawNumbers: rawNumbers || false,
+    raw: raw || false,
   })
 
   const { headerRow, skip } = detectHeader(rows)
