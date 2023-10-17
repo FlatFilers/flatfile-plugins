@@ -16,7 +16,7 @@ interface ApiSchemas {
   [key: string]: OpenApiSchema
 }
 
-export async function generateSetupFactory(
+export async function generateSetup(
   url: string,
   models?: Record<string, string>
 ): Promise<SetupFactory> {
@@ -44,6 +44,7 @@ export async function generateSetupFactory(
         label: property.title || key,
         description: `${property.description}`,
         readonly: property.readOnly || false,
+        constraints: [],
       }
 
       if (property.$ref) {
@@ -101,17 +102,26 @@ export async function generateSetupFactory(
         continue
       }
       const fields: Flatfile.Property[] = []
+      const requiredFields = schema.required || []
 
       for (const [key, property] of Object.entries(schema.properties || {})) {
         const field = convertPropertyToField(key, property) as Flatfile.Property
         if (field) {
+          if (requiredFields.includes(key)) {
+            field.constraints?.push({
+              type: 'required',
+            })
+          }
           fields.push(field)
         }
       }
 
       sheetConfigs.push({
         name: key,
-        slug: key.toLowerCase(),
+        slug:
+          models && models.hasOwnProperty(key)
+            ? models[key]
+            : key.toLowerCase(),
         fields: fields,
       })
     }
