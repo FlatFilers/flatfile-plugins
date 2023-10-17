@@ -1,5 +1,5 @@
 ---
-'@flatfile/plugin-export-workbook': minor
+'@flatfile/plugin-export-workbook': patch
 ---
 
 Include recordId in export
