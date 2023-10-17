@@ -8,7 +8,7 @@ export const recordHookPlugin = (
     record: FlatfileRecord,
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { concurrency?: number; cacheless?: boolean; debug?: boolean } = {}
+  options: { concurrency?: number; debug?: boolean } = {}
 ) => {
   return (listener: FlatfileListener) => {
     listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {

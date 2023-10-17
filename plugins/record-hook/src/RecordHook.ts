@@ -11,7 +11,7 @@ export const RecordHook = async (
     record: FlatfileRecord,
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { concurrency?: number; cacheless?: boolean; debug?: boolean } = {}
+  options: { concurrency?: number; debug?: boolean } = {}
 ) => {
   const { concurrency } = { concurrency: 10, ...options }
   return BulkRecordHook(
@@ -41,27 +41,26 @@ export const BulkRecordHook = async (
   options: {
     chunkSize?: number
     parallel?: number
-    cacheless?: boolean
     debug?: boolean
   } = {}
 ) => {
   try {
-    const fetchBatch = async (): Promise<FlatfileRecords<any>> => {
-      const data = await event.data
-      if (!data.records || data.records === 0) return
-      return prepareXRecords(data.records)
-    }
-
-    const batch = options?.cacheless
-      ? await fetchBatch()
-      : await event.cache.init<FlatfileRecords<any>>('records', fetchBatch)
+    const batch = await event.cache.init<FlatfileRecords<any>>(
+      'records',
+      async () => {
+        const data = await event.data
+        if (!data.records || data.records === 0) return
+        return prepareXRecords(data.records)
+      }
+    )
 
     if (!batch || batch.records.length === 0) return
 
     // run client defined data hooks
     await asyncBatch(batch.records, handler, options, event)
 
-    const updateEvent = async (batch: FlatfileRecords<any>) => {
+    event.afterAll(async () => {
+      const batch = event.cache.get<FlatfileRecords<any>>('records')
       const modifiedRecords = batch.records.filter((record) => {
         const messageCount = record.toJSON().info.length // no known value for original messages, so we can't compare
         return (
@@ -79,14 +78,7 @@ export const BulkRecordHook = async (
       } catch (e) {
         console.log(`Error updating records: ${e}`)
       }
-    }
-    options?.cacheless
-      ? await updateEvent(batch)
-      : event.afterAll(async () => {
-          const batch = event.cache.get<FlatfileRecords<any>>('records')
-
-          return updateEvent(batch)
-        })
+    })
   } catch (e) {
     console.log(`Error getting records: ${e}`)
   }
