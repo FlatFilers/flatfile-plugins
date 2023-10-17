@@ -78,8 +78,8 @@ export const BulkRecordHook = async (
     await asyncBatch(batch.records, handler, options, event)
 
     event.afterAll(async () => {
-      const cachedBatch = event.cache.get<FlatfileRecords<any>>('records')
-      const modifiedRecords = cachedBatch.records.filter(hasRecordChanges)
+      const batch = event.cache.get<FlatfileRecords<any>>('records')
+      const modifiedRecords = batch.records.filter(hasRecordChanges)
       if (!modifiedRecords || modifiedRecords.length === 0) {
         if (options.debug) {
           console.log('No records modified')
