@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.0.6
+
+### Patch Changes
+
+- 4435151: Include recordId in export
+
 ## 0.0.5
 
 ### Patch Changes
