@@ -4,7 +4,7 @@ import { generateSetupFactory } from './blueprint.generator'
 
 export default function openApiSchemaPlugin(
   url: string,
-  models: Record<string, string>
+  models?: Record<string, string>
 ) {
   return async function (listener: FlatfileListener) {
     listener.use(configureSpace(await generateSetupFactory(url, models)))
