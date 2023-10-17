@@ -9,7 +9,7 @@ import {
 
 import type { Flatfile } from '@flatfile/api'
 
-export class RecordTranslater<
+export class RecordTranslator<
   T extends FlatfileRecord | Flatfile.RecordWithLinks
 > {
   constructor(private readonly records: T[]) {
@@ -65,7 +65,11 @@ export class RecordTranslater<
         for (let [k, v] of Object.entries(recordWithInfo.row.rawData)) {
           const messages = recordWithInfo.info
             .filter((info) => info.field === k)
-            .map((info) => ({ message: info.message, type: info.level }))
+            .map((info) => ({
+              message: info.message,
+              type: info.level,
+              source: 'custom-logic',
+            }))
 
           values[k] = {
             value: v !== null && typeof v === 'object' ? v.value : v,
