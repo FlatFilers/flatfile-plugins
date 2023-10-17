@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.7
+
+### Patch Changes
+
+- d9333ff: Only updated modified records, set the record message source, & small bug fix
+
 ## 1.1.6
 
 ### Patch Changes
