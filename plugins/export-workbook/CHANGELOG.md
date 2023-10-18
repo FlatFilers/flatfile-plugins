@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.0.8
+
+### Patch Changes
+
+- 53003e9: Add "Next" url to job completion message
+
 ## 0.0.7
 
 ### Patch Changes
