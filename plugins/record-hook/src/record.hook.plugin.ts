@@ -1,6 +1,11 @@
 import type { FlatfileRecord } from '@flatfile/hooks'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { BulkRecordHook, RecordHook } from './RecordHook'
+import {
+  BulkRecordHook,
+  BulkRecordHookOptions,
+  RecordHook,
+  RecordHookOptions,
+} from './RecordHook'
 
 export const recordHookPlugin = (
   sheetSlug: string,
@@ -8,7 +13,7 @@ export const recordHookPlugin = (
     record: FlatfileRecord,
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { concurrency?: number; debug?: boolean } = {}
+  options: RecordHookOptions = {}
 ) => {
   return (listener: FlatfileListener) => {
     listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
@@ -23,7 +28,7 @@ export const bulkRecordHookPlugin = (
     records: FlatfileRecord[],
     event?: FlatfileEvent
   ) => any | Promise<any>,
-  options: { chunkSize?: number; parallel?: number; debug?: boolean } = {}
+  options: BulkRecordHookOptions = {}
 ) => {
   return (listener: FlatfileListener) => {
     listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {

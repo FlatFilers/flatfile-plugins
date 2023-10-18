@@ -7,9 +7,11 @@ import * as XLSX from 'xlsx'
 /**
  * Plugin config options.
  *
+ * @property {boolean} includeRecordIds - include record ids in the exported data.
  * @property {boolean} debug - show helpul messages useful for debugging (use intended for development).
  */
 export interface PluginOptions {
+  readonly includeRecordIds?: boolean
   readonly debug?: boolean
 }
 
@@ -17,18 +19,18 @@ export interface PluginOptions {
  * Runs extractor and creates an `.xlsx` file with all Flatfile Workbook data.
  *
  * @param event - Flatfile event
- * @param opts - plugin config options
+ * @param options - plugin config options
  */
 export const run = async (
   event: FlatfileEvent,
-  opts: PluginOptions
+  options: PluginOptions
 ): Promise<void> => {
   const { environmentId, jobId, spaceId, workbookId } = event.context
 
   try {
     const { data: sheets } = await api.sheets.list({ workbookId })
 
-    if (opts.debug) {
+    if (options.debug) {
       const meta = R.pipe(
         sheets,
         R.reduce((acc, sheet) => {
@@ -40,7 +42,6 @@ export const run = async (
     }
 
     const workbook = XLSX.utils.book_new()
-    const alphaColumnDesignations = genCyclicPattern()
 
     try {
       await api.jobs.ack(jobId, {
@@ -66,11 +67,17 @@ export const run = async (
                   }
                 }, {})
               )
-              return {
-                id,
-                ...rowValue,
-              }
+              return options?.includeRecordIds
+                ? {
+                    id,
+                    ...rowValue,
+                  }
+                : rowValue
             })
+          )
+
+          const alphaColumnDesignations = genCyclicPattern(
+            Object.keys(rows[0]).length
           )
 
           const worksheet = XLSX.utils.json_to_sheet(rows)
@@ -113,11 +120,23 @@ export const run = async (
         } catch (_getRecordsError: unknown) {
           logError('Failed to fetch records for sheet with id: ' + sheet.id)
 
+          await api.jobs.fail(jobId, {
+            outcome: {
+              message: 'Failed to fetch records for sheet with id: ' + sheet.id,
+            },
+          })
+
           return
         }
       }
     } catch (_jobAckError: unknown) {
       logError('Failed to acknowledge job with id: ' + jobId)
+
+      await api.jobs.fail(jobId, {
+        outcome: {
+          message: 'Failed to acknowledge job with id: ' + jobId,
+        },
+      })
 
       return
     }
@@ -125,9 +144,10 @@ export const run = async (
     const fileName = `Workbook-${currentEpoch()}.xlsx`
 
     try {
+      XLSX.set_fs(fs)
       XLSX.writeFileXLSX(workbook, fileName)
 
-      if (opts.debug) {
+      if (options.debug) {
         logInfo('File written to disk')
       }
     } catch (_writeError: unknown) {
@@ -154,7 +174,9 @@ export const run = async (
 
       reader.close()
 
-      if (opts.debug) {
+      await fs.promises.unlink(fileName)
+
+      if (options.debug) {
         logInfo(
           `Excel document uploaded. View file at https://spaces.flatfile.com/space/${spaceId}/files?mode=export`
         )
@@ -179,40 +201,50 @@ export const run = async (
         },
       })
 
-      if (opts.debug) {
+      if (options.debug) {
         logInfo('Done')
       }
     } catch (_jobError: unknown) {
       logError('Failed to complete job')
+
+      await api.jobs.fail(jobId, {
+        outcome: {
+          message: 'Failed to complete job.',
+        },
+      })
 
       return
     }
   } catch (_fetchSheetsError: unknown) {
     logError('Failed to fetch sheets for workbook id: ' + workbookId)
 
+    await api.jobs.fail(jobId, {
+      outcome: {
+        message: 'Failed to fetch sheets for workbook id: ' + workbookId,
+      },
+    })
+
     return
   }
 }
 
 /**
- * Generates the alpha pattern ["A", ... "AA", ..., "AAA", ...] to help
+ * Generates the alpha pattern ["A", "B", ... "AA", "AB", ..., "AAA", "AAB", ...] to help
  * with accessing cells in a worksheet.
  *
  * @param length - multiple of 26
  */
 const genCyclicPattern = (length: number = 104): Array<string> => {
-  const multiplier: number = Math.ceil(length / 26)
-
   let alphaPattern: Array<string> = []
 
-  for (let idx = 1; idx <= multiplier; idx++) {
-    for (let ascii = 65; ascii <= 90; ascii++) {
-      R.pipe(
-        R.times(idx, () => ascii),
-        (alphas: Array<number>) => String.fromCharCode(...alphas),
-        (str: string) => alphaPattern.push(str)
-      )
+  for (let i = 0; i < length; i++) {
+    let columnName = ''
+    let j = i
+    while (j >= 0) {
+      columnName = String.fromCharCode(65 + (j % 26)) + columnName // 65 is ASCII for 'A'
+      j = Math.floor(j / 26) - 1
     }
+    alphaPattern.push(columnName)
   }
 
   return alphaPattern

@@ -8,9 +8,6 @@ describe('JobHandler plugin e2e tests', () => {
     let spaceId: string
 
     beforeAll(async () => {
-      listener.on('**', (event) => {
-        console.log(event.topic, event.payload.job)
-      })
       listener.use(jobHandler('space:configure', mockFn))
 
       const space = await setupSpace()
@@ -37,7 +34,7 @@ describe('JobHandler plugin e2e tests', () => {
     let spaceId: string
 
     beforeAll(async () => {
-      listener.on('**', (event) => {
+      listener.on('job:failed', (event) => {
         console.log(event.topic, event.payload.job)
       })
       listener.use(jobHandler('space:configure', mockErrorFn))
