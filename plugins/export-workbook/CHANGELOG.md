@@ -1,5 +1,15 @@
 # @flatfile/plugin-export-workbook
 
+## 0.0.7
+
+### Patch Changes
+
+- 20affc9: add option flag to export recordId
+  fix column pattern generator
+  pass column count to generator per sheet
+  properly fail jobs on error
+  delete files after upload
+
 ## 0.0.6
 
 ### Patch Changes
