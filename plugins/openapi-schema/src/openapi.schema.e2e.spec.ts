@@ -1,10 +1,9 @@
 import api from '@flatfile/api'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
-import configureSpaceWithOpenAPI from '.'
+import { configureSpaceWithOpenAPI } from '.'
 
 const expectedConfig = {
   name: 'Pet',
-  slug: 'pet',
   fields: [
     {
       type: 'number',

@@ -1,11 +1,19 @@
 import { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { generateSetup } from './setup.factory'
+import {
+  ModelsToSheetConfig,
+  PartialWorkbookConfig,
+  generateSetup,
+} from './setup.factory'
 
-export default function configureSpaceWithOpenAPI(
+export function configureSpaceWithOpenAPI(
   url: string,
-  models?: Record<string, string>,
+  options?: {
+    models?: ModelsToSheetConfig
+    workbookConfig?: PartialWorkbookConfig
+    debug?: boolean
+  },
   callback?: (
     event: FlatfileEvent,
     workbookIds: string[],
@@ -13,9 +21,9 @@ export default function configureSpaceWithOpenAPI(
   ) => any | Promise<any>
 ) {
   return async function (listener: FlatfileListener) {
-    listener.use(configureSpace(await generateSetup(url, models), callback))
+    listener.use(configureSpace(await generateSetup(url, options), callback))
   }
 }
 
 export type { SetupFactory } from '@flatfile/plugin-space-configure'
-export { generateSetup } from './setup.factory'
+export * from './setup.factory'
