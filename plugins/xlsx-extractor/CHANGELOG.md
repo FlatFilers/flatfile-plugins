@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.8.1
+
+### Patch Changes
+
+- 59cb901: Export parsers
+
 ## 1.8.0
 
 ### Minor Changes

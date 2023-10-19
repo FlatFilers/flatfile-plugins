@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.0.9
+
+### Patch Changes
+
+- 59cb901: Export parsers
+
 ## 0.0.8
 
 ### Patch Changes
