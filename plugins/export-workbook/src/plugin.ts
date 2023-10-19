@@ -95,7 +95,11 @@ export const run = async (
                     // '0' is not a valid accessible index in a worksheet and '1' is the header row
                     const cell =
                       worksheet[
-                        `${alphaColumnDesignations[colIdx]}${rowIdx + 2}`
+                        `${
+                          alphaColumnDesignations[
+                            colIdx + (options?.includeRecordIds ? 1 : 0)
+                          ]
+                        }${rowIdx + 2}`
                       ]
 
                     cell.c = R.pipe(
@@ -105,6 +109,7 @@ export const run = async (
                         t: `[${m.type.toUpperCase()}]: ${m.message}`,
                       }))
                     )
+                    cell.c.hidden = true
                   }
                 })
               )
