@@ -61,9 +61,26 @@ export const run = async (
               const rowValue = R.pipe(
                 Object.keys(row),
                 R.reduce((acc, colName) => {
+                  const formatCell = (cellValue: Flatfile.CellValue) => {
+                    const { value, messages } = cellValue
+                    const cell: XLSX.CellObject = { t: 's', v: value }
+                    if (R.length(messages) > 0) {
+                      cell.c = R.pipe(
+                        messages,
+                        R.map((m) => ({
+                          a: 'Flatfile',
+                          t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                        }))
+                      )
+                      cell.c.hidden = true
+                    }
+
+                    return cell
+                  }
+
                   return {
                     ...acc,
-                    [colName]: row[colName].value,
+                    [colName]: formatCell(row[colName]),
                   }
                 }, {})
               )
@@ -76,45 +93,7 @@ export const run = async (
             })
           )
 
-          const alphaColumnDesignations = genCyclicPattern(
-            Object.keys(rows[0]).length
-          )
-
           const worksheet = XLSX.utils.json_to_sheet(rows)
-
-          R.pipe(
-            data.records,
-            R.forEach.indexed(({ values: row }, rowIdx) => {
-              R.pipe(
-                Object.keys(row),
-                R.forEach.indexed((colName, colIdx) => {
-                  const messages: Array<Flatfile.ValidationMessage> =
-                    row[colName].messages
-
-                  if (R.length(messages) > 0) {
-                    // '0' is not a valid accessible index in a worksheet and '1' is the header row
-                    const cell =
-                      worksheet[
-                        `${
-                          alphaColumnDesignations[
-                            colIdx + (options?.includeRecordIds ? 1 : 0)
-                          ]
-                        }${rowIdx + 2}`
-                      ]
-
-                    cell.c = R.pipe(
-                      messages,
-                      R.map((m) => ({
-                        a: 'Flatfile',
-                        t: `[${m.type.toUpperCase()}]: ${m.message}`,
-                      }))
-                    )
-                    cell.c.hidden = true
-                  }
-                })
-              )
-            })
-          )
 
           XLSX.utils.book_append_sheet(
             workbook,
