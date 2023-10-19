@@ -27,6 +27,8 @@ export const ExcelExtractor = (options?: ExcelExtractorOptions) => {
   )
 }
 
+export const excelParser = parseBuffer
+
 /*
  * @deprecated use `ExcelExtractor` instead
  */
