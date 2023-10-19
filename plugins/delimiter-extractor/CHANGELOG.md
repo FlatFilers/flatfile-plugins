@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.7.6
+
+### Patch Changes
+
+- 59cb901: Export parsers
+
 ## 0.7.5
 
 ### Patch Changes
