@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.5.7
+
+### Patch Changes
+
+- 59cb901: Export parsers
+
 ## 0.5.6
 
 ### Patch Changes

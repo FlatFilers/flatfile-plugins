@@ -1,5 +1,11 @@
 # @flatfile/plugin-json-extractor
 
+## 0.6.7
+
+### Patch Changes
+
+- 59cb901: Export parsers
+
 ## 0.6.6
 
 ### Patch Changes
