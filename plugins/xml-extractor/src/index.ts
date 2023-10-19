@@ -11,3 +11,5 @@ export const XMLExtractor = (options?: {
 }) => {
   return Extractor('.xml', 'xml', parseBuffer, options)
 }
+
+export const xmlParser = parseBuffer

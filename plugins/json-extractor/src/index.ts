@@ -9,6 +9,8 @@ export const JSONExtractor = (options?: {
   return Extractor('.json', 'json', parseBuffer, options)
 }
 
+export const jsonParser = parseBuffer
+
 /*
  * @deprecated use `JSONExtractor` instead
  */
