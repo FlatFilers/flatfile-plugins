@@ -1,0 +1,34 @@
+{
+  "name": "@flatfile/plugin-auto-update-records",
+  "version": "0.0.0",
+  "description": "A plugin for automatically updating records from a file extraction.",
+  "registryMetadata": {
+    "category": "automation"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "TZ=GMT jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [],
+  "author": "Flatfile, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/auto-update-records"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.5.30",
+    "@flatfile/listener": "^0.3.10",
+    "@flatfile/plugin-job-handler": "^0.1.4"
+  }
+}
