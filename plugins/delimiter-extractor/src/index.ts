@@ -38,3 +38,5 @@ export const DelimiterExtractor = (
     ...restOptions,
   })
 }
+
+export const delimiterParser = parseBuffer
