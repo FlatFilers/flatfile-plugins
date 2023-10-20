@@ -135,7 +135,7 @@ export const run = async (
           for (const columnDesignation of editableFieldAlphaColumnDesignations) {
             XLSX.utils.sheet_set_range_style(
               worksheet,
-              `${columnDesignation}2:${columnDesignation}${rowCount}`,
+              `${columnDesignation}2:${columnDesignation}${rowCount + 1}`,
               {
                 editable: true,
               }
@@ -150,7 +150,7 @@ export const run = async (
           for (const columnDesignation of readonlyFieldAlphaColumnDesignations) {
             XLSX.utils.sheet_set_range_style(
               worksheet,
-              `${columnDesignation}2:${columnDesignation}${rowCount}`,
+              `${columnDesignation}2:${columnDesignation}${rowCount + 1}`,
               {
                 ...readonlyColorScheme,
               }
