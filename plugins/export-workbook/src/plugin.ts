@@ -1,9 +1,9 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent } from '@flatfile/listener'
 import { processRecords } from '@flatfile/util-common'
-import * as XLSX from '@sheet/coredemo'
 import * as fs from 'fs'
 import * as R from 'remeda'
+import * as XLSX from './xlsx.full.min.js'
 
 /**
  * Plugin config options.
@@ -107,6 +107,7 @@ export const run = async (
             `A1:${alphaColumnDesignations[columnCount - 1]}1`,
             {
               bold: true,
+              ...readonlyColorScheme,
             }
           )
 
@@ -137,6 +138,21 @@ export const run = async (
               `${columnDesignation}2:${columnDesignation}${rowCount}`,
               {
                 editable: true,
+              }
+            )
+          }
+
+          const readonlyFieldAlphaColumnDesignations =
+            alphaColumnDesignations.filter(
+              (designation) =>
+                !editableFieldAlphaColumnDesignations.includes(designation)
+            )
+          for (const columnDesignation of readonlyFieldAlphaColumnDesignations) {
+            XLSX.utils.sheet_set_range_style(
+              worksheet,
+              `${columnDesignation}2:${columnDesignation}${rowCount}`,
+              {
+                ...readonlyColorScheme,
               }
             )
           }
@@ -263,8 +279,8 @@ export const run = async (
 }
 
 type ColorScheme = {
-  color: { rgb: string }
-  fgColor: { rgb: string }
+  color?: { rgb: string }
+  fgColor?: { rgb: string }
 }
 
 const errorRed: ColorScheme = {
@@ -280,6 +296,11 @@ const warningYellow: ColorScheme = {
 const infoBlue: ColorScheme = {
   color: { rgb: '000000' },
   fgColor: { rgb: 'daeef3' },
+}
+
+const readonlyColorScheme: ColorScheme = {
+  color: { rgb: '414857' },
+  fgColor: { rgb: 'f6f8fc' },
 }
 
 function getCellColorScheme(
