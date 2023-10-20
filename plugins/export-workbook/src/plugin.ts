@@ -1,9 +1,9 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent } from '@flatfile/listener'
 import { processRecords } from '@flatfile/util-common'
+import * as XLSX from '@sheet/coredemo'
 import * as fs from 'fs'
 import * as R from 'remeda'
-import * as XLSX from './xlsx.full.min.js'
 
 /**
  * Plugin config options.
@@ -190,7 +190,7 @@ export const run = async (
     const fileName = `Workbook-${currentEpoch()}.xlsx`
 
     try {
-      XLSX.writeFile(workbook, fileName, { cellStyles: true })
+      XLSX.writeFileXLSX(workbook, fileName, { cellStyles: true })
 
       if (options.debug) {
         logInfo('File written to disk')
