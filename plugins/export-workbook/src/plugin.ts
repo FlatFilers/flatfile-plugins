@@ -1,8 +1,9 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent } from '@flatfile/listener'
+import { processRecords } from '@flatfile/util-common'
+import * as XLSX from '@sheet/coredemo'
 import * as fs from 'fs'
 import * as R from 'remeda'
-import * as XLSX from 'xlsx'
 
 /**
  * Plugin config options.
@@ -51,49 +52,94 @@ export const run = async (
 
       for (const sheet of sheets) {
         try {
-          const { data } = await api.records.get(sheet.id, {
-            includeMessages: true,
-          })
+          const results = await processRecords(sheet.id, (records) => {
+            return R.pipe(
+              records,
+              R.map(({ id, values: row }) => {
+                const rowValue = R.pipe(
+                  Object.keys(row),
+                  R.reduce((acc, colName) => {
+                    const formatCell = (cellValue: Flatfile.CellValue) => {
+                      const { value, messages } = cellValue
+                      const cell: XLSX.CellObject = { t: 's', v: value }
+                      if (R.length(messages) > 0) {
+                        cell.c = R.pipe(
+                          messages,
+                          R.map((m) => ({
+                            a: 'Flatfile',
+                            t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                          }))
+                        )
+                        cell.c.hidden = true
+                        cell.s = getCellColorScheme(messages)
+                      }
 
-          const rows = R.pipe(
-            data.records,
-            R.map(({ id, values: row }) => {
-              const rowValue = R.pipe(
-                Object.keys(row),
-                R.reduce((acc, colName) => {
-                  const formatCell = (cellValue: Flatfile.CellValue) => {
-                    const { value, messages } = cellValue
-                    const cell: XLSX.CellObject = { t: 's', v: value }
-                    if (R.length(messages) > 0) {
-                      cell.c = R.pipe(
-                        messages,
-                        R.map((m) => ({
-                          a: 'Flatfile',
-                          t: `[${m.type.toUpperCase()}]: ${m.message}`,
-                        }))
-                      )
-                      cell.c.hidden = true
+                      return cell
                     }
 
-                    return cell
-                  }
-
-                  return {
-                    ...acc,
-                    [colName]: formatCell(row[colName]),
-                  }
-                }, {})
-              )
-              return options?.includeRecordIds
-                ? {
-                    id,
-                    ...rowValue,
-                  }
-                : rowValue
-            })
-          )
+                    return {
+                      ...acc,
+                      [colName]: formatCell(row[colName]),
+                    }
+                  }, {})
+                )
+                return options?.includeRecordIds
+                  ? {
+                      id,
+                      ...rowValue,
+                    }
+                  : rowValue
+              })
+            )
+          })
+          const rows = results.flat()
 
           const worksheet = XLSX.utils.json_to_sheet(rows)
+          worksheet['!protect'] = {}
+
+          const columnCount = Object.keys(rows[0]).length
+          const rowCount = rows.length
+
+          // Bold the first row (header)
+          const alphaColumnDesignations = genCyclicPattern(columnCount)
+          XLSX.utils.sheet_set_range_style(
+            worksheet,
+            `A1:${alphaColumnDesignations[columnCount - 1]}1`,
+            {
+              bold: true,
+            }
+          )
+
+          // Calculate editable columns directly from the sheet's configuration
+          const editableFieldAlphaColumnDesignations = sheet.config.fields
+            .map((field, index) => {
+              // Check if a field is NOT read-only
+              if (!field.readonly) {
+                return alphaColumnDesignations[
+                  options?.includeRecordIds ? index + 1 : index
+                ]
+              }
+            })
+            .filter(Boolean)
+
+          // Remove 'A' column if `includeRecordIds` is true as it's considered read-only
+          if (options?.includeRecordIds) {
+            const index = editableFieldAlphaColumnDesignations.indexOf('A')
+            if (index > -1) {
+              editableFieldAlphaColumnDesignations.splice(index, 1)
+            }
+          }
+
+          // Set editable columns to editable
+          for (const columnDesignation of editableFieldAlphaColumnDesignations) {
+            XLSX.utils.sheet_set_range_style(
+              worksheet,
+              `${columnDesignation}2:${columnDesignation}${rowCount}`,
+              {
+                editable: true,
+              }
+            )
+          }
 
           XLSX.utils.book_append_sheet(
             workbook,
@@ -128,8 +174,7 @@ export const run = async (
     const fileName = `Workbook-${currentEpoch()}.xlsx`
 
     try {
-      XLSX.set_fs(fs)
-      XLSX.writeFileXLSX(workbook, fileName)
+      XLSX.writeFile(workbook, fileName, { cellStyles: true })
 
       if (options.debug) {
         logInfo('File written to disk')
@@ -214,6 +259,58 @@ export const run = async (
     })
 
     return
+  }
+}
+
+type ColorScheme = {
+  color: { rgb: string }
+  fgColor: { rgb: string }
+}
+
+const errorRed: ColorScheme = {
+  color: { rgb: '9c0007' },
+  fgColor: { rgb: 'ffc7cd' },
+}
+
+const warningYellow: ColorScheme = {
+  color: { rgb: '9c5700' },
+  fgColor: { rgb: 'ffeb9c' },
+}
+
+const infoBlue: ColorScheme = {
+  color: { rgb: '000000' },
+  fgColor: { rgb: 'daeef3' },
+}
+
+function getCellColorScheme(
+  messages: Flatfile.ValidationMessage[]
+): ColorScheme | null {
+  let severityRank: Record<Flatfile.ValidationType, number> = {
+    error: 3,
+    warn: 2,
+    info: 1,
+  }
+
+  let maxSeverity = 0
+  let mostSevereType: Flatfile.ValidationType | null = null
+
+  for (const message of messages) {
+    const currentSeverity = severityRank[message.type!]
+    if (currentSeverity > maxSeverity) {
+      maxSeverity = currentSeverity
+      mostSevereType = message.type!
+    }
+  }
+
+  switch (mostSevereType) {
+    case 'error':
+      return errorRed
+    case 'warn':
+      return warningYellow
+    case 'info':
+      return infoBlue
+    default:
+      return null // No color scheme for null type or unrecognized types
   }
 }
 
