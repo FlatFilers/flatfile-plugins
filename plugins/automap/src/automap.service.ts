@@ -1,6 +1,6 @@
 import api, { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { asyncMap } from '@flatfile/common-plugin-utils'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import * as R from 'remeda'
 import { AutomapOptions } from './automap.plugin'
 
@@ -305,49 +305,11 @@ export class AutomapService {
     const sheets = workbookResponse.data.sheets || []
     const { defaultTargetSheet } = this.options
 
-    // if (!R.isNil(this.options.selectSheets)) {
-    //   const sample = await this.getRecordSampleForSheets(sheets);
-
-    //   const assignments = await asyncMap(sample, async ({ sheet, records }) => {
-    //     const target = await this.options.selectSheets!(records, sheet);
-
-    //     return { source: sheet.id, target };
-    //   });
-
-    //   return R.pipe(
-    //     assignments,
-    //     R.reject(({ target }) => target === false)
-    //   );
-    // } else
     if (R.length(sheets) === 1 && !R.isNil(defaultTargetSheet)) {
       return [{ source: R.first(sheets).id, target: defaultTargetSheet }]
     } else {
       return []
     }
-  }
-
-  /**
-   * This method retrieves a sample of records from the API for each sheet provided in the 'sheets' array.
-   * The sample size for each sheet is determined by the 'pageSize' parameter in the API request (currently set to 10).
-   *
-   * Each resulting sample is then combined with its respective sheet into an object,
-   * forming a 'SheetSample' which comprises the sheet information and its corresponding records.
-   * This operation is done for each sheet concurrently using the 'asyncMap' function.
-   *
-   * @param sheets - The list of sheets for which record samples are to be fetched.
-   * @returns A promise that resolves to an array of 'SheetSample' objects.
-   *
-   * @private
-   */
-  private async getRecordSampleForSheets(
-    sheets: ReadonlyArray<Flatfile.Sheet>
-  ): Promise<ReadonlyArray<SheetSample>> {
-    return asyncMap(sheets, async (sheet) => {
-      const response = await api.records.get(sheet.id, { pageSize: 10 })
-      const records = response.data.records
-
-      return { sheet, records: records! }
-    })
   }
 
   private verifyAbsoluteMatchingStrategy(

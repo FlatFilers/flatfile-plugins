@@ -1,4 +1,5 @@
 import api, { Flatfile } from '@flatfile/api'
+import { processRecords } from '@flatfile/util-common'
 
 export interface ResponseRejection {
   id: string
@@ -35,29 +36,28 @@ async function updateSheet(sheet: ResponseRejectionSheet): Promise<number> {
   }
 
   const rejectedRecordsIds = sheet.rejectedRecords.map((record) => record.id)
-  const sheetRecords = await api.records.get(sheet.id)
+  await processRecords(sheet.id, async (records) => {
+    const rejectedSheetRecords: Flatfile.Record_[] =
+      records.data.records?.filter((record: Flatfile.Record_) =>
+        rejectedRecordsIds.includes(record.id)
+      )
 
-  const rejectedSheetRecords: Flatfile.Record_[] =
-    sheetRecords.data.records?.filter((record: Flatfile.Record_) =>
-      rejectedRecordsIds.includes(record.id)
-    )
-
-  for (const record of rejectedSheetRecords || []) {
-    const rejectedRecord: ResponseRejectionRecord = sheet.rejectedRecords.find(
-      (item) => item.id === record.id
-    )
-    for (const value of rejectedRecord.values) {
-      if (record.values[value.field]) {
-        record.values[value.field].messages = [
-          {
-            type: 'error',
-            message: value.message,
-          },
-        ]
+    for (const record of rejectedSheetRecords || []) {
+      const rejectedRecord: ResponseRejectionRecord =
+        sheet.rejectedRecords.find((item) => item.id === record.id)
+      for (const value of rejectedRecord.values) {
+        if (record.values[value.field]) {
+          record.values[value.field].messages = [
+            {
+              type: 'error',
+              message: value.message,
+            },
+          ]
+        }
       }
     }
-  }
 
-  await api.records.update(sheet.id, rejectedSheetRecords)
+    await api.records.update(sheet.id, rejectedSheetRecords)
+  })
   return rejectedRecordsIds.length
 }
