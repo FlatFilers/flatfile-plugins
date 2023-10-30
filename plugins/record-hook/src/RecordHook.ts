@@ -74,12 +74,18 @@ export const BulkRecordHook = async (
       return
     }
 
+    await event.cache.init<FlatfileRecords<any>>('originalRecords', fetchData)
+
     // Execute client-defined data hooks
     await asyncBatch(batch.records, handler, options, event)
 
     event.afterAll(async () => {
       const batch = event.cache.get<FlatfileRecords<any>>('records')
-      const modifiedRecords = batch.records.filter(hasRecordChanges)
+      const originalRecords =
+        event.cache.get<FlatfileRecords<any>>('originalRecords')
+      const modifiedRecords = batch.records.filter((record) =>
+        hasRecordChanges(record, originalRecords.records)
+      )
       if (!modifiedRecords || modifiedRecords.length === 0) {
         if (options.debug) {
           console.log('No records modified')
@@ -105,12 +111,29 @@ export const BulkRecordHook = async (
   return handler
 }
 
-const hasRecordChanges = (record: FlatfileRecord) => {
-  const messageCount = record.toJSON().info.length
-  return (
-    JSON.stringify(record.originalValue) !== JSON.stringify(record.value) ||
-    messageCount > 0
+const hasRecordChanges = (
+  record: FlatfileRecord,
+  originalRecords: FlatfileRecord[]
+) => {
+  const originalRecord = originalRecords.find(
+    (original) => original.rowId === record.rowId
   )
+  return !deepEqual(originalRecord, record)
+}
+
+function deepEqual(obj1, obj2) {
+  if (obj1 === obj2) return true
+
+  const keysA = Object.keys(obj1)
+  const keysB = Object.keys(obj2)
+
+  if (keysA.length !== keysB.length) return false
+
+  for (let key of keysA) {
+    if (!keysB.includes(key) || !deepEqual(obj1[key], obj2[key])) return false
+  }
+
+  return true
 }
 
 const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
