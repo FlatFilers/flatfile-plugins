@@ -60,12 +60,16 @@ export async function generateSetup(
     }
 
     const workbook = {
-      "name": name,
-      "description": data.description,
-      "slug": name.split(" ").join(""),
-      "readOnly": false,
-      "access": ["add", "edit"],
-      "sheets": new Array<BlueprintField>,
+      "sheets": [
+        {
+          "name": name,
+          "description": data.description,
+          "slug": name.split(" ").join(""),
+          "readOnly": false,
+          "access": ["add", "edit"],
+          "fields": new Array<BlueprintField>
+        }
+      ]
     }
 
     const blueprintFields = Object.keys(data.properties).map((propertyKey)=>{
@@ -78,7 +82,7 @@ export async function generateSetup(
       };
       return schemaEntry
     })
-    blueprintFields.forEach((field)=>workbook.sheets.push(field));
+    blueprintFields.forEach((field)=>workbook.sheets[0].fields.push(field));
     
     console.log(workbook)
     return workbook
