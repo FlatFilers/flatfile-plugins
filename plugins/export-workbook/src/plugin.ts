@@ -198,6 +198,11 @@ export const run = async (
         outcome: {
           message:
             'Data was successfully written to Excel file and uploaded. You can access the workbook in the "Available Downloads" section of the Files page in Flatfile.',
+          next: {
+            type: 'url',
+            url: `/space/${spaceId}/files?mode=export`,
+            label: 'Available Downloads',
+          },
         },
       })
 

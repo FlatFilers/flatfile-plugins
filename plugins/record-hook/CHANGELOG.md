@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.8
+
+### Patch Changes
+
+- 379e1d7: Dependency update
+
 ## 1.1.7
 
 ### Patch Changes
