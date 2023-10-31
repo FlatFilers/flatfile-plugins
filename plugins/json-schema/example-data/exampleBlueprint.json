@@ -1,0 +1,76 @@
+{
+  "sheets": [
+    {
+      "name": "Example Sheet",
+      "description": "A basic flatfile blueprint",
+      "slug": "exampleSheet",
+      "readOnly": false,
+      "access": [
+        "add",
+        "edit"
+      ],
+      "fields": [
+        {
+          "key": "stringColumn",
+          "label": "String Column",
+          "type": "string"
+        },
+        {
+          "key": "stringColumn",
+          "label": "String Column",
+          "type": "string"
+        },
+        {
+          "key": "arrayColumn",
+          "label": "Array Column",
+          "type": "enum",
+          "config": {
+            "options": [
+              {
+                "label": "foo",
+                "value": "bar"
+              }
+            ]
+          }
+        },
+        {
+          "key": "objectColumn",
+          "label": "String Column",
+          "type": "reference",
+          "config": {
+            "ref": "nestedSheet",
+            "key": "nestedUniqueNumberColumn",
+            "relationship": "has-one"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Example Reference Sheet",
+      "description": "A referenced sheet",
+      "slug": "nestedSheet",
+      "readOnly": false,
+      "access": [
+        "add",
+        "edit"
+      ],
+      "fields": [
+        {
+          "key": "nestedUniqueNumberColumn",
+          "label": "Nested Unique Number Column",
+          "type": "number",
+          "constraints": [
+            {
+              "type": "unique"
+            }
+          ]
+        },
+        {
+          "key": "nestedStringColumn",
+          "label": "Nested String Column",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
