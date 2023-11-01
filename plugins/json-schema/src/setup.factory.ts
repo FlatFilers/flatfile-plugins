@@ -32,7 +32,7 @@ export async function generateSetup(
         sheets: [
           {
             name: options?.model?.name || data.title,
-            description: data.description || null,
+            description: `${data.description || ''}`,
             fields,
             ...options?.model,
           },
@@ -41,6 +41,7 @@ export async function generateSetup(
       },
     ],
   }
+  // console.dir(setup, {depth: null})
   return setup
 }
 
@@ -112,7 +113,7 @@ async function getPropertyType(
     enum: {
       key: parentKey,
       type: 'enum',
-      config: property.enum
+      config: property?.enum
         ? {
             options: property.enum.map((value: any) => ({
               value,
@@ -127,7 +128,7 @@ async function getPropertyType(
 
   const fieldConfig: Flatfile.Property = {
     label: parentKey,
-    description: property.description || null,
+    description: `${property.description || ''}`,
     constraints: [{ type: 'required' }],
     ...fieldTypes[property.type],
   }
