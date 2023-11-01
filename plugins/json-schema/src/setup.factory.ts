@@ -32,7 +32,7 @@ export async function generateSetup(
         sheets: [
           {
             name: options?.model?.name || data.title,
-            description: `${data.description || ''}`,
+            ...(data?.description && { description: data.description }),
             fields,
             ...options?.model,
           },
@@ -45,7 +45,7 @@ export async function generateSetup(
   return setup
 }
 
-async function generateFields(data: any): Promise<Flatfile.Property[]> {
+export async function generateFields(data: any): Promise<Flatfile.Property[]> {
   if (!data.properties) return []
 
   const fields = await Promise.all(
@@ -61,7 +61,7 @@ async function generateFields(data: any): Promise<Flatfile.Property[]> {
   return fields.flat().filter(Boolean)
 }
 
-async function getPropertyType(
+export async function getPropertyType(
   schema: any,
   property: any,
   parentKey = '',
@@ -128,7 +128,7 @@ async function getPropertyType(
 
   const fieldConfig: Flatfile.Property = {
     label: parentKey,
-    description: `${property.description || ''}`,
+    ...(property?.description && { description: property.description }),
     constraints: [{ type: 'required' }],
     ...fieldTypes[property.type],
   }
@@ -136,7 +136,7 @@ async function getPropertyType(
   return fieldTypes[fieldConfig.type] ? [fieldConfig] : []
 }
 
-async function resolveReference(schema: any, ref: string): Promise<any> {
+export async function resolveReference(schema: any, ref: string): Promise<any> {
   const hashIndex = ref.indexOf('#')
 
   if (ref.startsWith('#/')) return resolveLocalReference(schema, ref)
@@ -153,7 +153,7 @@ async function resolveReference(schema: any, ref: string): Promise<any> {
     : externalSchema
 }
 
-function resolveLocalReference(schema: any, ref: string): any {
+export function resolveLocalReference(schema: any, ref: string): any {
   const resolved = ref
     .split('/')
     .slice(1)
@@ -167,7 +167,7 @@ function resolveLocalReference(schema: any, ref: string): any {
   return resolved
 }
 
-async function fetchExternalReference(url: string): Promise<any> {
+export async function fetchExternalReference(url: string): Promise<any> {
   try {
     const { status, data } = await axios.get(url, {
       validateStatus: () => true,
