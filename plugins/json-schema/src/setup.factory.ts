@@ -23,8 +23,8 @@ export async function generateSetup(
     debug?: boolean
   }
 ): Promise<SetupFactory> {
-  const data = await fetchExternalReference(url)
-  const fields = await generateFields(data)
+  const data = await fetchExternalReference(url);
+  const fields = await generateFields(data);
   const setup: Setup = {
     workbooks: [
       {
@@ -57,7 +57,6 @@ async function generateFields(data: any): Promise<Flatfile.Property[]> {
       )
     )
   )
-
   return fields.flat().filter(Boolean)
 }
 
@@ -97,8 +96,18 @@ async function getPropertyType(
     boolean: { key: parentKey, type: 'boolean' },
     array: {
       key: parentKey,
-      type: 'string',
-      description: 'Comma-delimited list of values',
+      type: 'enum',
+      description: 'An enum of Selected Values',
+      config: property.enum
+        ? {
+            options: property.enum.map((value: any) => ({
+              value,
+              label: String(value),
+            })),
+          }
+        : {
+          options: []
+        },
     },
     enum: {
       key: parentKey,
@@ -110,7 +119,9 @@ async function getPropertyType(
               label: String(value),
             })),
           }
-        : undefined,
+        : {
+          options: []
+        },
     },
   }
 
@@ -163,7 +174,7 @@ async function fetchExternalReference(url: string): Promise<any> {
     if (status !== 200)
       throw new Error(`API returned status ${status}: ${data.statusText}`)
     return data
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(`Error fetching external reference: ${error.message}`)
   }
 }

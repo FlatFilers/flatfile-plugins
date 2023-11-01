@@ -1,11 +1,11 @@
-import { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { configureSpace } from '@flatfile/plugin-space-configure'
+import { Flatfile } from '@flatfile/api';
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener';
+import { configureSpace } from '@flatfile/plugin-space-configure';
 import {
   PartialSheetConfig,
   PartialWorkbookConfig,
   generateSetup,
-} from './setup.factory'
+} from './setup.factory';
 
 export function configureSpaceWithJsonSchema(
   url: string,
@@ -25,5 +25,6 @@ export function configureSpaceWithJsonSchema(
   }
 }
 
-export type { SetupFactory } from '@flatfile/plugin-space-configure'
-export * from './setup.factory'
+export type { SetupFactory } from '@flatfile/plugin-space-configure';
+export * from './setup.factory';
+
