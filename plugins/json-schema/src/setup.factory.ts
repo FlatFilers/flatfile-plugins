@@ -41,7 +41,7 @@ export async function generateSetup(
       },
     ],
   }
-  // console.dir(setup, {depth: null})
+  //console.dir(setup)
   return setup
 }
 
