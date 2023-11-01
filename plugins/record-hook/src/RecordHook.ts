@@ -51,7 +51,18 @@ export const BulkRecordHook = async (
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
-  const { versionId } = event.context
+  const { versionId, workbookId } = event.context
+  const { data: workbook } = await api.workbooks.get(workbookId)
+  const trackChanges = workbook.settings?.trackChanges ?? false
+  const completeCommit = async () => {
+    if (trackChanges) {
+      try {
+        await api.commits.complete(versionId)
+      } catch (e) {
+        console.log(`Error completing commit: ${e}`)
+      }
+    }
+  }
 
   const fetchData = async () => {
     const data = await event.data
@@ -70,7 +81,7 @@ export const BulkRecordHook = async (
       if (options.debug) {
         console.log('No records to process')
       }
-      await api.commits.complete(versionId)
+      completeCommit()
       return
     }
 
@@ -84,7 +95,7 @@ export const BulkRecordHook = async (
         if (options.debug) {
           console.log('No records modified')
         }
-        await api.commits.complete(versionId)
+        completeCommit()
         return
       }
 
