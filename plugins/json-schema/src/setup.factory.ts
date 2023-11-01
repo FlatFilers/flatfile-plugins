@@ -23,8 +23,8 @@ export async function generateSetup(
     debug?: boolean
   }
 ): Promise<SetupFactory> {
-  const data = await fetchExternalReference(url);
-  const fields = await generateFields(data);
+  const data = await fetchExternalReference(url)
+  const fields = await generateFields(data)
   const setup: Setup = {
     workbooks: [
       {
@@ -107,8 +107,8 @@ export async function getPropertyType(
             })),
           }
         : {
-          options: []
-        },
+            options: [],
+          },
     },
     enum: {
       key: parentKey,
@@ -121,15 +121,15 @@ export async function getPropertyType(
             })),
           }
         : {
-          options: []
-        },
+            options: [],
+          },
     },
   }
 
   const fieldConfig: Flatfile.Property = {
     label: parentKey,
     ...(property?.description && { description: property.description }),
-    constraints: [{ type: 'required' }],
+    ...(isRequired && { constraints: [{ type: 'required' }] }),
     ...fieldTypes[property.type],
   }
 
