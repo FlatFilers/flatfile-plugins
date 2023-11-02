@@ -68,7 +68,7 @@ export const BulkRecordHook = async (
     try {
       const data = await event.data
       return data.records && data.records.length
-        ? await prepareXRecords(data.records)
+        ? prepareXRecords(data.records)
         : undefined
     } catch (e) {
       console.log(`Error fetching records: ${e}`)
