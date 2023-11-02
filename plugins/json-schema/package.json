@@ -31,5 +31,8 @@
     "@flatfile/plugin-space-configure": "^0.1.5",
     "@hyperjump/json-schema": "^1.6.4",
     "axios": "^1.5.1"
+  },
+  "devDependencies": {
+    "express": "^4.18.2"
   }
 }
