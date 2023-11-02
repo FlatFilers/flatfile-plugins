@@ -1,4 +1,4 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile } from '@flatfile/api'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
@@ -51,13 +51,18 @@ export const BulkRecordHook = async (
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
-  const { versionId, workbookId } = event.context
-  const { data: workbook } = await api.workbooks.get(workbookId)
-  const trackChanges = workbook.settings?.trackChanges ?? false
+  const { versionId } = event.context
+  const { trackChanges } = event.payload
+
   const completeCommit = async () => {
     if (trackChanges) {
       try {
-        await api.commits.complete(versionId)
+        await event.fetch(`v1/commits/${versionId}/complete`, {
+          method: 'POST',
+        })
+        if (options.debug) {
+          console.log('Commit completed successfully')
+        }
       } catch (e) {
         console.log(`Error completing commit: ${e}`)
       }
@@ -65,10 +70,14 @@ export const BulkRecordHook = async (
   }
 
   const fetchData = async () => {
-    const data = await event.data
-    return data.records && data.records.length
-      ? prepareXRecords(data.records)
-      : undefined
+    try {
+      const data = await event.data
+      return data.records && data.records.length
+        ? prepareXRecords(data.records)
+        : undefined
+    } catch (e) {
+      console.log(`Error fetching records: ${e}`)
+    }
   }
 
   try {
@@ -81,7 +90,7 @@ export const BulkRecordHook = async (
       if (options.debug) {
         console.log('No records to process')
       }
-      completeCommit()
+      await completeCommit()
       return
     }
 
@@ -101,7 +110,7 @@ export const BulkRecordHook = async (
         if (options.debug) {
           console.log('No records modified')
         }
-        completeCommit()
+        await completeCommit()
         return
       }
 
@@ -147,7 +156,7 @@ function deepEqual(obj1, obj2) {
   return true
 }
 
-const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
+const prepareXRecords = (records: any): FlatfileRecords<any> => {
   const clearedMessages: Flatfile.Record_[] = records.map(
     (record: { values: { [x: string]: { messages: never[] } } }) => {
       // clear existing cell validation messages
