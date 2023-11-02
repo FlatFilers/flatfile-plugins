@@ -151,7 +151,7 @@ function deepEqual(obj1, obj2) {
   return true
 }
 
-const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
+const prepareXRecords = (records: any): FlatfileRecords<any> => {
   const clearedMessages: Flatfile.Record_[] = records.map(
     (record: { values: { [x: string]: { messages: never[] } } }) => {
       // clear existing cell validation messages
