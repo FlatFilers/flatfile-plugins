@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.10
+
+### Patch Changes
+
+- 2e2a201: Bug fix completing commits
+
 ## 1.1.9
 
 ### Patch Changes
