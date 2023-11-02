@@ -1,4 +1,4 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile } from '@flatfile/api'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
@@ -57,7 +57,12 @@ export const BulkRecordHook = async (
   const completeCommit = async () => {
     if (trackChanges) {
       try {
-        await api.commits.complete(versionId)
+        await event.fetch(`v1/commits/${versionId}/complete`, {
+          method: 'POST',
+        })
+        if (options.debug) {
+          console.log('Commit completed successfully')
+        }
       } catch (e) {
         console.log(`Error completing commit: ${e}`)
       }
