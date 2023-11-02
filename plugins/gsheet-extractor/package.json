@@ -19,7 +19,7 @@
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [],
-  "author": "David Boskovic",
+  "author": "Kasper Storgaard",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
