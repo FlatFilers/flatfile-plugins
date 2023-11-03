@@ -58,7 +58,7 @@ describe('bulkRecordHook() simple data modification e2e', ()=>{
       listener.use(fn)
     })
   
-    it('correctly modifies a simple values', async () => {
+    it('correctly modifies simple values', async () => {
       await createRecords(sheetId, defaultSimpleValueData);
 
       await listener.waitFor('commit:created');
