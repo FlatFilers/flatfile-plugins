@@ -1,8 +1,8 @@
-import { FlatfileRecord } from '@flatfile/hooks';
-import { FlatfileListener } from '@flatfile/listener';
-import { bulkRecordHook, recordHook } from '..';
+import { FlatfileRecord } from '@flatfile/hooks'
+import { FlatfileListener } from '@flatfile/listener'
+import { bulkRecordHook, recordHook } from '..'
 
-jest.setTimeout(10_000);
+jest.setTimeout(10_000)
 
 describe('recordHook', () => {
   test('it registers a records:* listener to the client', () => {

@@ -1,26 +1,26 @@
-import { Flatfile } from "@flatfile/api"
-import { FlatfileRecord } from "@flatfile/hooks"
+import { Flatfile } from '@flatfile/api'
+import { FlatfileRecord } from '@flatfile/hooks'
 
 export const defaultSimpleValueSchema: Array<Flatfile.Property> = [
   {
-    key: "name",
-    type: 'string'
+    key: 'name',
+    type: 'string',
   },
   {
-    key: "age",
-    type: 'number'
+    key: 'age',
+    type: 'number',
   },
   {
-    key: "alive",
-    type: 'boolean'
+    key: 'alive',
+    type: 'boolean',
   },
   {
-    key: "email",
-    type: 'string'
+    key: 'email',
+    type: 'string',
   },
   {
-    key: "notes",
-    type: 'string'
+    key: 'notes',
+    type: 'string',
   },
 ]
 
@@ -38,5 +38,5 @@ export const defaultSimpleValueData = [
     alive: true,
     email: 'jane@doe.com',
     notes: 'foobar',
-  }
+  },
 ]
