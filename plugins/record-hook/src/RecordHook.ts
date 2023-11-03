@@ -131,29 +131,11 @@ export const BulkRecordHook = async (
   return handler
 }
 
-const hasRecordChanges = (
-  record: FlatfileRecord,
-  originalRecords: FlatfileRecord[]
-) => {
+const hasRecordChanges = (record, originalRecords) => {
   const originalRecord = originalRecords.find(
     (original) => original.rowId === record.rowId
   )
-  return !deepEqual(originalRecord, record)
-}
-
-function deepEqual(obj1, obj2) {
-  if (obj1 === obj2) return true
-
-  const keysA = Object.keys(obj1)
-  const keysB = Object.keys(obj2)
-
-  if (keysA.length !== keysB.length) return false
-
-  for (let key of keysA) {
-    if (!keysB.includes(key) || !deepEqual(obj1[key], obj2[key])) return false
-  }
-
-  return true
+  return JSON.stringify(record) !== JSON.stringify(originalRecord)
 }
 
 const prepareXRecords = (records: any): FlatfileRecords<any> => {
