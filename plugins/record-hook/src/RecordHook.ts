@@ -131,26 +131,43 @@ export const BulkRecordHook = async (
   return handler
 }
 
-const hasRecordChanges = (
-  record: FlatfileRecord,
-  originalRecords: FlatfileRecord[]
-) => {
+const hasRecordChanges = (record, originalRecords) => {
   const originalRecord = originalRecords.find(
     (original) => original.rowId === record.rowId
   )
   return !deepEqual(originalRecord, record)
 }
 
-function deepEqual(obj1, obj2) {
+function deepEqual(obj1, obj2, seen = new WeakMap()) {
   if (obj1 === obj2) return true
 
-  const keysA = Object.keys(obj1)
-  const keysB = Object.keys(obj2)
+  if (
+    typeof obj1 !== 'object' ||
+    obj1 === null ||
+    typeof obj2 !== 'object' ||
+    obj2 === null
+  ) {
+    return obj1 === obj2
+  }
 
-  if (keysA.length !== keysB.length) return false
+  if (seen.has(obj1)) {
+    return seen.get(obj1) === obj2
+  }
+
+  seen.set(obj1, obj2)
+
+  const keysA = Object.keys(obj1)
+  if (keysA.length !== Object.keys(obj2).length) {
+    return false
+  }
 
   for (let key of keysA) {
-    if (!keysB.includes(key) || !deepEqual(obj1[key], obj2[key])) return false
+    if (!(key in obj2)) {
+      return false
+    }
+    if (!seen.has(obj1[key]) && !deepEqual(obj1[key], obj2[key], seen)) {
+      return false
+    }
   }
 
   return true
