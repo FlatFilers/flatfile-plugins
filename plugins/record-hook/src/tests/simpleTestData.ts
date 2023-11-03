@@ -1,4 +1,5 @@
 import { Flatfile } from "@flatfile/api"
+import { FlatfileRecord } from "@flatfile/hooks"
 
 export const defaultSimpleValueSchema: Array<Flatfile.Property> = [
   {
