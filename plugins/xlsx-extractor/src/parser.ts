@@ -1,7 +1,7 @@
-import { Flatfile } from '@flatfile/api'
-import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
-import { mapKeys, mapValues } from 'remeda'
 import * as XLSX from 'xlsx'
+import { mapKeys, mapValues } from 'remeda'
+import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
+import { Flatfile } from '@flatfile/api'
 
 export function parseBuffer(
   buffer: Buffer,
