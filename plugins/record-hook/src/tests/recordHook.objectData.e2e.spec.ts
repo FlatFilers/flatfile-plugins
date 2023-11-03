@@ -54,7 +54,7 @@ describe('recordHook() object data modification e2e', () => {
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
 
-      expect(records[records.length-1].valid).toBeTruthy()
+      expect(records[records.length - 1].valid).toBeTruthy()
     })
   })
 
@@ -73,7 +73,7 @@ describe('recordHook() object data modification e2e', () => {
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
 
-      expect(records[records.length-1].valid).toBeFalsy()
+      expect(records[records.length - 1].valid).toBeFalsy()
     })
   })
 })
