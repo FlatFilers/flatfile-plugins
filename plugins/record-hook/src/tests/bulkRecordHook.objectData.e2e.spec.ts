@@ -55,7 +55,7 @@ describe('bulkRecordHook() object data modification e2e', () => {
 
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
-      expect(records[0].valid).toBeTruthy()
+      expect(records[records.length-1].valid).toBeTruthy()
     })
   })
   describe('Assigns an invalid value to an enum', () => {
@@ -74,7 +74,7 @@ describe('bulkRecordHook() object data modification e2e', () => {
 
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
-      expect(records[1].valid).toBeFalsy()
+      expect(records[records.length-1].valid).toBeFalsy()
     })
   })
 })
