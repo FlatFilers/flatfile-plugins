@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.11
+
+### Patch Changes
+
+- 4d3fd49: Bug fix for record comparison
+
 ## 1.1.10
 
 ### Patch Changes
