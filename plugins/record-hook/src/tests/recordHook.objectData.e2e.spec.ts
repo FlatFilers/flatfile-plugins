@@ -28,7 +28,6 @@ describe('recordHook() object data modification e2e', ()=>{
       spaceId = space.id;
       const workbook = await setupSimpleWorkbook(space.id, defaultObjectValueSchema);
       sheetId = workbook.sheets[0].id;
-      console.dir(workbook.sheets, {depth: null})
   })
   
   afterAll(async () => {
@@ -48,7 +47,7 @@ describe('recordHook() object data modification e2e', ()=>{
 
       await listener.waitFor('commit:created');
       const records = await getRecords(sheetId);
-      console.dir(records, {depth: null});
+
       expect(records[0].valid).toBeTruthy();
     });
   });
@@ -65,7 +64,7 @@ describe('recordHook() object data modification e2e', ()=>{
 
       await listener.waitFor('commit:created');
       const records = await getRecords(sheetId);
-      console.dir(records, {depth: null});
+
       expect(records[1].valid).toBeFalsy();
     });
   });
