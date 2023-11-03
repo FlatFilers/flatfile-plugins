@@ -7,7 +7,7 @@ import {
   setupSpace,
 } from '@flatfile/utils-testing'
 
-import { recordHook } from '../index'
+import { recordHook } from '..'
 
 import {
   defaultSimpleValueData,
@@ -62,14 +62,41 @@ describe('recordHook() simple data modification e2e', () => {
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
 
-      expect(records[0].values['name']).toMatchObject({ value: stringValue })
-      expect(records[1].values['name']).toMatchObject({ value: stringValue })
+      expect(records[records.length-2].values['name']).toMatchObject({ value: stringValue })
+      expect(records[records.length-1].values['name']).toMatchObject({ value: stringValue })
 
-      expect(records[0].values['age']).toMatchObject({ value: intValue })
-      expect(records[1].values['age']).toMatchObject({ value: intValue })
+      expect(records[records.length-2].values['age']).toMatchObject({ value: intValue })
+      expect(records[records.length-1].values['age']).toMatchObject({ value: intValue })
 
-      expect(records[0].values['alive']).toMatchObject({ value: booleanValue })
-      expect(records[1].values['alive']).toMatchObject({ value: booleanValue })
+      expect(records[records.length-2].values['alive']).toMatchObject({ value: booleanValue })
+      expect(records[records.length-1].values['alive']).toMatchObject({ value: booleanValue })
     })
   })
+
+  describe('Assigns an invalid value and adds an error', ()=>{
+    
+    it('correctly assigns null and adds error', async () => {
+      listener.use(recordHook('test', (record) => {
+        record.set('name', null);
+        if(record.get('name') === null){
+          record.addError('name', 'Name is null')
+        }
+        
+      }));
+      await createRecords(sheetId, defaultSimpleValueData)
+
+      await listener.waitFor('commit:created')
+      const records = await getRecords(sheetId)
+      
+      const errors = records.map(r => {
+        return r.values['name'].messages.filter(m => m.type === 'error');
+      });
+      errors.forEach((e, i) => e.length === 0 ? errors[i].splice(i, 1) : null);
+
+      expect(records[records.length-2].values['name']).toMatchObject({ value: undefined })
+      expect(records[records.length-1].values['name']).toMatchObject({ value: undefined })
+
+      expect(errors.length).toBe(records.length);
+    });
+  });
 })

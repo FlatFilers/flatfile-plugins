@@ -1,5 +1,4 @@
 import { Flatfile } from '@flatfile/api'
-import { FlatfileRecord } from '@flatfile/hooks'
 
 export const defaultObjectValueSchema: Array<Flatfile.Property> = [
   {

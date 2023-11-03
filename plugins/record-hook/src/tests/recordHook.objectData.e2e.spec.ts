@@ -7,7 +7,7 @@ import {
   setupSpace,
 } from '@flatfile/utils-testing'
 
-import { recordHook } from '../index'
+import { recordHook } from '..'
 
 import {
   defaultObjectValueData,
