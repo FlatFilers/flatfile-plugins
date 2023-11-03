@@ -1,13 +1,17 @@
-import * as XLSX from 'xlsx'
-import { mapKeys, mapValues } from 'remeda'
-import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 import { Flatfile } from '@flatfile/api'
+import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
+import { mapKeys, mapValues } from 'remeda'
+import * as XLSX from 'xlsx'
 
 export function parseBuffer(
   buffer: Buffer,
   options?: {
     raw?: boolean
     rawNumbers?: boolean
+    detectHeader?: (rows: Record<string, any>[]) => {
+      headerRow: Record<string, string>
+      skip: number
+    }
   }
 ): WorkbookCapture {
   const workbook = XLSX.read(buffer, {
@@ -19,7 +23,8 @@ export function parseBuffer(
     return convertSheet(
       value,
       options?.rawNumbers || false,
-      options?.raw || false
+      options?.raw || false,
+      options?.detectHeader || defaultDetectHeader
     )
   })
 }
@@ -32,7 +37,11 @@ export function parseBuffer(
 function convertSheet(
   sheet: XLSX.WorkSheet,
   rawNumbers: boolean,
-  raw: boolean
+  raw: boolean,
+  detectHeader: (rows: Record<string, any>[]) => {
+    headerRow: Record<string, string>
+    skip: number
+  }
 ): SheetCapture {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
@@ -91,7 +100,7 @@ function prependNonUniqueHeaderColumns(
 const isNullOrWhitespace = (value: any) =>
   value === null || (typeof value === 'string' && value.trim() === '')
 
-const detectHeader = (
+const defaultDetectHeader = (
   rows: Record<string, any>[]
 ): { headerRow: Record<string, string>; skip: number } => {
   const ROWS_TO_CHECK = 10
