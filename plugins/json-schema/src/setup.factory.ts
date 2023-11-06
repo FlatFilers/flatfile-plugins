@@ -56,8 +56,15 @@ export async function generateSetup(
 export async function generateFields(data: any): Promise<Flatfile.Property[]> {
   if (!data.properties) return []
 
-  const url = new URL(data.$id)
-  const origin = url.origin
+  const getOrigin = (url: string) => {
+    try {
+      const url = new URL(data.$id)
+      return url.origin
+    } catch (error) {
+      return ''
+    }
+  }
+  const origin = getOrigin(data.$id)
 
   const fields = await Promise.all(
     Object.keys(data.properties).map((key) =>
