@@ -1,6 +1,5 @@
 import api from '@flatfile/api'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
-import axios from 'axios'
 import express from 'express'
 import { configureSpaceWithJsonSchema } from '../src'
 import { startServer, stopServer } from './test-server/server'
@@ -52,8 +51,8 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
     },
   }
 
-  const expecedWorkbookData = {
-    name: 'ExampleData',
+  const expectedWorkbookData = {
+    name: 'JSON Schema Workbook',
     labels: [],
     sheets: [
       {
@@ -126,10 +125,9 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
     const workspace = await api.workbooks.get(space.data.primaryWorkbookId)
     const workspaceData = workspace.data
 
-    expect(true).toBe(true)
-    expect(workspaceData.name).toBe(expecedWorkbookData.name)
+    expect(workspaceData.name).toBe(expectedWorkbookData.name)
     expect(workspaceData.sheets[0].config).toMatchObject(
-      expecedWorkbookData.sheets[0].config
+      expectedWorkbookData.sheets[0].config
     )
   })
 })
