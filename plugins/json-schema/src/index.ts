@@ -2,15 +2,14 @@ import { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 import {
-  PartialSheetConfig,
+  ModelToSheetConfig,
   PartialWorkbookConfig,
   generateSetup,
 } from './setup.factory'
 
 export function configureSpaceWithJsonSchema(
-  url: string,
+  models?: ModelToSheetConfig[],
   options?: {
-    model?: PartialSheetConfig
     workbookConfig?: PartialWorkbookConfig
     debug?: boolean
   },
@@ -21,7 +20,7 @@ export function configureSpaceWithJsonSchema(
   ) => any | Promise<any>
 ) {
   return async function (listener: FlatfileListener) {
-    listener.use(configureSpace(await generateSetup(url, options), callback))
+    listener.use(configureSpace(await generateSetup(models, options), callback))
   }
 }
 

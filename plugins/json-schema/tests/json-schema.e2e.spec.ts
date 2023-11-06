@@ -107,7 +107,7 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
     server = startServer(app, port, pureDataSchema)
     console.log('Setting up Space and Retrieving spaceId')
 
-    await listener.use(configureSpaceWithJsonSchema(url))
+    await listener.use(configureSpaceWithJsonSchema([{ sourceUrl: url }]))
 
     const space = await setupSpace()
     spaceId = space.id

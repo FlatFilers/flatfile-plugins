@@ -2,6 +2,10 @@ import { Flatfile } from '@flatfile/api'
 import { Setup, SetupFactory } from '@flatfile/plugin-space-configure'
 import axios from 'axios'
 
+export interface ModelToSheetConfig extends PartialSheetConfig {
+  sourceUrl: string
+}
+
 export type PartialWorkbookConfig = Omit<
   Flatfile.CreateWorkbookConfig,
   'sheets' | 'name'
@@ -16,37 +20,44 @@ export type PartialSheetConfig = Omit<
 }
 
 export async function generateSetup(
-  url: string,
+  models?: ModelToSheetConfig[],
   options?: {
-    model?: PartialSheetConfig
     workbookConfig?: PartialWorkbookConfig
     debug?: boolean
   }
 ): Promise<SetupFactory> {
-  const data = await fetchExternalReference(url)
-  const fields = await generateFields(data)
+  const sheets = await Promise.all(
+    models.map(async (model: ModelToSheetConfig) => {
+      const data = await fetchExternalReference(model.sourceUrl)
+      const fields = await generateFields(data)
+      return {
+        name: model?.name || data.title,
+        ...(data?.description && { description: data.description }),
+        fields,
+        ...model,
+      }
+    })
+  )
   const setup: Setup = {
     workbooks: [
       {
-        name: data.title,
-        sheets: [
-          {
-            name: options?.model?.name || data.title,
-            ...(data?.description && { description: data.description }),
-            fields,
-            ...options?.model,
-          },
-        ],
-        ...options?.workbookConfig,
+        name: options?.workbookConfig?.name || 'JSON Schema Workbook',
+        sheets,
       },
     ],
+    ...options?.workbookConfig,
   }
-  //console.dir(setup)
+  if (options?.debug) {
+    console.dir(setup, { depth: null })
+  }
   return setup
 }
 
 export async function generateFields(data: any): Promise<Flatfile.Property[]> {
   if (!data.properties) return []
+
+  const url = new URL(data.$id)
+  const origin = url.origin
 
   const fields = await Promise.all(
     Object.keys(data.properties).map((key) =>
@@ -54,7 +65,8 @@ export async function generateFields(data: any): Promise<Flatfile.Property[]> {
         data,
         data.properties[key],
         key,
-        (data.required && data.required.includes(key)) || false
+        (data.required && data.required.includes(key)) || false,
+        origin
       )
     )
   )
@@ -65,13 +77,16 @@ export async function getPropertyType(
   schema: any,
   property: any,
   parentKey = '',
-  isRequired = false
+  isRequired = false,
+  origin: string
 ): Promise<Flatfile.Property[]> {
   if (property.$ref) {
     return getPropertyType(
       schema,
-      await resolveReference(schema, property.$ref),
-      parentKey
+      await resolveReference(schema, property.$ref, origin),
+      parentKey,
+      false,
+      origin
     )
   }
 
@@ -83,7 +98,8 @@ export async function getPropertyType(
             property,
             property.properties[key],
             parentKey ? `${parentKey}_${key}` : key,
-            (property.required && property.required.includes(key)) || false
+            (property.required && property.required.includes(key)) || false,
+            origin
           )
         })
       )
@@ -136,7 +152,11 @@ export async function getPropertyType(
   return fieldTypes[fieldConfig.type] ? [fieldConfig] : []
 }
 
-export async function resolveReference(schema: any, ref: string): Promise<any> {
+export async function resolveReference(
+  schema: any,
+  ref: string,
+  origin: string
+): Promise<any> {
   const hashIndex = ref.indexOf('#')
 
   if (ref.startsWith('#/')) return resolveLocalReference(schema, ref)
@@ -144,9 +164,7 @@ export async function resolveReference(schema: any, ref: string): Promise<any> {
   const urlPart = hashIndex >= 0 ? ref.substring(0, hashIndex) : ref
   const fragmentPart = hashIndex >= 0 ? ref.substring(hashIndex) : ''
 
-  const externalSchema = await fetchExternalReference(
-    `http://localhost:1234${urlPart}`
-  ) // TODO: dev hack
+  const externalSchema = await fetchExternalReference(`${origin}${urlPart}`)
 
   return fragmentPart
     ? resolveLocalReference(externalSchema, fragmentPart)
