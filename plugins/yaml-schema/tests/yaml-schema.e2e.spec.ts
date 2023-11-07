@@ -1,10 +1,10 @@
 import api from '@flatfile/api'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
+import { startServer, stopServer } from '@flatfile/utils-testing/src/server'
 import express from 'express'
 import fs from 'fs'
 import path from 'path'
 import { configureSpaceWithYamlSchema } from '../src'
-import { startServer, stopServer } from './test-server/server'
 
 const app = express()
 const port = 8080
