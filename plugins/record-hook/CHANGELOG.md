@@ -1,5 +1,24 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.11
+
+### Patch Changes
+
+- 4d3fd49: Bug fix for record comparison
+
+## 1.1.10
+
+### Patch Changes
+
+- 2e2a201: Bug fix completing commits
+
+## 1.1.9
+
+### Patch Changes
+
+- 265412b: Only complete commits when trackChanges is enabled on the Workbook
+- e6ed034: Fix to compare full Record objects instead of just Record values
+
 ## 1.1.8
 
 ### Patch Changes
