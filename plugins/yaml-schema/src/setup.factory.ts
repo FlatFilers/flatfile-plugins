@@ -30,10 +30,7 @@ export async function generateSetup(
 ): Promise<SetupFactory> {
   const sheets = await Promise.all(
     models.map(async (model: ModelToSheetConfig) => {
-      console.dir('starting')
       const data = await fetchExternalReference(model.sourceUrl)
-      console.dir('fetched')
-      console.dir(data, { depth: null })
       const fields = await generateFields(data)
       return {
         name: model?.name || data.title,
@@ -53,7 +50,6 @@ export async function generateSetup(
     ...options?.workbookConfig,
   }
   if (options?.debug) {
-    console.dir(setup, { depth: null })
   }
   return setup
 }
@@ -168,7 +164,6 @@ export async function resolveReference(
 
   const urlPart = hashIndex >= 0 ? ref.substring(0, hashIndex) : ref
   const fragmentPart = hashIndex >= 0 ? ref.substring(hashIndex) : ''
-  console.dir(fragmentPart, { depth: null })
   const externalSchema = await fetchExternalReference(`${origin}${urlPart}`)
 
   return fragmentPart
