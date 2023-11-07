@@ -1,0 +1,22 @@
+{
+  "name": "@flatfile/utils-fetch-schema",
+  "version": "0.0.1",
+  "description": "A utility package for fetching schemas for schema-plugins",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest --passWithNoTests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "utils/testing"
+  },
+  "author": "Morgan Daley",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
