@@ -29,7 +29,7 @@ export function jobHandler(
   job: string,
   handler: (
     event: FlatfileEvent,
-    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
+    tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => Promise<void | Flatfile.JobCompleteDetails>,
   opts: PluginOptions = {}
 ) {
@@ -42,9 +42,9 @@ export function jobHandler(
         progress: 10,
       })
 
-      const tick = async (progress?: number, info?: string) => {
+      const tick = async (progress: number, info?: string) => {
         return await api.jobs.ack(jobId, {
-          info,
+          info: `${info}`,
           progress,
         })
       }
