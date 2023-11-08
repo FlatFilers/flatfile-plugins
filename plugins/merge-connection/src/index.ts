@@ -79,7 +79,7 @@ export default function mergePlugin() {
 function handleCreateConnectedWorkbooks() {
   return async (
     event: FlatfileEvent,
-    tick: (progress: number, message: string) => Promise<Flatfile.JobResponse>
+    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => {
     try {
       const { spaceId, environmentId, jobId } = event.context
@@ -191,7 +191,7 @@ function handleCreateConnectedWorkbooks() {
 function handleConnectedWorkbookSync() {
   return async (
     event: FlatfileEvent,
-    tick: (progress: number, message: string) => Promise<Flatfile.JobResponse>
+    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => {
     try {
       const { spaceId, workbookId, environmentId } = event.context
@@ -296,7 +296,7 @@ async function checkAllSyncsComplete(
 async function waitForMergeSync(
   mergeClient: MergeClient,
   category: string,
-  tick: (progress: number, message: string) => Promise<Flatfile.JobResponse>
+  tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
 ): Promise<void> {
   try {
     let attempts = 0

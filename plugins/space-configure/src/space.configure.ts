@@ -25,7 +25,7 @@ export function configureSpace(
   callback?: (
     event: FlatfileEvent,
     workbookIds: string[],
-    tick: (progress: number, message: string) => Promise<Flatfile.JobResponse>
+    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => any | Promise<any>
 ) {
   return function (listener: FlatfileListener) {
