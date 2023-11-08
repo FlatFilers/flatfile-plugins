@@ -4,4 +4,4 @@
 '@flatfile/plugin-job-handler': patch
 ---
 
-Require tick() params
+Make tick() params optional
