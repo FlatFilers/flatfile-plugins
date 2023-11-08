@@ -19,5 +19,9 @@ export default {
       name: 'PluginRecordHook',
     },
   ],
-  plugins: [typescript(), commonjs({ include: '../../node_modules/**' }), nodeResolve({ browser: true })],
+  plugins: [
+    commonjs({ include: '../../node_modules/**' }),
+    nodeResolve({ browser: true }),
+    typescript({ tsconfig: '../../tsconfig.json' }),
+  ],
 }
