@@ -14,12 +14,15 @@
 '@flatfile/plugin-xml-extractor': patch
 '@flatfile/plugin-zip-extractor': patch
 '@flatfile/plugin-job-handler': patch
+'@flatfile/plugin-convert-json-schema': patch
+'@flatfile/plugin-record-hook': patch
 '@flatfile/util-file-buffer': patch
 '@flatfile/plugin-autocast': patch
 '@flatfile/plugin-automap': patch
 '@flatfile/util-extractor': patch
 '@flatfile/plugin-dedupe': patch
 '@flatfile/utils-testing': patch
+'@flatfile/util-common': patch
 ---
 
 Release to update @flatfile/api dep
