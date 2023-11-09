@@ -27,8 +27,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.30",
-    "@flatfile/listener": "^0.3.15",
+    "@flatfile/api": "^1.5.37",
+    "@flatfile/listener": "^0.3.17",
     "@flatfile/util-extractor": "0.4.6",
     "@flatfile/util-file-buffer": "0.1.2",
     "remeda": "^1.24.0",
