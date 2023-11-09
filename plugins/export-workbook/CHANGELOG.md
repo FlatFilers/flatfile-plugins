@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.0.10
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+
 ## 0.0.9
 
 ### Patch Changes

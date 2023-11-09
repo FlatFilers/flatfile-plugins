@@ -1,5 +1,14 @@
 # @flatfile/plugin-record-hook
 
+## 1.8.2
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- Updated dependencies [28820d5]
+- Updated dependencies [edaedf5]
+  - @flatfile/util-extractor@0.4.7
+
 ## 1.8.1
 
 ### Patch Changes
