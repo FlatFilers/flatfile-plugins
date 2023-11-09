@@ -1,5 +1,12 @@
 # @flatfile/plugin-automap
 
+## 0.1.2
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- 8c29fa1: Glob match on extract operation to provide automap support on all extractors
+
 ## 0.1.1
 
 ### Patch Changes

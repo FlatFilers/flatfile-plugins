@@ -1,5 +1,11 @@
 # @flatfile/utils-testing
 
+## 0.0.5
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+
 ## 0.0.4
 
 ### Patch Changes
