@@ -49,7 +49,6 @@ describe('bulkRecordHook() simple data modification e2e', () => {
 
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
-      console.dir(records[records.length - 2].values['name'].messages)
       expect(
         records[records.length - 2].values['name'].messages[0]
       ).toMatchObject({ type: 'info', message: messageValue })
