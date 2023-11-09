@@ -14,4 +14,7 @@ module.exports = {
       statements: 100,
     },
   },
+  moduleNameMapper: {
+    '^flat$': require.resolve('flat'),
+  },
 }
