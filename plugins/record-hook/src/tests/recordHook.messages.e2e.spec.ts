@@ -36,8 +36,8 @@ describe('recordHook() simple data modification e2e', () => {
     await deleteSpace(spaceId)
   })
 
-  describe('Assigns metadata without assigning a new value', () => {
-    it('correctly assigns metadata', async () => {
+  describe('Assigns messages without assigning a new value', () => {
+    it('correctly assigns messages', async () => {
       listener.use(
         recordHook('test', (record) => {
           record.addInfo('name', messageValue)
