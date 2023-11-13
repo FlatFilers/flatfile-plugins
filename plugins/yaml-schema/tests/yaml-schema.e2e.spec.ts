@@ -83,7 +83,7 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
     await deleteSpace(spaceId)
   })
 
-  it('should configure a space and correctly format and flatten the JSON Schema', async () => {
+  it('should configure a space and correctly format and flatten the YAML Schema', async () => {
     console.log('starting configuration')
     await listener.waitFor('job:ready', 1, 'space:configure')
 
