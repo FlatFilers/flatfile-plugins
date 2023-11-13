@@ -1,23 +1,34 @@
 import { Flatfile } from '@flatfile/api'
 import { Setup, SetupFactory } from '@flatfile/plugin-space-configure'
-import {
-  ModelToSheetConfig,
-  PartialWorkbookConfig,
-  fetchExternalReference,
-  resolveLocalReference,
-} from '@flatfile/util-fetch-schema'
+import axios from 'axios'
+
+export interface ModelToSheetConfig extends PartialSheetConfig {
+  sourceUrl: string
+}
+
+export type PartialWorkbookConfig = Omit<
+  Flatfile.CreateWorkbookConfig,
+  'sheets' | 'name'
+> & {
+  name?: string
+}
+export type PartialSheetConfig = Omit<
+  Flatfile.SheetConfig,
+  'fields' | 'name'
+> & {
+  name?: string
+}
 
 export async function generateSetup(
   models?: ModelToSheetConfig[],
-  schemas?: any[],
   options?: {
     workbookConfig?: PartialWorkbookConfig
     debug?: boolean
   }
 ): Promise<SetupFactory> {
   const sheets = await Promise.all(
-    models.map(async (model: ModelToSheetConfig, i) => {
-      const data = schemas[i]
+    models.map(async (model: ModelToSheetConfig) => {
+      const data = await fetchExternalReference(model.sourceUrl)
       const fields = await generateFields(data)
       return {
         name: model?.name || data.title,
@@ -158,4 +169,31 @@ export async function resolveReference(
   return fragmentPart
     ? resolveLocalReference(externalSchema, fragmentPart)
     : externalSchema
+}
+
+export function resolveLocalReference(schema: any, ref: string): any {
+  const resolved = ref
+    .split('/')
+    .slice(1)
+    .reduce(
+      (acc, part) =>
+        acc && (acc[part] || acc.$defs?.[part] || acc.definitions?.[part]),
+      schema
+    )
+
+  if (!resolved) throw new Error(`Cannot resolve reference: ${ref}`)
+  return resolved
+}
+
+export async function fetchExternalReference(url: string): Promise<any> {
+  try {
+    const { status, data } = await axios.get(url, {
+      validateStatus: () => true,
+    })
+    if (status !== 200)
+      throw new Error(`API returned status ${status}: ${data.statusText}`)
+    return data
+  } catch (error: any) {
+    throw new Error(`Error fetching external reference: ${error.message}`)
+  }
 }
