@@ -1,5 +1,11 @@
 import api from '@flatfile/api'
-import { deleteSpace, setupListener, setupSpace, startServer, stopServer } from '@flatfile/utils-testing'
+import {
+  deleteSpace,
+  setupListener,
+  setupSpace,
+  startServer,
+  stopServer,
+} from '@flatfile/utils-testing'
 import express from 'express'
 import fs from 'fs'
 import path from 'path'
@@ -10,7 +16,6 @@ const port = 8080
 const url = `http://localhost:${port}/`
 
 let server
-
 describe('configureSpaceWithYamlSchema() e2e', () => {
   const pureDataSchema = fs.readFileSync(
     path.resolve(__dirname, './exampleData.yml'),
@@ -18,7 +23,7 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
   )
 
   const expectedWorkbookData = {
-    name: 'YAML Schema Workbook',
+    name: 'JSON Schema Workbook',
     labels: [],
     sheets: [
       {
@@ -80,11 +85,11 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
 
   afterAll(async () => {
     stopServer(server)
+    console.log(`Stopping temporary server on port ${port}`)
     await deleteSpace(spaceId)
   })
 
   it('should configure a space and correctly format and flatten the YAML Schema', async () => {
-    console.log('starting configuration')
     await listener.waitFor('job:ready', 1, 'space:configure')
 
     const space = await api.spaces.get(spaceId)
