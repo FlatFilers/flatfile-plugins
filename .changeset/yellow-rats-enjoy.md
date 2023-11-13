@@ -5,4 +5,4 @@
 '@flatfile/utils-testing': patch
 ---
 
-DRY up YAML plugin, remove accidental edits to JSON plugin
+DRY up and release YAML plugin, remove accidental edits to JSON plugin
