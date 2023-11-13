@@ -11,7 +11,7 @@ const url = `http://localhost:${port}/`
 
 let server
 
-describe('configureSpaceWithJsonSchema() e2e', () => {
+describe('configureSpaceWithYamlSchema() e2e', () => {
   const pureDataSchema = fs.readFileSync(
     path.resolve(__dirname, './exampleData.yml'),
     'utf-8'
