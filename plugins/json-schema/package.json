@@ -29,7 +29,6 @@
   "dependencies": {
     "@flatfile/api": "^1.5.33",
     "@flatfile/plugin-space-configure": "^0.1.5",
-    "@flatfile/util-fetch-schema": "^0.0.1",
     "@hyperjump/json-schema": "^1.6.4",
     "axios": "^1.5.1"
   },
