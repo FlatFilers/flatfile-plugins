@@ -11,14 +11,14 @@ const url = `http://localhost:${port}/`
 
 let server
 
-describe('configureSpaceWithJsonSchema() e2e', () => {
+describe('configureSpaceWithYamlSchema() e2e', () => {
   const pureDataSchema = fs.readFileSync(
     path.resolve(__dirname, './exampleData.yml'),
     'utf-8'
   )
 
   const expectedWorkbookData = {
-    name: 'JSON Schema Workbook',
+    name: 'YAML Schema Workbook',
     labels: [],
     sheets: [
       {
@@ -26,7 +26,7 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
         config: {
           name: 'ExampleData',
           description:
-            'A basic set of JSON Schema to test data type conversions simply',
+            'A basic set of YAML Schema to test data type conversions simply',
           fields: [
             {
               type: 'string',
@@ -83,7 +83,7 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
     await deleteSpace(spaceId)
   })
 
-  it('should configure a space and correctly format and flatten the JSON Schema', async () => {
+  it('should configure a space and correctly format and flatten the YAML Schema', async () => {
     console.log('starting configuration')
     await listener.waitFor('job:ready', 1, 'space:configure')
 
