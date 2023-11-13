@@ -26,7 +26,7 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
         config: {
           name: 'ExampleData',
           description:
-            'A basic set of JSON Schema to test data type conversions simply',
+            'A basic set of YAML Schema to test data type conversions simply',
           fields: [
             {
               type: 'string',
