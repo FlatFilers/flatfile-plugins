@@ -1,4 +1,4 @@
-$id: 'https://localhost:3000/json'
+$id: 'https://localhost:3000/yaml'
 description: 'A basic set of YAML Schema to test data type conversions simply'
 type: 'object'
 title: 'ExampleData'
