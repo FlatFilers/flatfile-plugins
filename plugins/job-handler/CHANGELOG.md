@@ -1,5 +1,14 @@
 # @flatfile/plugin-job-handler
 
+## 0.1.5
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- edaedf5: Fix tick params
+- Updated dependencies [28820d5]
+  - @flatfile/util-common@0.2.3
+
 ## 0.1.4
 
 ### Patch Changes

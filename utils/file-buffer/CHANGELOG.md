@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.1.3
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+
 ## 0.1.2
 
 ### Patch Changes

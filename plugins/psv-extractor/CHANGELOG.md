@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.6.3
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+
 ## 1.6.2
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 import api, { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { asyncMap } from '@flatfile/common-plugin-utils'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import * as R from 'remeda'
 import { AutomapOptions } from './automap.plugin'
 
@@ -26,7 +26,7 @@ export class AutomapService {
 
     listener.on(
       Flatfile.EventTopic.JobCompleted,
-      { job: 'file:extract' },
+      { job: 'file:extract*' },
       (event) => this.handleFileExtraction(event)
     )
   }
