@@ -1,0 +1,29 @@
+{
+  "name": "@flatfile/plugin-forward-webhook",
+  "version": "0.0.1",
+  "description": "A plugin to forward events via webhook for clients to manipulate at their endpoints in a language-agnostic way.",
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "packages/forward-webhook"
+  },
+  "author": "Morgan Daley",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FlatFilers/flatfile-plugins/issues"
+  },
+  "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
+  "dependencies": {
+    "axios": "^1.6.1"
+  }
+}
