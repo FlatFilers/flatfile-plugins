@@ -18,13 +18,17 @@ export const RecordHook = async (
   ) => any | Promise<any>,
   options: RecordHookOptions = {}
 ) => {
-  const { concurrency } = { concurrency: 10, ...options }
+  const { concurrency = 10 } = options
   return BulkRecordHook(
     event,
     async (records, event) => {
       const handlers = await records.map((record: FlatfileRecord) =>
         Effect.promise(async () => {
-          await handler(record, event)
+          try {
+            await handler(record, event)
+          } catch (e) {
+            console.log(`An error occurred while running the handler: ${e}`)
+          }
         })
       )
       return Effect.runPromise(
