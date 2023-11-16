@@ -52,6 +52,16 @@ function. */
     })
   })
 
+  it('should send data and receive a resolution', async () => {
+    // console.log('starting webhook')
+    console.log('setting up forwarding')
+    listener.use(forwardWebhook(url, (data) => (testData = data)))
+    listener.on('job:outcome-acknowledged', (e: unknown) => {
+      console.log('webhook complete')
+      expect(e).toBeTruthy()
+    })
+  })
+
   it('should error on 500 received', async () => {
     console.log('setting up forwarding')
     listener.use(forwardWebhook(errUrl, (data) => (testData = data)))
