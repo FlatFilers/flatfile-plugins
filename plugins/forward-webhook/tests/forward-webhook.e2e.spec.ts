@@ -43,11 +43,12 @@ describe('forward-webhook() e2e', () => {
   })
 
   it('should forward webhook', async () => {
-    // listener.on('**', (e) => console.dir(e, { depth: null }))
     console.log('starting webhook')
     await listener.waitFor('job:outcome-acknowledged', 1)
-    console.log('webhook complete')
-    console.dir(testData, { depth: null })
-    expect(true).toBe(true)
+    listener.on('job:outcome-acknowledged', (e: unknown) => {
+      // console.dir(e, { depth: null })
+      console.log('webhook complete')
+      expect(e).toBeTruthy()
+    })
   })
 })
