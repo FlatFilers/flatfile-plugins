@@ -1,22 +1,31 @@
 import axios from 'axios'
 
-export async function resolveReference(
-  schema: any,
-  ref: string,
-  origin: string
-): Promise<any> {
-  const hashIndex = ref.indexOf('#')
+import { Flatfile } from '@flatfile/api'
 
-  if (ref.startsWith('#/')) return resolveLocalReference(schema, ref)
+export interface ModelToSheetConfig extends PartialSheetConfig {
+  sourceUrl: string
+}
 
-  const urlPart = hashIndex >= 0 ? ref.substring(0, hashIndex) : ref
-  const fragmentPart = hashIndex >= 0 ? ref.substring(hashIndex) : ''
+export type PartialSheetConfig = Omit<
+  Flatfile.SheetConfig,
+  'fields' | 'name'
+> & {
+  name?: string
+}
 
-  const externalSchema = await fetchExternalReference(`${origin}${urlPart}`)
+export type PartialWorkbookConfig = Omit<
+  Flatfile.CreateWorkbookConfig,
+  'sheets' | 'name'
+> & {
+  name?: string
+}
 
-  return fragmentPart
-    ? resolveLocalReference(externalSchema, fragmentPart)
-    : externalSchema
+export async function getSchemas(models?: ModelToSheetConfig[]) {
+  const schemas = models.map(async (model: ModelToSheetConfig) => {
+    return await fetchExternalReference(model.sourceUrl)
+  })
+
+  return await Promise.all(schemas)
 }
 
 export async function fetchExternalReference(url: string): Promise<any> {

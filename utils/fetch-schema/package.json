@@ -1,22 +1,34 @@
 {
-  "name": "@flatfile/utils-fetch-schema",
+  "name": "@flatfile/util-fetch-schema",
   "version": "0.0.1",
-  "description": "A utility package for fetching schemas for schema-plugins",
-  "main": "src/index.ts",
+  "description": "A utility for fetching schemas for processing",
+  "registryMetadata": {
+    "category": "utilities"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "parcel build",
     "dev": "parcel watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
+  "keywords": [],
+  "author": "Morgan Daley",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "utils/testing"
+    "directory": "utils/fetch-schema"
   },
-  "author": "Morgan Daley",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.6.0"
+    "@flatfile/api": "^1.5.30",
+    "@flatfile/listener": "^0.3.15",
+    "axios": "^1.6.1"
   }
 }

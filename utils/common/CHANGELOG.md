@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 0.2.3
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+
 ## 0.2.2
 
 ### Patch Changes

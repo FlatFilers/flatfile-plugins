@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-common",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A library containing common utilities and helpers for plugins.",
   "keywords": [],
   "author": "Carl Brugger",
@@ -24,6 +24,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.32"
+    "@flatfile/api": "^1.5.37"
   }
 }
