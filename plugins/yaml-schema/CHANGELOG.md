@@ -1,4 +1,4 @@
-# @flatfile/plugin-yaml-schema
+# @flatfile/plugin-convert-yaml-schema
 
 ## 0.0.1
 

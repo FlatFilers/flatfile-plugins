@@ -36,7 +36,7 @@ export async function generateSetup(
   const setup: Setup = {
     workbooks: [
       {
-        name: options?.workbookConfig?.name || 'JSON Schema Workbook',
+        name: options?.workbookConfig?.name || 'YAML Schema Workbook',
         sheets,
       },
     ],
