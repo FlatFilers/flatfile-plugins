@@ -23,7 +23,7 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
   )
 
   const expectedWorkbookData = {
-    name: 'YAML Schema Workbook',
+    name: 'JSON Schema Workbook',
     labels: [],
     sheets: [
       {

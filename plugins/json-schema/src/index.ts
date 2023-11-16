@@ -1,11 +1,12 @@
 import { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import {
+import type {
   ModelToSheetConfig,
   PartialWorkbookConfig,
-  generateSetup,
-} from './setup.factory'
+} from '@flatfile/util-fetch-schema'
+import { generateSetup } from '@flatfile/util-fetch-schema'
+import { getSchemas } from '@flatfile/util-fetch-schema/src'
 
 export function configureSpaceWithJsonSchema(
   models?: ModelToSheetConfig[],
@@ -20,9 +21,9 @@ export function configureSpaceWithJsonSchema(
   ) => any | Promise<any>
 ) {
   return async function (listener: FlatfileListener) {
-    listener.use(configureSpace(await generateSetup(models, options), callback))
+    const schemas = await getSchemas(models)
+    listener.use(
+      configureSpace(await generateSetup(schemas, options), callback)
+    )
   }
 }
-
-export type { SetupFactory } from '@flatfile/plugin-space-configure'
-export * from './setup.factory'

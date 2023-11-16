@@ -2,6 +2,8 @@ import axios from 'axios'
 
 import { Flatfile } from '@flatfile/api'
 
+import { SetupFactory } from '@flatfile/plugin-space-configure'
+
 export interface ModelToSheetConfig extends PartialSheetConfig {
   sourceUrl: string
 }
@@ -10,6 +12,7 @@ export type PartialSheetConfig = Omit<
   Flatfile.SheetConfig,
   'fields' | 'name'
 > & {
+  title?: string
   name?: string
 }
 
@@ -54,3 +57,5 @@ export function resolveLocalReference(schema: any, ref: string): any {
   if (!resolved) throw new Error(`Cannot resolve reference: ${ref}`)
   return resolved
 }
+
+export * from './setup.factory'
