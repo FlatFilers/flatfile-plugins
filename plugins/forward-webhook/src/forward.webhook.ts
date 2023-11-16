@@ -12,18 +12,35 @@ export function forwardWebhook(
   return async (listener: FlatfileListener) => {
     return listener.on('**', async (e) => {
       if (e.topic === 'job:outcome-acknowledged') return
-      const { data } = await axios.post(url, { ...e })
-      let callbackData = undefined
-      if (callback) callbackData = await callback(data)
-      api.events.create({
-        domain: e.domain as Flatfile.Domain,
-        topic: 'job:outcome-acknowledged',
-        context: {
-          ...e.context,
-          actionName: 'forward-webhook',
-        },
-        payload: callbackData || data,
-      })
+      try {
+        const { data } = await axios.post(url, { ...e })
+        console.dir(data)
+        let callbackData = undefined
+        if (callback) callbackData = await callback(data)
+        api.events.create({
+          domain: e.domain as Flatfile.Domain,
+          topic: 'job:outcome-acknowledged',
+          context: {
+            ...e.context,
+            actionName: 'forward-webhook',
+          },
+          payload: callbackData || data,
+        })
+      } catch (err) {
+        api.events.create({
+          domain: e.domain as Flatfile.Domain,
+          topic: 'job:outcome-acknowledged',
+          context: {
+            ...e.context,
+            actionName: 'forward-webhook',
+          },
+          payload: {
+            error: true,
+            message: 'Error recieved, please try again',
+            data: err,
+          },
+        })
+      }
     })
   }
 }

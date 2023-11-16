@@ -5,8 +5,15 @@ export const startServer = (app, port, data?: any) => {
   })
 
   app.post('/', (req, res) => {
-    console.dir(req, { depth: null })
     res.send({
+      message: 'POST request recieved with data',
+      data: req.body,
+    })
+  })
+
+  app.post('/error', (req, res) => {
+    // console.dir(req)
+    res.status(500).send({
       message: 'POST request recieved with data',
       data: req.body,
     })
