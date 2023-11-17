@@ -23,7 +23,6 @@ export async function responseRejectionHandler(
 ): Promise<void | Flatfile.JobCompleteDetails> {
   let totalRejectedRecords = 0
 
-  // Using a for...of loop to handle asynchronous operations
   for (const sheet of responseRejection.sheets || []) {
     const count = await updateSheet(sheet, responseRejection.deleteSubmitted)
     totalRejectedRecords += count
