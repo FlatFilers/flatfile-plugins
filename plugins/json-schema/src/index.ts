@@ -5,8 +5,7 @@ import type {
   ModelToSheetConfig,
   PartialWorkbookConfig,
 } from '@flatfile/util-fetch-schema'
-import { generateSetup } from '@flatfile/util-fetch-schema'
-import { getSchemas } from '@flatfile/util-fetch-schema/src'
+import { generateSetup, getSchemas } from '@flatfile/util-fetch-schema'
 
 export function configureSpaceWithJsonSchema(
   models?: ModelToSheetConfig[],
