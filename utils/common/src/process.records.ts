@@ -2,9 +2,9 @@ import api, { Flatfile } from '@flatfile/api'
 
 export async function processRecords<R>(
   sheetId: string,
-  callback: (records: Flatfile.RecordsWithLinks) => R,
+  callback: (records: Flatfile.RecordsWithLinks) => Promise<R | void>,
   recordGetOptions?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
-): Promise<R[]> {
+): Promise<R[] | void> {
   let pageNumber = 1
   const results: R[] = []
 
@@ -20,9 +20,11 @@ export async function processRecords<R>(
       break
     }
 
-    const result = callback(records)
-    results.push(result)
+    const result = await callback(records)
+    if (result !== undefined && result !== null) {
+      results.push(result as R)
+    }
   }
 
-  return results
+  return results.length ? results : undefined
 }
