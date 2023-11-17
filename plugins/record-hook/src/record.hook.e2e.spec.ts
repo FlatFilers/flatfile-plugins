@@ -67,4 +67,31 @@ describe('recordHook() e2e', () => {
       expect(records[1].values['name']).toMatchObject({ value: 'daddy' })
     })
   })
+
+  describe('recordHook errors', () => {
+    beforeEach(async () => {
+      listener.use(
+        recordHook('test', (record) => {
+          throw new Error('oops')
+        })
+      )
+    })
+    it('returns readable error', async () => {
+      const logSpy = jest.spyOn(global.console, 'log')
+      await createRecords(sheetId, [
+        {
+          name: 'John Doe',
+          email: 'john@doe.com',
+          notes: 'foobar',
+        },
+      ])
+
+      await listener.waitFor('commit:created')
+
+      expect(logSpy).toHaveBeenCalledWith(
+        'An error occurred while running the handler: Error: oops'
+      )
+      logSpy.mockRestore()
+    })
+  })
 })
