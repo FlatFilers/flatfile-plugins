@@ -2,11 +2,11 @@ import api from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
-import axios from 'axios'
 import {
   RejectionResponse,
   responseRejectionHandler,
-} from '../../../utils/response-rejection/src' // TODO: replace with '@flatfile/util-response-rejection'
+} from '@flatfile/util-response-rejection'
+import axios from 'axios'
 
 export function webhookEgress(job: string, webhookUrl?: string) {
   return function (listener: FlatfileListener) {
