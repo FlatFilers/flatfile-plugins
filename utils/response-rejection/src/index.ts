@@ -35,7 +35,7 @@ export async function responseRejectionHandler(
     outcome: {
       heading: totalRejectedRecords > 0 ? 'Rejected Records' : 'Success!',
       acknowledge: true,
-      ...(next && { next }),
+      ...(next && !responseRejection.deleteSubmitted && { next }),
       message,
     },
   }
@@ -51,7 +51,7 @@ function getNext(totalRejectedRecords): Flatfile.JobOutcomeNext | undefined {
   return totalRejectedRecords > 0
     ? {
         type: 'url',
-        url: '?filter=error',
+        url: '?searchField=submissionStatus&searchValue=rejected',
         label: 'See rejections',
       }
     : undefined
