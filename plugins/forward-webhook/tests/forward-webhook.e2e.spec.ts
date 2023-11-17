@@ -13,6 +13,7 @@ import { forwardWebhook } from '../src'
 const app = express()
 const port = 8080
 const url = `http://localhost:${port}/`
+const dataUrl = `http://localhost:${port}/data`
 const errUrl = `http://localhost:${port}/error`
 
 let server
@@ -42,9 +43,11 @@ describe('forward-webhook() e2e', () => {
 
   /* The code block you provided is a test case that verifies the functionality of the `forwardWebhook`
 function. */
+
   it('should forward webhook', async () => {
     // console.log('starting webhook')
     console.log('setting up forwarding')
+    expect.assertions(1)
     listener.use(forwardWebhook(url, (data) => (testData = data)))
     listener.on('job:outcome-acknowledged', (e: unknown) => {
       console.log('webhook complete')
@@ -52,18 +55,20 @@ function. */
     })
   })
 
-  it('should send data and receive a resolution', async () => {
+  it('should send data and receive a resolution', () => {
     // console.log('starting webhook')
     console.log('setting up forwarding')
-    listener.use(forwardWebhook(url, (data) => (testData = data)))
+    expect.assertions(1)
+    listener.use(forwardWebhook(dataUrl, (data) => (testData = data)))
     listener.on('job:outcome-acknowledged', (e: unknown) => {
       console.log('webhook complete')
-      expect(e).toBeTruthy()
+      expect(testData.data.dataMessage).toBe('Hello World!')
     })
   })
 
   it('should error on 500 received', async () => {
     console.log('setting up forwarding')
+    expect.assertions(1)
     listener.use(forwardWebhook(errUrl, (data) => (testData = data)))
     listener.on('job:outcome-acknowledged', (e) => {
       console.log('webhook complete')

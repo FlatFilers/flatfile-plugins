@@ -11,6 +11,15 @@ export const startServer = (app, port, data?: any) => {
     })
   })
 
+  app.post('/data', (req, res) => {
+    res.send({
+      message: 'POST request recieved with data',
+      data: {
+        dataMessage: 'Hello World!',
+      },
+    })
+  })
+
   app.post('/error', (req, res) => {
     // console.dir(req)
     res.status(500).send({
