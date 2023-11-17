@@ -2,11 +2,11 @@ import api from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
-import {
-  ResponseRejection,
-  responseRejectionHandler,
-} from '@flatfile/util-response-rejection'
 import axios from 'axios'
+import {
+  RejectionResponse,
+  responseRejectionHandler,
+} from '../../../utils/response-rejection/src' // TODO: replace with '@flatfile/util-response-rejection'
 
 export function webhookEgress(job: string, webhookUrl?: string) {
   return function (listener: FlatfileListener) {
@@ -48,22 +48,11 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           )
 
           if (response.status === 200) {
-            const rejections: ResponseRejection = response.data.rejections
+            const rejections: RejectionResponse = response.data.rejections
             if (rejections) {
-              const totalRejectedRecords = await responseRejectionHandler(
-                rejections
-              )
-              return {
-                outcome: {
-                  next: {
-                    type: 'id',
-                    id: rejections.id,
-                    label: 'See rejections',
-                  },
-                  message: `${totalRejectedRecords} record(s) were rejected during data submission. Review the rejection notes, fix, then resubmit.`,
-                },
-              }
+              return await responseRejectionHandler(rejections)
             }
+
             return {
               outcome: {
                 message: `Data was successfully submitted to the provided webhook. Go check it out at ${webhookReceiver}.`,
@@ -85,13 +74,8 @@ export function webhookEgress(job: string, webhookUrl?: string) {
             '@flatfile/plugin-webhook-egress',
             JSON.stringify(error, null, 2)
           )
-
-          return {
-            outcome: {
-              message:
-                "This job failed probably because it couldn't find the webhook URL.",
-            },
-          }
+          // Throw error to fail job
+          throw new Error(`Error posting data to webhook`)
         }
       })
     )
