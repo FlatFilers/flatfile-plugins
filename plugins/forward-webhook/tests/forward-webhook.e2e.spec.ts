@@ -59,10 +59,9 @@ function. */
       })
     })
 
-    waitForWebhookCompletion.then((e) => {
+    await waitForWebhookCompletion.then((e) => {
       return expect(e).toBeTruthy()
     })
-    await listener.waitFor('job:outcome-acknowledged', 1)
     expect.hasAssertions()
   })
 
@@ -77,10 +76,9 @@ function. */
       })
     })
     listener.use(forwardWebhook(dataUrl, (data) => (testData = data)))
-    waitForWebhookCompletion.then((e) => {
-      return expect(testData.data.dataMessage).toBe('Hello World!')
+    await waitForWebhookCompletion.then((e) => {
+      expect(testData.data.dataMessage).toBe('Hello World!')
     })
-    await listener.waitFor('job:outcome-acknowledged', 1)
     expect.hasAssertions()
   })
 
@@ -100,11 +98,10 @@ function. */
         resolve(e)
       })
     })
-    waitForWebhookCompletion.then((e: FlatfileEvent) => {
+    await waitForWebhookCompletion.then((e: FlatfileEvent) => {
       expect(e.payload.error).toBe(true)
       expect(testData).toBeUndefined()
     })
-    await listener.waitFor('job:outcome-acknowledged', 1)
     expect.hasAssertions()
   })
 })
