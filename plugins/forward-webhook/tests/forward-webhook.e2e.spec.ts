@@ -7,6 +7,8 @@ import {
   stopServer,
 } from '@flatfile/utils-testing'
 
+import { FlatfileEvent } from '@flatfile/listener'
+import exp from 'constants'
 import express from 'express'
 import { forwardWebhook } from '../src'
 
@@ -22,9 +24,7 @@ describe('forward-webhook() e2e', () => {
   let spaceId: string
   const listener = setupListener()
 
-  let testData
-
-  beforeAll(async () => {
+  beforeEach(async () => {
     console.log(`Starting temporary server on port ${port}`)
     server = startServer(app, port, { message: 'Hello World!' })
 
@@ -33,7 +33,7 @@ describe('forward-webhook() e2e', () => {
     spaceId = space.id
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     console.log(`Stopping temporary server on port ${port}`)
     stopServer(server)
 
@@ -45,34 +45,66 @@ describe('forward-webhook() e2e', () => {
 function. */
 
   it('should forward webhook', async () => {
-    // console.log('starting webhook')
     console.log('setting up forwarding')
-    expect.assertions(1)
+    let testData
+
     listener.use(forwardWebhook(url, (data) => (testData = data)))
     listener.on('job:outcome-acknowledged', (e: unknown) => {
       console.log('webhook complete')
-      expect(e).toBeTruthy()
     })
+    const waitForWebhookCompletion = new Promise((resolve) => {
+      listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
+        console.log('webhook complete')
+        resolve(e)
+      })
+    })
+
+    waitForWebhookCompletion.then((e) => {
+      return expect(e).toBeTruthy()
+    })
+    await listener.waitFor('job:outcome-acknowledged', 1)
+    expect.hasAssertions()
   })
 
-  it('should send data and receive a resolution', () => {
-    // console.log('starting webhook')
-    console.log('setting up forwarding')
-    expect.assertions(1)
-    listener.use(forwardWebhook(dataUrl, (data) => (testData = data)))
-    listener.on('job:outcome-acknowledged', (e: unknown) => {
-      console.log('webhook complete')
-      expect(testData.data.dataMessage).toBe('Hello World!')
+  it('should send data and receive a resolution', async () => {
+    console.log('setting up forwarding with data')
+    let testData
+
+    const waitForWebhookCompletion = new Promise((resolve) => {
+      listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
+        console.log('webhook complete')
+        resolve(e)
+      })
     })
+    listener.use(forwardWebhook(dataUrl, (data) => (testData = data)))
+    waitForWebhookCompletion.then((e) => {
+      return expect(testData.data.dataMessage).toBe('Hello World!')
+    })
+    await listener.waitFor('job:outcome-acknowledged', 1)
+    expect.hasAssertions()
   })
 
   it('should error on 500 received', async () => {
-    console.log('setting up forwarding')
-    expect.assertions(1)
-    listener.use(forwardWebhook(errUrl, (data) => (testData = data)))
-    listener.on('job:outcome-acknowledged', (e) => {
-      console.log('webhook complete')
-      expect(e.payload.error).toBe(true)
+    console.log('setting up forwarding for error')
+    let testData
+
+    listener.use(
+      forwardWebhook(errUrl, (data) => {
+        // callbacks do not run on error
+        testData = data
+      })
+    )
+    const waitForWebhookCompletion = new Promise((resolve) => {
+      listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
+        console.log('webhook complete')
+        resolve(e)
+      })
     })
+    waitForWebhookCompletion.then((e: FlatfileEvent) => {
+      expect(e.payload.error).toBe(true)
+      expect(testData).toBeUndefined()
+    })
+    await listener.waitFor('job:outcome-acknowledged', 1)
+    expect.hasAssertions()
   })
 })

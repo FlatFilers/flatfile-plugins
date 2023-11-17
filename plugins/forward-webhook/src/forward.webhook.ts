@@ -15,7 +15,7 @@ export function forwardWebhook(
       try {
         const { data } = await axios.post(url, { ...e })
         console.dir(data)
-        let callbackData = undefined
+        let callbackData
         if (callback) callbackData = await callback(data)
         api.events.create({
           domain: e.domain as Flatfile.Domain,
