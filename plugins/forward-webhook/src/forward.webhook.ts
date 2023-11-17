@@ -14,7 +14,6 @@ export function forwardWebhook(
       if (e.topic === 'job:outcome-acknowledged') return
       try {
         const { data } = await axios.post(url, { ...e })
-        console.dir(data)
         let callbackData
         if (callback) callbackData = await callback(data)
         api.events.create({
