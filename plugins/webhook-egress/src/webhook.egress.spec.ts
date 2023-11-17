@@ -87,8 +87,7 @@ describe('webhookEgress() e2e', () => {
 
     const response = await api.jobs.get(failedJobId)
     expect(response.data.outcome).toEqual({
-      message:
-        "This job failed probably because it couldn't find the webhook URL.",
+      message: 'Error posting data to webhook',
     })
   })
 })
