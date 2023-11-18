@@ -1,56 +1,59 @@
 import { Flatfile } from '@flatfile/api'
-import { Setup, SetupFactory } from '@flatfile/plugin-space-configure'
+import { SetupFactory } from '@flatfile/plugin-space-configure'
 import axios from 'axios'
 
-export interface ModelToSheetConfig extends PartialSheetConfig {
-  sourceUrl: string
+export type JsonSetupFactory = {
+  workbooks: PartialWorkbookConfig[]
+  space?: Partial<Flatfile.spaces.SpaceConfig>
 }
 
 export type PartialWorkbookConfig = Omit<
   Flatfile.CreateWorkbookConfig,
-  'sheets' | 'name'
+  'sheets'
 > & {
-  name?: string
+  sheets: PartialSheetConfig[]
 }
+
 export type PartialSheetConfig = Omit<
   Flatfile.SheetConfig,
   'fields' | 'name'
 > & {
   name?: string
+  jsonModel: any | (() => any | Promise<any>)
 }
 
 export async function generateSetup(
-  models?: ModelToSheetConfig[],
-  options?: {
-    workbookConfig?: PartialWorkbookConfig
-    debug?: boolean
-  }
+  setupFactory: JsonSetupFactory
 ): Promise<SetupFactory> {
-  const sheets = await Promise.all(
-    models.map(async (model: ModelToSheetConfig) => {
-      const data = await fetchExternalReference(model.sourceUrl)
-      const fields = await generateFields(data)
+  const workbooks = await Promise.all(
+    setupFactory.workbooks.map(async (workbook) => {
+      const sheets = await Promise.all(
+        workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) => {
+          const model =
+            typeof partialSheetConfig.jsonModel === 'function'
+              ? await partialSheetConfig.jsonModel()
+              : partialSheetConfig.jsonModel
+
+          delete partialSheetConfig.jsonModel
+          const fields = await generateFields(model)
+
+          return {
+            name: partialSheetConfig?.name || model.title,
+            ...(model?.description && { description: model.description }),
+            fields,
+            ...partialSheetConfig,
+          }
+        })
+      )
+
       return {
-        name: model?.name || data.title,
-        ...(data?.description && { description: data.description }),
-        fields,
-        ...model,
+        ...workbook,
+        sheets,
       }
     })
   )
-  const setup: Setup = {
-    workbooks: [
-      {
-        name: options?.workbookConfig?.name || 'JSON Schema Workbook',
-        sheets,
-      },
-    ],
-    ...options?.workbookConfig,
-  }
-  if (options?.debug) {
-    console.dir(setup, { depth: null })
-  }
-  return setup
+
+  return { workbooks, space: setupFactory.space }
 }
 
 export async function generateFields(data: any): Promise<Flatfile.Property[]> {
@@ -58,8 +61,7 @@ export async function generateFields(data: any): Promise<Flatfile.Property[]> {
 
   const getOrigin = (url: string) => {
     try {
-      const url = new URL(data.$id)
-      return url.origin
+      return new URL(url).origin
     } catch (error) {
       return ''
     }
@@ -67,15 +69,15 @@ export async function generateFields(data: any): Promise<Flatfile.Property[]> {
   const origin = getOrigin(data.$id)
 
   const fields = await Promise.all(
-    Object.keys(data.properties).map((key) =>
-      getPropertyType(
+    Object.keys(data.properties).map(async (key) => {
+      return await getPropertyType(
         data,
         data.properties[key],
         key,
         (data.required && data.required.includes(key)) || false,
         origin
       )
-    )
+    })
   )
   return fields.flat().filter(Boolean)
 }
@@ -88,9 +90,14 @@ export async function getPropertyType(
   origin: string
 ): Promise<Flatfile.Property[]> {
   if (property.$ref) {
-    return getPropertyType(
+    const resolvedProperty = await resolveReference(
       schema,
-      await resolveReference(schema, property.$ref, origin),
+      property.$ref,
+      origin
+    )
+    return await getPropertyType(
+      schema,
+      resolvedProperty,
       parentKey,
       false,
       origin
@@ -98,19 +105,18 @@ export async function getPropertyType(
   }
 
   if (property.type === 'object' && property.properties) {
-    return (
-      await Promise.all(
-        Object.keys(property.properties).map(async (key) => {
-          return getPropertyType(
-            property,
-            property.properties[key],
-            parentKey ? `${parentKey}_${key}` : key,
-            (property.required && property.required.includes(key)) || false,
-            origin
-          )
-        })
-      )
-    ).flat()
+    const propertyFields = await Promise.all(
+      Object.keys(property.properties).map(async (key) => {
+        return await getPropertyType(
+          property,
+          property.properties[key],
+          parentKey ? `${parentKey}_${key}` : key,
+          (property.required && property.required.includes(key)) || false,
+          origin
+        )
+      })
+    )
+    return propertyFields.flat()
   }
 
   const fieldTypes: Record<string, Flatfile.Property> = {
@@ -200,7 +206,7 @@ export async function fetchExternalReference(url: string): Promise<any> {
     if (status !== 200)
       throw new Error(`API returned status ${status}: ${data.statusText}`)
     return data
-  } catch (error: any) {
+  } catch (error) {
     throw new Error(`Error fetching external reference: ${error.message}`)
   }
 }
