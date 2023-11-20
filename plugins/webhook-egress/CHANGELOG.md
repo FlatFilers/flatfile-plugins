@@ -1,5 +1,16 @@
 # @flatfile/plugin-webhook-egress
 
+## 0.1.5
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- Updated dependencies [28820d5]
+- Updated dependencies [edaedf5]
+  - @flatfile/util-response-rejection@0.1.4
+  - @flatfile/plugin-job-handler@0.1.5
+  - @flatfile/util-common@0.2.3
+
 ## 0.1.4
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.0.3
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- edaedf5: Fix tick params
+- Updated dependencies [28820d5]
+- Updated dependencies [edaedf5]
+  - @flatfile/plugin-space-configure@0.1.6
+  - @flatfile/plugin-job-handler@0.1.5
+  - @flatfile/util-common@0.2.3
+
 ## 0.0.2
 
 ### Patch Changes

@@ -26,7 +26,7 @@ export class AutomapService {
 
     listener.on(
       Flatfile.EventTopic.JobCompleted,
-      { job: 'file:extract' },
+      { job: 'file:extract*' },
       (event) => this.handleFileExtraction(event)
     )
   }

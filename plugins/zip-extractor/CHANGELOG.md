@@ -1,5 +1,14 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.3.9
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- Updated dependencies [28820d5]
+  - @flatfile/util-file-buffer@0.1.3
+  - @flatfile/util-common@0.2.3
+
 ## 0.3.8
 
 ### Patch Changes
