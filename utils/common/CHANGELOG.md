@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 0.2.4
+
+### Patch Changes
+
+- 8a7a0b9: Small upgrade to processRecords() to let the callback return void
+
 ## 0.2.3
 
 ### Patch Changes
