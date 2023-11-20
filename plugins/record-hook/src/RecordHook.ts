@@ -27,7 +27,9 @@ export const RecordHook = async (
           try {
             await handler(record, event)
           } catch (e) {
-            console.log(`An error occurred while running the handler: ${e}`)
+            console.error(
+              `An error occurred while running the handler: ${e.message}`
+            )
           }
         })
       )

@@ -69,15 +69,13 @@ describe('recordHook() e2e', () => {
   })
 
   describe('recordHook errors', () => {
+    const logErrorSpy = jest.spyOn(global.console, 'error')
     beforeEach(async () => {
       listener.use(
         recordHook('test', (record) => {
           throw new Error('oops')
         })
       )
-    })
-    it('returns readable error', async () => {
-      const logSpy = jest.spyOn(global.console, 'log')
       await createRecords(sheetId, [
         {
           name: 'John Doe',
@@ -85,13 +83,15 @@ describe('recordHook() e2e', () => {
           notes: 'foobar',
         },
       ])
-
+    })
+    it('returns readable error', async () => {
       await listener.waitFor('commit:created')
-
-      expect(logSpy).toHaveBeenCalledWith(
-        'An error occurred while running the handler: Error: oops'
+      expect(logErrorSpy).toHaveBeenCalledWith(
+        'An error occurred while running the handler: oops'
       )
-      logSpy.mockRestore()
+    })
+    afterEach(() => {
+      logErrorSpy.mockClear()
     })
   })
 })
