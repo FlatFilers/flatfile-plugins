@@ -48,7 +48,7 @@ export const Extractor = (
         const buffer = await getFileBuffer(event)
         const { jobId } = event.context
         try {
-          const tick = async (progress: number, info: string) => {
+          const tick = async (progress: number, info?: string) => {
             await api.jobs.ack(jobId, { progress, info })
             if (debug) {
               console.log(`Job progress: ${progress}, Info: ${info}`)

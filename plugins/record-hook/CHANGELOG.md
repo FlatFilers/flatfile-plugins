@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.12
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- Updated dependencies [28820d5]
+  - @flatfile/util-common@0.2.3
+
 ## 1.1.11
 
 ### Patch Changes

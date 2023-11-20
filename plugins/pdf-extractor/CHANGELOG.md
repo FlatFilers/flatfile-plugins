@@ -1,5 +1,13 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.0.7
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- Updated dependencies [28820d5]
+  - @flatfile/util-file-buffer@0.1.3
+
 ## 0.0.6
 
 ### Patch Changes

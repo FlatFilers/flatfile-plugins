@@ -1,7 +1,7 @@
 import api from '@flatfile/api'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 import express from 'express'
-import { configureSpaceWithJsonSchema } from '../src'
+import { configureSpaceWithJsonSchema, fetchExternalReference } from '../src'
 import { startServer, stopServer } from './test-server/server'
 
 const app = express()
@@ -106,7 +106,20 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
     server = startServer(app, port, pureDataSchema)
     console.log('Setting up Space and Retrieving spaceId')
 
-    await listener.use(configureSpaceWithJsonSchema([{ sourceUrl: url }]))
+    await listener.use(
+      configureSpaceWithJsonSchema({
+        workbooks: [
+          {
+            name: 'JSON Schema Workbook',
+            sheets: [
+              {
+                source: async () => await fetchExternalReference(url),
+              },
+            ],
+          },
+        ],
+      })
+    )
 
     const space = await setupSpace()
     spaceId = space.id
