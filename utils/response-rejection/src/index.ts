@@ -33,6 +33,7 @@ export async function responseRejectionHandler(
 
   return {
     outcome: {
+      buttonText: 'Close',
       heading: totalRejectedRecords > 0 ? 'Rejected Records' : 'Success!',
       acknowledge: true,
       ...(next && !responseRejection.deleteSubmitted && { next }),
@@ -43,8 +44,8 @@ export async function responseRejectionHandler(
 
 function getMessage(totalRejectedRecords) {
   return totalRejectedRecords > 0
-    ? `${totalRejectedRecords} record(s) were rejected during data submission. Review the rejection notes, fix, then resubmit.`
-    : 'Data was successfully submitted.'
+    ? `During the data submission process, ${totalRejectedRecords} records were rejected. Please review and correct these records before resubmitting.`
+    : 'The data has been successfully submitted without any rejections. This task is now complete.'
 }
 
 function getNext(totalRejectedRecords): Flatfile.JobOutcomeNext | undefined {
