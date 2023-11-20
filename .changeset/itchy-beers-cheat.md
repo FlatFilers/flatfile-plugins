@@ -1,5 +1,5 @@
 ---
-'@flatfile/plugin-convert-json-schema': patch
+'@flatfile/plugin-convert-json-schema': minor
 ---
 
 Improve handling of JSON retrieval
