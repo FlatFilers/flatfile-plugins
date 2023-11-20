@@ -1,5 +1,4 @@
 import api, { Flatfile } from '@flatfile/api'
-import { processRecords } from '@flatfile/util-common'
 
 export interface ResponseRejection {
   id: string
