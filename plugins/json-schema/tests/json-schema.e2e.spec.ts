@@ -113,7 +113,7 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
             name: 'JSON Schema Workbook',
             sheets: [
               {
-                jsonModel: async () => await fetchExternalReference(url),
+                source: async () => await fetchExternalReference(url),
               },
             ],
           },

@@ -19,7 +19,7 @@ export type PartialSheetConfig = Omit<
   'fields' | 'name'
 > & {
   name?: string
-  jsonModel: any | (() => any | Promise<any>)
+  source: any | (() => any | Promise<any>)
 }
 
 export async function generateSetup(
@@ -30,11 +30,11 @@ export async function generateSetup(
       const sheets = await Promise.all(
         workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) => {
           const model =
-            typeof partialSheetConfig.jsonModel === 'function'
-              ? await partialSheetConfig.jsonModel()
-              : partialSheetConfig.jsonModel
+            typeof partialSheetConfig.source === 'function'
+              ? await partialSheetConfig.source()
+              : partialSheetConfig.source
 
-          delete partialSheetConfig.jsonModel
+          delete partialSheetConfig.source
           const fields = await generateFields(model)
 
           return {
