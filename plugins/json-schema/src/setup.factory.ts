@@ -19,7 +19,7 @@ export type PartialSheetConfig = Omit<
   'fields' | 'name'
 > & {
   name?: string
-  source: any | (() => any | Promise<any>)
+  source: object | string | (() => object | Promise<object>)
 }
 
 export async function generateSetup(
@@ -29,11 +29,7 @@ export async function generateSetup(
     setupFactory.workbooks.map(async (workbook) => {
       const sheets = await Promise.all(
         workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) => {
-          const model =
-            typeof partialSheetConfig.source === 'function'
-              ? await partialSheetConfig.source()
-              : partialSheetConfig.source
-
+          const model = await getModel(partialSheetConfig.source)
           delete partialSheetConfig.source
           const fields = await generateFields(model)
 
@@ -54,6 +50,29 @@ export async function generateSetup(
   )
 
   return { workbooks, space: setupFactory.space }
+}
+
+async function getModel(
+  source: object | string | (() => object | Promise<object>)
+) {
+  if (typeof source === 'function') {
+    return await source()
+  }
+
+  if (typeof source === 'string' && isValidUrl(source)) {
+    return await fetchExternalReference(source)
+  }
+
+  return source
+}
+
+function isValidUrl(url: string) {
+  try {
+    new URL(url)
+    return true
+  } catch (error) {
+    return false
+  }
 }
 
 export async function generateFields(data: any): Promise<Flatfile.Property[]> {
