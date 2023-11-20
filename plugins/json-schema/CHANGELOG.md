@@ -1,5 +1,11 @@
 # @flatfile/plugin-json-schema
 
+## 0.1.0
+
+### Minor Changes
+
+- 6d1ddf1: Improve handling of JSON retrieval
+
 ## 0.0.4
 
 ### Patch Changes
