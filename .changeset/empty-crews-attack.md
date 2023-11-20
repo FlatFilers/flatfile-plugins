@@ -1,5 +1,5 @@
 ---
-'@flatfile/util-response-rejection': patch
+'@flatfile/util-response-rejection': minor
 '@flatfile/plugin-webhook-egress': patch
 ---
 
