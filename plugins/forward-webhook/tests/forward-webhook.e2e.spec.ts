@@ -1,4 +1,3 @@
-import api from '@flatfile/api'
 import {
   deleteSpace,
   setupListener,
@@ -8,19 +7,18 @@ import {
 } from '@flatfile/utils-testing'
 
 import { FlatfileEvent } from '@flatfile/listener'
-import exp from 'constants'
+import axios from 'axios'
 import express from 'express'
 import { forwardWebhook } from '../src'
 
 const app = express()
 const port = 8080
 const url = `http://localhost:${port}/`
-const dataUrl = `http://localhost:${port}/data`
-const errUrl = `http://localhost:${port}/error`
-
-let server
+const dataUrl = `http://localhost:${port}/data/`
+const errUrl = `http://localhost:${port}/error/`
 
 describe('forward-webhook() e2e', () => {
+  let server
   let spaceId: string
   const listener = setupListener()
 
@@ -41,9 +39,6 @@ describe('forward-webhook() e2e', () => {
     await deleteSpace(spaceId)
   })
 
-  /* The code block you provided is a test case that verifies the functionality of the `forwardWebhook`
-function. */
-
   it('should forward webhook', async () => {
     console.log('setting up forwarding')
     let testData
@@ -59,10 +54,12 @@ function. */
       })
     })
 
-    await waitForWebhookCompletion.then((e) => {
-      return expect(e).toBeTruthy()
-    })
-    expect.hasAssertions()
+    return (
+      await waitForWebhookCompletion.then((e: FlatfileEvent) => {
+        return expect(e).toBeTruthy(), expect(e.payload.error).toBeFalsy()
+      }),
+      expect.hasAssertions()
+    )
   })
 
   it('should send data and receive a resolution', async () => {
@@ -76,10 +73,15 @@ function. */
       })
     })
     listener.use(forwardWebhook(dataUrl, (data) => (testData = data)))
-    await waitForWebhookCompletion.then((e) => {
-      expect(testData.data.dataMessage).toBe('Hello World!')
-    })
-    expect.hasAssertions()
+    return (
+      await waitForWebhookCompletion.then((e: FlatfileEvent) => {
+        return (
+          expect(testData.data.dataMessage).toBe('Hello World!'),
+          expect(e.payload.error).toBeFalsy()
+        )
+      }),
+      expect.hasAssertions()
+    )
   })
 
   it('should error on 500 received', async () => {
@@ -98,10 +100,13 @@ function. */
         resolve(e)
       })
     })
-    await waitForWebhookCompletion.then((e: FlatfileEvent) => {
-      expect(e.payload.error).toBe(true)
-      expect(testData).toBeUndefined()
-    })
-    expect.hasAssertions()
+    return (
+      await waitForWebhookCompletion.then((e: FlatfileEvent) => {
+        return (
+          expect(e.payload.error).toBe(true), expect(testData).toBeUndefined()
+        )
+      }),
+      expect.hasAssertions()
+    )
   })
 })
