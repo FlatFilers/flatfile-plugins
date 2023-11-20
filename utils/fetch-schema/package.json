@@ -1,7 +1,10 @@
 {
-  "name": "@flatfile/utils-testing",
-  "version": "0.0.6",
-  "description": "A utility package for testing plugins",
+  "name": "@flatfile/util-fetch-schema",
+  "version": "0.0.2",
+  "description": "A utility for fetching schemas for processing",
+  "registryMetadata": {
+    "category": "utilities"
+  },
   "engines": {
     "node": ">= 16"
   },
@@ -15,18 +18,17 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
-  "author": "Carl Brugger",
+  "keywords": [],
+  "author": "Morgan Daley",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "utils/testing"
+    "directory": "utils/fetch-schema"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.37",
-    "@flatfile/listener": "^0.3.17",
-    "@flatfile/listener-driver-pubsub": "^1.0.0",
-    "@jest/globals": "^29.6.4",
-    "axios": "^1.4.0"
+    "@flatfile/api": "^1.5.30",
+    "@flatfile/listener": "^0.3.15",
+    "axios": "^1.6.1"
   }
 }

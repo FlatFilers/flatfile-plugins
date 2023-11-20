@@ -1,58 +1,29 @@
 import api from '@flatfile/api'
-import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
+import {
+  deleteSpace,
+  setupListener,
+  setupSpace,
+  startServer,
+  stopServer,
+} from '@flatfile/utils-testing'
 import express from 'express'
-import { configureSpaceWithJsonSchema, fetchExternalReference } from '../src'
-import { startServer, stopServer } from './test-server/server'
+import fs from 'fs'
+import path from 'path'
+import { configureSpaceWithYamlSchema } from '../src'
 
 const app = express()
 const port = 8080
 const url = `http://localhost:${port}/`
 
 let server
-
-describe('configureSpaceWithJsonSchema() e2e', () => {
-  const pureDataSchema = {
-    $id: 'https://localhost:3000/json',
-    description:
-      'A basic set of JSON Schema to test data type conversions simply',
-    type: 'object',
-    title: 'ExampleData',
-    properties: {
-      stringColumn: {
-        description: 'A column for strings!',
-        type: 'string',
-      },
-      integerColumn: {
-        description: 'A column for integers!',
-        type: 'integer',
-      },
-      arrayColumn: {
-        description: 'A column for string arrays!',
-        type: 'array',
-        items: {
-          type: 'string',
-        },
-      },
-      objectColumn: {
-        description:
-          'A column for nested columns containing numbers and strings!',
-        type: 'object',
-        properties: {
-          nestedUniqueNumberColumn: {
-            description: 'A column for unique numbers!',
-            type: 'number',
-            uniqueItems: true,
-          },
-          nestedStringColumn: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  }
+describe('configureSpaceWithYamlSchema() e2e', () => {
+  const pureDataSchema = fs.readFileSync(
+    path.resolve(__dirname, './exampleData.yml'),
+    'utf-8'
+  )
 
   const expectedWorkbookData = {
-    name: 'JSON Schema Workbook',
+    name: 'YAML Schema Workbook',
     labels: [],
     sheets: [
       {
@@ -60,7 +31,7 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
         config: {
           name: 'ExampleData',
           description:
-            'A basic set of JSON Schema to test data type conversions simply',
+            'A basic set of YAML Schema to test data type conversions simply',
           fields: [
             {
               type: 'string',
@@ -106,20 +77,7 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
     server = startServer(app, port, pureDataSchema)
     console.log('Setting up Space and Retrieving spaceId')
 
-    await listener.use(
-      configureSpaceWithJsonSchema({
-        workbooks: [
-          {
-            name: 'JSON Schema Workbook',
-            sheets: [
-              {
-                source: async () => await fetchExternalReference(url),
-              },
-            ],
-          },
-        ],
-      })
-    )
+    await listener.use(configureSpaceWithYamlSchema([{ sourceUrl: url }]))
 
     const space = await setupSpace()
     spaceId = space.id
@@ -127,11 +85,11 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
 
   afterAll(async () => {
     stopServer(server)
+    console.log(`Stopping temporary server on port ${port}`)
     await deleteSpace(spaceId)
   })
 
-  it('should configure a space and correctly format and flatten the JSON Schema', async () => {
-    console.log('starting configuration')
+  it('should configure a space and correctly format and flatten the YAML Schema', async () => {
     await listener.waitFor('job:ready', 1, 'space:configure')
 
     const space = await api.spaces.get(spaceId)
