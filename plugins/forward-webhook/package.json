@@ -26,6 +26,8 @@
   "dependencies": {
     "@flatfile/api": "^1.5.37",
     "@flatfile/listener": "^0.3.17",
+    "@types/express": "^4.17.21",
+    "@types/http-server": "^0.12.4",
     "axios": "^1.6.1"
   }
 }
