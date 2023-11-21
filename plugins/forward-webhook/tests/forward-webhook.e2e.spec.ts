@@ -1,20 +1,16 @@
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 
+import { CrossEnvConfig } from '@flatfile/cross-env-config'
 import { FlatfileEvent } from '@flatfile/listener'
-import axios from 'axios'
-import express from 'express'
-import http from 'http'
 import { forwardWebhook } from '../src'
 
-const app = express()
-const port = 6060
-const url = process.env.WEBHOOK_SITE_URL
-if (url === undefined) throw new Error('WEBHOOK_SITE_URL is undefined')
+const url = CrossEnvConfig.get('WEBHOOK_SITE_URL')
+if (url === undefined || url === '')
+  throw new Error('WEBHOOK_SITE_URL is undefined')
 const dataUrl = `${url}/data/`
 const errUrl = `http://badUrl.bad/error/`
 
 describe('forward-webhook() e2e', () => {
-  let server: http.Server
   let spaceId: string
   const listener = setupListener()
 
@@ -37,7 +33,6 @@ describe('forward-webhook() e2e', () => {
 
     const waitForWebhookCompletion = new Promise((resolve) => {
       listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
-        console.log('webhook complete')
         resolve(e)
       })
     })
@@ -56,7 +51,6 @@ describe('forward-webhook() e2e', () => {
 
     const waitForWebhookCompletion = new Promise((resolve) => {
       listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
-        console.log('webhook complete')
         resolve(e)
       })
     })
@@ -81,7 +75,6 @@ describe('forward-webhook() e2e', () => {
     )
     const waitForWebhookCompletion = new Promise((resolve) => {
       listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
-        console.log('webhook complete')
         resolve(e)
       })
     })
