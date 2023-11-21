@@ -1,4 +1,4 @@
-import { Express, json } from 'express'
+import { Express, json, urlencoded } from 'express'
 
 import http from 'http'
 
@@ -7,6 +7,7 @@ export const startServer = (
   port: number,
   data?: any
 ): http.Server => {
+  app.use(urlencoded({ extended: false }))
   app.use(json())
 
   app
