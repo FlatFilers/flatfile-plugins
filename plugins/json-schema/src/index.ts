@@ -1,7 +1,7 @@
 import { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { JsonSetupFactory, generateSetup } from './setup.factory'
+import { JsonSetupFactory, generateSetup } from '@flatfile/util-fetch-schema'
 
 export function configureSpaceWithJsonSchema(
   setupFactory: JsonSetupFactory,
@@ -15,5 +15,3 @@ export function configureSpaceWithJsonSchema(
     listener.use(configureSpace(await generateSetup(setupFactory), callback))
   }
 }
-
-export * from './setup.factory'
