@@ -34,7 +34,11 @@ describe('forward-webhook() e2e', () => {
 
   afterEach(async () => {
     console.log(`Stopping temporary server on port ${port}`)
-    await stopServer(server)
+    try {
+      await stopServer(server)
+    } catch (e) {
+      console.error(e)
+    }
 
     console.log('Deleting temporary Space')
     await deleteSpace(spaceId)
