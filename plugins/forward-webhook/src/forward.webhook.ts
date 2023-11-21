@@ -5,7 +5,7 @@ import axios from 'axios'
 
 // no return value
 export function forwardWebhook(
-  url: string,
+  url?: string,
   callback?: (data) => Promise<any> | any,
   options?: any
 ) {
@@ -14,11 +14,13 @@ export function forwardWebhook(
       if (e.topic === 'job:outcome-acknowledged') return
       console.log('starting try')
       try {
-        const { data } = await axios.post(url, e, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
+        const post = await axios.post(url || process.env.WEBHOOK_SITE_URL, e)
+        const data =
+          typeof post.data === 'string' && post.data.length > 0
+            ? { ...JSON.parse(post.data) }
+            : { ...post.data }
+
+        console.dir(data)
 
         let callbackData = callback ? await callback(data) : null
         console.log('success')

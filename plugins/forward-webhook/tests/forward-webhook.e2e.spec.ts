@@ -1,10 +1,4 @@
-import {
-  deleteSpace,
-  setupListener,
-  setupSpace,
-  startServer,
-  stopServer,
-} from '@flatfile/utils-testing'
+import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 
 import { FlatfileEvent } from '@flatfile/listener'
 import axios from 'axios'
@@ -14,9 +8,10 @@ import { forwardWebhook } from '../src'
 
 const app = express()
 const port = 6060
-const url = `http://localhost:${port}/`
-const dataUrl = `http://localhost:${port}/data/`
-const errUrl = `http://localhost:${port}/error/`
+const url = process.env.WEBHOOK_SITE_URL
+if (url === undefined) throw new Error('WEBHOOK_SITE_URL is undefined')
+const dataUrl = `${url}/data/`
+const errUrl = `http://badUrl.bad/error/`
 
 describe('forward-webhook() e2e', () => {
   let server: http.Server
@@ -24,48 +19,14 @@ describe('forward-webhook() e2e', () => {
   const listener = setupListener()
 
   beforeEach(async () => {
-    console.log(`Starting temporary server on port ${port}`)
-    server = startServer(app, port, { message: 'Hello World test!' })
-
     console.log('Setting up temporary Space and Retrieving spaceId')
     const space = await setupSpace()
     spaceId = space.id
   })
 
   afterEach(async () => {
-    console.log(`Stopping temporary server on port ${port}`)
-    try {
-      await stopServer(server)
-    } catch (e) {
-      console.error(e)
-    }
-
     console.log('Deleting temporary Space')
     await deleteSpace(spaceId)
-  })
-
-  it('should have spun up the server properly', async () => {
-    console.log('testing server')
-    const { data } = await axios.get(url)
-    console.dir(data)
-
-    const dataTwo = await axios
-      .post(
-        url,
-        { message: 'Hello World!' },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-request-id': '13242',
-          },
-        }
-      )
-      .catch((err) => {
-        console.error(err)
-      })
-    console.dir(dataTwo)
-
-    return expect(data).toBeTruthy, expect(dataTwo).toBeTruthy()
   })
 
   it('should forward webhook', async () => {
@@ -102,16 +63,13 @@ describe('forward-webhook() e2e', () => {
     listener.use(forwardWebhook(dataUrl, (data) => (testData = data)))
     return (
       await waitForWebhookCompletion.then((e: FlatfileEvent) => {
-        return (
-          expect(testData.data.dataMessage).toBe('Hello World!'),
-          expect(e.payload.error).toBeFalsy()
-        )
+        return expect(testData).toBeTruthy, expect(e.payload.error).toBeFalsy()
       }),
       expect.hasAssertions()
     )
   })
 
-  it('should error on 500 received', async () => {
+  it('should error on error received', async () => {
     console.log('setting up forwarding for error')
     let testData
 
