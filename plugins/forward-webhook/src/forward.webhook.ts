@@ -20,8 +20,6 @@ export function forwardWebhook(
             ? { ...JSON.parse(post.data) }
             : { ...post.data }
 
-        console.dir(data)
-
         let callbackData = callback ? await callback(data) : null
         console.log('success')
         api.events.create({
