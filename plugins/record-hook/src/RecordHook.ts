@@ -72,21 +72,19 @@ export const BulkRecordHook = async (
   const fetchData = async () => {
     try {
       const data = await event.data
-      return data.records && data.records.length
-        ? prepareXRecords(data.records)
-        : undefined
+      return data.records && data.records.length ? data.records : undefined
     } catch (e) {
       console.log(`Error fetching records: ${e}`)
     }
   }
 
   try {
-    const batch = await event.cache.init<FlatfileRecords<any>>(
-      'records',
+    const originalRecords = await event.cache.init<Flatfile.Record_[]>(
+      'originalRecords',
       fetchData
     )
 
-    if (!batch || batch.records.length === 0) {
+    if (!originalRecords || originalRecords.length === 0) {
       if (options.debug) {
         console.log('No records to process')
       }
@@ -94,17 +92,21 @@ export const BulkRecordHook = async (
       return
     }
 
-    await event.cache.init<FlatfileRecords<any>>('originalRecords', fetchData)
+    const batch = await event.cache.init<FlatfileRecords<any>>(
+      'records',
+      async () => await prepareXRecords(originalRecords)
+    )
 
     // Execute client-defined data hooks
     await asyncBatch(batch.records, handler, options, event)
 
     event.afterAll(async () => {
-      const batch = event.cache.get<FlatfileRecords<any>>('records')
+      const { records } = event.cache.get<FlatfileRecords<any>>('records')
+      const batch = new RecordTranslator<FlatfileRecord>(records).toXRecords()
       const originalRecords =
-        event.cache.get<FlatfileRecords<any>>('originalRecords')
-      const modifiedRecords = batch.records.filter((record) =>
-        hasRecordChanges(record, originalRecords.records)
+        event.cache.get<Flatfile.Record_[]>('originalRecords')
+      const modifiedRecords = batch.filter((record) =>
+        hasRecordChanges(record, originalRecords)
       )
       if (!modifiedRecords || modifiedRecords.length === 0) {
         if (options.debug) {
@@ -114,12 +116,8 @@ export const BulkRecordHook = async (
         return
       }
 
-      const recordsUpdates = new RecordTranslator<FlatfileRecord>(
-        modifiedRecords
-      ).toXRecords()
-
       try {
-        return await event.update(recordsUpdates)
+        return await event.update(modifiedRecords)
       } catch (e) {
         console.log(`Error updating records: ${e}`)
       }
@@ -138,16 +136,7 @@ const hasRecordChanges = (record, originalRecords) => {
   return JSON.stringify(record) !== JSON.stringify(originalRecord)
 }
 
-const prepareXRecords = (records: any): FlatfileRecords<any> => {
-  const clearedMessages: Flatfile.Record_[] = records.map(
-    (record: { values: { [x: string]: { messages: never[] } } }) => {
-      // clear existing cell validation messages
-      Object.keys(record.values).forEach((k) => {
-        record.values[k].messages = []
-      })
-      return record
-    }
-  )
-  const fromX = new RecordTranslator<Flatfile.Record_>(clearedMessages)
+const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
+  const fromX = new RecordTranslator<Flatfile.Record_>(records)
   return fromX.toFlatFileRecords()
 }
