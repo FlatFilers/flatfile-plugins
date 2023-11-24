@@ -1,0 +1,43 @@
+{
+  "name": "@flatfile/plugin-convert-yaml-schema",
+  "version": "0.0.3",
+  "description": "A plugin for converting YAML Schema definitions to Flatfile Blueprint.",
+  "registryMetadata": {
+    "category": "schema-converters"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [],
+  "author": "Flatfile, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/yaml-schema"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.5.33",
+    "@flatfile/plugin-convert-json-schema": "^0.1.0",
+    "@flatfile/plugin-json-schema": "^0.0.2",
+    "@flatfile/plugin-space-configure": "^0.1.5",
+    "@flatfile/util-fetch-schema": "^0.0.2",
+    "@flatfile/utils-testing": "^0.0.6",
+    "@hyperjump/json-schema": "^1.6.4",
+    "axios": "^1.5.1",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,5 +1,12 @@
 # @flatfile/plugin-dedupe
 
+## 0.0.7
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- 2dfe659: Bug fix when no duplicate values found
+
 ## 0.0.6
 
 ### Patch Changes

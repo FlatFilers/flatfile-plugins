@@ -121,7 +121,15 @@ export const dedupe = async (
       })
 
     if (R.isEmpty(removeThese)) {
-      await api.jobs.ack(jobId, { info: 'No duplicates found' })
+      try {
+        await api.jobs.complete(jobId, { info: 'No duplicates found' })
+      } catch (jobCompleteError: unknown) {
+        logError(
+          'Failed to set job as `complete`' +
+            '\n' +
+            JSON.stringify(jobCompleteError, null, 2)
+        )
+      }
       if (opts.debug) {
         logInfo('No duplicates found')
       }
