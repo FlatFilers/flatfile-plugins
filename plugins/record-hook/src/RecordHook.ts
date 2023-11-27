@@ -131,7 +131,7 @@ export const BulkRecordHook = async (
       }
     })
   } catch (e) {
-    console.log(`Error getting records: ${e}`)
+    console.error(`An error occurred while running the handler: ${e.message}`)
   }
 
   return handler
