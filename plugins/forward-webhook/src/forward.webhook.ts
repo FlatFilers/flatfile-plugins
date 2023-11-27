@@ -3,7 +3,6 @@ import api from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import axios from 'axios'
 
-// no return value
 export function forwardWebhook(
   url?: string,
   callback?: (data) => Promise<any> | any,
@@ -31,7 +30,6 @@ export function forwardWebhook(
           payload: callbackData || data,
         })
       } catch (err) {
-        console.log('error forwarding webhook')
         console.error(err)
         api.events.create({
           domain: e.domain as Flatfile.Domain,
