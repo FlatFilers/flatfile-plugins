@@ -9,10 +9,13 @@ export function forwardWebhook(
   options?: any
 ) {
   return async (listener: FlatfileListener) => {
-    return listener.on('**', async (e) => {
-      if (e.topic === 'job:outcome-acknowledged') return
+    return listener.on('**', async (event) => {
+      if (event.topic === 'job:outcome-acknowledged') return
       try {
-        const post = await axios.post(url || process.env.WEBHOOK_SITE_URL, e)
+        const post = await axios.post(
+          url || process.env.WEBHOOK_SITE_URL,
+          event
+        )
         if (post.status !== 200) throw new Error('Error forwarding webhook')
         const data =
           post.headers['content-type'] === 'application/json'
@@ -21,10 +24,10 @@ export function forwardWebhook(
 
         let callbackData = callback ? await callback(data) : null
         api.events.create({
-          domain: e.domain as Flatfile.Domain,
+          domain: event.domain as Flatfile.Domain,
           topic: 'job:outcome-acknowledged',
           context: {
-            ...e.context,
+            ...event.context,
             actionName: 'forward-webhook',
           },
           payload: callbackData || data,
@@ -32,10 +35,10 @@ export function forwardWebhook(
       } catch (err) {
         console.error(err)
         api.events.create({
-          domain: e.domain as Flatfile.Domain,
+          domain: event.domain as Flatfile.Domain,
           topic: 'job:outcome-acknowledged',
           context: {
-            ...e.context,
+            ...event.context,
             actionName: 'forward-webhook',
           },
           payload: {
