@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.13
+
+### Patch Changes
+
+- f18a889: Human-readable errors from recordHook
+
 ## 1.1.12
 
 ### Patch Changes
