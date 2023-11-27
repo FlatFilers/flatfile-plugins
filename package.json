@@ -14,6 +14,7 @@
     "clean": "find ./ '(' -name 'node_modules' -o -name 'dist' -o -name '.turbo' -o -name '.parcel-cache' ')' -type d -exec rm -rf {} +",
     "test": "turbo test --concurrency=1",
     "build": "turbo build",
+    "reset": "npm run clean && npm i && npm run build",
     "lint": "prettier --check **/*.ts",
     "changeset": "changeset",
     "changeset-apply": "changeset version",
@@ -37,7 +38,7 @@
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
-    "@flatfile/listener": "^0.3.15",
+    "@flatfile/listener": "^0.3.17",
     "@flatfile/utils-testing": "^0.0.2",
     "@parcel/packager-ts": "^2.9.1",
     "@parcel/transformer-typescript-types": "^2.9.1",

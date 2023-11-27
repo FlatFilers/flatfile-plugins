@@ -18,13 +18,19 @@ export const RecordHook = async (
   ) => any | Promise<any>,
   options: RecordHookOptions = {}
 ) => {
-  const { concurrency } = { concurrency: 10, ...options }
+  const { concurrency = 10 } = options
   return BulkRecordHook(
     event,
     async (records, event) => {
       const handlers = await records.map((record: FlatfileRecord) =>
         Effect.promise(async () => {
-          await handler(record, event)
+          try {
+            await handler(record, event)
+          } catch (e) {
+            console.error(
+              `An error occurred while running the handler: ${e.message}`
+            )
+          }
         })
       )
       return Effect.runPromise(
@@ -125,35 +131,17 @@ export const BulkRecordHook = async (
       }
     })
   } catch (e) {
-    console.log(`Error getting records: ${e}`)
+    console.error(`An error occurred while running the handler: ${e.message}`)
   }
 
   return handler
 }
 
-const hasRecordChanges = (
-  record: FlatfileRecord,
-  originalRecords: FlatfileRecord[]
-) => {
+const hasRecordChanges = (record, originalRecords) => {
   const originalRecord = originalRecords.find(
     (original) => original.rowId === record.rowId
   )
-  return !deepEqual(originalRecord, record)
-}
-
-function deepEqual(obj1, obj2) {
-  if (obj1 === obj2) return true
-
-  const keysA = Object.keys(obj1)
-  const keysB = Object.keys(obj2)
-
-  if (keysA.length !== keysB.length) return false
-
-  for (let key of keysA) {
-    if (!keysB.includes(key) || !deepEqual(obj1[key], obj2[key])) return false
-  }
-
-  return true
+  return JSON.stringify(record) !== JSON.stringify(originalRecord)
 }
 
 const prepareXRecords = (records: any): FlatfileRecords<any> => {

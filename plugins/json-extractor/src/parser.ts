@@ -1,4 +1,5 @@
 import { WorkbookCapture } from '@flatfile/util-extractor'
+import { flatten } from 'flat'
 
 export function parseBuffer(buffer: Buffer): WorkbookCapture {
   try {
@@ -10,21 +11,32 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
       return {} as WorkbookCapture
     }
 
-    const results: Array<Record<string, string>> = JSON.parse(fileContents)
+    const parsedData = JSON.parse(fileContents) || []
+    const results = Array.isArray(parsedData) ? parsedData : [parsedData]
 
-    if (!results || !results.length) {
-      console.log('No data found in the file')
+    // Ensure all items are objects
+    const filteredResults = results.filter(
+      (item) => typeof item === 'object' && item !== null
+    )
+
+    if (filteredResults.length === 0) {
       return {} as WorkbookCapture
     }
 
-    const headers = Object.keys(results[0]).filter((header) => header !== '')
+    // Flatten the first item to determine headers
+    const firstItem = flatten(filteredResults[0], { safe: true })
+    const headers = Object.keys(firstItem).filter((header) => header !== '')
 
-    const filteredData = results.map((row: Record<string, any>) => {
-      const filteredRow: Record<string, any> = {}
-      for (const header of headers) {
-        filteredRow[header] = { value: row[header] }
-      }
-      return filteredRow
+    // Flatten and filter all rows once
+    const filteredData = filteredResults.map((row) => {
+      const flattedRow = flatten(row, { safe: true })
+      return headers.reduce((filteredRow, header) => {
+        const cell = flattedRow[header]
+        filteredRow[header] = {
+          value: Array.isArray(cell) ? JSON.stringify(cell) : cell,
+        }
+        return filteredRow
+      }, {})
     })
 
     return {
@@ -34,7 +46,7 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
       },
     } as WorkbookCapture
   } catch (error) {
-    console.log('An error occurred:', error)
+    console.error('An error occurred:', error)
     throw error
   }
 }

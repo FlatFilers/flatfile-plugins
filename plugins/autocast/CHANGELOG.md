@@ -1,5 +1,14 @@
 # @flatfile/plugin-autocast
 
+## 0.3.3
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- Updated dependencies [28820d5]
+  - @flatfile/plugin-record-hook@1.1.12
+  - @flatfile/util-common@0.2.3
+
 ## 0.3.2
 
 ### Patch Changes

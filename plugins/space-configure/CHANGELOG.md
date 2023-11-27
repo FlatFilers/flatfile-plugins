@@ -1,5 +1,15 @@
 # @flatfile/plugin-space-configure
 
+## 0.1.6
+
+### Patch Changes
+
+- 28820d5: Release to update @flatfile/api dep
+- edaedf5: Fix tick params
+- Updated dependencies [28820d5]
+- Updated dependencies [edaedf5]
+  - @flatfile/plugin-job-handler@0.1.5
+
 ## 0.1.5
 
 ### Patch Changes
