@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-webhook-forward-events",
+  "name": "@flatfile/plugin-automation-webhook-event-forwarding",
   "version": "0.0.1",
   "description": "A plugin to forward events via webhook for clients to manipulate at their endpoints in a language-agnostic way.",
   "source": "src/index.ts",
