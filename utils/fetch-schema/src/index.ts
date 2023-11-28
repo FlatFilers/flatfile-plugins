@@ -185,3 +185,17 @@ export async function fetchExternalReference(url: string): Promise<any> {
     throw new Error(`Error fetching external reference: ${error.message}`)
   }
 }
+
+export async function getModel(
+  source: object | string | (() => object | Promise<object>)
+) {
+  if (typeof source === 'function') {
+    return await source()
+  }
+
+  if (typeof source === 'string' && isValidUrl(source)) {
+    return await fetchExternalReference(source)
+  }
+
+  return source
+}

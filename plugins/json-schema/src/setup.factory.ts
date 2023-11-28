@@ -5,7 +5,8 @@ import {
   PartialSheetConfig,
   SchemaSetupFactory,
   fetchExternalReference,
-  getPropertyType,
+  generateFields,
+  getModel,
   isValidUrl,
 } from '@flatfile/util-fetch-schema'
 
@@ -37,44 +38,4 @@ export async function generateSetup(
   )
 
   return { workbooks, space: setupFactory.space }
-}
-
-async function getModel(
-  source: object | string | (() => object | Promise<object>)
-) {
-  if (typeof source === 'function') {
-    return await source()
-  }
-
-  if (typeof source === 'string' && isValidUrl(source)) {
-    return await fetchExternalReference(source)
-  }
-
-  return source
-}
-
-export async function generateFields(data: any): Promise<Flatfile.Property[]> {
-  if (!data.properties) return []
-
-  const getOrigin = (url: string) => {
-    try {
-      return new URL(url).origin
-    } catch (error) {
-      return ''
-    }
-  }
-  const origin = getOrigin(data.$id)
-
-  const fields = await Promise.all(
-    Object.keys(data.properties).map(async (key) => {
-      return await getPropertyType(
-        data,
-        data.properties[key],
-        key,
-        (data.required && data.required.includes(key)) || false,
-        origin
-      )
-    })
-  )
-  return fields.flat().filter(Boolean)
 }
