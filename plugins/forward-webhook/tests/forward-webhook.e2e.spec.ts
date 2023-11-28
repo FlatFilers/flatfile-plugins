@@ -1,4 +1,7 @@
+import type { Flatfile } from '@flatfile/api'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
+
+import api from '@flatfile/api'
 
 import { CrossEnvConfig } from '@flatfile/cross-env-config'
 import { FlatfileEvent } from '@flatfile/listener'
@@ -29,7 +32,22 @@ describe('forward-webhook() e2e', () => {
     console.log('setting up forwarding')
     let testData
 
-    listener.use(forwardWebhook(url, (data) => (testData = data)))
+    listener.use(
+      forwardWebhook(url, (data, event) => {
+        if (event.topic === 'job:outcome-acknowledged') {
+          return
+        }
+        api.events.create({
+          domain: event.domain as Flatfile.Domain,
+          topic: 'job:outcome-acknowledged',
+          context: {
+            ...event.context,
+            actionName: 'forward-webhook',
+          },
+          payload: data,
+        })
+      })
+    )
 
     const waitForWebhookCompletion = new Promise((resolve) => {
       listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
@@ -54,7 +72,22 @@ describe('forward-webhook() e2e', () => {
         resolve(e)
       })
     })
-    listener.use(forwardWebhook(dataUrl, (data) => (testData = data)))
+    listener.use(
+      forwardWebhook(url, (data, event) => {
+        if (event.topic === 'job:outcome-acknowledged') {
+          return
+        }
+        api.events.create({
+          domain: event.domain as Flatfile.Domain,
+          topic: 'job:outcome-acknowledged',
+          context: {
+            ...event.context,
+            actionName: 'forward-webhook',
+          },
+          payload: data,
+        })
+      })
+    )
     return (
       await waitForWebhookCompletion.then((e: FlatfileEvent) => {
         return expect(testData).toBeTruthy, expect(e.payload.error).toBeFalsy()
@@ -68,9 +101,19 @@ describe('forward-webhook() e2e', () => {
     let testData
 
     listener.use(
-      forwardWebhook(errUrl, (data) => {
-        // callbacks do not run on error
-        testData = data
+      forwardWebhook(errUrl, (data, event) => {
+        if (event.topic === 'job:outcome-acknowledged') {
+          return
+        }
+        api.events.create({
+          domain: event.domain as Flatfile.Domain,
+          topic: 'job:outcome-acknowledged',
+          context: {
+            ...event.context,
+            actionName: 'forward-webhook',
+          },
+          payload: data,
+        })
       })
     )
     const waitForWebhookCompletion = new Promise((resolve) => {
