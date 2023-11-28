@@ -1,9 +1,17 @@
+import { Flatfile } from '@flatfile/api'
+import { SetupFactory } from '@flatfile/plugin-space-configure'
 import axios from 'axios'
 
-import { Flatfile } from '@flatfile/api'
+export type SchemaSetupFactory = {
+  workbooks: PartialWorkbookConfig[]
+  space?: Partial<Flatfile.spaces.SpaceConfig>
+}
 
-export interface ModelToSheetConfig extends PartialSheetConfig {
-  sourceUrl: string
+export type PartialWorkbookConfig = Omit<
+  Flatfile.CreateWorkbookConfig,
+  'sheets'
+> & {
+  sheets: PartialSheetConfig[]
 }
 
 export type PartialSheetConfig = Omit<
@@ -11,34 +19,144 @@ export type PartialSheetConfig = Omit<
   'fields' | 'name'
 > & {
   name?: string
+  source: object | string | (() => object | Promise<object>)
 }
 
-export type PartialWorkbookConfig = Omit<
-  Flatfile.CreateWorkbookConfig,
-  'sheets' | 'name'
-> & {
-  name?: string
-}
-
-export async function getSchemas(models?: ModelToSheetConfig[]) {
-  const schemas = models.map(async (model: ModelToSheetConfig) => {
-    return await fetchExternalReference(model.sourceUrl)
-  })
-
-  return await Promise.all(schemas)
-}
-
-export async function fetchExternalReference(url: string): Promise<any> {
+export function isValidUrl(url: string) {
   try {
-    const { status, data } = await axios.get(url, {
-      validateStatus: () => true,
-    })
-    if (status !== 200)
-      throw new Error(`API returned status ${status}: ${data.statusText}`)
-    return data
-  } catch (error: any) {
-    throw new Error(`Error fetching external reference: ${error.message}`)
+    new URL(url)
+    return true
+  } catch (error) {
+    return false
   }
+}
+
+export async function generateFields(data: any): Promise<Flatfile.Property[]> {
+  if (!data.properties) return []
+
+  const getOrigin = (url: string) => {
+    try {
+      return new URL(url).origin
+    } catch (error) {
+      return ''
+    }
+  }
+  const origin = getOrigin(data.$id)
+
+  const fields = await Promise.all(
+    Object.keys(data.properties).map(async (key) => {
+      return await getPropertyType(
+        data,
+        data.properties[key],
+        key,
+        (data.required && data.required.includes(key)) || false,
+        origin
+      )
+    })
+  )
+  return fields.flat().filter(Boolean)
+}
+
+export async function getPropertyType(
+  schema: any,
+  property: any,
+  parentKey = '',
+  isRequired = false,
+  origin: string
+): Promise<Flatfile.Property[]> {
+  if (property.$ref) {
+    const resolvedProperty = await resolveReference(
+      schema,
+      property.$ref,
+      origin
+    )
+    return await getPropertyType(
+      schema,
+      resolvedProperty,
+      parentKey,
+      false,
+      origin
+    )
+  }
+
+  if (property.type === 'object' && property.properties) {
+    const propertyFields = await Promise.all(
+      Object.keys(property.properties).map(async (key) => {
+        return await getPropertyType(
+          property,
+          property.properties[key],
+          parentKey ? `${parentKey}_${key}` : key,
+          (property.required && property.required.includes(key)) || false,
+          origin
+        )
+      })
+    )
+    return propertyFields.flat()
+  }
+
+  const fieldTypes: Record<string, Flatfile.Property> = {
+    string: { key: parentKey, type: 'string' },
+    number: { key: parentKey, type: 'number' },
+    integer: { key: parentKey, type: 'number' },
+    boolean: { key: parentKey, type: 'boolean' },
+    array: {
+      key: parentKey,
+      type: 'enum',
+      description: 'An enum of Selected Values',
+      config: property.enum
+        ? {
+            options: property.enum.map((value: any) => ({
+              value,
+              label: String(value),
+            })),
+          }
+        : {
+            options: [],
+          },
+    },
+    enum: {
+      key: parentKey,
+      type: 'enum',
+      config: property?.enum
+        ? {
+            options: property.enum.map((value: any) => ({
+              value,
+              label: String(value),
+            })),
+          }
+        : {
+            options: [],
+          },
+    },
+  }
+
+  const fieldConfig: Flatfile.Property = {
+    label: parentKey,
+    ...(property?.description && { description: property.description }),
+    ...(isRequired && { constraints: [{ type: 'required' }] }),
+    ...fieldTypes[property.type],
+  }
+
+  return fieldTypes[fieldConfig.type] ? [fieldConfig] : []
+}
+
+export async function resolveReference(
+  schema: any,
+  ref: string,
+  origin: string
+): Promise<any> {
+  const hashIndex = ref.indexOf('#')
+
+  if (ref.startsWith('#/')) return resolveLocalReference(schema, ref)
+
+  const urlPart = hashIndex >= 0 ? ref.substring(0, hashIndex) : ref
+  const fragmentPart = hashIndex >= 0 ? ref.substring(hashIndex) : ''
+
+  const externalSchema = await fetchExternalReference(`${origin}${urlPart}`)
+
+  return fragmentPart
+    ? resolveLocalReference(externalSchema, fragmentPart)
+    : externalSchema
 }
 
 export function resolveLocalReference(schema: any, ref: string): any {
@@ -53,4 +171,17 @@ export function resolveLocalReference(schema: any, ref: string): any {
 
   if (!resolved) throw new Error(`Cannot resolve reference: ${ref}`)
   return resolved
+}
+
+export async function fetchExternalReference(url: string): Promise<any> {
+  try {
+    const { status, data } = await axios.get(url, {
+      validateStatus: () => true,
+    })
+    if (status !== 200)
+      throw new Error(`API returned status ${status}: ${data.statusText}`)
+    return data
+  } catch (error) {
+    throw new Error(`Error fetching external reference: ${error.message}`)
+  }
 }

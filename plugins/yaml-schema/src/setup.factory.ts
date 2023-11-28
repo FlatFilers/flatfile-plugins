@@ -1,6 +1,8 @@
 import { Flatfile } from '@flatfile/api'
 import { SetupFactory } from '@flatfile/plugin-space-configure'
 
+import jsYaml from 'js-yaml'
+
 import {
   PartialSheetConfig,
   SchemaSetupFactory,
@@ -16,7 +18,7 @@ export async function generateSetup(
     setupFactory.workbooks.map(async (workbook) => {
       const sheets = await Promise.all(
         workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) => {
-          const model = await getModel(partialSheetConfig.source)
+          const model = jsYaml.load(await getModel(partialSheetConfig.source))
           delete partialSheetConfig.source
           const fields = await generateFields(model)
 

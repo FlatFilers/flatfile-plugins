@@ -1,7 +1,8 @@
 import api from '@flatfile/api'
+import { fetchExternalReference } from '@flatfile/util-fetch-schema'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 import express from 'express'
-import { configureSpaceWithJsonSchema, fetchExternalReference } from '../src'
+import { configureSpaceWithJsonSchema } from '../src'
 import { startServer, stopServer } from './test-server/server'
 
 const app = express()

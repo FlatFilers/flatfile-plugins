@@ -1,10 +1,11 @@
 import { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { JsonSetupFactory, generateSetup } from './setup.factory'
+import { SchemaSetupFactory } from '@flatfile/util-fetch-schema'
+import { generateSetup } from './setup.factory'
 
 export function configureSpaceWithJsonSchema(
-  setupFactory: JsonSetupFactory,
+  setupFactory: SchemaSetupFactory,
   callback?: (
     event: FlatfileEvent,
     workbookIds: string[],
