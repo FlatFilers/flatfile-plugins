@@ -1,4 +1,4 @@
-import { Extractor } from '@flatfile/util-extractor'
+import { Extractor } from '../../../utils/extractor/src'
 import { parseBuffer } from './parser'
 
 /**
