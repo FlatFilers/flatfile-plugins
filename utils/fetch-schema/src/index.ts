@@ -199,3 +199,43 @@ export async function getModel(
 
   return source
 }
+
+async function processSheetConfig(
+  partialSheetConfig: PartialSheetConfig,
+  loadFunction?: (source: string) => Promise<any>
+): Promise<any> {
+  const model = loadFunction
+    ? loadFunction(await getModel(partialSheetConfig.source))
+    : await getModel(partialSheetConfig.source)
+  delete partialSheetConfig.source
+  const fields = await generateFields(model)
+
+  return {
+    name: partialSheetConfig?.name || model.title,
+    ...(model?.description && { description: model.description }),
+    fields,
+    ...partialSheetConfig,
+  }
+}
+
+export async function generateSetup(
+  setupFactory: SchemaSetupFactory,
+  loadFunction?: () => any | Promise<any>
+): Promise<SetupFactory> {
+  const workbooks = await Promise.all(
+    setupFactory.workbooks.map(async (workbook) => {
+      const sheets = await Promise.all(
+        workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) =>
+          processSheetConfig(partialSheetConfig, loadFunction)
+        )
+      )
+
+      return {
+        ...workbook,
+        sheets,
+      }
+    })
+  )
+
+  return { workbooks, space: setupFactory.space }
+}

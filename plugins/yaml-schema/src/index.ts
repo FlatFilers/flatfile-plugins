@@ -1,8 +1,8 @@
 import { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { SchemaSetupFactory } from '@flatfile/util-fetch-schema'
-import { generateSetup } from './setup.factory'
+import { SchemaSetupFactory, generateSetup } from '@flatfile/util-fetch-schema'
+import jsYaml from 'js-yaml'
 
 export function configureSpaceWithYamlSchema(
   setupFactory: SchemaSetupFactory,
@@ -13,8 +13,8 @@ export function configureSpaceWithYamlSchema(
   ) => any | Promise<any>
 ) {
   return async function (listener: FlatfileListener) {
-    listener.use(configureSpace(await generateSetup(setupFactory), callback))
+    listener.use(
+      configureSpace(await generateSetup(setupFactory, jsYaml.load), callback)
+    )
   }
 }
-
-export * from './setup.factory'
