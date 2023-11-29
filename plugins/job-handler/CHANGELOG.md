@@ -1,5 +1,11 @@
 # @flatfile/plugin-job-handler
 
+## 0.1.6
+
+### Patch Changes
+
+- 3d31680: Display Modal instead of a Toast on Job error
+
 ## 0.1.5
 
 ### Patch Changes
