@@ -200,9 +200,11 @@ export async function getModel(
   return source
 }
 
+type loadFunction = (func: () => any) => any | Promise<any>
+
 async function processSheetConfig(
   partialSheetConfig: PartialSheetConfig,
-  loadFunction?: (source: string) => Promise<any>
+  loadFunction?: loadFunction
 ): Promise<any> {
   const model = loadFunction
     ? loadFunction(await getModel(partialSheetConfig.source))
@@ -220,7 +222,7 @@ async function processSheetConfig(
 
 export async function generateSetup(
   setupFactory: SchemaSetupFactory,
-  loadFunction?: () => any | Promise<any>
+  loadFunction?: loadFunction
 ): Promise<SetupFactory> {
   const workbooks = await Promise.all(
     setupFactory.workbooks.map(async (workbook) => {
