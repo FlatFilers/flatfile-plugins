@@ -1,4 +1,4 @@
-import { CompositeFieldOptions, compositeUniquePlugin } from '.'
+import { CompositeFieldOptions, CompositeProperty, compositeUniquePlugin } from '.'
 
 import {
   setupListener,
@@ -22,10 +22,12 @@ const testSheetFields: Array<Flatfile.Property> = [
   {
     key: 'combo1',
     type: 'string',
+    constraints: [{ type: 'unique' }],
   },
   {
     key: 'combo2',
     type: 'string',
+    constraints: [{ type: 'unique' }],
   },
 ]
 
@@ -39,6 +41,12 @@ const testSheetValues = [
   {
     field1: 'Chase',
     field2: 'Gerald',
+    combo1: '',
+    combo2: '',
+  },
+  {
+    field1: '',
+    field2: 'AlexJoe',
     combo1: '',
     combo2: '',
   },
@@ -110,6 +118,7 @@ describe('compositeUniquePlugin', () => {
     const space = await setupSpace()
     spaceId = space.id
     const workbook = await setupSimpleWorkbook(space.id, testSheetFields)
+    console.dir(workbook, { depth: null })
     sheetId = workbook.sheets[0].id
   })
 
@@ -119,10 +128,18 @@ describe('compositeUniquePlugin', () => {
 
   describe('Creates composite field value properly', () => {
     it('correctly combines fields if no source is provided', async () => {
+      const field: CompositeProperty = {
+        key: 'combo1',
+        type: 'composite',
+        constraints: [{ type: 'unique' }],
+        config: {
+          sources: ['field1', 'field2'],
+        },
+      }
+
       const testOptions1: CompositeFieldOptions = {
         sheetSlug: 'test',
-        name: 'combo1',
-        fields: ['field1', 'field2'],
+        field
       }
 
       listener.use(compositeUniquePlugin(testOptions1))
@@ -138,11 +155,19 @@ describe('compositeUniquePlugin', () => {
     })
 
     it('correctly performs source combination', async () => {
+      const field: CompositeProperty = {
+        key: 'combo2',
+        type: 'composite',
+        constraints: [{ type: 'unique' }],
+        config: {
+          sources: ['field1', 'field2'],
+        },
+      }
+
       const testOptions2: CompositeFieldOptions = {
         sheetSlug: 'test',
-        name: 'combo2',
-        fields: ['field1', 'field2'],
-        source: async ({ fields, record }) => 'HotDog',
+        field,
+        handler: async ({ fields, record }) => 'HotDog',
       }
 
       listener.use(compositeUniquePlugin(testOptions2))
@@ -153,8 +178,8 @@ describe('compositeUniquePlugin', () => {
       const records = await getRecords(sheetId)
       // console.dir(records, { depth: null })
 
-      expect(records[2].values['combo2'].value).toBe('HotDog')
       expect(records[3].values['combo2'].value).toBe('HotDog')
+      expect(records[4].values['combo2'].value).toBe('HotDog')
     })
   })
 })

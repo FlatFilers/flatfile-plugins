@@ -87,6 +87,7 @@ export async function setupSimpleWorkbook(
     name: 'ci-wb-' + Date.now(),
     spaceId: spaceId,
     environmentId: getEnvironmentId(),
+    settings: { trackChanges: true },
     sheets: [
       {
         name: 'test',

@@ -27,6 +27,8 @@
     "@flatfile/listener": "^0.3.17",
     "@flatfile/listener-driver-pubsub": "^1.0.0",
     "@jest/globals": "^29.6.4",
+    "@parcel/packager-ts": "^2.10.3",
+    "@parcel/transformer-typescript-types": "^2.10.3",
     "axios": "^1.4.0"
   }
 }

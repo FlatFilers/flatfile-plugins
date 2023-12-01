@@ -1,0 +1,16 @@
+{
+    "name": "flatfile-playground",
+    "version": "0.0.0",
+    "description": "",
+    "source": "src/index.ts",
+    "scripts": {
+      "start": "npx flatfile@latest develop"
+    },
+    "author": "Carl Brugger",
+    "license": "ISC",
+    "dependencies": {
+      "@flatfile/api": "^1.5.20",
+      "@flatfile/hooks": "^1.3.2",
+      "@flatfile/javascript": "^0.1.5"
+    }
+  }
