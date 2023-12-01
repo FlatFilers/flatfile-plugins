@@ -1,4 +1,4 @@
-import { Extractor } from '../../../utils/extractor/src'
+import { Extractor } from '@flatfile/util-extractor'
 import { GetHeadersOptions } from './header.detection'
 import { parseBuffer } from './parser'
 
