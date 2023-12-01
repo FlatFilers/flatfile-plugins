@@ -71,6 +71,7 @@ export function jobHandler(
           outcome ?? {
             info: String(error.message),
             outcome: {
+              acknowledge: true,
               message: String(error.message),
             },
           }

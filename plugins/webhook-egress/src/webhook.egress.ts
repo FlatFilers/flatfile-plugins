@@ -12,7 +12,7 @@ export function webhookEgress(job: string, webhookUrl?: string) {
   return function (listener: FlatfileListener) {
     listener.use(
       jobHandler(job, async (event, tick) => {
-        const { workbookId, payload } = event.context
+        const { workbookId } = event.context
         const { data: workbook } = await api.workbooks.get(workbookId)
         const { data: workbookSheets } = await api.sheets.list({ workbookId })
 
@@ -34,7 +34,6 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           const response = await axios.post(
             webhookReceiver,
             {
-              ...payload,
               workbook: {
                 ...workbook,
                 sheets,

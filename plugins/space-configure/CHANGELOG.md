@@ -1,5 +1,11 @@
 # @flatfile/plugin-space-configure
 
+## 0.1.7
+
+### Patch Changes
+
+- 91662e0: Dependency update
+
 ## 0.1.6
 
 ### Patch Changes
