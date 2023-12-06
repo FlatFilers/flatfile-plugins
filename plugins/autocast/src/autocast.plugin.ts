@@ -13,7 +13,7 @@ export function autocast(
     debug?: boolean
   }
 ) {
-  return async (listener: FlatfileListener) => {
+  return (listener: FlatfileListener) => {
     listener.on(
       'commit:created',
       { sheetSlug },
