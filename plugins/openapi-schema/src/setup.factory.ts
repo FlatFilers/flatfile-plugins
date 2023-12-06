@@ -1,18 +1,29 @@
 import { Flatfile } from '@flatfile/api'
-import { SetupFactory } from '@flatfile/plugin-space-configure'
+import { PartialWb, SetupFactory } from '@flatfile/plugin-space-configure'
 import axios from 'axios'
+
+export type OpenAPISetupFactory = {
+  workbooks: PartialWorkbookConfig[]
+  space?: Partial<Flatfile.spaces.SpaceConfig>
+  debug?: boolean
+}
 
 export type PartialWorkbookConfig = Omit<
   Flatfile.CreateWorkbookConfig,
-  'sheets' | 'name'
+  'name' | 'sheets'
 > & {
   name?: string
+  sheets: PartialSheetConfig[]
+  source: string
 }
+
 export type PartialSheetConfig = Omit<
   Flatfile.SheetConfig,
-  'fields' | 'name'
+  'fields' | 'name' | 'slug'
 > & {
   name?: string
+  slug?: string
+  model: string
 }
 
 export type ModelsToSheetConfig = { [key: string]: PartialSheetConfig }
@@ -32,49 +43,63 @@ interface ApiSchemas {
 }
 
 export async function generateSetup(
-  url: string,
-  options?: {
-    models?: ModelsToSheetConfig
-    workbookConfig?: PartialWorkbookConfig
-    debug?: boolean
-  }
+  setupFactory: OpenAPISetupFactory
 ): Promise<SetupFactory> {
   try {
-    const { status, data } = await axios.get(url, {
-      validateStatus: () => true,
-    })
-
-    if (status !== 200) {
-      throw new Error(`API returned status ${status}: ${data.statusText}`)
-    }
-
-    const schemas: ApiSchemas = data.components.schemas
-
-    const sheetConfigs: Flatfile.SheetConfig[] = await Promise.all(
-      Object.entries(schemas)
-        .filter(
-          ([key]) => !options?.models || options?.models.hasOwnProperty(key)
-        )
-        .map(async ([key, schema]) => {
-          const fields = await generateFields(schema, schemas)
-          const modelDetails = options?.models?.[key]
-          return {
-            name: modelDetails?.name || key,
-            fields,
-            ...modelDetails,
-          }
+    const workbooks: PartialWb[] = await Promise.all(
+      setupFactory.workbooks.map(async (workbook) => {
+        const { status, data } = await axios.get(workbook.source, {
+          validateStatus: () => true,
         })
-    )
 
-    return {
-      workbooks: [
-        {
+        if (status !== 200) {
+          throw new Error(`API returned status ${status}: ${data.statusText}`)
+        }
+
+        const schemas: ApiSchemas = data.components.schemas
+
+        const sheets: Flatfile.SheetConfig[] = (
+          await Promise.all(
+            workbook.sheets.map(async (sheet) => {
+              const modelName = sheet.model
+              delete sheet.model
+              const schema = schemas[modelName]
+              if (!schema) {
+                console.error(`Schema not found for table name ${sheet.slug}`)
+                return
+              }
+              const fields: Flatfile.Property[] = await generateFields(
+                schema,
+                schemas
+              )
+
+              const requiredFields = new Set(schema.required || [])
+              fields.forEach((field) => {
+                if (requiredFields.has(field.key)) {
+                  field.constraints?.push({ type: 'required' })
+                }
+              })
+
+              return {
+                name: modelName,
+                slug: modelName,
+                ...sheet,
+                fields,
+              } as Flatfile.SheetConfig
+            })
+          )
+        ).filter(Boolean)
+
+        delete workbook.source
+
+        return {
           name: data.info.title,
-          ...options?.workbookConfig,
-          sheets: sheetConfigs,
-        },
-      ],
-    }
+          ...workbook,
+          sheets,
+        } as PartialWb
+      })
+    )
+    return { workbooks, space: setupFactory.space }
   } catch (error) {
     console.error(error)
     throw new Error(`Error fetching or processing schema: ${error.message}`)

@@ -40,8 +40,15 @@ describe('SpaceConfigure plugin e2e tests', () => {
   beforeAll(async () => {
     listener.use(
       configureSpaceWithOpenAPI(
-        'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.1/webhook-example.json',
-        undefined,
+        {
+          workbooks: [
+            {
+              source:
+                'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.1/webhook-example.json',
+              sheets: [{ model: 'Pet' }],
+            },
+          ],
+        },
         mockFn
       )
     )
