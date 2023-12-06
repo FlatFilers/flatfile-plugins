@@ -29,7 +29,10 @@ export async function responseRejectionHandler(
   }
 
   const message = responseRejection.message ?? getMessage(totalRejectedRecords)
-  const next = getNext(totalRejectedRecords)
+  const next = getNext(
+    totalRejectedRecords,
+    responseRejection.sheets[0].sheetId
+  )
 
   return {
     outcome: {
@@ -48,12 +51,15 @@ function getMessage(totalRejectedRecords) {
     : 'The data has been successfully submitted without any rejections. This task is now complete.'
 }
 
-function getNext(totalRejectedRecords): Flatfile.JobOutcomeNext | undefined {
+function getNext(
+  totalRejectedRecords: number,
+  sheetId: string
+): Flatfile.JobOutcomeNext | undefined {
   return totalRejectedRecords > 0
     ? {
-        type: 'url',
-        url: '?searchField=submissionStatus&searchValue=rejected',
-        label: 'See rejections',
+        type: 'id',
+        id: sheetId,
+        query: 'searchField=submissionStatus&searchValue=rejected',
       }
     : undefined
 }
