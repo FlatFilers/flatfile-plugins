@@ -1,5 +1,17 @@
 # @flatfile/plugin-record-hook
 
+## 1.1.14
+
+### Patch Changes
+
+- 920df43: This update handles caching of record messages.
+
+## 1.1.13
+
+### Patch Changes
+
+- f18a889: Human-readable errors from recordHook
+
 ## 1.1.12
 
 ### Patch Changes
