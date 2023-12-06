@@ -1,4 +1,5 @@
 import { Extractor } from '@flatfile/util-extractor'
+import { GetHeadersOptions } from './header.detection'
 import { parseBuffer } from './parser'
 
 /**
@@ -15,6 +16,7 @@ export interface ExcelExtractorOptions {
   readonly rawNumbers?: boolean
   readonly chunkSize?: number
   readonly parallel?: number
+  readonly headerDetectionOptions?: GetHeadersOptions
   readonly debug?: boolean
 }
 
