@@ -6,7 +6,7 @@
     "category": "extractor"
   },
   "engines": {
-    "node": ">= 16"
+    "node": ">= 18"
   },
   "source": "src/index.ts",
   "main": "dist/main.js",
