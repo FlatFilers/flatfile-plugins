@@ -7,7 +7,10 @@ import { mapValues } from 'remeda'
 export const Extractor = (
   fileExt: string | RegExp,
   extractorType: string,
-  parseBuffer: (buffer: Buffer, options: any) => WorkbookCapture,
+  parseBuffer: (
+    buffer: Buffer,
+    options: any
+  ) => WorkbookCapture | Promise<WorkbookCapture>,
   options?: Record<string, any>
 ) => {
   return (listener: FlatfileListener) => {
@@ -56,7 +59,7 @@ export const Extractor = (
           }
 
           await tick(3, 'Parsing Sheets')
-          const capture = parseBuffer(buffer, options)
+          const capture = await parseBuffer(buffer, options)
           const workbook = await createWorkbook(
             event.context.environmentId,
             file,
