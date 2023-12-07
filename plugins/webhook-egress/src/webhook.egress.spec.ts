@@ -104,4 +104,79 @@ describe('webhookEgress() e2e', () => {
         'Data was not successfully submitted to the provided webhook. Status: 400 Bad Request',
     })
   })
+
+  describe('webhookEgress() e2e w/ response rejection', () => {
+    it('returns no rejections', async () => {
+      mockedAxiosPost.mockResolvedValue({
+        status: 200,
+        data: {
+          rejections: {
+            deleteSubmitted: true,
+          },
+        },
+      })
+      listener.use(webhookEgress('workbook:egressTestSuccess', 'example.com'))
+
+      const { data: successfulJob } = await api.jobs.create({
+        type: 'workbook',
+        operation: 'egressTestSuccess',
+        source: workbookId,
+      })
+      const successfulJobId = successfulJob.id
+      await api.jobs.execute(successfulJobId)
+
+      await listener.waitFor('job:ready', 1, 'workbook:egressTestSuccess')
+
+      const response = await api.jobs.get(successfulJobId)
+      expect(response.data.outcome.message).toEqual(
+        'The data has been successfully submitted without any rejections. This task is now complete.'
+      )
+      expect(response.data.outcome.heading).toEqual('Success!')
+    })
+
+    it('returns rejections', async () => {
+      mockedAxiosPost.mockResolvedValue({
+        status: 200,
+        data: {
+          rejections: {
+            id: workbookId,
+            deleteSubmitted: true,
+            sheets: [
+              {
+                sheetId: sheetId,
+                rejectedRecords: [
+                  {
+                    id: 'dev_rc_91d271c823d84a378ec0165ddc886864',
+                    values: [
+                      {
+                        field: 'email',
+                        message: 'Not a valid Flatfile email address',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      })
+      listener.use(webhookEgress('workbook:egressTestSuccess', 'example.com'))
+
+      const { data: successfulJob } = await api.jobs.create({
+        type: 'workbook',
+        operation: 'egressTestSuccess',
+        source: workbookId,
+      })
+      const successfulJobId = successfulJob.id
+      await api.jobs.execute(successfulJobId)
+
+      await listener.waitFor('job:ready', 1, 'workbook:egressTestSuccess')
+
+      const response = await api.jobs.get(successfulJobId)
+      expect(response.data.outcome.message).toEqual(
+        'During the data submission process, 1 records were rejected. Please review and correct these records before resubmitting.'
+      )
+      expect(response.data.outcome.heading).toEqual('Rejected Records')
+    })
+  })
 })
