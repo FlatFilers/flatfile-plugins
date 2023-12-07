@@ -6,12 +6,15 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
+import axios from 'axios'
 import { webhookEgress } from './webhook.egress'
 
 jest.setTimeout(10_000)
+jest.mock('axios')
 
 describe('webhookEgress() e2e', () => {
   const listener = setupListener()
+  const mockedAxiosPost = axios.post as jest.MockedFunction<typeof axios.post>
 
   let spaceId
   let workbookId
@@ -46,8 +49,11 @@ describe('webhookEgress() e2e', () => {
   })
 
   it('returns successful outcome message', async () => {
-    const webhookUrl = process.env.WEBHOOK_SITE_URL
-    listener.use(webhookEgress('workbook:egressTestSuccess', webhookUrl))
+    mockedAxiosPost.mockResolvedValue({
+      status: 200,
+      data: {},
+    })
+    listener.use(webhookEgress('workbook:egressTestSuccess', 'example.com'))
 
     const { data: successfulJob } = await api.jobs.create({
       type: 'workbook',
@@ -61,15 +67,20 @@ describe('webhookEgress() e2e', () => {
 
     const response = await api.jobs.get(successfulJobId)
     expect(response.data.outcome.message).toEqual(
-      `Data was successfully submitted to the provided webhook. Go check it out at ${webhookUrl}.`
+      `Data was successfully submitted to the provided webhook. Go check it out at example.com.`
     )
   })
 
   it('returns failure outcome message', async () => {
+    mockedAxiosPost.mockResolvedValue({
+      status: 400,
+      statusText: 'Bad Request',
+      data: {},
+    })
+
     const logErrorSpy = jest.spyOn(global.console, 'error')
 
-    const invalidWebhookUrl = 'https://webhook.site'
-    listener.use(webhookEgress('workbook:egressTestFailure', invalidWebhookUrl))
+    listener.use(webhookEgress('workbook:egressTestFailure', 'example.com'))
 
     const { data: failedJob } = await api.jobs.create({
       type: 'workbook',
@@ -82,12 +93,15 @@ describe('webhookEgress() e2e', () => {
     await listener.waitFor('job:ready', 1, 'workbook:egressTestFailure')
 
     expect(logErrorSpy).toHaveBeenCalledWith(
-      '[@flatfile/plugin-webhook-egress]:[FATAL] {}'
+      expect.stringContaining(
+        '[@flatfile/plugin-webhook-egress]:[FATAL] Failed to submit data to example.com. Status: 400 Bad Request'
+      )
     )
 
     const response = await api.jobs.get(failedJobId)
     expect(response.data.outcome).toEqual({
-      message: 'Error posting data to webhook',
+      message:
+        'Data was not successfully submitted to the provided webhook. Status: 400 Bad Request',
     })
   })
 })

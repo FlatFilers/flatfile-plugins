@@ -20,7 +20,7 @@ export interface RecordRejections {
 
 export async function responseRejectionHandler(
   responseRejection: RejectionResponse
-): Promise<void | Flatfile.JobCompleteDetails> {
+): Promise<Flatfile.JobCompleteDetails> {
   let totalRejectedRecords = 0
 
   for (const sheet of responseRejection.sheets || []) {
@@ -29,10 +29,10 @@ export async function responseRejectionHandler(
   }
 
   const message = responseRejection.message ?? getMessage(totalRejectedRecords)
-  const next = getNext(
-    totalRejectedRecords,
-    responseRejection.sheets[0].sheetId
-  )
+  let next
+  if (responseRejection.deleteSubmitted && totalRejectedRecords > 0) {
+    next = getNext(totalRejectedRecords, responseRejection.sheets[0].sheetId)
+  }
 
   return {
     outcome: {
