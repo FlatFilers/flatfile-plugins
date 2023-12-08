@@ -1,5 +1,12 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.7.8
+
+### Patch Changes
+
+- Updated dependencies [c93b2d9]
+  - @flatfile/util-extractor@0.4.8
+
 ## 0.7.7
 
 ### Patch Changes
