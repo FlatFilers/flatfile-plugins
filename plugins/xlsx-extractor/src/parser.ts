@@ -62,6 +62,8 @@ async function convertSheet(
     rawNumbers,
     raw,
   })
+
+  // return if there are no rows
   if (!rows || rows.length === 0) {
     return
   }
@@ -72,7 +74,12 @@ async function convertSheet(
   const headerizer = Headerizer.create(headerDetectionOptions)
   const headerStream = Readable.from(extractValues(rows))
   const { header, skip } = await headerizer.getHeaders(headerStream)
+
   rows.splice(0, skip)
+  // return if there are no rows
+  if (rows.length === 0) {
+    return
+  }
 
   const toExcelHeader = (data: string[], keys: string[]) =>
     data.reduce((result, value, index) => {
