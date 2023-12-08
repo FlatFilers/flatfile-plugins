@@ -59,7 +59,3 @@ export function generateUsername() {
 
   return `${randomAdjective}${randomNoun}${randomNumber}`
 }
-
-export function generateMssqlConnectionString(connConfig: sql.config) {
-  return `Server=${connConfig.server};Port=${connConfig.options.port};User Id=${connConfig.user};Password='${connConfig.password}';Database=${connConfig.database};Encrypt=true;TrustServerCertificate=true;Connection Timeout=30;`
-}
