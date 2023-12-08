@@ -120,7 +120,7 @@ export async function createWorkbook(
   environmentId: string,
   sheets: Flatfile.SheetConfig[],
   name: string,
-  connectionString: string
+  connectionConfig: sql.config
 ) {
   const { data: workbook } = await api.workbooks.create({
     name: `[file] ${name}`,
@@ -130,7 +130,7 @@ export async function createWorkbook(
     sheets,
     metadata: {
       connectionType: 'FOREIGN_MSSQL',
-      connectionString,
+      connectionConfig,
     },
   })
 

@@ -10,7 +10,6 @@ import {
   sheetsTransformer,
 } from './restore.database'
 import { createResources } from './setup.resources'
-import { generateMssqlConnectionString } from './utils'
 
 export const foreignDBExtractor = () => {
   return (listener: FlatfileListener) => {
@@ -89,13 +88,12 @@ export const foreignDBExtractor = () => {
           await tick(65, 'Creating workbook')
           const tables = await getTablesAndColumns(connConfig)
           const sheets = generateSheets(tables)
-          const connectionString = generateMssqlConnectionString(connConfig)
           const workbook = await createWorkbook(
             spaceId,
             environmentId,
             sheets,
             connConfig.database,
-            connectionString
+            connConfig
           )
           await tick(70, 'Created workbook')
 
