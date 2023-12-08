@@ -66,7 +66,7 @@ export const Extractor = (
             capture
           )
           if (!workbook.sheets || workbook.sheets.length === 0) {
-            throw new Error('because no Sheets found')
+            throw new Error('No Sheets found')
           }
           await tick(10, 'Adding records to Sheets')
 
@@ -106,9 +106,12 @@ export const Extractor = (
           })
           console.log(workbook)
         } catch (e) {
-          console.log(`error ${e}`)
+          console.log(`Extractor error: ${e.message}`)
           await api.jobs.fail(jobId, {
-            info: `Extraction failed ${e.message}`,
+            info: 'Extraction failed',
+            outcome: {
+              message: e.message,
+            },
           })
         }
       }
@@ -130,7 +133,7 @@ async function createWorkbook(
   const workbook = await api.workbooks.create(workbookConfig)
 
   if (!workbook.data.sheets || workbook.data.sheets.length === 0) {
-    throw new Error('because no Sheets found')
+    throw new Error('No Sheets found')
   }
 
   return workbook.data

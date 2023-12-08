@@ -18,23 +18,31 @@ export async function parseBuffer(
     cellDates: true,
   })
   const sheetNames = Object.keys(workbook.Sheets)
-
-  const processedSheets = await Promise.all(
-    sheetNames.map(async (sheetName) => {
-      const value = workbook.Sheets[sheetName]
-      const processedValue = await convertSheet(
-        value,
-        options?.rawNumbers || false,
-        options?.raw || false,
-        options?.headerDetectionOptions || {
-          algorithm: 'default',
-        }
+  try {
+    const processedSheets = (
+      await Promise.all(
+        sheetNames.map(async (sheetName) => {
+          const sheet = workbook.Sheets[sheetName]
+          const processedSheet = await convertSheet(
+            sheet,
+            options?.rawNumbers || false,
+            options?.raw || false,
+            options?.headerDetectionOptions || {
+              algorithm: 'default',
+            }
+          )
+          if (!processedSheet) {
+            return
+          }
+          return [sheetName, processedSheet]
+        })
       )
-      return [sheetName, processedValue]
-    })
-  )
-
-  return Object.fromEntries(processedSheets)
+    ).filter(Boolean)
+    return Object.fromEntries(processedSheets)
+  } catch (e) {
+    console.error(e)
+    throw new Error('Failed to parse workbook')
+  }
 }
 
 /**
@@ -47,13 +55,16 @@ async function convertSheet(
   rawNumbers: boolean = false,
   raw: boolean = false,
   headerDetectionOptions?: GetHeadersOptions
-): Promise<SheetCapture> {
+): Promise<SheetCapture | undefined> {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
     defval: null,
     rawNumbers,
     raw,
   })
+  if (!rows || rows.length === 0) {
+    return
+  }
 
   const extractValues = (data: Record<string, any>[]) =>
     data.map((row) => Object.values(row).filter((value) => value !== null))
