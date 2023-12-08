@@ -16,6 +16,7 @@ export async function parseBuffer(
   const workbook = XLSX.read(buffer, {
     type: 'buffer',
     cellDates: true,
+    dense: true,
   })
   const sheetNames = Object.keys(workbook.Sheets)
   try {
