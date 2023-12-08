@@ -1,5 +1,6 @@
 ---
 '@flatfile/plugin-record-hook': patch
+'@flatfile/plugin-autocast': patch
 ---
 
-Builds from rollup for CDN builds to be included
+Switch build tools to rollup. Builds from rollup for CDN builds to be included.

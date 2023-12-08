@@ -47,11 +47,6 @@ export default [
         sourcemap: false,
         format: 'es',
       },
-      {
-        file: 'dist/index.js',
-        format: 'umd',
-        name: 'PluginRecordHook',
-      },
     ],
     plugins: [
       json(),
