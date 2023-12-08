@@ -1,5 +1,16 @@
 # @flatfile/plugin-record-hook
 
+## 1.9.0
+
+### Minor Changes
+
+- c93b2d9: Improved header detection options.
+
+### Patch Changes
+
+- Updated dependencies [c93b2d9]
+  - @flatfile/util-extractor@0.4.8
+
 ## 1.8.2
 
 ### Patch Changes
