@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-record-hook",
-  "version": "1.1.14",
+  "version": "1.2.0",
   "description": "A plugin for writing custom record-level hooks in Flatfile.",
   "registryMetadata": {
     "category": "records"
@@ -13,13 +13,19 @@
     "last 2 versions",
     "not dead"
   ],
-  "source": "src/index.ts",
-  "main": "dist/main.js",
-  "module": "dist/module.mjs",
-  "types": "dist/types.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "parcel build",
-    "dev": "parcel watch",
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./src/tests/*.spec.ts --config=../../jest.config.js --runInBand"
   },
@@ -39,6 +45,11 @@
     "effect": "^2.0.0-next.29"
   },
   "devDependencies": {
-    "axios": "^1.4.0"
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "axios": "^1.4.0",
+    "rollup": "^4.3.0"
   }
 }

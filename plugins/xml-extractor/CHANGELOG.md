@@ -1,5 +1,12 @@
 # @flatfile/plugin-dxp-config
 
+## 0.5.9
+
+### Patch Changes
+
+- Updated dependencies [c93b2d9]
+  - @flatfile/util-extractor@0.4.8
+
 ## 0.5.8
 
 ### Patch Changes
