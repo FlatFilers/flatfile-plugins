@@ -73,13 +73,6 @@ export async function generateSetup(
                 schemas
               )
 
-              const requiredFields = new Set(schema.required || [])
-              fields.forEach((field) => {
-                if (requiredFields.has(field.key)) {
-                  field.constraints?.push({ type: 'required' })
-                }
-              })
-
               return {
                 name: modelName,
                 slug: modelName,

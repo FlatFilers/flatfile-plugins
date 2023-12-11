@@ -7,27 +7,20 @@ const expectedConfig = {
   fields: [
     {
       type: 'number',
-      config: {},
       key: 'id',
       label: 'id',
-      description: 'undefined',
       constraints: [{ type: 'required' }],
-      readonly: false,
     },
     {
       type: 'string',
       key: 'name',
       label: 'name',
-      description: 'undefined',
       constraints: [{ type: 'required' }],
-      readonly: false,
     },
     {
       type: 'string',
       key: 'tag',
       label: 'tag',
-      description: 'undefined',
-      readonly: false,
     },
   ],
 }
