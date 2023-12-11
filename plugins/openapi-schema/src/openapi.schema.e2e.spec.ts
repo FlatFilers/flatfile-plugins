@@ -59,7 +59,6 @@ describe('SpaceConfigure plugin e2e tests', () => {
 
     const space = await api.spaces.get(spaceId)
     const workspace = await api.workbooks.get(space.data.primaryWorkbookId)
-    console.dir(workspace, { depth: null })
 
     expect(workspace.data.name).toBe('Webhook Example')
     expect(workspace.data.sheets[0].name).toBe('Pet')
