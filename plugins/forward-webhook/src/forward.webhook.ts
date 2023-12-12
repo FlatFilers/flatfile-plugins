@@ -1,5 +1,3 @@
-import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import axios from 'axios'
 
@@ -8,6 +6,8 @@ export function forwardWebhook(
   callback?: (data, event) => Promise<any> | any,
   options?: any
 ) {
+  console.log('setting up forwarding with data')
+  console.log(url)
   return async (listener: FlatfileListener) => {
     return listener.on('**', async (event) => {
       try {
@@ -16,10 +16,22 @@ export function forwardWebhook(
           event
         )
         if (post.status !== 200) throw new Error('Error forwarding webhook')
-        const data =
-          post.headers['content-type'] === 'application/json'
-            ? { ...JSON.parse(JSON.stringify(post.data)) }
-            : { data: post.data }
+        const contentTypeExists = !!(
+          post?.headers &&
+          post?.headers['content-type'] !== undefined &&
+          post?.headers['content-type'] !== null
+        )
+        const contentTypeIsJson = !!(
+          contentTypeExists &&
+          post?.headers['content-type'] === 'application/json'
+        )
+        const dataIsJson = !!JSON.parse(JSON.stringify(post.data))
+        const checkContentType = contentTypeExists
+          ? contentTypeIsJson
+          : dataIsJson
+        const data = checkContentType
+          ? { ...JSON.parse(JSON.stringify(post.data)) }
+          : { data: post.data }
         callback ? await callback(data, event) : null
       } catch (err) {
         console.error(err)
