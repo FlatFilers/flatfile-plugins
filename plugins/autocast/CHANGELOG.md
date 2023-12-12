@@ -1,5 +1,22 @@
 # @flatfile/plugin-autocast
 
+## 0.4.0
+
+### Minor Changes
+
+- 9d36229: Switch build tools to rollup. Builds from rollup for CDN builds to be included.
+
+### Patch Changes
+
+- Updated dependencies [9d36229]
+  - @flatfile/plugin-record-hook@1.2.0
+
+## 0.3.4
+
+### Patch Changes
+
+- 37873a4: Bug fix
+
 ## 0.3.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.8
+
+### Patch Changes
+
+- c93b2d9: Improved header detection options.
+
 ## 0.4.7
 
 ### Patch Changes

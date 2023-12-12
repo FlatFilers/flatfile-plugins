@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-autocast",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "A plugin for automatically casting values in Flatfile.",
   "registryMetadata": {
     "category": "transform"
@@ -8,13 +8,19 @@
   "engines": {
     "node": ">= 16"
   },
-  "source": "src/index.ts",
-  "main": "dist/main.js",
-  "module": "dist/module.mjs",
-  "types": "dist/types.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "parcel build",
-    "dev": "parcel watch",
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "TZ=GMT jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
@@ -27,9 +33,16 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.37",
+    "@flatfile/api": "^1.5.45",
     "@flatfile/listener": "^0.3.17",
-    "@flatfile/plugin-record-hook": "^1.1.12",
+    "@flatfile/plugin-record-hook": "^1.2.0",
     "@flatfile/util-common": "^0.2.3"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "rollup": "^4.3.0"
   }
 }
