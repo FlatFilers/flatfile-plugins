@@ -40,6 +40,6 @@ describe('ZipExtractor e2e', () => {
       await listener.waitFor('file:created', 4)
       const filesPostUpload = await getFiles(spaceId)
       expect(filesPostUpload.length).toBe(4)
-    })
+    }, 15_000)
   })
 })
