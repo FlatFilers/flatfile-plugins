@@ -54,7 +54,7 @@ export abstract class Headerizer {
 }
 
 export const countNonEmptyCells = (row: string[]): number => {
-  return row.filter((cell) => cell.trim() !== '').length
+  return row.filter((cell) => `${cell}`.trim() !== '').length
 }
 
 // This is the original / default implementation of detectHeader.
