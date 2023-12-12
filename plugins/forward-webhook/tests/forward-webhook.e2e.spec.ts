@@ -1,21 +1,11 @@
 import type { Flatfile } from '@flatfile/api'
+import api from '@flatfile/api'
+import { FlatfileEvent } from '@flatfile/listener'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 import axios from 'axios'
-
-import api from '@flatfile/api'
-
-import { CrossEnvConfig } from '@flatfile/cross-env-config'
-import { FlatfileEvent } from '@flatfile/listener'
 import { forwardWebhook } from '../src'
 
 jest.mock('axios')
-
-// const url = CrossEnvConfig.get('WEBHOOK_SITE_URL')
-const url = 'https://example.com'
-// if (url === undefined || url === '')
-//   throw new Error('WEBHOOK_SITE_URL is undefined')
-const dataUrl = `${url}/data/`
-const errUrl = `http://badUrl.bad/error/`
 
 describe('forward-webhook() e2e', () => {
   let spaceId: string
@@ -24,13 +14,11 @@ describe('forward-webhook() e2e', () => {
   const mockedAxiosPost = axios.post as jest.MockedFunction<typeof axios.post>
 
   beforeEach(async () => {
-    console.log('Setting up temporary Space and Retrieving spaceId')
     const space = await setupSpace()
     spaceId = space.id
   })
 
   afterEach(async () => {
-    console.log('Deleting temporary Space')
     await deleteSpace(spaceId)
   })
 
@@ -44,16 +32,13 @@ describe('forward-webhook() e2e', () => {
   })
 
   it('should forward webhook', async () => {
-    console.log('setting up forwarding')
-    let testData
-
     mockedAxiosPost.mockResolvedValue({
       status: 200,
       data: {},
     })
 
     listener.use(
-      forwardWebhook(url, (data, event) => {
+      forwardWebhook('https://example.com', (data, event) => {
         if (event.topic === 'job:outcome-acknowledged') {
           return
         }
@@ -84,7 +69,6 @@ describe('forward-webhook() e2e', () => {
   })
 
   it('should send data and receive a resolution', async () => {
-    console.log('setting up forwarding with data')
     let testData
 
     const waitForWebhookCompletion = new Promise((resolve) => {
@@ -93,7 +77,7 @@ describe('forward-webhook() e2e', () => {
       })
     })
     listener.use(
-      forwardWebhook(url, (data, event) => {
+      forwardWebhook('https://example.com', (data, event) => {
         if (event.topic === 'job:outcome-acknowledged') {
           return
         }
@@ -117,7 +101,6 @@ describe('forward-webhook() e2e', () => {
   })
 
   it('should error on error received', async () => {
-    console.log('setting up forwarding for error')
     mockedAxiosPost.mockResolvedValue({
       status: 500,
       data: {},
@@ -125,7 +108,7 @@ describe('forward-webhook() e2e', () => {
     let testData
 
     listener.use(
-      forwardWebhook(errUrl, (data, event) => {
+      forwardWebhook('https://example.com', (data, event) => {
         if (event.topic === 'job:outcome-acknowledged') {
           return
         }
