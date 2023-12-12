@@ -7,7 +7,6 @@ export function forwardWebhook(
   options?: any
 ) {
   console.log('setting up forwarding with data')
-  console.log(url)
   return async (listener: FlatfileListener) => {
     return listener.on('**', async (event) => {
       try {

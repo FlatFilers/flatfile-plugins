@@ -57,8 +57,6 @@ describe('forward-webhook() e2e', () => {
         if (event.topic === 'job:outcome-acknowledged') {
           return
         }
-        console.dir(data, { depth: null })
-        console.dir(event, { depth: null })
         api.events.create({
           domain: event.domain as Flatfile.Domain,
           topic: 'job:outcome-acknowledged',
