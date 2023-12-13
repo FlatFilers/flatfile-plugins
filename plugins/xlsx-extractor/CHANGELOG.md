@@ -1,5 +1,24 @@
 # @flatfile/plugin-record-hook
 
+## 1.9.1
+
+### Patch Changes
+
+- c39cc51: Fix for xlsx extraction when file contains empty sheets
+- Updated dependencies [c39cc51]
+  - @flatfile/util-extractor@0.4.9
+
+## 1.9.0
+
+### Minor Changes
+
+- c93b2d9: Improved header detection options.
+
+### Patch Changes
+
+- Updated dependencies [c93b2d9]
+  - @flatfile/util-extractor@0.4.8
+
 ## 1.8.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-json-extractor
 
+## 0.6.10
+
+### Patch Changes
+
+- 99f4c0a: Minor refactoring: remove flat dep & switch build tool
+
 ## 0.6.9
 
 ### Patch Changes

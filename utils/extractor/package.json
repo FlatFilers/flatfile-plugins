@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-extractor",
-  "version": "0.4.7",
+  "version": "0.4.9",
   "description": "A library containing common utilities and helpers for extractors.",
   "keywords": [],
   "author": "Carl Brugger",
