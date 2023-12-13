@@ -3,17 +3,16 @@ import axios from 'axios'
 
 export function webhookEventForward(
   url?: string,
-  callback?: (data, event) => Promise<any> | any,
-  options?: any
+  callback?: (data, event) => Promise<any> | any
 ) {
-  console.log('setting up forwarding with data')
   return async (listener: FlatfileListener) => {
     return listener.on('**', async (event) => {
       try {
-        const post = await axios.post(
-          url || process.env.WEBHOOK_SITE_URL,
-          event
-        )
+        const apiUrl = url || process.env.WEBHOOK_SITE_URL
+        if (typeof apiUrl === 'undefined') {
+          throw new Error('No url provided')
+        }
+        const post = await axios.post(apiUrl, event)
         if (post.status !== 200) throw new Error('Error forwarding webhook')
         const contentTypeExists = !!(
           post?.headers &&
