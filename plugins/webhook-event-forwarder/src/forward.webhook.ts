@@ -1,7 +1,7 @@
 import { FlatfileListener } from '@flatfile/listener'
 import axios from 'axios'
 
-export function forwardWebhook(
+export function webhookEventForward(
   url?: string,
   callback?: (data, event) => Promise<any> | any,
   options?: any

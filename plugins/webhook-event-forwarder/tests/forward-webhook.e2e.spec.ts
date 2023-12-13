@@ -3,7 +3,7 @@ import api from '@flatfile/api'
 import { FlatfileEvent } from '@flatfile/listener'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 import axios from 'axios'
-import { forwardWebhook } from '../src'
+import { webhookEventForward } from '../src'
 
 jest.mock('axios')
 
@@ -38,7 +38,7 @@ describe('forward-webhook() e2e', () => {
     })
 
     listener.use(
-      forwardWebhook('https://example.com', (data, event) => {
+      webhookEventForward('https://example.com', (data, event) => {
         if (event.topic === 'job:outcome-acknowledged') {
           return
         }
@@ -77,7 +77,7 @@ describe('forward-webhook() e2e', () => {
       })
     })
     listener.use(
-      forwardWebhook('https://example.com', (data, event) => {
+      webhookEventForward('https://example.com', (data, event) => {
         if (event.topic === 'job:outcome-acknowledged') {
           return
         }
@@ -108,7 +108,7 @@ describe('forward-webhook() e2e', () => {
     let testData
 
     listener.use(
-      forwardWebhook('https://example.com', (data, event) => {
+      webhookEventForward('https://example.com', (data, event) => {
         if (event.topic === 'job:outcome-acknowledged') {
           return
         }
