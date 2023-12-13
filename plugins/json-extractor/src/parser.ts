@@ -1,5 +1,4 @@
 import { WorkbookCapture } from '@flatfile/util-extractor'
-import { flatten } from 'flat'
 
 export function parseBuffer(buffer: Buffer): WorkbookCapture {
   try {
@@ -23,13 +22,26 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
       return {} as WorkbookCapture
     }
 
+    // Custom flatten function
+    const flattenObject = (obj: any, parent: string = '', res: any = {}) => {
+      for (let key in obj) {
+        const propName = parent ? parent + '.' + key : key
+        if (typeof obj[key] === 'object') {
+          flattenObject(obj[key], propName, res)
+        } else {
+          res[propName] = obj[key]
+        }
+      }
+      return res
+    }
+
     // Flatten the first item to determine headers
-    const firstItem = flatten(filteredResults[0], { safe: true })
+    const firstItem = flattenObject(filteredResults[0])
     const headers = Object.keys(firstItem).filter((header) => header !== '')
 
-    // Flatten and filter all rows once
+    // Flatten and filter all rows
     const filteredData = filteredResults.map((row) => {
-      const flattedRow = flatten(row, { safe: true })
+      const flattedRow = flattenObject(row)
       return headers.reduce((filteredRow, header) => {
         const cell = flattedRow[header]
         filteredRow[header] = {
