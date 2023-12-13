@@ -9,7 +9,6 @@ describe('parser', function () {
 
   test('JSON to WorkbookCapture', () => {
     const capture = parseBuffer(buffer)
-    console.dir(capture, { depth: null })
     expect(capture).toEqual({
       Sheet1: {
         headers: [
