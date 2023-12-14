@@ -28,6 +28,5 @@
     "@flatfile/listener": "^0.3.17",
     "@flatfile/util-common": "^0.2.3",
     "@flatfile/util-file-buffer": "^0.1.3",
-    "remeda": "^1.14.0"
   }
 }
