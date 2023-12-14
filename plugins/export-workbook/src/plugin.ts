@@ -1,8 +1,10 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent } from '@flatfile/listener'
+import { processRecords } from '@flatfile/util-common'
 import * as fs from 'fs'
 import * as R from 'remeda'
 import * as XLSX from 'xlsx'
+import { logError, logInfo, logWarn } from '../../../utils/common/src'
 
 /**
  * Plugin config options.
@@ -38,7 +40,10 @@ export const run = async (
         }, '')
       )
 
-      logInfo('Sheets found in Flatfile workbook:' + meta)
+      logInfo(
+        '@flatfile/plugin-export-workbook',
+        `Sheets found in Flatfile workbook: ${meta}`
+      )
     }
 
     const workbook = XLSX.utils.book_new()
@@ -51,65 +56,63 @@ export const run = async (
 
       for (const sheet of sheets) {
         try {
-          const { data } = await api.records.get(sheet.id, {
-            includeMessages: true,
-          })
+          const results = await processRecords<Record<string, any>[]>(
+            sheet.id,
+            (records): Record<string, any>[] => {
+              return R.pipe(
+                records,
+                R.map(({ id, values: row }) => {
+                  const rowValue = R.pipe(
+                    Object.keys(row),
+                    R.reduce((acc, colName) => {
+                      const formatCell = (cellValue: Flatfile.CellValue) => {
+                        const { value, messages } = cellValue
+                        const cell: XLSX.CellObject = {
+                          t: 's',
+                          v: value,
+                          c: [],
+                        }
+                        if (R.length(messages) > 0) {
+                          cell.c = messages.map((m) => ({
+                            a: 'Flatfile',
+                            t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                            T: true,
+                          }))
+                          cell.c.hidden = true
+                          console.dir(cell, { depth: null })
+                        }
 
-          const rows = R.pipe(
-            data.records,
-            R.map(({ id, values: row }) => {
-              const rowValue = R.pipe(
-                Object.keys(row),
-                R.reduce((acc, colName) => {
-                  return {
-                    ...acc,
-                    [colName]: row[colName].value,
-                  }
-                }, {})
-              )
-              return options?.includeRecordIds
-                ? {
-                    id,
-                    ...rowValue,
-                  }
-                : rowValue
-            })
-          )
+                        return cell
+                      }
 
-          const alphaColumnDesignations = genCyclicPattern(
-            Object.keys(rows[0]).length
-          )
-
-          const worksheet = XLSX.utils.json_to_sheet(rows)
-
-          R.pipe(
-            data.records,
-            R.forEach.indexed(({ values: row }, rowIdx) => {
-              R.pipe(
-                Object.keys(row),
-                R.forEach.indexed((colName, colIdx) => {
-                  const messages: Array<Flatfile.ValidationMessage> =
-                    row[colName].messages
-
-                  if (R.length(messages) > 0) {
-                    // '0' is not a valid accessible index in a worksheet and '1' is the header row
-                    const cell =
-                      worksheet[
-                        `${alphaColumnDesignations[colIdx]}${rowIdx + 2}`
-                      ]
-
-                    cell.c = R.pipe(
-                      messages,
-                      R.map((m) => ({
-                        a: 'Flatfile',
-                        t: `[${m.type.toUpperCase()}]: ${m.message}`,
-                      }))
-                    )
-                  }
+                      return {
+                        ...acc,
+                        [colName]: formatCell(row[colName]),
+                      }
+                    }, {})
+                  )
+                  return options?.includeRecordIds
+                    ? {
+                        id,
+                        ...rowValue,
+                      }
+                    : rowValue
                 })
               )
-            })
+            }
           )
+          if (!results) {
+            if (options.debug) {
+              logWarn(
+                '@flatfile/plugin-export-workbook',
+                `No records found for sheet with id: ${sheet.id}. Skipping.`
+              )
+            }
+            continue
+          }
+          const rows = results.flat()
+
+          const worksheet = XLSX.utils.json_to_sheet(rows)
 
           XLSX.utils.book_append_sheet(
             workbook,
@@ -118,11 +121,14 @@ export const run = async (
             sheet.name.substring(0, 31)
           )
         } catch (_getRecordsError: unknown) {
-          logError('Failed to fetch records for sheet with id: ' + sheet.id)
+          logError(
+            '@flatfile/plugin-export-workbook',
+            `Failed to fetch records for sheet with id: ${sheet.id}`
+          )
 
           await api.jobs.fail(jobId, {
             outcome: {
-              message: 'Failed to fetch records for sheet with id: ' + sheet.id,
+              message: `Failed to fetch records for sheet with id: ${sheet.id}`,
             },
           })
 
@@ -130,11 +136,14 @@ export const run = async (
         }
       }
     } catch (_jobAckError: unknown) {
-      logError('Failed to acknowledge job with id: ' + jobId)
+      logError(
+        '@flatfile/plugin-export-workbook',
+        `Failed to acknowledge job with id: ${jobId}`
+      )
 
       await api.jobs.fail(jobId, {
         outcome: {
-          message: 'Failed to acknowledge job with id: ' + jobId,
+          message: `Failed to acknowledge job with id: ${jobId}`,
         },
       })
 
@@ -145,13 +154,16 @@ export const run = async (
 
     try {
       XLSX.set_fs(fs)
-      XLSX.writeFileXLSX(workbook, fileName)
+      XLSX.writeFileXLSX(workbook, fileName) //, { cellStyles: true })
 
       if (options.debug) {
-        logInfo('File written to disk')
+        logInfo('@flatfile/plugin-export-workbook', 'File written to disk')
       }
     } catch (_writeError: unknown) {
-      logError('Failed to write file to disk')
+      logError(
+        '@flatfile/plugin-export-workbook',
+        'Failed to write file to disk'
+      )
 
       await api.jobs.fail(jobId, {
         outcome: {
@@ -178,11 +190,12 @@ export const run = async (
 
       if (options.debug) {
         logInfo(
+          '@flatfile/plugin-export-workbook',
           `Excel document uploaded. View file at https://spaces.flatfile.com/space/${spaceId}/files?mode=export`
         )
       }
     } catch (_uploadError: unknown) {
-      logError('Failed to upload file')
+      logError('@flatfile/plugin-export-workbook', 'Failed to upload file')
 
       await api.jobs.fail(jobId, {
         outcome: {
@@ -196,21 +209,24 @@ export const run = async (
     try {
       await api.jobs.complete(jobId, {
         outcome: {
+          acknowledge: true,
           message:
             'Data was successfully written to Excel file and uploaded. You can access the workbook in the "Available Downloads" section of the Files page in Flatfile.',
           next: {
-            type: 'url',
-            url: `/space/${spaceId}/files?mode=export`,
-            label: 'Available Downloads',
+            type: 'id',
+            id: spaceId,
+            path: 'files',
+            query: 'mode=export',
+            label: 'See all downloads',
           },
         },
       })
 
       if (options.debug) {
-        logInfo('Done')
+        logInfo('@flatfile/plugin-export-workbook', 'Done')
       }
     } catch (_jobError: unknown) {
-      logError('Failed to complete job')
+      logError('@flatfile/plugin-export-workbook', 'Failed to complete job')
 
       await api.jobs.fail(jobId, {
         outcome: {
@@ -221,11 +237,14 @@ export const run = async (
       return
     }
   } catch (_fetchSheetsError: unknown) {
-    logError('Failed to fetch sheets for workbook id: ' + workbookId)
+    logError(
+      '@flatfile/plugin-export-workbook',
+      `Failed to fetch sheets for workbook id: ${workbookId}`
+    )
 
     await api.jobs.fail(jobId, {
       outcome: {
-        message: 'Failed to fetch sheets for workbook id: ' + workbookId,
+        message: `Failed to fetch sheets for workbook id: ${workbookId}`,
       },
     })
 
@@ -257,16 +276,4 @@ const genCyclicPattern = (length: number = 104): Array<string> => {
 
 const currentEpoch = (): string => {
   return `${Math.floor(Date.now() / 1000)}`
-}
-
-const logError = (msg: string): void => {
-  console.error('[@flatfile/plugin-export-workbook]:[FATAL] ' + msg)
-}
-
-const logInfo = (msg: string): void => {
-  console.log('[@flatfile/plugin-export-workbook]:[INFO] ' + msg)
-}
-
-const logWarn = (msg: string): void => {
-  console.warn('[@flatfile/plugin-export-workbook]:[WARN] ' + msg)
 }
