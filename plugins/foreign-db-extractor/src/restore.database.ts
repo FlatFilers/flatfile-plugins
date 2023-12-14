@@ -225,6 +225,8 @@ async function recordTransformer(connConfig: sql.config, tableName: string) {
       UPDATE ${tableName}
         SET rowid = NEXT VALUE FOR ${tableName}_rowid;
     `)
+    await request.query(`CREATE UNIQUE INDEX rowid_index ON ${tableName} (rowid);
+    `)
 
     // Count Rows
     console.log(`Count Rows`)
