@@ -1,4 +1,4 @@
-# @flatfile/plugin-record-hook
+# @flatfile/plugin-xlsx-extractor
 
 ## 1.9.1
 
