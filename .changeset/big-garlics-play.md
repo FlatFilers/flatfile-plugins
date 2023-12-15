@@ -4,6 +4,7 @@
 '@flatfile/util-response-rejection': patch
 '@flatfile/plugin-export-workbook': patch
 '@flatfile/plugin-space-configure': patch
+'@flatfile/plugin-json-extractor': patch
 '@flatfile/plugin-webhook-egress': patch
 '@flatfile/plugin-xlsx-extractor': patch
 '@flatfile/plugin-dxp-configure': patch
