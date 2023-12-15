@@ -2,7 +2,6 @@ import api, { Flatfile } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
-import { mapValues } from 'remeda'
 
 export const Extractor = (
   fileExt: string | RegExp,
@@ -145,11 +144,10 @@ function getWorkbookConfig(
   environmentId: string,
   workbookCapture: WorkbookCapture
 ): Flatfile.CreateWorkbookConfig {
-  const sheets = Object.values(
-    mapValues(workbookCapture, (sheet, sheetName) => {
-      return getSheetConfig(sheetName, sheet)
-    })
-  )
+  const sheets = Object.entries(workbookCapture).map(([sheetName, sheet]) => {
+    return getSheetConfig(sheetName, sheet)
+  })
+
   return {
     name: `[file] ${name}`,
     labels: ['file'],

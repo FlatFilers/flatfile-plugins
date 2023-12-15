@@ -1,9 +1,9 @@
 {
-  "name": "@flatfile/plugin-delimiter-extractor",
-  "version": "0.7.9",
-  "description": "A plugin for parsing a delimited file and extracting it into Flatfile.",
+  "name": "@flatfile/plugin-convert-sql-ddl",
+  "version": "0.0.2",
+  "description": "A plugin for converting SQL DDL into Flatfile Blueprint.",
   "registryMetadata": {
-    "category": "extractors"
+    "category": "schema-converters"
   },
   "engines": {
     "node": ">= 16"
@@ -19,21 +19,18 @@
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [],
-  "author": "Carl Brugger",
+  "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/delimiter-parser"
+    "directory": "plugins/sql-ddl-converter"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.0",
-    "@flatfile/util-extractor": "^0.4.9",
-    "papaparse": "^5.4.1",
-    "remeda": "^1.14.0"
-  },
-  "devDependencies": {
-    "@types/flat": "^5.0.2",
-    "@types/papaparse": "^5.3.7"
+    "@flatfile/api": "^1.5.37",
+    "@flatfile/plugin-convert-json-schema": "^0.1.0",
+    "@flatfile/plugin-space-configure": "^0.1.6",
+    "axios": "^1.5.1",
+    "sql-ddl-to-json-schema": "^4.1.0"
   }
 }
