@@ -1,4 +1,4 @@
-# @flatfile/plugin-sql-ddl
+# @flatfile/plugin-convert-sql-ddl
 
 ## 0.0.2
 

@@ -2,7 +2,9 @@ import api, { Flatfile } from '@flatfile/api'
 
 export async function processRecords<R>(
   sheetId: string,
-  callback: (records: Flatfile.RecordsWithLinks) => Promise<R | void>,
+  callback: (
+    records: Flatfile.RecordsWithLinks
+  ) => R | void | Promise<R | void>,
   recordGetOptions?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
 ): Promise<R[] | void> {
   let pageNumber = 1

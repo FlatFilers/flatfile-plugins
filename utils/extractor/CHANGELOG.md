@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.4.9
+
+### Patch Changes
+
+- c39cc51: Fix for xlsx extraction when file contains empty sheets
+
 ## 0.4.8
 
 ### Patch Changes

@@ -1,6 +1,4 @@
 import api from '@flatfile/api'
-import * as fs from 'fs'
-import * as path from 'path'
 import {
   deleteSpace,
   getEnvironmentId,
@@ -8,6 +6,8 @@ import {
   setupListener,
   setupSpace,
 } from '@flatfile/utils-testing'
+import * as fs from 'fs'
+import * as path from 'path'
 import { ZipExtractor } from '.'
 
 describe('ZipExtractor e2e', () => {
