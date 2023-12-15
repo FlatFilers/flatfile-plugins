@@ -79,7 +79,6 @@ export const run = async (
                             T: true,
                           }))
                           cell.c.hidden = true
-                          console.dir(cell, { depth: null })
                         }
 
                         return cell
