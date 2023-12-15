@@ -1,10 +1,14 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent } from '@flatfile/listener'
-import { processRecords } from '@flatfile/util-common'
+import {
+  logError,
+  logInfo,
+  logWarn,
+  processRecords,
+} from '@flatfile/util-common'
 import * as fs from 'fs'
 import * as R from 'remeda'
 import * as XLSX from 'xlsx'
-import { logError, logInfo, logWarn } from '../../../utils/common/src'
 
 /**
  * Plugin config options.
