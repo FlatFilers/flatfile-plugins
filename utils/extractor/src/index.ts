@@ -2,7 +2,6 @@ import api, { Flatfile } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
-import { mapValues } from 'remeda'
 
 export const Extractor = (
   fileExt: string | RegExp,
@@ -66,7 +65,7 @@ export const Extractor = (
             capture
           )
           if (!workbook.sheets || workbook.sheets.length === 0) {
-            throw new Error('because no Sheets found')
+            throw new Error('No Sheets found')
           }
           await tick(10, 'Adding records to Sheets')
 
@@ -106,9 +105,12 @@ export const Extractor = (
           })
           console.log(workbook)
         } catch (e) {
-          console.log(`error ${e}`)
+          console.log(`Extractor error: ${e.message}`)
           await api.jobs.fail(jobId, {
-            info: `Extraction failed ${e.message}`,
+            info: 'Extraction failed',
+            outcome: {
+              message: e.message,
+            },
           })
         }
       }
@@ -130,7 +132,7 @@ async function createWorkbook(
   const workbook = await api.workbooks.create(workbookConfig)
 
   if (!workbook.data.sheets || workbook.data.sheets.length === 0) {
-    throw new Error('because no Sheets found')
+    throw new Error('No Sheets found')
   }
 
   return workbook.data
@@ -142,11 +144,10 @@ function getWorkbookConfig(
   environmentId: string,
   workbookCapture: WorkbookCapture
 ): Flatfile.CreateWorkbookConfig {
-  const sheets = Object.values(
-    mapValues(workbookCapture, (sheet, sheetName) => {
-      return getSheetConfig(sheetName, sheet)
-    })
-  )
+  const sheets = Object.entries(workbookCapture).map(([sheetName, sheet]) => {
+    return getSheetConfig(sheetName, sheet)
+  })
+
   return {
     name: `[file] ${name}`,
     labels: ['file'],

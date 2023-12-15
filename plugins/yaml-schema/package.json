@@ -27,13 +27,12 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.33",
+    "@flatfile/api": "^1.6.0",
+    "@flatfile/listener": "^0.3.17",
     "@flatfile/plugin-convert-json-schema": "^0.1.0",
-    "@flatfile/plugin-json-schema": "^0.0.2",
     "@flatfile/plugin-space-configure": "^0.1.5",
     "@flatfile/util-fetch-schema": "^0.0.2",
     "@flatfile/utils-testing": "^0.0.6",
-    "@hyperjump/json-schema": "^1.6.4",
     "axios": "^1.5.1",
     "js-yaml": "^4.1.0"
   },
