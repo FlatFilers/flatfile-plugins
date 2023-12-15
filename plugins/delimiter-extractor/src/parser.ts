@@ -1,6 +1,6 @@
 import { Flatfile } from '@flatfile/api'
-import Papa, { ParseResult } from 'papaparse'
 import { WorkbookCapture } from '@flatfile/util-extractor'
+import Papa, { ParseResult } from 'papaparse'
 import { mapKeys, mapValues } from 'remeda'
 
 export function parseBuffer(
