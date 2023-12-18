@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-delimiter-extractor",
-  "version": "0.7.9",
+  "version": "0.7.10",
   "description": "A plugin for parsing a delimited file and extracting it into Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.6.0",
-    "@flatfile/util-extractor": "^0.4.9",
+    "@flatfile/util-extractor": "^0.4.10",
     "papaparse": "^5.4.1",
     "remeda": "^1.14.0"
   },

@@ -1,5 +1,21 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.0.0
+
+### Major Changes
+
+- 75ea05d: Upgrade to the @flatfile/util-response-rejection plugin to support deleting successfully submitted records or adding a status column to indicate successful/rejected records.
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- Updated dependencies [7a0073d]
+- Updated dependencies [75ea05d]
+- Updated dependencies [97ffa1c]
+  - @flatfile/util-response-rejection@1.0.0
+  - @flatfile/plugin-job-handler@0.1.7
+  - @flatfile/util-common@0.2.5
+
 ## 0.1.5
 
 ### Patch Changes

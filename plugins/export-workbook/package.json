@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-export-workbook",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A plugin for exporting data in Flatfile to Workbooks.",
   "registryMetadata": {
     "category": "export"
@@ -29,7 +29,7 @@
   "dependencies": {
     "@flatfile/api": "^1.6.0",
     "@flatfile/listener": "^0.3.17",
-    "@flatfile/util-common": "^0.2.4",
+    "@flatfile/util-common": "^0.2.5",
     "remeda": "^1.14.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
   }

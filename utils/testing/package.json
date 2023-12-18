@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/utils-testing",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A utility package for testing plugins",
   "engines": {
     "node": ">= 16"

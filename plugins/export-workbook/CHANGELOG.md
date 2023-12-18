@@ -1,5 +1,15 @@
 # @flatfile/plugin-export-workbook
 
+## 0.0.11
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- 97ffa1c: Export workbook plugin bug fix for handling multiple comments on a cell
+- Updated dependencies [7a0073d]
+- Updated dependencies [97ffa1c]
+  - @flatfile/util-common@0.2.5
+
 ## 0.0.10
 
 ### Patch Changes

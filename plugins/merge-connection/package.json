@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-connect-via-merge",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A connect plugin for Merge.dev",
   "registryMetadata": {
     "category": "connect"
@@ -29,8 +29,8 @@
   "dependencies": {
     "@flatfile/api": "^1.6.0",
     "@flatfile/listener": "^0.3.17",
-    "@flatfile/plugin-job-handler": "^0.1.5",
-    "@flatfile/util-common": "^0.2.3",
+    "@flatfile/plugin-job-handler": "^0.1.7",
+    "@flatfile/util-common": "^0.2.5",
     "@mergeapi/merge-node-client": "^0.1.6",
     "axios": "^1.5.1"
   }
