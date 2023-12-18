@@ -1,5 +1,14 @@
 # @flatfile/plugin-dxp-config
 
+## 0.0.11
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- 5704be5: Introducing the @flatfile/plugin-convert-openapi-schema plugin!
+
+  Switched @flatfile/plugin-dxp-configure build tool.
+
 ## 0.0.10
 
 ### Patch Changes

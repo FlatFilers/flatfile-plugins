@@ -1,5 +1,13 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.0.8
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- Updated dependencies [7a0073d]
+  - @flatfile/util-file-buffer@0.1.4
+
 ## 0.0.7
 
 ### Patch Changes

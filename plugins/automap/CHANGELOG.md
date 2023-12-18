@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.1.3
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+
 ## 0.1.2
 
 ### Patch Changes

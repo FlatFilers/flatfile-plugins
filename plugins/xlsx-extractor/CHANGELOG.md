@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 1.9.2
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- Updated dependencies [7a0073d]
+  - @flatfile/util-extractor@0.4.10
+
 ## 1.9.1
 
 ### Patch Changes

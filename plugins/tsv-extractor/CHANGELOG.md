@@ -1,5 +1,11 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.5.4
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+
 ## 1.5.3
 
 ### Patch Changes

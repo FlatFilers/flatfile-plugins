@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.6.4
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+
 ## 1.6.3
 
 ### Patch Changes

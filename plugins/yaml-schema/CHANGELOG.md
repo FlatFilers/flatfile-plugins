@@ -1,5 +1,16 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.0.4
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- Updated dependencies [7a0073d]
+  - @flatfile/plugin-space-configure@0.1.8
+  - @flatfile/plugin-convert-json-schema@0.1.1
+  - @flatfile/util-fetch-schema@0.0.3
+  - @flatfile/utils-testing@0.0.7
+
 ## 0.0.3
 
 ### Patch Changes

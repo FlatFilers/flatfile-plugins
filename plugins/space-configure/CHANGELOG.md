@@ -1,5 +1,13 @@
 # @flatfile/plugin-space-configure
 
+## 0.1.8
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- Updated dependencies [7a0073d]
+  - @flatfile/plugin-job-handler@0.1.7
+
 ## 0.1.7
 
 ### Patch Changes

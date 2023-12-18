@@ -1,5 +1,11 @@
 # @flatfile/utils-testing
 
+## 0.0.7
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+
 ## 0.0.6
 
 ### Patch Changes

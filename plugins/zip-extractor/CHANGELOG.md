@@ -1,5 +1,15 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.3.10
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- Updated dependencies [7a0073d]
+- Updated dependencies [97ffa1c]
+  - @flatfile/util-file-buffer@0.1.4
+  - @flatfile/util-common@0.2.5
+
 ## 0.3.9
 
 ### Patch Changes
