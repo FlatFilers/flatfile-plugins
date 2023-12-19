@@ -35,7 +35,7 @@
   "dependencies": {
     "@flatfile/api": "^1.5.37",
     "@flatfile/plugin-space-configure": "^0.1.8",
-    "axios": "^1.5.1"
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",

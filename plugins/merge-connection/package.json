@@ -32,6 +32,6 @@
     "@flatfile/plugin-job-handler": "^0.1.7",
     "@flatfile/util-common": "^0.2.5",
     "@mergeapi/merge-node-client": "^0.1.6",
-    "axios": "^1.5.1"
+    "axios": "^1.6.2"
   }
 }
