@@ -1,7 +1,6 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
-import { asyncBatch } from '@flatfile/util-common'
 import {
   Merge,
   MergeClient,
@@ -350,22 +349,17 @@ async function waitForMergeSync(
 
 async function deleteSheetRecords(sheetId: string) {
   try {
-    // TODO: change this to a bulk delete job. `api.records.get` only gets 10k records at a time
-    const { data: records } = await api.records.get(sheetId)
-    if (records.records.length > 0) {
-      const recordIds = records.records.map((record) => {
-        return record.id
-      })
-
-      const options = { chunkSize: 100, parallel: 5, debug: true }
-      await asyncBatch(
-        recordIds,
-        async (chunk: string[]) => {
-          await api.records.delete(sheetId, { ids: chunk })
-        },
-        options
-      )
-    }
+    const { data: sheet } = await api.sheets.get(sheetId)
+    await api.jobs.create({
+      type: 'workbook',
+      operation: 'delete-records',
+      trigger: 'immediate',
+      source: sheet.workbookId,
+      config: {
+        sheet: sheetId,
+        filter: 'all',
+      },
+    })
   } catch (e) {
     handleError(e, `Error deleting records from sheet ${sheetId}`)
   }
