@@ -30,7 +30,7 @@ export async function responseRejectionHandler(
 
   const message = responseRejection.message ?? getMessage(totalRejectedRecords)
   let next
-  if (responseRejection.deleteSubmitted && totalRejectedRecords > 0) {
+  if (!responseRejection.deleteSubmitted && totalRejectedRecords > 0) {
     next = getNext(totalRejectedRecords, responseRejection.sheets[0].sheetId)
   }
 
@@ -59,6 +59,7 @@ function getNext(
     ? {
         type: 'id',
         id: sheetId,
+        label: 'View Rejected Records',
         query: 'searchField=submissionStatus&searchValue=rejected',
       }
     : undefined
