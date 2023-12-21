@@ -53,6 +53,7 @@ export async function createResources(
     await tick(10, 'Uploaded .bak file to S3')
   } catch (error) {
     console.error('Error during S3 upload:', error)
+    throw new Error('Error during S3 upload')
   }
 
   // Step 3: Create RDS Instance
@@ -78,6 +79,7 @@ export async function createResources(
     await tick(20, 'Created RDS instance')
   } catch (error) {
     console.error('Error during RDS instance creation:', error)
+    throw new Error('Error during RDS instance creation')
   }
 
   // Wait for the RDS instance to become ready and get its endpoint and port
