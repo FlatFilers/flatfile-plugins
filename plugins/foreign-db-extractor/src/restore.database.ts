@@ -24,6 +24,7 @@ export async function restoreDatabaseFromBackup(
     // Checking if the database is available
     let isAvailable = false
     while (!isAvailable) {
+      //TODO needs to timeout after so many tries
       const result = await conn.query(
         `SELECT state_desc FROM sys.databases WHERE name = '${dbName}'`
       )
@@ -151,11 +152,18 @@ export async function sheetsTransformer(
     try {
       // Rename the table to match the sheet ID
       await renameTable(connConfig, sheetName, newTableName)
+    } catch (error) {
+      console.error(`Error renaming sheet ${sheetName}:`, error)
+    }
 
+    try {
       // Populate the `_flatfile_record_id` and add a `rowid` column
       await recordTransformer(connConfig, newTableName)
     } catch (error) {
-      console.error(`Error processing sheet ${sheetName}:`, error)
+      console.error(
+        `Error transforming rows to records in sheet ${sheetName}:`,
+        error
+      )
     }
   }
 }
@@ -186,7 +194,7 @@ async function renameTable(
   }
 }
 
-// This function adds a _flatfile_record_id and rowid columns to the table
+// This function adds a `_flatfile_record_id` and `rowid` columns to the table
 async function recordTransformer(connConfig: sql.config, tableName: string) {
   let conn
   try {
@@ -203,30 +211,34 @@ async function recordTransformer(connConfig: sql.config, tableName: string) {
       `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${tableName}' AND COLUMN_NAME = '${recordIdField}'`
     )
     if (columnCheck.recordset.length === 0) {
-      // Add _flatfile_record_id column to the table
+      // Add `_flatfile_record_id` column to the table
       console.log(`Add _flatfile_record_id column to the table`)
       await request.query(
         `ALTER TABLE ${tableName} ADD ${safeRecordIdField} VARCHAR(255);`
       )
     }
 
-    // Add a `rowid` column to the table to join on later (instead of the identity column)
-    console.log(`Add a rowid column to the table`)
+    // Add a sequenial `rowid` column to the table to join on later
+    console.log(`Add a rowid sequence`)
     await request.query(`
       CREATE SEQUENCE ${tableName}_rowid
         START WITH 1
         INCREMENT BY 1;
     `)
+    console.log(`Add a rowid column to the table`)
     await request.query(`
       ALTER TABLE ${tableName}
         ADD rowid INT;
     `)
+    console.log(`Populate the rowid column`)
     await request.query(`
       UPDATE ${tableName}
         SET rowid = NEXT VALUE FOR ${tableName}_rowid;
     `)
-    await request.query(`CREATE UNIQUE INDEX rowid_index ON ${tableName} (rowid);
-    `)
+    console.log(`Create an index on the rowid column`)
+    await request.query(
+      `CREATE UNIQUE INDEX rowid_index ON ${tableName} (rowid);`
+    )
 
     // Count Rows
     console.log(`Count Rows`)
@@ -234,11 +246,11 @@ async function recordTransformer(connConfig: sql.config, tableName: string) {
       `SELECT COUNT(*) as count FROM ${tableName};`
     )
     const count = countsResult.recordset[0].count
-
+    console.log(`${tableName} has ${count} rows`)
     // Generate record IDs
     const recordIds = Array.from({ length: count }, () => makeId())
 
-    // Create a temporary ${tableName}_tmp_record_ids table
+    // Create a temporary `${tableName}_tmp_record_ids` table
     console.log(`Create a temporary ${tableName}_tmp_record_ids table`)
     await request.query(
       `CREATE TABLE ${tableName}_tmp_record_ids (id VARCHAR(255), rowid INT IDENTITY(1,1))`
@@ -255,7 +267,7 @@ async function recordTransformer(connConfig: sql.config, tableName: string) {
       )
     }
 
-    // Populate the _flatfile_record_id
+    // Populate the `_flatfile_record_id`
     console.log(`Populate the _flatfile_record_id`)
     let updatedRows = 0
     let totalUpdated = 0
