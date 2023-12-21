@@ -1,5 +1,11 @@
 # @flatfile/util-response-rejection
 
+## 1.0.1
+
+### Patch Changes
+
+- e283ef6: Bug fix
+
 ## 1.0.0
 
 ### Major Changes
