@@ -27,7 +27,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.0",
+    "@flatfile/api": "^1.6.3",
     "@flatfile/listener": "^0.3.17",
     "axios": "^1.6.2"
   }

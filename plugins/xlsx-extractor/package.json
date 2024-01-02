@@ -27,7 +27,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.0",
+    "@flatfile/api": "^1.6.3",
     "@flatfile/util-extractor": "^0.4.10",
     "remeda": "^1.14.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
