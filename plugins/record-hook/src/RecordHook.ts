@@ -54,13 +54,13 @@ export const BulkRecordHook = async (
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
-  const { versionId } = event.context
+  const { commitId } = event.context
   const { trackChanges } = event.payload
 
   const completeCommit = async () => {
     if (trackChanges) {
       try {
-        await event.fetch(`v1/commits/${versionId}/complete`, {
+        await event.fetch(`v1/commits/${commitId}/complete`, {
           method: 'POST',
         })
         if (options.debug) {
