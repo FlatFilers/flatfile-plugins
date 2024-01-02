@@ -60,13 +60,6 @@ export const BulkRecordHook = async (
   const { commitId } = event.context
   const { trackChanges } = event.payload
 
-  if (!commitId) {
-    if (options.debug) {
-      console.log('No commitId found in event')
-    }
-    return
-  }
-
   const completeCommit = async () => {
     if (trackChanges) {
       try {
