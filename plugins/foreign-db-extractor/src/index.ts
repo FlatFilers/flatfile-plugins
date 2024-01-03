@@ -3,11 +3,9 @@ import FlatfileListener from '@flatfile/listener'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
 import sql from 'mssql'
 import {
-  createWorkbook,
   generateSheets,
   getTablesAndColumns,
   restoreDatabaseFromBackup,
-  sheetsTransformer,
 } from './restore.database'
 import { createResources } from './setup.resources'
 
@@ -63,7 +61,7 @@ export const foreignDBExtractor = () => {
             await createResources(buffer, fileName, tick)
 
           const database = fileName.replace('.bak', '')
-          const connConfig: sql.config = {
+          const connectionConfig: sql.config = {
             user,
             password,
             server,
@@ -80,27 +78,26 @@ export const foreignDBExtractor = () => {
           await tick(50, 'Starting Database Restore')
 
           // Step 2: Restore DB from Backup
-          await restoreDatabaseFromBackup(connConfig, arn)
+          await restoreDatabaseFromBackup(connectionConfig, arn)
           await tick(55, 'Restored DB from backup')
 
           // Step 3: Create a Workbook
           // Get column names for all tables, loop through them and create Sheets for each table
           await tick(65, 'Creating workbook')
-          const tables = await getTablesAndColumns(connConfig)
+          const tables = await getTablesAndColumns(connectionConfig)
           const sheets = generateSheets(tables)
-          const workbook = await createWorkbook(
+          const { data: workbook } = await api.workbooks.create({
+            name: `[file] ${database}`,
+            labels: ['file'],
             spaceId,
             environmentId,
             sheets,
-            connConfig.database,
-            connConfig
-          )
+            metadata: {
+              connectionType: 'FOREIGN_MSSQL',
+              connectionConfig,
+            },
+          })
           await tick(70, 'Created workbook')
-
-          // Step 4: Apply Flatfile Record transformation
-          await tick(75, 'Applying Flatfile Record transformation')
-          await sheetsTransformer(workbook.sheets, connConfig)
-          await tick(80, 'Finished applying Flatfile Record transformation')
 
           await tick(95, 'Wrapping up')
           await api.files.update(fileId, {

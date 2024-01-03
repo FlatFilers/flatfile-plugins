@@ -38,11 +38,12 @@ export async function createResources(
   tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
 ) {
   // Step 1: Create S3 Bucket
+  await tick(5, 'Creating S3 bucket')
   const bucketName = `foreign-db-extractor-s3-bucket`
   await createS3BucketIfNotExists(bucketName)
-  await tick(5, 'Created S3 bucket')
 
   // Step 2: Upload .bak file to S3
+  await tick(10, 'Uploading .bak file to S3')
   try {
     const putObjectCommand = new PutObjectCommand({
       Bucket: bucketName,
@@ -50,13 +51,13 @@ export async function createResources(
       Body: buffer,
     })
     await s3Client.send(putObjectCommand)
-    await tick(10, 'Uploaded .bak file to S3')
   } catch (error) {
     console.error('Error during S3 upload:', error)
     throw new Error('Error during S3 upload')
   }
 
   // Step 3: Create RDS Instance
+  await tick(20, 'Creating RDS instance')
   const dbInstanceIdentifier = `foreign-db-extractor-${uuidv4()}`
   console.log(`Creating RDS instance with identifier "${dbInstanceIdentifier}"`)
   const user = generateUsername()
@@ -76,7 +77,6 @@ export async function createResources(
     })
     await rdsClient.send(createDBInstanceCommand)
     console.log('RDS instance creation initiated.')
-    await tick(20, 'Created RDS instance')
   } catch (error) {
     console.error('Error during RDS instance creation:', error)
     throw new Error('Error during RDS instance creation')
@@ -87,9 +87,11 @@ export async function createResources(
     rdsClient,
     dbInstanceIdentifier
   )
+  console.log(`RDS instance is ready at ${server}:${port}`)
   await tick(30, 'RDS instance is ready')
 
   // Step 4: Create a `SQLSERVER_BACKUP_RESTORE` option group for the RDS instance
+  await tick(40, 'Creating option group')
   const optionGroupName = 'sql-rds-native-backup-restore'
   try {
     const majorEngineVersion = await getMajorEngineVersion(dbInstanceIdentifier)
@@ -98,7 +100,6 @@ export async function createResources(
     await associateOptionGroupToInstance(dbInstanceIdentifier, optionGroupName)
     await waitForRDSInstance(rdsClient, dbInstanceIdentifier, 'modifying')
     await waitForRDSInstance(rdsClient, dbInstanceIdentifier)
-    await tick(40, 'Option group created')
   } catch (error) {
     console.error('Error during RDS option group creation:', error)
   }
