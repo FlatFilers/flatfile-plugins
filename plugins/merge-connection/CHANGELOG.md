@@ -1,5 +1,15 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.0.4
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- Updated dependencies [7a0073d]
+- Updated dependencies [97ffa1c]
+  - @flatfile/plugin-job-handler@0.1.7
+  - @flatfile/util-common@0.2.5
+
 ## 0.0.3
 
 ### Patch Changes

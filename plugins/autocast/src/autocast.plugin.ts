@@ -1,7 +1,7 @@
 import api from '@flatfile/api'
-import { FlatfileRecord, TPrimitive } from '@flatfile/hooks'
+import { TPrimitive } from '@flatfile/hooks'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { BulkRecordHook } from '@flatfile/plugin-record-hook'
+import { BulkRecordHook, FlatfileRecord } from '@flatfile/plugin-record-hook'
 import { logInfo } from '@flatfile/util-common'
 
 export function autocast(
@@ -13,7 +13,7 @@ export function autocast(
     debug?: boolean
   }
 ) {
-  return async (listener: FlatfileListener) => {
+  return (listener: FlatfileListener) => {
     listener.on(
       'commit:created',
       { sheetSlug },

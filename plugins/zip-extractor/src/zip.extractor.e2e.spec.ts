@@ -1,6 +1,4 @@
 import api from '@flatfile/api'
-import * as fs from 'fs'
-import * as path from 'path'
 import {
   deleteSpace,
   getEnvironmentId,
@@ -8,6 +6,8 @@ import {
   setupListener,
   setupSpace,
 } from '@flatfile/utils-testing'
+import * as fs from 'fs'
+import * as path from 'path'
 import { ZipExtractor } from '.'
 
 describe('ZipExtractor e2e', () => {
@@ -40,6 +40,6 @@ describe('ZipExtractor e2e', () => {
       await listener.waitFor('file:created', 4)
       const filesPostUpload = await getFiles(spaceId)
       expect(filesPostUpload.length).toBe(4)
-    })
+    }, 15_000)
   })
 })

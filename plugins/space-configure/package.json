@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-space-configure",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A plugin for configuring a Flatfile Space.",
   "registryMetadata": {
     "category": "core"
@@ -27,8 +27,11 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.37",
+    "@flatfile/api": "^1.6.0",
     "@flatfile/listener": "^0.3.17",
-    "@flatfile/plugin-job-handler": "^0.1.6"
+    "@flatfile/plugin-job-handler": "^0.1.7"
+  },
+  "devDependencies": {
+    "@flatfile/utils-testing": "^0.0.7"
   }
 }

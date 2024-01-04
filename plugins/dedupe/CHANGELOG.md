@@ -1,5 +1,11 @@
 # @flatfile/plugin-dedupe
 
+## 0.0.8
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+
 ## 0.0.7
 
 ### Patch Changes

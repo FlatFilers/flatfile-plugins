@@ -2,7 +2,6 @@ import { Flatfile } from '@flatfile/api'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
-import { Effect } from 'effect'
 import { RecordTranslator } from './record.translator'
 
 export interface RecordHookOptions {
@@ -22,22 +21,20 @@ export const RecordHook = async (
   return BulkRecordHook(
     event,
     async (records, event) => {
-      const handlers = await records.map((record: FlatfileRecord) =>
-        Effect.promise(async () => {
-          try {
-            await handler(record, event)
-          } catch (e) {
-            console.error(
-              `An error occurred while running the handler: ${e.message}`
-            )
-          }
-        })
-      )
-      return Effect.runPromise(
-        Effect.all(handlers, {
-          concurrency,
-        })
-      )
+      const promises = new Set<Promise<any>>()
+
+      for (const record of records) {
+        const promise = Promise.resolve(handler(record, event)).finally(() =>
+          promises.delete(promise)
+        )
+        promises.add(promise)
+
+        if (promises.size >= concurrency) {
+          await Promise.race(promises)
+        }
+      }
+
+      return await Promise.all(promises)
     },
     options
   )
@@ -57,13 +54,13 @@ export const BulkRecordHook = async (
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
-  const { versionId } = event.context
+  const { commitId } = event.context
   const { trackChanges } = event.payload
 
   const completeCommit = async () => {
     if (trackChanges) {
       try {
-        await event.fetch(`v1/commits/${versionId}/complete`, {
+        await event.fetch(`v1/commits/${commitId}/complete`, {
           method: 'POST',
         })
         if (options.debug) {

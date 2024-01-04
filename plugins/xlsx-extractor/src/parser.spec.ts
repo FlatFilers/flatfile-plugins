@@ -1,13 +1,18 @@
-import { parseBuffer } from './parser'
+import { WorkbookCapture } from '@flatfile/util-extractor'
 import * as fs from 'fs'
 import * as path from 'path'
+import { parseBuffer } from './parser'
 
 describe('parser', () => {
   const buffer: Buffer = fs.readFileSync(
     path.join(__dirname, '../ref/test-basic.xlsx')
   )
-  test('Excel to WorkbookCapture', () => {
-    expect(parseBuffer(buffer).Departments).toEqual({
+  let capture: WorkbookCapture
+  beforeAll(async () => {
+    capture = await parseBuffer(buffer)
+  })
+  test('Excel to WorkbookCapture', async () => {
+    expect(capture.Departments).toEqual({
       headers: ['Code', 'Details', 'BranchName', 'Tenant'],
       required: { Code: true, Details: false, BranchName: true, Tenant: true },
       data: [
@@ -27,9 +32,8 @@ describe('parser', () => {
     })
   })
 
-  describe('test-basic.xlsx', function () {
-    const capture = parseBuffer(buffer)
-    test('finds all the sheet names', () => {
+  describe('test-basic.xlsx', () => {
+    test('finds all the sheet names', async () => {
       expect(Object.keys(capture)).toEqual([
         'Departments',
         'Clients',

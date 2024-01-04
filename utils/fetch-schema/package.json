@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-fetch-schema",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A utility for fetching schemas for processing",
   "registryMetadata": {
     "category": "utilities"
@@ -27,8 +27,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.5.30",
-    "@flatfile/listener": "^0.3.15",
+    "@flatfile/api": "^1.6.0",
+    "@flatfile/listener": "^0.3.17",
     "axios": "^1.6.1"
   }
 }

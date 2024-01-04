@@ -1,27 +1,49 @@
-import * as XLSX from 'xlsx'
-import { mapKeys, mapValues } from 'remeda'
-import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 import { Flatfile } from '@flatfile/api'
+import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
+import { mapKeys, mapValues } from 'remeda'
+import { Readable } from 'stream'
+import * as XLSX from 'xlsx'
+import { GetHeadersOptions, Headerizer } from './header.detection'
 
-export function parseBuffer(
+export async function parseBuffer(
   buffer: Buffer,
   options?: {
     raw?: boolean
     rawNumbers?: boolean
+    headerDetectionOptions?: GetHeadersOptions
   }
-): WorkbookCapture {
+): Promise<WorkbookCapture> {
   const workbook = XLSX.read(buffer, {
     type: 'buffer',
     cellDates: true,
+    dense: true,
   })
-
-  return mapValues(workbook.Sheets, (value, key) => {
-    return convertSheet(
-      value,
-      options?.rawNumbers || false,
-      options?.raw || false
-    )
-  })
+  const sheetNames = Object.keys(workbook.Sheets)
+  try {
+    const processedSheets = (
+      await Promise.all(
+        sheetNames.map(async (sheetName) => {
+          const sheet = workbook.Sheets[sheetName]
+          const processedSheet = await convertSheet(
+            sheet,
+            options?.rawNumbers || false,
+            options?.raw || false,
+            options?.headerDetectionOptions || {
+              algorithm: 'default',
+            }
+          )
+          if (!processedSheet) {
+            return
+          }
+          return [sheetName, processedSheet]
+        })
+      )
+    ).filter(Boolean)
+    return Object.fromEntries(processedSheets)
+  } catch (e) {
+    console.error(e)
+    throw new Error('Failed to parse workbook')
+  }
 }
 
 /**
@@ -29,41 +51,64 @@ export function parseBuffer(
  *
  * @param sheet
  */
-function convertSheet(
+async function convertSheet(
   sheet: XLSX.WorkSheet,
-  rawNumbers: boolean,
-  raw: boolean
-): SheetCapture {
+  rawNumbers: boolean = false,
+  raw: boolean = false,
+  headerDetectionOptions?: GetHeadersOptions
+): Promise<SheetCapture | undefined> {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
     defval: null,
-    rawNumbers: rawNumbers || false,
-    raw: raw || false,
+    rawNumbers,
+    raw,
   })
 
-  const { headerRow, skip } = detectHeader(rows)
+  // return if there are no rows
+  if (!rows || rows.length === 0) {
+    return
+  }
+
+  const extractValues = (data: Record<string, any>[]) =>
+    data.map((row) => Object.values(row).filter((value) => value !== null))
+
+  const headerizer = Headerizer.create(headerDetectionOptions)
+  const headerStream = Readable.from(extractValues(rows))
+  const { header, skip } = await headerizer.getHeaders(headerStream)
+
   rows.splice(0, skip)
+  // return if there are no rows
+  if (rows.length === 0) {
+    return
+  }
 
-  const headers = prependNonUniqueHeaderColumns(headerRow)
-  const required: Record<string, boolean> = {}
-  Object.keys(headerRow).forEach((key) => {
-    const newKey = headers[key]
-    if (newKey) {
-      required[newKey] = headerRow[key]?.toString().includes('*') ?? false
-    }
-  })
+  const toExcelHeader = (data: string[], keys: string[]) =>
+    data.reduce((result, value, index) => {
+      result[keys[index]] = value
+      return result
+    }, {})
 
-  const data: Flatfile.RecordData[] = rows
+  const columnKeys = Object.keys(rows[0])
+  const excelHeader = toExcelHeader(header, columnKeys)
+  const headers = prependNonUniqueHeaderColumns(excelHeader)
+  const required = Object.fromEntries(
+    Object.entries(excelHeader).map(([key, value]) => [
+      headers[key],
+      value?.toString().includes('*') ?? false,
+    ])
+  )
+
+  const data = rows
     .filter((row) => !Object.values(row).every(isNullOrWhitespace))
-    .map((row) => {
-      const mappedRow = mapKeys(row, (key) => headers[key])
-      return mapValues(mappedRow, (value) => ({
-        value: value,
-      })) as Flatfile.RecordData
-    })
+    .map((row) =>
+      mapValues(
+        mapKeys(row, (key) => headers[key]),
+        (value) => ({ value })
+      )
+    )
 
   return {
-    headers: Object.values(headers).filter((v) => v) as string[],
+    headers: Object.values(headers).filter(Boolean),
     required,
     data,
   }
@@ -90,31 +135,3 @@ function prependNonUniqueHeaderColumns(
 
 const isNullOrWhitespace = (value: any) =>
   value === null || (typeof value === 'string' && value.trim() === '')
-
-const detectHeader = (
-  rows: Record<string, any>[]
-): { headerRow: Record<string, string>; skip: number } => {
-  const ROWS_TO_CHECK = 10
-
-  let skip = 0
-  let widestRow: Record<string, string> = {}
-  let widestRowCount = 0
-
-  for (let i = 0; i < Math.min(rows.length, ROWS_TO_CHECK); i++) {
-    const row = rows[i]
-    const rowCount = countNonEmptyCells(row)
-    if (rowCount > widestRowCount) {
-      widestRow = row
-      widestRowCount = rowCount
-      skip = i + 1
-    }
-  }
-
-  return { headerRow: widestRow, skip }
-}
-
-const countNonEmptyCells = (row: Record<string, string>): number => {
-  return Object.values(row).filter(
-    (cell) => cell && cell.toString().trim() !== ''
-  ).length
-}

@@ -1,5 +1,12 @@
 # @flatfile/util-common
 
+## 0.2.5
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- 97ffa1c: Export workbook plugin bug fix for handling multiple comments on a cell
+
 ## 0.2.4
 
 ### Patch Changes

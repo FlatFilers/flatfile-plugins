@@ -1,4 +1,12 @@
-# @flatfile/plugin-json-schema
+# @flatfile/plugin-convert-json-schema
+
+## 0.1.1
+
+### Patch Changes
+
+- 7a0073d: Dependency cleanup
+- Updated dependencies [7a0073d]
+  - @flatfile/plugin-space-configure@0.1.8
 
 ## 0.1.0
 

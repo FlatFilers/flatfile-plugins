@@ -1,0 +1,52 @@
+{
+  "name": "@flatfile/plugin-webhook-event-forwarder",
+  "version": "0.0.2",
+  "description": "A plugin to forward events via webhook for clients to manipulate at their endpoints in a language-agnostic way.",
+  "registryMetadata": {
+    "category": "automation"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [],
+  "author": "Morgan Daley",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/webhook-event-forwarder"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FlatFilers/flatfile-plugins/issues"
+  },
+  "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
+  "dependencies": {
+    "@flatfile/api": "^1.5.37",
+    "@flatfile/listener": "^0.3.17",
+    "@types/express": "^4.17.21",
+    "axios": "^1.6.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "rollup": "^4.3.0"
+  }
+}
