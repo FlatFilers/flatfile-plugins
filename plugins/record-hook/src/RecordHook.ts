@@ -18,7 +18,7 @@ export const RecordHook = async (
   options: RecordHookOptions = {}
 ) => {
   const { concurrency = 10 } = options
-  return BulkRecordHook(
+  BulkRecordHook(
     event,
     async (records, event) => {
       const promises = new Set<Promise<any>>()
@@ -128,8 +128,6 @@ export const BulkRecordHook = async (
   } catch (e) {
     console.error(`An error occurred while running the handler: ${e.message}`)
   }
-
-  return handler
 }
 
 const hasRecordChanges = (record, originalRecords) => {

@@ -18,7 +18,7 @@ export function autocast(
       'commit:created',
       { sheetSlug },
       async (event: FlatfileEvent) => {
-        return await BulkRecordHook(
+        await BulkRecordHook(
           event,
           async (records: FlatfileRecord[]) => {
             const sheetId = event.context.sheetId
