@@ -1,15 +1,11 @@
 import api from '@flatfile/api'
-import {
-  deleteSpace,
-  setupListener,
-  setupSpace,
-  startServer,
-  stopServer,
-} from '@flatfile/utils-testing'
+import { fetchExternalReference } from '@flatfile/util-fetch-schema'
+import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 import express from 'express'
 import fs from 'fs'
 import path from 'path'
 import { configureSpaceWithYamlSchema } from '../src'
+import { startServer, stopServer } from './test-server/server'
 
 const app = express()
 const port = 8080
@@ -77,7 +73,20 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
     server = startServer(app, port, pureDataSchema)
     console.log('Setting up Space and Retrieving spaceId')
 
-    await listener.use(configureSpaceWithYamlSchema([{ sourceUrl: url }]))
+    await listener.use(
+      configureSpaceWithYamlSchema({
+        workbooks: [
+          {
+            name: 'YAML Schema Workbook',
+            sheets: [
+              {
+                source: async () => await fetchExternalReference(url),
+              },
+            ],
+          },
+        ],
+      })
+    )
 
     const space = await setupSpace()
     spaceId = space.id
