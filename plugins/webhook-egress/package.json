@@ -8,13 +8,19 @@
   "engines": {
     "node": ">= 16"
   },
-  "source": "src/index.ts",
-  "main": "dist/main.js",
-  "module": "dist/module.mjs",
-  "types": "dist/types.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "parcel build",
-    "dev": "parcel watch",
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
@@ -27,7 +33,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.0",
+    "@flatfile/api": "^1.6.3",
     "@flatfile/listener": "^0.3.17",
     "@flatfile/plugin-job-handler": "^0.1.7",
     "@flatfile/util-response-rejection": "^1.0.0",
@@ -35,6 +41,11 @@
     "axios": "^1.4.0"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.0.7"
+    "@flatfile/utils-testing": "^0.0.7",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "rollup": "^4.3.0"
   }
 }
