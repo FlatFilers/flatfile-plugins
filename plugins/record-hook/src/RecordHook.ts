@@ -18,7 +18,7 @@ export const RecordHook = async (
   options: RecordHookOptions = {}
 ) => {
   const { concurrency = 10 } = options
-  BulkRecordHook(
+  return BulkRecordHook(
     event,
     async (records, event) => {
       const promises = new Set<Promise<any>>()
