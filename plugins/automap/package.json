@@ -29,7 +29,7 @@
   "dependencies": {
     "@flatfile/api": "^1.6.0",
     "@flatfile/common-plugin-utils": "^1.0.1",
-    "@flatfile/listener": "^0.3.18",
+    "@flatfile/listener": "^0.3.19",
     "remeda": "^1.23.0"
   },
   "devDependencies": {
