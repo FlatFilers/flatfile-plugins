@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.2.2
+
+### Patch Changes
+
+- cf61e1c: Replace the effect library in favor of custom concurrency control in recordHook
+
 ## 1.2.1
 
 ### Patch Changes
