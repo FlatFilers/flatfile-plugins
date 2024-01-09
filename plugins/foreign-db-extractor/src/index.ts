@@ -67,10 +67,9 @@ export const foreignDBExtractor = () => {
           const database = fileName.replace('.bak', '')
           // TODO: Move this to a config file
           const connectionConfig: sql.config = {
-            user: 'QuickFalcon0798',
-            password: 'q,Bj{~Q]?56J',
-            server:
-              'foreign-mssql-db-instance.c3buptdb8fco.us-west-2.rds.amazonaws.com',
+            user: process.env.FOREIGN_MSSQL_USER,
+            password: process.env.FOREIGN_MSSQL_PASSWORD,
+            server: process.env.FOREIGN_MSSQL_SERVER,
             database,
             options: { port: 1433, trustServerCertificate: true },
             connectionTimeout: 30000,
