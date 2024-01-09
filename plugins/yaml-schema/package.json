@@ -27,8 +27,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.0",
-    "@flatfile/listener": "^0.3.17",
+    "@flatfile/api": "^1.6.3",
+    "@flatfile/listener": "^0.4.0",
     "@flatfile/plugin-convert-json-schema": "^0.1.1",
     "@flatfile/plugin-space-configure": "^0.1.8",
     "@flatfile/util-fetch-schema": "^0.0.3",

@@ -27,13 +27,12 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.0",
-    "@flatfile/listener": "^0.3.17",
+    "@flatfile/api": "^1.6.3",
+    "@flatfile/listener": "^0.4.0",
     "@flatfile/plugin-space-configure": "^0.1.8",
     "axios": "^1.5.1"
   },
   "devDependencies": {
-    "@flatfile/listener": "^0.3.17",
     "express": "^4.18.2"
   }
 }

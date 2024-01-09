@@ -128,8 +128,6 @@ export const BulkRecordHook = async (
   } catch (e) {
     console.error(`An error occurred while running the handler: ${e.message}`)
   }
-
-  return handler
 }
 
 const hasRecordChanges = (record, originalRecords) => {

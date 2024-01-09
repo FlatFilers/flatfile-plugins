@@ -38,7 +38,7 @@
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
-    "@flatfile/listener": "^0.3.17",
+    "@flatfile/listener": "^0.4.0",
     "@flatfile/utils-testing": "^0.0.2",
     "@parcel/packager-ts": "^2.9.1",
     "@parcel/transformer-typescript-types": "^2.9.1",
@@ -63,6 +63,6 @@
     "@rollup/rollup-linux-x64-gnu": "^4.8.0"
   },
   "dependencies": {
-    "axios": "^1.5.1"
+    "axios": "^1.6.5"
   }
 }
