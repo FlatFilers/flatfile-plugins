@@ -5,9 +5,10 @@ import sql from 'mssql'
 import {
   generateSheets,
   getTablesAndColumns,
+  renameDatabase,
   restoreDatabaseFromBackup,
-} from './restore.database'
-import { createResources } from './setup.resources'
+  uploadFileToS3Bucket,
+} from './database.restore'
 
 export const foreignDBExtractor = () => {
   return (listener: FlatfileListener) => {
@@ -15,12 +16,12 @@ export const foreignDBExtractor = () => {
     listener.on('file:created', async (event) => {
       const { data: file } = await api.files.get(event.context.fileId)
       if (file.mode === 'export') {
-        return false
+        return
       }
 
       // Filter on MSSQL backup file type
       if (!file.name.endsWith('.bak')) {
-        return false
+        return
       }
 
       const jobs = await api.jobs.create({
@@ -56,34 +57,32 @@ export const foreignDBExtractor = () => {
           await tick(0, 'Retrieving file')
           const buffer = await getFileBuffer(event)
 
-          // Step 1: Create AWS resources
-          const { server, port, bucketName, user, password } =
-            await createResources(buffer, fileName, tick)
-
-          const database = fileName.replace('.bak', '')
-          const connectionConfig: sql.config = {
-            user,
-            password,
-            server,
-            database,
-            options: {
-              port,
-              trustServerCertificate: true,
-            },
-            connectionTimeout: 30_000,
-            requestTimeout: 90_000,
-            timeout: 15_000,
-          }
-          const arn = `arn:aws:s3:::${bucketName}/${fileName}`
-          await tick(50, 'Starting Database Restore')
+          // Step 1: Upload file to S3
+          await tick(20, 'Uploading file to S3 bucket')
+          const bucketName = `foreign-db-extractor-s3-bucket`
+          await uploadFileToS3Bucket(bucketName, buffer, fileName)
 
           // Step 2: Restore DB from Backup
+          await tick(30, 'Restoring database')
+          const database = fileName.replace('.bak', '')
+          // TODO: Move this to a config file
+          const connectionConfig: sql.config = {
+            user: 'QuickFalcon0798',
+            password: 'q,Bj{~Q]?56J',
+            server:
+              'foreign-mssql-db-instance.c3buptdb8fco.us-west-2.rds.amazonaws.com',
+            database,
+            options: { port: 1433, trustServerCertificate: true },
+            connectionTimeout: 30000,
+            requestTimeout: 90000,
+            timeout: 15000,
+          }
+          const arn = `arn:aws:s3:::${bucketName}/${fileName}`
           await restoreDatabaseFromBackup(connectionConfig, arn)
-          await tick(55, 'Restored DB from backup')
 
           // Step 3: Create a Workbook
           // Get column names for all tables, loop through them and create Sheets for each table
-          await tick(65, 'Creating workbook')
+          await tick(40, 'Creating workbook')
           const tables = await getTablesAndColumns(connectionConfig)
           const sheets = generateSheets(tables)
           const { data: workbook } = await api.workbooks.create({
@@ -97,9 +96,25 @@ export const foreignDBExtractor = () => {
               connectionConfig,
             },
           })
-          await tick(70, 'Created workbook')
 
-          await tick(95, 'Wrapping up')
+          // Step 4: Rename database to workbookId
+          await tick(50, 'Renaming database')
+          await renameDatabase(connectionConfig, database, workbook.id)
+
+          // Step 5: Update workbook with new DB name in connection config
+          await tick(60, 'Updating workbook connection config')
+          await api.workbooks.update(workbook.id, {
+            metadata: {
+              connectionType: 'FOREIGN_MSSQL',
+              connectionConfig: {
+                ...connectionConfig,
+                database: workbook.id,
+              },
+            },
+          })
+
+          // Step 6: Update file with workbookId
+          await tick(70, 'Updating file')
           await api.files.update(fileId, {
             workbookId: workbook.id,
           })

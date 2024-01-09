@@ -1,4 +1,31 @@
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import sql from 'mssql'
+
+const s3Client = new S3Client({
+  region: 'us-west-2',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+})
+
+export async function uploadFileToS3Bucket(
+  bucketName: string,
+  buffer: Buffer,
+  fileName: string
+) {
+  try {
+    const putObjectCommand = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: fileName,
+      Body: buffer,
+    })
+    await s3Client.send(putObjectCommand)
+  } catch (error) {
+    console.error('Error during S3 upload:', error)
+    throw new Error('Error during S3 upload')
+  }
+}
 
 export async function restoreDatabaseFromBackup(
   connConfig: sql.config,
@@ -109,4 +136,25 @@ export function generateSheets(tables: object) {
       }),
     }
   })
+}
+
+export async function renameDatabase(
+  connConfig: sql.config,
+  oldName: string,
+  newName: string
+) {
+  let conn
+  try {
+    conn = await sql.connect({ ...connConfig, database: 'master' })
+    const renameDbCommand = `EXECUTE rdsadmin.dbo.rds_modify_db_name N'${oldName}', N'${newName}'`
+    await conn.query(renameDbCommand)
+    console.log(`Database ${oldName} renamed to ${newName} in RDS instance.`)
+  } catch (error) {
+    console.error('Error during database rename in RDS:', error)
+    throw new Error('Error during database rename in RDS')
+  } finally {
+    if (conn) {
+      conn.close()
+    }
+  }
 }
