@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.3.19",
+    "@flatfile/listener": "^0.4.0",
     "@flatfile/util-file-buffer": "^0.1.4",
     "axios": "^1.4.0",
     "fs-extra": "^11.1.1",
