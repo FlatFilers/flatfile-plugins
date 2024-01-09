@@ -1,3 +1,4 @@
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import sql from 'mssql'
 import fetch from 'node-fetch'
 
@@ -185,4 +186,25 @@ type Task = {
   status: string
   progress: number
   type: string
+}
+
+export async function renameDatabase(
+  connConfig: sql.config,
+  oldName: string,
+  newName: string
+) {
+  let conn
+  try {
+    conn = await sql.connect({ ...connConfig, database: 'master' })
+    const renameDbCommand = `EXECUTE rdsadmin.dbo.rds_modify_db_name N'${oldName}', N'${newName}'`
+    await conn.query(renameDbCommand)
+    console.log(`Database ${oldName} renamed to ${newName} in RDS instance.`)
+  } catch (error) {
+    console.error('Error during database rename in RDS:', error)
+    throw new Error('Error during database rename in RDS')
+  } finally {
+    if (conn) {
+      conn.close()
+    }
+  }
 }
