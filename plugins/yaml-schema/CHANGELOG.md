@@ -1,5 +1,19 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.1.0
+
+### Minor Changes
+
+- 30981b2: Dependency updates
+
+### Patch Changes
+
+- Updated dependencies [30981b2]
+  - @flatfile/plugin-space-configure@0.2.0
+  - @flatfile/plugin-convert-json-schema@0.2.0
+  - @flatfile/util-fetch-schema@0.1.0
+  - @flatfile/utils-testing@0.1.0
+
 ## 0.0.4
 
 ### Patch Changes

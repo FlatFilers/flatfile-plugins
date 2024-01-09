@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.2.0
+
+### Minor Changes
+
+- 30981b2: Dependency updates
+
 ## 0.1.3
 
 ### Patch Changes
