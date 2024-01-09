@@ -1,5 +1,11 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.6.0
+
+### Minor Changes
+
+- 30981b2: Dependency updates
+
 ## 1.5.4
 
 ### Patch Changes

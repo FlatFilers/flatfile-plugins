@@ -1,5 +1,16 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.1.0
+
+### Minor Changes
+
+- 30981b2: Dependency updates
+
+### Patch Changes
+
+- Updated dependencies [30981b2]
+  - @flatfile/util-file-buffer@0.2.0
+
 ## 0.0.8
 
 ### Patch Changes

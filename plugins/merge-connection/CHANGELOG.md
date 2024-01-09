@@ -1,5 +1,17 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.1.0
+
+### Minor Changes
+
+- 30981b2: Dependency updates
+
+### Patch Changes
+
+- Updated dependencies [30981b2]
+  - @flatfile/plugin-job-handler@0.2.0
+  - @flatfile/util-common@0.3.0
+
 ## 0.0.4
 
 ### Patch Changes
