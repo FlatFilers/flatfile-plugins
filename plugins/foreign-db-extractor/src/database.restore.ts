@@ -144,17 +144,30 @@ export async function renameDatabase(
   newName: string
 ) {
   let conn
-  try {
-    conn = await sql.connect({ ...connConfig, database: 'master' })
-    const renameDbCommand = `EXECUTE rdsadmin.dbo.rds_modify_db_name N'${oldName}', N'${newName}'`
-    await conn.query(renameDbCommand)
-    console.log(`Database ${oldName} renamed to ${newName} in RDS instance.`)
-  } catch (error) {
-    console.error('Error during database rename in RDS:', error)
-    throw new Error('Error during database rename in RDS')
-  } finally {
-    if (conn) {
-      conn.close()
+  let connectionError = true
+  let retries = 0
+  while (connectionError && retries < 6) {
+    try {
+      conn = await sql.connect({ ...connConfig, database: 'master' })
+      connectionError = false
+      const renameDbCommand = `EXECUTE rdsadmin.dbo.rds_modify_db_name N'${oldName}', N'${newName}'`
+      await conn.query(renameDbCommand)
+      console.log(`Database ${oldName} renamed to ${newName} in RDS instance.`)
+    } catch (error) {
+      console.error('Error during database rename in RDS:', error)
+      if (error.name === 'ConnectionError') {
+        console.log('Waiting for SQL connection to be available...')
+        retries++
+        await new Promise((resolve) => setTimeout(resolve, 15_000))
+      } else {
+        console.error('Error during database rename in RDS:', error)
+        throw error
+      }
+    } finally {
+      if (conn) {
+        conn.close()
+        console.log('Closed SQL connection.')
+      }
     }
   }
 }
