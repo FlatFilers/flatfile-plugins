@@ -4,7 +4,6 @@
     "isolatedModules": true,
     "lib": [ "es2015", "dom" ],
     "target": "es2015",
-    "moduleResolution": "node",
-    "strict": true
+    "moduleResolution": "node"
   }
 }
