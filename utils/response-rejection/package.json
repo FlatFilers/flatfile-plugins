@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "build:prod": "rollup -c --environment NODE_ENV:production",
     "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
@@ -35,12 +36,5 @@
   "dependencies": {
     "@flatfile/api": "^1.6.3",
     "@flatfile/util-common": "^0.3.0"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "rollup": "^4.3.0"
   }
 }
