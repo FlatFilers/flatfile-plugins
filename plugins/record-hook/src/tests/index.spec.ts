@@ -1,6 +1,6 @@
 import { FlatfileRecord } from '@flatfile/hooks'
 import { FlatfileListener } from '@flatfile/listener'
-import { bulkRecordHook, recordHook } from '..'
+import { bulkRecordHook, recordHook } from '../record.hook.plugin'
 
 jest.setTimeout(10_000)
 
