@@ -54,6 +54,7 @@ export const foreignDBExtractor = () => {
           const job = await api.jobs.get(jobId)
           const { fileName } = job.data.input
 
+          //Step 0: Get file buffer
           await tick(0, 'Retrieving file')
           const buffer = await getFileBuffer(event)
 
@@ -64,8 +65,10 @@ export const foreignDBExtractor = () => {
 
           // Step 2: Restore DB from Backup
           await tick(30, 'Restoring database')
+          // We are expecting to retrieve the database name from the file name
           const database = fileName.replace('.bak', '')
-          // TODO: Move this to a config file
+          // Connection config for hot RDS instance
+          // The restore requires access to the master database
           const connectionConfig: sql.config = {
             user: process.env.FOREIGN_MSSQL_USER,
             password: process.env.FOREIGN_MSSQL_PASSWORD,
