@@ -198,7 +198,7 @@ export async function renameDatabase(
   let retries = 0
   while (connectionError && retries < 6) {
     try {
-      conn = await sql.connect({ ...connConfig, database: 'master' })
+      conn = await sql.connect({ ...connConfig, database: 'master' }) // Connecting to the master database to execute rename command
       connectionError = false
       const renameDbCommand = `EXECUTE rdsadmin.dbo.rds_modify_db_name N'${oldName}', N'${newName}'`
       await conn.query(renameDbCommand)
