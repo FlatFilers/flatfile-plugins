@@ -18,16 +18,22 @@ export const dxpConfigure = (workbook: Workbook) => {
         info: 'Configuring...',
       })
 
-      const src = workbook.options.sheets
+      const {
+        name,
+        namespace,
+        settings,
+        sheets: originalSheets,
+      } = workbook.options
 
-      const sheets = Object.keys(src)
-        .map((key) => src[key].toBlueprint(workbook.options.namespace, key))
+      const sheets = Object.keys(originalSheets)
+        .map((key) => originalSheets[key].toBlueprint(namespace, key))
         .map((sheet) => ({ ...sheet, actions: sheet.actions || [] }))
 
       await api.workbooks.create({
         spaceId: spaceId,
         environmentId: environmentId,
-        name: workbook.options.name,
+        name,
+        settings,
         // @ts-ignore
         sheets,
       })

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-dxp-configure",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "description": "A plugin for using DXP class-based configurations.",
   "registryMetadata": {
     "category": "utilities"
@@ -39,10 +39,10 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.3.17"
+    "@flatfile/listener": "^0.4.0"
   },
   "devDependencies": {
-    "@flatfile/configure": "^0.5.32",
+    "@flatfile/configure": "^0.5.39",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",

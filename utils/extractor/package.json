@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-extractor",
-  "version": "0.4.10",
+  "version": "0.5.0",
   "description": "A library containing common utilities and helpers for extractors.",
   "keywords": [],
   "author": "Carl Brugger",
@@ -25,8 +25,8 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.3.17",
-    "@flatfile/util-common": "^0.2.5",
-    "@flatfile/util-file-buffer": "^0.1.4"
+    "@flatfile/listener": "^0.4.0",
+    "@flatfile/util-common": "^0.3.0",
+    "@flatfile/util-file-buffer": "^0.2.0"
   }
 }
