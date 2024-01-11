@@ -53,8 +53,10 @@ export function configureSpace(
           ...config.space,
         })
 
-        for (const document of config.documents) {
-          await api.documents.create(spaceId, document)
+        if (config.documents) {
+          for (const document of config.documents) {
+            await api.documents.create(spaceId, document)
+          }
         }
 
         if (callback) {
