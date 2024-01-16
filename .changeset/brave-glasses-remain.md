@@ -8,7 +8,6 @@
 '@flatfile/plugin-convert-json-schema': patch
 '@flatfile/plugin-record-hook': patch
 '@flatfile/plugin-convert-yaml-schema': patch
-'@flatfile/plugin-connect-via-merge': patch
 '@flatfile/util-fetch-schema': patch
 '@flatfile/utils-testing': patch
 ---
