@@ -6,9 +6,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-
-import { recordHook } from '..'
-
+import { recordHook } from '../record.hook.plugin'
 import {
   defaultObjectValueData,
   defaultObjectValueSchema,
@@ -22,8 +20,8 @@ const badEnumValue = 'badValue'
 describe('recordHook() object data modification e2e', () => {
   const listener = setupListener()
 
-  let spaceId
-  let sheetId
+  let spaceId: string
+  let sheetId: string
 
   beforeAll(async () => {
     const space = await setupSpace()
@@ -32,7 +30,7 @@ describe('recordHook() object data modification e2e', () => {
       space.id,
       defaultObjectValueSchema
     )
-    sheetId = workbook.sheets[0].id
+    sheetId = workbook.sheets![0].id
   })
 
   afterAll(async () => {
@@ -54,7 +52,7 @@ describe('recordHook() object data modification e2e', () => {
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
 
-      expect(records[records.length - 1].valid).toBeTruthy()
+      expect(records[0].valid).toBeTruthy()
     })
   })
 
@@ -73,7 +71,7 @@ describe('recordHook() object data modification e2e', () => {
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
 
-      expect(records[records.length - 1].valid).toBeFalsy()
+      expect(records[1].valid).toBeFalsy()
     })
   })
 })

@@ -1,5 +1,17 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.5.0
+
+### Minor Changes
+
+- 30981b2: Dependency updates
+
+### Patch Changes
+
+- Updated dependencies [30981b2]
+  - @flatfile/util-file-buffer@0.2.0
+  - @flatfile/util-common@0.3.0
+
 ## 0.4.10
 
 ### Patch Changes

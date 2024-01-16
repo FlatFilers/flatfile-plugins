@@ -13,20 +13,18 @@ export const fileBuffer = (
     listener.on('file:created', async (event) => {
       const { data: file } = await api.files.get(event.context.fileId)
       if (file.mode === 'export') {
-        return false
+        return
       }
 
       if (typeof matchFile === 'string' && !file.name.endsWith(matchFile)) {
-        return false
+        return
       }
 
       if (matchFile instanceof RegExp && !matchFile.test(file.name)) {
-        return false
+        return
       }
 
-      return getFileBuffer(event).then((buffer) => {
-        return callback(file, buffer, event)
-      })
+      getFileBuffer(event).then((buffer) => callback(file, buffer, event))
     })
   }
 }

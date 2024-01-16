@@ -1,13 +1,11 @@
-import {
-  FlatfileRecord,
-  FlatfileRecords,
+import type { Flatfile } from '@flatfile/api'
+import type {
   IRawRecord,
   TPrimitive,
   TRecordData,
   TRecordDataWithLinks,
 } from '@flatfile/hooks'
-
-import type { Flatfile } from '@flatfile/api'
+import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 
 export class RecordTranslator<
   T extends FlatfileRecord | Flatfile.RecordWithLinks
@@ -16,9 +14,9 @@ export class RecordTranslator<
     this.records = records
   }
 
-  toFlatFileRecords = () => {
+  toFlatfileRecords = (): FlatfileRecords<any> => {
     if (this.records instanceof FlatfileRecords) {
-      return this.records as FlatfileRecords<any>
+      return this.records
     } else {
       const XRecords = this.records as Flatfile.RecordWithLinks[]
 
@@ -52,11 +50,11 @@ export class RecordTranslator<
           return rawRecord
         })
       )
-      return FFRecords as FlatfileRecords<any>
+      return FFRecords
     }
   }
 
-  toXRecords = () => {
+  toXRecords = (): Flatfile.RecordsWithLinks => {
     if (this.records[0] instanceof FlatfileRecord) {
       const FFRecords = this.records as FlatfileRecord[]
       return FFRecords.map((record: FlatfileRecord) => {
@@ -83,9 +81,9 @@ export class RecordTranslator<
           values,
           metadata,
         }
-      })
+      }) as Flatfile.RecordsWithLinks
     } else {
-      return this.records as Flatfile.Record_[]
+      return this.records as Flatfile.RecordsWithLinks
     }
   }
 }

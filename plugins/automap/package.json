@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-automap",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "A plugin for auto mapping imported files when confidence levels are high.",
   "registryMetadata": {
     "category": "automation"
@@ -27,12 +27,12 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.0",
+    "@flatfile/api": "^1.6.3",
     "@flatfile/common-plugin-utils": "^1.0.1",
-    "@flatfile/listener": "^0.3.17",
+    "@flatfile/listener": "^0.4.0",
     "remeda": "^1.23.0"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.0.7"
+    "@flatfile/utils-testing": "^0.1.0"
   }
 }

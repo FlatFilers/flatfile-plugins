@@ -1,5 +1,16 @@
 # @flatfile/plugin-job-handler
 
+## 0.2.0
+
+### Minor Changes
+
+- 30981b2: Dependency updates
+
+### Patch Changes
+
+- Updated dependencies [30981b2]
+  - @flatfile/util-common@0.3.0
+
 ## 0.1.7
 
 ### Patch Changes

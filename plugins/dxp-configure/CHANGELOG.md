@@ -1,5 +1,17 @@
 # @flatfile/plugin-dxp-config
 
+## 0.1.0
+
+### Minor Changes
+
+- 30981b2: Dependency updates
+
+## 0.0.12
+
+### Patch Changes
+
+- 8f28095: Update @flatfile/configure
+
 ## 0.0.11
 
 ### Patch Changes

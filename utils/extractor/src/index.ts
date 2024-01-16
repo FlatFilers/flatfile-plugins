@@ -16,15 +16,15 @@ export const Extractor = (
     listener.on('file:created', async (event) => {
       const { data: file } = await api.files.get(event.context.fileId)
       if (file.mode === 'export') {
-        return false
+        return
       }
 
       if (typeof fileExt === 'string' && !file.name.endsWith(fileExt)) {
-        return false
+        return
       }
 
       if (fileExt instanceof RegExp && !fileExt.test(file.name)) {
-        return false
+        return
       }
 
       const jobs = await api.jobs.create({
