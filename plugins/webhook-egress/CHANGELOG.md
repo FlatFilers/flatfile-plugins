@@ -1,5 +1,11 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.1.1
+
+### Patch Changes
+
+- 9aa56ac: Update axios dependency
+
 ## 1.1.0
 
 ### Minor Changes
