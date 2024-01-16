@@ -27,7 +27,9 @@ export function automap(options: AutomapOptions) {
 export interface AutomapOptions {
   readonly accuracy: 'confident' | 'exact'
   readonly debug?: boolean
-  readonly defaultTargetSheet?: string
+  readonly defaultTargetSheet?:
+    | string
+    | ((fileName?: string, event?: FlatfileEvent) => string)
   readonly matchFilename?: RegExp
   readonly onFailure?: (event: FlatfileEvent) => void
   readonly targetWorkbook?: string
