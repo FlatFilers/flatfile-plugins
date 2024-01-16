@@ -1,5 +1,5 @@
 import type { FlatfileRecord } from '@flatfile/hooks'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import {
   BulkRecordHook,
   BulkRecordHookOptions,

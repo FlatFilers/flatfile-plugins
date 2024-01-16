@@ -6,9 +6,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-
-import { bulkRecordHook } from '..'
-
+import { bulkRecordHook } from '../record.hook.plugin'
 import {
   defaultSimpleValueData,
   defaultSimpleValueSchema,
@@ -19,8 +17,8 @@ const messageValue = 'this is a name'
 describe('bulkRecordHook() simple data modification e2e', () => {
   const listener = setupListener()
 
-  let spaceId
-  let sheetId
+  let spaceId: string
+  let sheetId: string
 
   beforeAll(async () => {
     const space = await setupSpace()
@@ -29,7 +27,7 @@ describe('bulkRecordHook() simple data modification e2e', () => {
       space.id,
       defaultSimpleValueSchema
     )
-    sheetId = workbook.sheets[0].id
+    sheetId = workbook.sheets![0].id
   })
 
   afterAll(async () => {
@@ -49,12 +47,15 @@ describe('bulkRecordHook() simple data modification e2e', () => {
 
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
-      expect(
-        records[records.length - 2].values['name'].messages[0]
-      ).toMatchObject({ type: 'info', message: messageValue })
-      expect(
-        records[records.length - 1].values['name'].messages[0]
-      ).toMatchObject({ type: 'info', message: messageValue })
+      // console.dir(records, { depth: null })
+      expect(records[0].values['name'].messages[0]).toMatchObject({
+        type: 'info',
+        message: messageValue,
+      })
+      expect(records[1].values['name'].messages[0]).toMatchObject({
+        type: 'info',
+        message: messageValue,
+      })
     })
   })
 })

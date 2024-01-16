@@ -29,6 +29,6 @@
   "dependencies": {
     "@flatfile/api": "^1.6.3",
     "@flatfile/listener": "^0.4.0",
-    "axios": "^1.6.1"
+    "axios": "^1.6.5"
   }
 }

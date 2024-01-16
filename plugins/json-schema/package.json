@@ -30,7 +30,7 @@
     "@flatfile/api": "^1.6.3",
     "@flatfile/listener": "^0.4.0",
     "@flatfile/plugin-space-configure": "^0.2.0",
-    "axios": "^1.5.1"
+    "axios": "^1.6.5"
   },
   "devDependencies": {
     "express": "^4.18.2"
