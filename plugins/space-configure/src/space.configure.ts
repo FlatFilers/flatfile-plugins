@@ -53,6 +53,12 @@ export function configureSpace(
           ...config.space,
         })
 
+        if (config.documents) {
+          for (const document of config.documents) {
+            await api.documents.create(spaceId, document)
+          }
+        }
+
         if (callback) {
           await callback(event, workbookIds, tick)
         }
@@ -68,5 +74,6 @@ export type SetupFactory =
 type Setup = {
   workbooks: PartialWb[]
   space?: Partial<Flatfile.spaces.SpaceConfig>
+  documents?: Flatfile.DocumentConfig[]
 }
 type PartialWb = Partial<Flatfile.CreateWorkbookConfig>
