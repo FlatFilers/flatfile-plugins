@@ -6,9 +6,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-
-import { recordHook } from '..'
-
+import { recordHook } from '../record.hook.plugin'
 import {
   defaultSimpleValueData,
   defaultSimpleValueSchema,
@@ -17,8 +15,8 @@ import {
 describe('recordHook() simple data modification e2e', () => {
   const listener = setupListener()
 
-  let spaceId
-  let sheetId
+  let spaceId: string
+  let sheetId: string
 
   beforeAll(async () => {
     const space = await setupSpace()
@@ -27,7 +25,7 @@ describe('recordHook() simple data modification e2e', () => {
       space.id,
       defaultSimpleValueSchema
     )
-    sheetId = workbook.sheets[0].id
+    sheetId = workbook.sheets![0].id
   })
 
   afterAll(async () => {
@@ -46,8 +44,8 @@ describe('recordHook() simple data modification e2e', () => {
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
 
-      expect(records[records.length - 2].metadata).toMatchObject({ test: true })
-      expect(records[records.length - 1].metadata).toMatchObject({ test: true })
+      expect(records[0].metadata).toMatchObject({ test: true })
+      expect(records[1].metadata).toMatchObject({ test: true })
     })
   })
 })

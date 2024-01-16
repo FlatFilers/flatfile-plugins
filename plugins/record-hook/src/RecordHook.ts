@@ -1,6 +1,6 @@
-import { Flatfile } from '@flatfile/api'
-import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
-import { FlatfileEvent } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import type { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
+import type { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
 import { RecordTranslator } from './record.translator'
 
@@ -72,22 +72,22 @@ export const BulkRecordHook = async (
     }
   }
 
-  const fetchData = async () => {
+  const fetchData = async (): Promise<
+    Flatfile.RecordsWithLinks | undefined
+  > => {
     try {
       const data = await event.data
       return data.records && data.records.length ? data.records : undefined
     } catch (e) {
       console.log(`Error fetching records: ${e}`)
     }
+    return undefined
   }
 
   try {
-    const originalRecords = await event.cache.init<Flatfile.Record_[]>(
-      'originalRecords',
-      fetchData
-    )
+    const data = await fetchData()
 
-    if (!originalRecords || originalRecords.length === 0) {
+    if (!data || data.length === 0) {
       if (options.debug) {
         console.log('No records to process')
       }
@@ -95,22 +95,40 @@ export const BulkRecordHook = async (
       return
     }
 
+    await event.cache.init<FlatfileRecords<any>>(
+      'originalRecords',
+      async () => await prepareXRecords(data)
+    )
+
     const batch = await event.cache.init<FlatfileRecords<any>>(
       'records',
-      async () => await prepareXRecords(originalRecords)
+      async () => await prepareXRecords(data)
     )
 
     // Execute client-defined data hooks
     await asyncBatch(batch.records, handler, options, event)
 
     event.afterAll(async () => {
-      const { records } = event.cache.get<FlatfileRecords<any>>('records')
-      const batch = new RecordTranslator<FlatfileRecord>(records).toXRecords()
-      const originalRecords =
-        event.cache.get<Flatfile.Record_[]>('originalRecords')
-      const modifiedRecords = batch.filter((record) =>
-        hasRecordChanges(record, originalRecords)
+      const { records: batch } =
+        event.cache.get<FlatfileRecords<any>>('records')
+      const records: Flatfile.RecordsWithLinks = await prepareFlatfileRecords(
+        batch
       )
+
+      const { records: originalBatch } =
+        event.cache.get<FlatfileRecords<any>>('originalRecords')
+      const originalRecords: Flatfile.RecordsWithLinks =
+        await prepareFlatfileRecords(originalBatch)
+
+      const modifiedRecords: Flatfile.RecordsWithLinks = records.filter(
+        (record: Flatfile.RecordWithLinks) => {
+          const originalRecord: Flatfile.RecordWithLinks = originalRecords.find(
+            (original: Flatfile.RecordWithLinks) => original.id === record.id
+          )!
+          return hasChange(record, originalRecord)
+        }
+      )
+
       if (!modifiedRecords || modifiedRecords.length === 0) {
         if (options.debug) {
           console.log('No records modified')
@@ -130,14 +148,67 @@ export const BulkRecordHook = async (
   }
 }
 
-const hasRecordChanges = (record, originalRecords) => {
-  const originalRecord = originalRecords.find(
-    (original) => original.rowId === record.rowId
-  )
-  return JSON.stringify(record) !== JSON.stringify(originalRecord)
+function hasChange(
+  originalRecord: Flatfile.RecordWithLinks,
+  modifiedRecord: Flatfile.RecordWithLinks
+): boolean {
+  // Check if objects are identical or both null
+  if (originalRecord === modifiedRecord) {
+    return false
+  }
+
+  // Check if one of them is null or not an object
+  if (
+    typeof originalRecord !== 'object' ||
+    typeof modifiedRecord !== 'object' ||
+    originalRecord == null ||
+    modifiedRecord == null
+  ) {
+    return true
+  }
+
+  // Get keys excluding ignored keys at the current level
+  const keysOriginal = Object.keys(originalRecord)
+  const keysModified = Object.keys(modifiedRecord)
+
+  // Check if number of properties is different
+  if (keysOriginal.length !== keysModified.length) {
+    return true
+  }
+
+  // Iterate over keys and check for changes, including nested objects
+  for (const key of keysOriginal) {
+    if (!keysModified.includes(key)) {
+      return true
+    }
+
+    // Check if the current property is an object and needs recursive comparison
+    if (
+      typeof originalRecord[key] === 'object' &&
+      typeof modifiedRecord[key] === 'object' &&
+      originalRecord[key] !== null &&
+      modifiedRecord[key] !== null
+    ) {
+      if (hasChange(originalRecord[key], modifiedRecord[key])) {
+        return true
+      }
+    } else if (originalRecord[key] !== modifiedRecord[key]) {
+      // Direct comparison for non-object or primitive types
+      return true
+    }
+  }
+
+  return false
+}
+
+const prepareFlatfileRecords = async (
+  records: any
+): Promise<Flatfile.RecordsWithLinks> => {
+  const fromFlatfile = new RecordTranslator<FlatfileRecord<any>>(records)
+  return fromFlatfile.toXRecords()
 }
 
 const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
-  const fromX = new RecordTranslator<Flatfile.Record_>(records)
-  return fromX.toFlatFileRecords()
+  const fromX = new RecordTranslator<Flatfile.RecordWithLinks>(records)
+  return fromX.toFlatfileRecords()
 }
