@@ -1,5 +1,11 @@
 # @flatfile/plugin-space-configure
 
+## 0.3.0
+
+### Minor Changes
+
+- 43a3a41: Accept documents in Setup object
+
 ## 0.2.0
 
 ### Minor Changes

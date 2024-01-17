@@ -1,5 +1,17 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.1.1
+
+### Patch Changes
+
+- 9aa56ac: Update axios dependency
+- Updated dependencies [9aa56ac]
+- Updated dependencies [43a3a41]
+  - @flatfile/plugin-convert-json-schema@0.2.1
+  - @flatfile/util-fetch-schema@0.1.1
+  - @flatfile/utils-testing@0.1.1
+  - @flatfile/plugin-space-configure@0.3.0
+
 ## 0.1.0
 
 ### Minor Changes

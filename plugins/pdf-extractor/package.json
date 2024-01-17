@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-pdf-extractor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A plugin for parsing PDF files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
