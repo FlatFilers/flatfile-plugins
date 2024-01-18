@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-automap",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A plugin for auto mapping imported files when confidence levels are high.",
   "registryMetadata": {
     "category": "automation"
