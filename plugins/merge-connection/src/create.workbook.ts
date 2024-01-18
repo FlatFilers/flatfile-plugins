@@ -5,7 +5,13 @@ import {
   SetupFactory,
   generateSetup,
 } from '@flatfile/plugin-convert-openapi-schema'
-import { CATEGORY_MODELS, MERGE_ACCESS_KEY } from './config'
+import { MergeClient } from '@mergeapi/merge-node-client'
+import {
+  CATEGORY_MODELS,
+  MERGE_ACCESS_KEY,
+  SYNC_RETRY_INTERVAL_MS,
+} from './config'
+import { checkAllSyncsComplete } from './sync.status.check'
 import { getMergeClient, getSecret, handleError } from './utils'
 
 export function handleCreateConnectedWorkbooks() {
@@ -25,29 +31,56 @@ export function handleCreateConnectedWorkbooks() {
         throw new Error('Missing Merge API key')
       }
 
-      const mergeClient = getMergeClient(apiKey)
+      // This MergeClient is used to retrieve the account token
+      const tmpMergeClient: MergeClient = getMergeClient(apiKey)
 
       let accountTokenObj
-      let category
-
-      // Since we don't know what category the Merge integration belongs to, we need to try each one
-      const categories = Object.keys(CATEGORY_MODELS)
-      for (let categoryAttempt of categories) {
+      // Since we don't know what categories the Merge integration belongs to, we need to try each one to find an account token
+      const mergeCategories = Object.keys(CATEGORY_MODELS)
+      for (const categoryAttempt of mergeCategories) {
         try {
-          accountTokenObj = await mergeClient[
+          accountTokenObj = await tmpMergeClient[
             categoryAttempt as keyof typeof mergeClient
           ].accountToken.retrieve(publicToken)
           if (accountTokenObj) {
-            category = categoryAttempt
-            break // break out of the loop as soon as a valid category is found
+            break // break out of the loop as soon as a valid account token is retrieved
           }
         } catch (e) {} // ignore and keep trying
       }
-      if (!category || !accountTokenObj) {
+
+      if (!accountTokenObj) {
         throw new Error('Error retrieving account token')
       }
 
-      const { accountToken, integration } = accountTokenObj
+      // The accountToken is tied to the category selected during the Merge integration setup.
+      // However, we don't know what category that is, so we need to retrieve it
+      const {
+        accountToken,
+        integration: { name, categories },
+      } = accountTokenObj
+
+      // This MergeClient is used to retrieve the category
+      const mergeClient: MergeClient = getMergeClient(apiKey, accountToken)
+
+      // We can retrieve the category off of the modelId of the first synced model
+      let results
+      do {
+        results = await checkAllSyncsComplete(
+          mergeClient,
+          // Merge doesn't seem to care what category is used here, it will return the same results regardless
+          // And since we are searching for the category, we'll just use the first one the integration has listed
+          categories[0]
+        )
+        await new Promise((resolve) =>
+          setTimeout(resolve, SYNC_RETRY_INTERVAL_MS)
+        )
+      } while (results.syncedModels.length === 0)
+
+      // The modelId is prefix with the category for the given accountToken
+      const category = results.syncedModels[0].modelId.split('.')[0]
+      if (!category) {
+        throw new Error('Error retrieving category')
+      }
 
       await tick(20, 'Retrieved account token...')
 
@@ -84,9 +117,10 @@ export function handleCreateConnectedWorkbooks() {
       const workbookIds = await Promise.all(
         config.workbooks.map(async (workbookConfig) => {
           const request: Flatfile.CreateWorkbookConfig = {
+            ...workbookConfig,
             spaceId,
             environmentId,
-            name: integration.name,
+            name,
             labels: ['connection'],
             actions: [
               {
@@ -94,7 +128,7 @@ export function handleCreateConnectedWorkbooks() {
                 mode: 'foreground',
                 label: 'Sync',
                 type: 'string',
-                description: `Sync data from ${integration.name}.`,
+                description: `Sync data from ${name}.`,
               },
             ],
             metadata: {
@@ -107,9 +141,7 @@ export function handleCreateConnectedWorkbooks() {
                 },
               ],
             },
-            sheets: workbookConfig.sheets,
           }
-          console.dir(request, { depth: null })
           const { data: workbook } = await api.workbooks.create(request)
           return workbook.id
         })
@@ -142,10 +174,10 @@ export function handleCreateConnectedWorkbooks() {
         outcome: {
           next: {
             type: 'id',
-            id: workbookIds[0],
+            id: workbookIds[0], //pick first
             label: 'Go to workbook...',
           },
-          message: `We've created a connected Workbook that perfectly matches the Merge.dev schema for ${integration.name}, ensuring a seamless connection and easy synchronization going forward.`,
+          message: `We've created a connected Workbook that perfectly matches the Merge.dev schema for ${name}, ensuring a seamless connection and easy synchronization going forward.`,
         },
       } as Flatfile.JobCompleteDetails
     } catch (e) {

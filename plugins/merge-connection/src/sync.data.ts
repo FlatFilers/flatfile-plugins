@@ -11,7 +11,7 @@ export async function syncData(
   try {
     await deleteSheetRecords(sheetId)
 
-    const model = mergeClient[category as keyof typeof mergeClient]
+    const model = mergeClient[category as keyof MergeClient]
     let paginatedList: { results: any[]; next?: string } | null = null
     do {
       paginatedList = (await (model[slug as keyof typeof model] as any).list({
