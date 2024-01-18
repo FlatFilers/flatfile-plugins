@@ -29,7 +29,7 @@ export interface AutomapOptions {
   readonly debug?: boolean
   readonly defaultTargetSheet?:
     | string
-    | ((fileName?: string, event?: FlatfileEvent) => string)
+    | ((fileName?: string, event?: FlatfileEvent) => string | Promise<string>)
   readonly matchFilename?: RegExp
   readonly onFailure?: (event: FlatfileEvent) => void
   readonly targetWorkbook?: string
