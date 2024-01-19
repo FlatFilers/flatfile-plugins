@@ -7,6 +7,7 @@ import {
   processRecords,
 } from '@flatfile/util-common'
 import * as fs from 'fs'
+import path from 'path'
 import * as R from 'remeda'
 import * as XLSX from 'xlsx'
 
@@ -153,7 +154,8 @@ export const run = async (
       return
     }
 
-    const fileName = `Workbook-${currentEpoch()}.xlsx`
+    // Lambdas only allow writing to /tmp directory
+    const fileName = path.join('/tmp', `Workbook-${currentEpoch()}.xlsx`)
 
     try {
       XLSX.set_fs(fs)
