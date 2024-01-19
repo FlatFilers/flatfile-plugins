@@ -1,5 +1,16 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 1.11.0
+
+### Minor Changes
+
+- 3b25c6a: @flatfile/plugin-delimiter-extractor can now guess the delimiter if one is not provided. Also the header detection logic has been upgraded.
+  @flatfile/plugin-xlsx-extractor has updated header detection logic.
+
+  ```
+
+  ```
+
 ## 1.10.0
 
 ### Minor Changes
