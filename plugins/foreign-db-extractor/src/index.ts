@@ -2,13 +2,9 @@ import api, { Flatfile } from '@flatfile/api'
 import FlatfileListener from '@flatfile/listener'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
 import sql from 'mssql'
-import {
-  generateSheets,
-  getTablesAndColumns,
-  renameDatabase,
-  restoreDatabaseFromBackup,
-  uploadFileToS3Bucket,
-} from './database.restore'
+import { restoreDatabaseFromBackup } from './database.restore'
+import { generateSheets } from './generate.sheets'
+import { putInS3Bucket } from './put.s3'
 
 export const foreignDBExtractor = () => {
   return (listener: FlatfileListener) => {
@@ -59,21 +55,30 @@ export const foreignDBExtractor = () => {
           const buffer = await getFileBuffer(event)
 
           // Step 1: Upload file to S3
-          await tick(20, 'Uploading file to S3 bucket')
+          await tick(10, 'Uploading file to S3 bucket')
           const bucketName = `foreign-db-extractor-s3-bucket`
-          await uploadFileToS3Bucket(bucketName, buffer, fileName)
+          await putInS3Bucket(bucketName, buffer, fileName)
 
-          // Step 2: Restore DB from Backup
+          // Step 2: Create a Workbook
+          await tick(20, 'Creating workbook')
+
+          // Create a workbook so we can use the workbookId to name the database
+          const { data: workbook } = await api.workbooks.create({
+            name: `[file] ${fileName}`,
+            labels: ['file'],
+            spaceId,
+            environmentId,
+          })
+
+          // Step 3: Restore DB from Backup
           await tick(30, 'Restoring database')
-          // We are expecting to retrieve the database name from the file name
-          const database = fileName.replace('.bak', '')
           // Connection config for hot RDS instance
           // The restore requires access to the master database
           const connectionConfig: sql.config = {
             user: process.env.FOREIGN_MSSQL_USER,
             password: process.env.FOREIGN_MSSQL_PASSWORD,
             server: process.env.FOREIGN_MSSQL_SERVER,
-            database,
+            database: workbook.id,
             options: { port: 1433, trustServerCertificate: true },
             connectionTimeout: 30000,
             requestTimeout: 90000,
@@ -82,16 +87,11 @@ export const foreignDBExtractor = () => {
           const arn = `arn:aws:s3:::${bucketName}/${fileName}`
           await restoreDatabaseFromBackup(connectionConfig, arn)
 
-          // Step 3: Create a Workbook
+          // Step 4: Create a Workbook
           // Get column names for all tables, loop through them and create Sheets for each table
           await tick(40, 'Creating workbook')
-          const tables = await getTablesAndColumns(connectionConfig)
-          const sheets = generateSheets(tables)
-          const { data: workbook } = await api.workbooks.create({
-            name: `[file] ${database}`,
-            labels: ['file'],
-            spaceId,
-            environmentId,
+          const sheets = await generateSheets(connectionConfig)
+          await api.workbooks.update(workbook.id, {
             sheets,
             metadata: {
               connectionType: 'FOREIGN_MSSQL',
@@ -99,24 +99,8 @@ export const foreignDBExtractor = () => {
             },
           })
 
-          // Step 4: Rename database to workbookId
-          await tick(50, 'Renaming database')
-          await renameDatabase(connectionConfig, database, workbook.id)
-
-          // Step 5: Update workbook with new DB name in connection config
-          await tick(60, 'Updating workbook connection config')
-          await api.workbooks.update(workbook.id, {
-            metadata: {
-              connectionType: 'FOREIGN_MSSQL',
-              connectionConfig: {
-                ...connectionConfig,
-                database: workbook.id,
-              },
-            },
-          })
-
-          // Step 6: Update file with workbookId
-          await tick(70, 'Updating file')
+          // Step 5: Update file with workbookId
+          await tick(50, 'Updating file')
           await api.files.update(fileId, {
             workbookId: workbook.id,
           })
