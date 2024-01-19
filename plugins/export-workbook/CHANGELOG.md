@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.1.1
+
+### Patch Changes
+
+- 2849070: Write tmp file to /tmp dir
+
 ## 0.1.0
 
 ### Minor Changes
