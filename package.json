@@ -6,7 +6,6 @@
     "node": ">=16"
   },
   "workspaces": [
-    "flatfilers/*",
     "plugins/*",
     "support/*",
     "utils/*"
