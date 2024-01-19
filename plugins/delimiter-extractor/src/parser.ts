@@ -2,22 +2,37 @@ import { Flatfile } from '@flatfile/api'
 import { WorkbookCapture } from '@flatfile/util-extractor'
 import Papa, { ParseResult } from 'papaparse'
 import { mapKeys, mapValues } from 'remeda'
+import { Readable } from 'stream'
+import { Delimiters } from '.'
+import { GetHeadersOptions, Headerizer } from './header.detection'
 
-export function parseBuffer(
+export async function parseBuffer(
   buffer: Buffer,
   options: {
-    delimiter: string
+    delimiter: Delimiters
+    guessDelimiters?: Delimiters[]
     dynamicTyping?: boolean
     skipEmptyLines?: boolean | 'greedy'
     transform?: (value: any) => Flatfile.CellValueUnion
+    headerDetectionOptions?: GetHeadersOptions
   }
-): WorkbookCapture {
+): Promise<WorkbookCapture> {
   try {
     const fileContents = buffer.toString('utf8')
     const results: ParseResult<Record<string, string>> = Papa.parse(
       fileContents,
       {
         delimiter: options.delimiter,
+        delimitersToGuess: options.guessDelimiters || [
+          ',',
+          '|',
+          '\t',
+          ';',
+          ':',
+          '~',
+          '^',
+          '#',
+        ],
         dynamicTyping: options?.dynamicTyping || false,
         header: false,
         skipEmptyLines: options?.skipEmptyLines || 'greedy',
@@ -31,16 +46,29 @@ export function parseBuffer(
     }
     const transform = options?.transform || ((value) => value)
 
-    const { headerRow, skip } = detectHeader(rows)
-    rows.splice(0, skip)
+    const extractValues = (data: Record<string, any>[]) =>
+      data.map((row) => Object.values(row).filter((value) => value !== null))
 
-    const headers = prependNonUniqueHeaderColumns(headerRow)
-    const required: Record<string, boolean> = {}
-    Object.keys(headerRow).forEach((key) => {
-      const newKey = headers[key]
-      if (newKey) {
-        required[newKey] = headerRow[key]?.toString().includes('*') ?? false
+    const headerizer = Headerizer.create(
+      options.headerDetectionOptions || {
+        algorithm: 'default',
       }
+    )
+    const headerStream = Readable.from(extractValues(rows))
+    const { header, skip } = await headerizer.getHeaders(headerStream)
+
+    rows.splice(0, skip)
+    // return if there are no rows
+    if (rows.length === 0) {
+      return
+    }
+
+    const headers = prependNonUniqueHeaderColumns(header)
+    const required: Record<string, boolean> = {}
+    header.forEach((item) => {
+      const key = item.replace('*', '').trim()
+      const hasAsterisk = item.includes('*')
+      required[key] = hasAsterisk
     })
 
     const data: Flatfile.RecordData[] = rows
@@ -55,7 +83,7 @@ export function parseBuffer(
     const sheetName = 'Sheet1'
     return {
       [sheetName]: {
-        headers: Object.values(headers).filter((v) => v) as string[],
+        headers,
         required,
         data,
       },
@@ -66,11 +94,9 @@ export function parseBuffer(
   }
 }
 
-function prependNonUniqueHeaderColumns(
-  record: Record<string, string>
-): Record<string, string> {
+function prependNonUniqueHeaderColumns(record: string[]): string[] {
   const counts: Record<string, number> = {}
-  const result: Record<string, string> = {}
+  const result: string[] = []
   for (const [key, value] of Object.entries(record)) {
     const cleanValue = value?.toString().replace('*', '')
     if (cleanValue && counts[value]) {
@@ -87,31 +113,3 @@ function prependNonUniqueHeaderColumns(
 
 const isNullOrWhitespace = (value: any) =>
   value === null || (typeof value === 'string' && value.trim() === '')
-
-const detectHeader = (
-  rows: Record<string, any>[]
-): { headerRow: Record<string, string>; skip: number } => {
-  const ROWS_TO_CHECK = 10
-
-  let skip = 0
-  let widestRow: Record<string, string> = {}
-  let widestRowCount = 0
-
-  for (let i = 0; i < Math.min(rows.length, ROWS_TO_CHECK); i++) {
-    const row = rows[i]
-    const rowCount = countNonEmptyCells(row)
-    if (rowCount > widestRowCount) {
-      widestRow = row
-      widestRowCount = rowCount
-      skip = i + 1
-    }
-  }
-
-  return { headerRow: widestRow, skip }
-}
-
-const countNonEmptyCells = (row: Record<string, string>): number => {
-  return Object.values(row).filter(
-    (cell) => cell && cell.toString().trim() !== ''
-  ).length
-}
