@@ -1,5 +1,13 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.0.5
+
+### Patch Changes
+
+- 9aa56ac: Update axios dependency
+- Updated dependencies [43a3a41]
+  - @flatfile/plugin-space-configure@0.3.0
+
 ## 0.0.4
 
 ### Patch Changes

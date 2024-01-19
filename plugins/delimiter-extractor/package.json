@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-delimiter-extractor",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "A plugin for parsing a delimited file and extracting it into Flatfile.",
   "registryMetadata": {
     "category": "extractors"

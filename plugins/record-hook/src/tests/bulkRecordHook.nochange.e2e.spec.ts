@@ -12,7 +12,7 @@ import {
   defaultSimpleValueSchema,
 } from './simpleTestData'
 
-describe('bulkRecordHook() simple data modification e2e', () => {
+describe('bulkRecordHook() no data change e2e', () => {
   const listener = setupListener()
 
   let spaceId: string
@@ -32,22 +32,21 @@ describe('bulkRecordHook() simple data modification e2e', () => {
     await deleteSpace(spaceId)
   })
 
-  describe('Assigns metadata without assigning a new value', () => {
-    it('correctly assigns metadata', async () => {
-      listener.use(
-        bulkRecordHook('test', (records) =>
+  it('console logs: No records modified', async () => {
+    listener.use(
+      bulkRecordHook(
+        'test',
+        (records) =>
           records.map((record) => {
-            record.setMetadata({ test: true })
-          })
-        )
+            return
+          }),
+        { debug: true }
       )
-      await createRecords(sheetId, defaultSimpleValueData)
+    )
+    await createRecords(sheetId, defaultSimpleValueData)
 
-      await listener.waitFor('commit:created')
-      const records = await getRecords(sheetId)
-
-      expect(records[0].metadata).toMatchObject({ test: true })
-      expect(records[1].metadata).toMatchObject({ test: true })
-    })
+    const logSpy = jest.spyOn(global.console, 'log')
+    await listener.waitFor('commit:created')
+    expect(logSpy).toHaveBeenCalledWith('No records modified')
   })
 })

@@ -1,42 +1,39 @@
 import { Flatfile } from '@flatfile/api'
 import { Extractor } from '@flatfile/util-extractor'
+import { GetHeadersOptions } from './header.detection'
 import { parseBuffer } from './parser'
 
-const delimiterMap = {
-  ',': 'csv',
-  ';': 'ssv',
-  ':': 'dsv',
-  '~': 'tilde',
-  '^': 'caret',
-  '#': 'hash',
+export enum NativeFileTypes {
+  CSV = 'csv',
+  TSV = 'tsv',
+  PSV = 'psv',
 }
 
-type Delimiter = keyof typeof delimiterMap
+export type Delimiters = ',' | '|' | '\t' | ';' | ':' | '~' | '^' | '#'
 
 interface DelimiterOptions {
-  delimiter: Delimiter
+  delimiter?: Delimiters
+  guessDelimiters?: Delimiters[]
   dynamicTyping?: boolean
   skipEmptyLines?: boolean | 'greedy'
   transform?: (value: any) => Flatfile.CellValueUnion
   chunkSize?: number
   parallel?: number
+  headerDetectionOptions?: GetHeadersOptions
   debug?: boolean
 }
 
 export const DelimiterExtractor = (
   fileExt: string,
-  { delimiter, ...restOptions }: DelimiterOptions
+  options: DelimiterOptions
 ) => {
-  const operation = delimiterMap[delimiter]
-
-  if (!operation) {
-    throw new Error(`Unsupported delimiter "${delimiter}" provided.`)
+  if (Object.values(NativeFileTypes).includes(fileExt as NativeFileTypes)) {
+    throw new Error(
+      `${fileExt} is a native file type and not supported by the delimiter extractor.`
+    )
   }
 
-  return Extractor(fileExt, operation, parseBuffer, {
-    delimiter,
-    ...restOptions,
-  })
+  return Extractor(fileExt, 'delimiter', parseBuffer, options)
 }
 
 export const delimiterParser = parseBuffer

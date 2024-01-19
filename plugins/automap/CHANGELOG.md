@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.2.1
+
+### Patch Changes
+
+- 9fa31e2: Update defaultTargetSheet return value
+
 ## 0.2.0
 
 ### Minor Changes

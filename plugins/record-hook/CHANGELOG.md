@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.3.1
+
+### Patch Changes
+
+- 6cdb7ac: expand recordHook rollup config
+- 9aa56ac: Update axios dependency
+- 999b84b: Code clean up & fix check for modified records
+
 ## 1.3.0
 
 ### Minor Changes
