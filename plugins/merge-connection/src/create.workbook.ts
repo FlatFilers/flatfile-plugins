@@ -34,8 +34,11 @@ export function handleCreateConnectedWorkbooks() {
       // This MergeClient is used to retrieve the account token
       const tmpMergeClient: MergeClient = getMergeClient(apiKey)
 
+      // Since we don't know what categories the Merge integration belongs to, we need to try each one to find
+      // an account token. However an integration can belong to multiple categories, so the category that
+      // provides the account token may not be the same category that the user selected. We'll just use the
+      // first one that works.
       let accountTokenObj
-      // Since we don't know what categories the Merge integration belongs to, we need to try each one to find an account token
       const mergeCategories = Object.keys(CATEGORY_MODELS)
       for (const categoryAttempt of mergeCategories) {
         try {
@@ -53,13 +56,13 @@ export function handleCreateConnectedWorkbooks() {
       }
 
       // The accountToken is tied to the category selected during the Merge integration setup.
-      // However, we don't know what category that is, so we need to retrieve it
+      // The `integration.categories` is just a list of all the categories the integration belongs to.
       const {
         accountToken,
         integration: { name, categories },
       } = accountTokenObj
 
-      // This MergeClient is used to retrieve the category
+      // This MergeClient is provided the `accountToken` and can be used to retrieve the category
       const mergeClient: MergeClient = getMergeClient(apiKey, accountToken)
 
       // We can retrieve the category off of the modelId of the first synced model
@@ -84,7 +87,8 @@ export function handleCreateConnectedWorkbooks() {
 
       await tick(20, 'Retrieved account token...')
 
-      // Using the category, we can fetch Merge's schema provided through their OpenAPI spec and convert it to a Flatfile sheet config
+      // Using the category, we can fetch Merge's schema provided through their OpenAPI spec and convert
+      // it to a Flatfile sheet config
       const models = CATEGORY_MODELS[category]
       const sheets: PartialSheetConfig[] = Object.keys(models).map((key) => {
         const model = models[key]
