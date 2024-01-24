@@ -111,6 +111,7 @@ export function handleCreateConnectedWorkbooks() {
       config.workbooks.map((workbook) => {
         workbook.sheets.map((sheet) => {
           sheet.fields.map((field) => {
+            // Merge's OpenAPI spec uses snake_case, but Merge's API uses camelCase
             field.key = snakeToCamel(field.key)
             delete field.description
           })
