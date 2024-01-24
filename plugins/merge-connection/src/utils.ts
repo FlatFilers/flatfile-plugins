@@ -38,3 +38,15 @@ export function mapRecords(
     return mappedRecord
   })
 }
+
+export function snakeToCamel(snakeCaseString: string): string {
+  return snakeCaseString
+    .split('_')
+    .map((word, index) => {
+      if (index === 0) {
+        return word
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1)
+    })
+    .join('')
+}

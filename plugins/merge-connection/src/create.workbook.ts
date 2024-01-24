@@ -12,7 +12,7 @@ import {
   SYNC_RETRY_INTERVAL_MS,
 } from './config'
 import { checkAllSyncsComplete } from './sync.status.check'
-import { getMergeClient, getSecret, handleError } from './utils'
+import { getMergeClient, getSecret, handleError, snakeToCamel } from './utils'
 
 export function handleCreateConnectedWorkbooks() {
   return async (
@@ -111,6 +111,7 @@ export function handleCreateConnectedWorkbooks() {
       config.workbooks.map((workbook) => {
         workbook.sheets.map((sheet) => {
           sheet.fields.map((field) => {
+            field.key = snakeToCamel(field.key)
             delete field.description
           })
         })
