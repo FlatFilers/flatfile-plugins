@@ -1,7 +1,9 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { FlatfileRecord } from '@flatfile/hooks'
-import { bulkRecordHookPlugin } from '@flatfile/plugin-record-hook'
+import {
+  FlatfileRecord,
+  bulkRecordHookPlugin,
+} from '@flatfile/plugin-record-hook'
 import { getConstraints } from './get.constraints'
 
 export const externalConstraint = (

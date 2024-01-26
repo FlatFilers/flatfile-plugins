@@ -1,3 +1,4 @@
+import { Flatfile } from '@flatfile/api'
 import {
   createRecords,
   deleteSpace,
@@ -6,7 +7,6 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-import { Flatfile } from '@flatfile/api'
 import { externalConstraint } from './external.constraint'
 
 describe('externalConstraint()', () => {
