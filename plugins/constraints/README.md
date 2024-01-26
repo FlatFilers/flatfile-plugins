@@ -6,7 +6,7 @@ This plugin introduces the ability to register external constraints for blueprin
 
 ```ts
 listener.use(
-  externalConstraint('test', (value, key, { config, record }) => {
+  externalConstraint('length', (value, key, { config, record }) => {
     if (value.length > config.max) {
       record.addError(key, `Text must be under ${config.max} characters`)
       // alternatively throw the error
