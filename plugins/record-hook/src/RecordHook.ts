@@ -85,7 +85,10 @@ export const BulkRecordHook = async (
   }
 
   try {
-    const data = await fetchData()
+    const data = await event.cache.init<Flatfile.RecordsWithLinks>(
+      'data',
+      async () => await fetchData()
+    )
 
     if (!data || data.length === 0) {
       if (options.debug) {
@@ -94,11 +97,6 @@ export const BulkRecordHook = async (
       await completeCommit()
       return
     }
-
-    await event.cache.init<FlatfileRecords<any>>(
-      'originalRecords',
-      async () => await prepareXRecords(data)
-    )
 
     const batch = await event.cache.init<FlatfileRecords<any>>(
       'records',
@@ -115,10 +113,10 @@ export const BulkRecordHook = async (
         batch
       )
 
-      const { records: originalBatch } =
-        event.cache.get<FlatfileRecords<any>>('originalRecords')
+      const data = await event.cache.get<Flatfile.RecordsWithLinks>('data')
+      const { records: originalXRecords } = await prepareXRecords(data)
       const originalRecords: Flatfile.RecordsWithLinks =
-        await prepareFlatfileRecords(originalBatch)
+        await prepareFlatfileRecords(originalXRecords)
 
       const modifiedRecords: Flatfile.RecordsWithLinks = records.filter(
         (record: Flatfile.RecordWithLinks) => {
