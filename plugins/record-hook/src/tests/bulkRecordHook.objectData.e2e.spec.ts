@@ -51,7 +51,7 @@ describe('bulkRecordHook() object data modification e2e', () => {
     it('correctly modifies Object values', async () => {
       await createRecords(sheetId, defaultObjectValueData)
 
-      await listener.waitFor('commit:created')
+      await listener.waitFor('commit:created', 2)
       const records = await getRecords(sheetId)
       expect(records[0].valid).toBeTruthy()
     })
@@ -70,7 +70,7 @@ describe('bulkRecordHook() object data modification e2e', () => {
     it('correctly modifies Object values', async () => {
       await createRecords(sheetId, defaultObjectValueData)
 
-      await listener.waitFor('commit:created')
+      await listener.waitFor('commit:created', 2)
       const records = await getRecords(sheetId)
       expect(records[1].valid).toBeFalsy()
     })
