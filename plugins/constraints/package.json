@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-constraints",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A plugin for extending blueprint with external constraints",
   "registryMetadata": {
     "category": "records"
@@ -36,7 +36,7 @@
     "@flatfile/plugin-record-hook": "^1.3.2"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.1.1",
+    "@flatfile/utils-testing": "^0.1.2",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
