@@ -1,0 +1,49 @@
+{
+  "name": "@flatfile/plugin-constraints",
+  "version": "1.0.0",
+  "description": "A plugin for extending blueprint with external constraints",
+  "registryMetadata": {
+    "category": "records"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:prod": "rollup -c --environment NODE_ENV:production",
+    "dev": "rollup -c --watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [],
+  "author": "David Boskovic",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/constraints"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.6.5",
+    "@flatfile/listener": "^0.4.0",
+    "@flatfile/plugin-record-hook": "^1.3.2"
+  },
+  "devDependencies": {
+    "@flatfile/utils-testing": "^0.1.1",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "rollup": "^4.3.0",
+    "rollup-plugin-dts": "^6.1.0",
+    "ts-jest": "^29.1.2"
+  }
+}
