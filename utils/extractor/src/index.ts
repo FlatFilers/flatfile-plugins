@@ -39,26 +39,35 @@ export const Extractor = (
       'job:ready',
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
+        const { jobId } = event.context
         const { chunkSize, parallel, debug } = {
-          chunkSize: 10_000,
+          chunkSize: 5_000,
           parallel: 1,
           debug: false,
           ...options,
         }
 
-        const { data: file } = await api.files.get(event.context.fileId)
-        const buffer = await getFileBuffer(event)
-        const { jobId } = event.context
-        try {
-          const tick = async (progress: number, info?: string) => {
-            await api.jobs.ack(jobId, { progress, info })
-            if (debug) {
-              console.log(`Job progress: ${progress}, Info: ${info}`)
-            }
+        const tick = async (progress: number, info?: string) => {
+          await api.jobs.ack(jobId, { progress, info })
+          if (debug) {
+            console.log(`Job progress: ${progress}, Info: ${info}`)
           }
+        }
+
+        try {
+          await api.jobs.ack(jobId, {
+            progress: 1,
+            info: 'Excecuting file extraction',
+          })
+          await tick(1, 'Retrieving file')
+          const { data: file } = await api.files.get(event.context.fileId)
+          const buffer = await getFileBuffer(event)
 
           await tick(3, 'Parsing Sheets')
-          const capture = await parseBuffer(buffer, options)
+          const capture = await parseBuffer(buffer, {
+            ...options,
+            fileId: event.context.fileId,
+          })
           const workbook = await createWorkbook(
             event.context.environmentId,
             file,
