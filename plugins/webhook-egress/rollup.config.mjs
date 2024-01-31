@@ -14,7 +14,6 @@ if (!PROD) {
 }
 
 const external = [
-  '@flatfile/api',
   '@flatfile/listener',
   '@flatfile/plugin-job-handler',
   '@flatfile/util-response-rejection',
