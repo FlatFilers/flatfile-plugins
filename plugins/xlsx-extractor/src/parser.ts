@@ -10,6 +10,7 @@ export async function parseBuffer(
     raw?: boolean
     rawNumbers?: boolean
     headerDetectionOptions?: GetHeadersOptions
+    dateNF?: string
     debug?: boolean
   }
 ): Promise<WorkbookCapture> {
