@@ -6,7 +6,6 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-import axios from 'axios'
 import fetchMock from 'jest-fetch-mock'
 import { webhookEgress } from './webhook.egress'
 

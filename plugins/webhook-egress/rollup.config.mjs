@@ -18,7 +18,7 @@ const external = [
   '@flatfile/plugin-job-handler',
   '@flatfile/util-response-rejection',
   '@flatfile/util-common',
-  'axios',
+  'node-fetch',
 ]
 
 function commonPlugins(browser) {
