@@ -124,7 +124,7 @@ export async function createRecords(
   records: Array<Record<string, any>>
 ) {
   await axios.post(
-    `https://platform.flatfile.com/api/v1/sheets/${sheetId}/records`,
+    `${process.env.AGENT_INTERNAL_URL}/v1/sheets/${sheetId}/records`,
 
     records.map((r) =>
       Object.keys(r).reduce((acc: Record<string, any>, k) => {

@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.3.2
+
+### Patch Changes
+
+- 675f0ca: Optimizes data fetch
+
 ## 1.3.1
 
 ### Patch Changes
