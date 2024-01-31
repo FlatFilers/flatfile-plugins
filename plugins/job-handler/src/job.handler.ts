@@ -37,19 +37,20 @@ export function jobHandler(
     listener.on('job:ready', { job }, async (event) => {
       const { jobId } = event.context
 
-      const tick = async (progress: number) => {
-        return await api.jobs.update(jobId, {
+      await api.jobs.ack(jobId, {
+        info: 'Accepted',
+        progress: 10,
+      })
+
+      const tick = async (progress: number, info?: string) => {
+        return await api.jobs.ack(jobId, {
           progress,
+          ...(info !== undefined && { info }),
         })
       }
 
       let outcome
       try {
-        await api.jobs.ack(jobId, {
-          info: `Excecuting ${job}`,
-          progress: 0,
-        })
-
         outcome = await handler(event, tick)
 
         if (opts.debug) {
