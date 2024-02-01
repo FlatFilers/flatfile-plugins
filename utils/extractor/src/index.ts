@@ -55,10 +55,6 @@ export const Extractor = (
         }
 
         try {
-          await api.jobs.ack(jobId, {
-            progress: 1,
-            info: 'Excecuting file extraction',
-          })
           await tick(1, 'Retrieving file')
           const { data: file } = await api.files.get(event.context.fileId)
           const buffer = await getFileBuffer(event)
