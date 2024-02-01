@@ -8,13 +8,20 @@
   "engines": {
     "node": ">= 16"
   },
-  "source": "src/index.ts",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.mjs",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "parcel build",
-    "dev": "parcel watch",
+    "build": "rollup -c",
+    "build:prod": "rollup -c --environment NODE_ENV:production",
+    "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
