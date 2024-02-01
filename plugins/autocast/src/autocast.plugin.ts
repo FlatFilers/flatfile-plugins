@@ -111,8 +111,12 @@ export function castBoolean(value: TPrimitive): TPrimitive {
 }
 
 export function castDate(value: TPrimitive): TPrimitive {
-  if (typeof value === 'string' || typeof value === 'number') {
-    const date = new Date(value)
+  // Check if value is a number and if so use the numeric value instead of a string
+  const numericTimestamp = Number(value)
+  let finalValue = !isNaN(numericTimestamp) ? numericTimestamp : value
+
+  if (typeof finalValue === 'string' || typeof finalValue === 'number') {
+    const date = new Date(finalValue)
     if (!isNaN(date.getTime())) {
       return date.toUTCString()
     }
