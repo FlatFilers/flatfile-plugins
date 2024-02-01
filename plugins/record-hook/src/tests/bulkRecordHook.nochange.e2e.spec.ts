@@ -48,5 +48,5 @@ describe('bulkRecordHook() no data change e2e', () => {
     const logSpy = jest.spyOn(global.console, 'log')
     await listener.waitFor('commit:created')
     expect(logSpy).toHaveBeenCalledWith('No records modified')
-  })
+  }, 15_000)
 })

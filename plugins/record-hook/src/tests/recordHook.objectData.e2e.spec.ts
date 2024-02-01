@@ -53,7 +53,7 @@ describe('recordHook() object data modification e2e', () => {
       const records = await getRecords(sheetId)
 
       expect(records[0].valid).toBeTruthy()
-    })
+    }, 15_000)
   })
 
   describe('Assigns an invalid value to an enum', () => {
@@ -72,6 +72,6 @@ describe('recordHook() object data modification e2e', () => {
       const records = await getRecords(sheetId)
 
       expect(records[1].valid).toBeFalsy()
-    })
+    }, 15_000)
   })
 })

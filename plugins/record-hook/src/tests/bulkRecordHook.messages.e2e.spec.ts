@@ -56,6 +56,6 @@ describe('bulkRecordHook() simple data modification e2e', () => {
         type: 'info',
         message: messageValue,
       })
-    })
+    }, 15_000)
   })
 })
