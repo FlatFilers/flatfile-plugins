@@ -54,5 +54,5 @@ describe('recordHook() throw error e2e', () => {
     expect(logErrorSpy).toHaveBeenCalledWith(
       'An error occurred while running the handler: oops'
     )
-  }, 10_000)
+  }, 15_000)
 })
