@@ -44,7 +44,13 @@ export function autocast(
                 typeof originalValue !== field.type
               ) {
                 try {
-                  record.computeIfPresent(field.key, caster)
+                  record.computeIfPresent(
+                    field.key,
+                    caster,
+                    `Cast '${originalValue}' from '${typeof originalValue}' to '${
+                      field.type
+                    }'`
+                  )
                 } catch (e) {
                   record.addError(
                     field.key,
