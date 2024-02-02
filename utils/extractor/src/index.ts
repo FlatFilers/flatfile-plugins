@@ -14,7 +14,8 @@ export const Extractor = (
 ) => {
   return (listener: FlatfileListener) => {
     listener.on('file:created', async (event) => {
-      const { data: file } = await api.files.get(event.context.fileId)
+      const { fileId } = event.context
+      const { data: file } = await api.files.get(fileId)
       if (file.mode === 'export') {
         return
       }
@@ -31,7 +32,7 @@ export const Extractor = (
         type: Flatfile.JobType.File,
         operation: `extract-plugin-${extractorType}`,
         status: Flatfile.JobStatus.Ready,
-        source: event.context.fileId,
+        source: fileId,
       })
       await api.jobs.execute(jobs.data.id)
     })
@@ -39,26 +40,31 @@ export const Extractor = (
       'job:ready',
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
+        const { fileId, jobId } = event.context
         const { chunkSize, parallel, debug } = {
-          chunkSize: 10_000,
+          chunkSize: 5_000,
           parallel: 1,
           debug: false,
           ...options,
         }
 
-        const { data: file } = await api.files.get(event.context.fileId)
-        const buffer = await getFileBuffer(event)
-        const { jobId } = event.context
-        try {
-          const tick = async (progress: number, info?: string) => {
-            await api.jobs.ack(jobId, { progress, info })
-            if (debug) {
-              console.log(`Job progress: ${progress}, Info: ${info}`)
-            }
+        const tick = async (progress: number, info?: string) => {
+          await api.jobs.ack(jobId, { progress, info })
+          if (debug) {
+            console.log(`Job progress: ${progress}, Info: ${info}`)
           }
+        }
+
+        try {
+          await tick(1, 'Retrieving file')
+          const { data: file } = await api.files.get(fileId)
+          const buffer = await getFileBuffer(event)
 
           await tick(3, 'Parsing Sheets')
-          const capture = await parseBuffer(buffer, options)
+          const capture = await parseBuffer(buffer, {
+            ...options,
+            fileId,
+          })
           const workbook = await createWorkbook(
             event.context.environmentId,
             file,

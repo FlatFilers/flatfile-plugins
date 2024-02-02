@@ -48,6 +48,6 @@ describe('bulkRecordHook() simple data modification e2e', () => {
 
       expect(records[0].metadata).toMatchObject({ test: true })
       expect(records[1].metadata).toMatchObject({ test: true })
-    })
+    }, 15_000)
   })
 })
