@@ -1,5 +1,13 @@
 # @flatfile/plugin-job-handler
 
+## 0.2.1
+
+### Patch Changes
+
+- 0d63b1f: This release add browser builds to the `@flatfile/util-response-rejection`, `@flatfile/plugin-webhook-egress`, `@flatfile/plugin-job-handler` & `@flatfile/util-common` plugins can be used in client-side apps.
+- Updated dependencies [0d63b1f]
+  - @flatfile/util-common@0.3.1
+
 ## 0.2.0
 
 ### Minor Changes
