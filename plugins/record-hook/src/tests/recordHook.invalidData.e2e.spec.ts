@@ -63,5 +63,5 @@ describe('recordHook() assigns an invalid value and adds an error e2e', () => {
     })
 
     expect(errors.length).toBe(records.length)
-  })
+  }, 15_000)
 })

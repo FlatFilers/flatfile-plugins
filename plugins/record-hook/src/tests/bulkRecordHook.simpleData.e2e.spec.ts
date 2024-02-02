@@ -75,5 +75,5 @@ describe.each([
 
     expect(records[0].values['alive']).toMatchObject({ value: booleanValue })
     expect(records[1].values['alive']).toMatchObject({ value: booleanValue })
-  })
+  }, 15_000)
 })

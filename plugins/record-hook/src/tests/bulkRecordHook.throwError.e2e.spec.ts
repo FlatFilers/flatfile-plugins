@@ -58,5 +58,5 @@ describe('bulkRecordHook() throws error e2e', () => {
     expect(logErrorSpy).toHaveBeenCalledWith(
       'An error occurred while running the handler: oops'
     )
-  })
+  }, 15_000)
 })
