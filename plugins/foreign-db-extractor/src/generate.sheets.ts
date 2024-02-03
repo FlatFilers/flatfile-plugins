@@ -20,7 +20,7 @@ export async function generateSheets(
   })
 }
 
-async function getTablesAndColumns(connConfig: sql.config) {
+async function getTablesAndColumns(connConfig: string) {
   let tables = {}
   let conn
   try {

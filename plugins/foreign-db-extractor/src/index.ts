@@ -101,7 +101,7 @@ export const foreignDBExtractor = () => {
           await api.workbooks.update(workbook.id, {
             metadata: {
               connectionType: 'FOREIGN_MSSQL',
-              connectionConfig,
+              connectionConfig: connection,
             },
           })
 
