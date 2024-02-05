@@ -48,7 +48,7 @@ export const foreignDBExtractor = () => {
           // Step 1: Upload file to S3
           await tick(1, 'Uploading file to S3 bucket')
 
-          const storageResponse = await fetch(
+          const storageUploadResponse = await fetch(
             `${process.env.FLATFILE_API_URL}/v1/storage/upload`,
             {
               method: 'POST',
@@ -61,7 +61,13 @@ export const foreignDBExtractor = () => {
               }),
             }
           )
-          const { arn } = await storageResponse.json()
+
+          if (storageUploadResponse.status !== 200) {
+            const errorBody = await storageUploadResponse.json()
+            throw new Error(errorBody.errors[0].message)
+          }
+
+          const { arn } = await storageUploadResponse.json()
 
           // Step 2: Create a Workbook
           await tick(10, 'Creating workbook')
@@ -76,7 +82,7 @@ export const foreignDBExtractor = () => {
 
           // Step 3: Restore DB from Backup
           await tick(20, 'Restoring database')
-          const restoreResponse = await fetch(
+          const databaseRestoreResponse = await fetch(
             `${process.env.FLATFILE_API_URL}/v1/database/restore`,
             {
               method: 'POST',
@@ -91,7 +97,12 @@ export const foreignDBExtractor = () => {
             }
           )
 
-          const { connection } = await restoreResponse.json()
+          if (databaseRestoreResponse.status !== 200) {
+            const errorBody = await databaseRestoreResponse.json()
+            throw new Error(errorBody.errors[0].message)
+          }
+
+          const { connection } = await databaseRestoreResponse.json()
 
           // Step 4: Create a Workbook
           // Get column names for all tables, loop through them and create Sheets for each table
