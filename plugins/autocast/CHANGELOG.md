@@ -1,5 +1,11 @@
 # @flatfile/plugin-autocast
 
+## 0.6.0
+
+### Minor Changes
+
+- 94e245a: This release upgrades the messaging when a value is cast. It also fixes a bug when the autocast plugin is used concurrently with recordHooks.
+
 ## 0.5.0
 
 ### Minor Changes
