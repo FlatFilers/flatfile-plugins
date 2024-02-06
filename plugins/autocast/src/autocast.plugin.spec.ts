@@ -31,6 +31,7 @@ describe('autocast plugin', () => {
       'August 16, 2023',
       '2023-08-16T00:00:00.000Z',
       1692144000000,
+      '1692144000000',
     ])('should return a date', (date) => {
       expect(castDate(date)).toBe('Wed, 16 Aug 2023 00:00:00 GMT')
     })
