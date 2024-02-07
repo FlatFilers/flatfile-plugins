@@ -43,7 +43,7 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.4.0",
+    "@flatfile/listener": "^1.0.0",
     "@flatfile/util-common": "^0.3.1"
   },
   "devDependencies": {

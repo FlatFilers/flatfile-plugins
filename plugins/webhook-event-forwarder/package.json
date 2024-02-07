@@ -46,7 +46,7 @@
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "dependencies": {
     "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.4.0",
+    "@flatfile/listener": "^1.0.0",
     "@types/express": "^4.17.21",
     "axios": "^1.6.5"
   },
