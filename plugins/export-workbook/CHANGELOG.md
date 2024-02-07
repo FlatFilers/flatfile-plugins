@@ -1,5 +1,12 @@
 # @flatfile/plugin-export-workbook
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [7c1c094]
+  - @flatfile/util-common@0.4.0
+
 ## 0.1.1
 
 ### Patch Changes

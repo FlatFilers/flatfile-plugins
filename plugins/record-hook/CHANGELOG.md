@@ -1,5 +1,17 @@
 # @flatfile/plugin-record-hook
 
+## 1.4.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
+### Patch Changes
+
+- 7c1c094: Update UMD build
+- Updated dependencies [7c1c094]
+  - @flatfile/util-common@0.4.0
+
 ## 1.3.2
 
 ### Patch Changes

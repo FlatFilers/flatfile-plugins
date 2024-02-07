@@ -1,5 +1,15 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.1.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
+### Patch Changes
+
+- @flatfile/plugin-space-configure@0.3.1
+
 ## 0.0.5
 
 ### Patch Changes

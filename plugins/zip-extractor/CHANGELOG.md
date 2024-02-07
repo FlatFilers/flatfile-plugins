@@ -1,5 +1,12 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [7c1c094]
+  - @flatfile/util-common@0.4.0
+
 ## 0.4.0
 
 ### Minor Changes
