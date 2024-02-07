@@ -1,9 +1,10 @@
+import { dts } from 'rollup-plugin-dts'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import resolve from '@rollup/plugin-node-resolve'
 import terser from '@rollup/plugin-terser'
 import typescript from '@rollup/plugin-typescript'
-import { dts } from 'rollup-plugin-dts'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -20,8 +21,13 @@ const external = [
   '@flatfile/util-common',
 ]
 
-function commonPlugins(browser) {
+function commonPlugins(browser, umd = false) {
   return [
+    !umd
+      ? peerDepsExternal({
+          includeDependencies: true,
+        })
+      : undefined,
     json(),
     commonjs({ include: '**/node_modules/**', requireReturnsDefault: 'auto' }),
     resolve({ browser, preferBuiltins: !browser }),
@@ -71,14 +77,21 @@ export default [
         sourcemap: false,
         format: 'es',
       },
+    ],
+    plugins: commonPlugins(true),
+    external,
+  },
+  {
+    input: 'src/index.ts',
+    output: [
       {
         file: 'dist/index.js',
         format: 'umd',
         name: 'PluginRecordHook',
       },
     ],
-    plugins: commonPlugins(true),
-    external,
+    plugins: commonPlugins(true, true),
+    internal: external,
   },
   {
     input: 'src/index.ts',
