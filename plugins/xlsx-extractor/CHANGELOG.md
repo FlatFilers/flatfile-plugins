@@ -76,3 +76,134 @@
 - f2b2f59: @flatfile/api dependency updated to latest version.
 - Updated dependencies [f2b2f59]
   - @flatfile/util-extractor@0.4.4
+
+  ## 1.7.4
+#### 2023-09-22
+### Patch Changes
+- e111565: Update XLSX dependency version.
+
+## 1.7.3
+#### 2023-09-21
+### Patch Changes
+- Updated dependencies [0195166]
+  - @flatfile/util-extractor@0.4.3
+
+## 1.7.2
+#### 2023-09-19
+### Patch Changes
+- Updated dependencies [134cf31]
+  - @flatfile/util-extractor@0.4.2
+
+## 1.7.1
+#### 2023-09-08
+### Patch Changes
+- Updated dependencies [7019e58]
+  - @flatfile/util-extractor@0.4.1
+
+## 1.7.0
+#### 2023-08-30
+### Minor Changes
+- b399623: Refactor extractors to handle extraction on job:ready. Add debug option.
+- Updated dependencies [b399623]
+  - @flatfile/util-extractor@0.4.0
+
+## 1.6.0
+#### 2023-08-30
+### Minor Changes
+- 447691a: Add configurable batch options.
+- Updated dependencies [447691a]
+  - @flatfile/util-extractor@0.3.0
+
+## 1.5.3
+#### 2023-08-25
+### Patch Changes
+- @flatfile/util-extractor@0.2.4
+
+## 1.5.2
+#### 2023-08-24
+### Patch Changes
+- f5efd60: Update @flatfile/listener dependency.
+- Updated dependencies [f5efd60]
+  - @flatfile/util-extractor@0.2.3
+
+## 1.5.1
+#### 2023-08-11
+### Patch Changes
+- @flatfile/util-extractor@0.2.2
+
+## 1.5.0
+#### 2023-08-09
+### Minor Changes
+- c0b8d8d: Support duplicate headers with non-unique header keys.
+
+## 1.4.0
+#### 2023-08-02
+### Minor Changes
+- 6189d31: Fix for ghost rows in Excel files.
+
+## 1.3.2
+#### 2023-08-02
+### Patch Changes
+- 1cd2f31: Add header row auto-detection.
+- Updated dependencies [c859a10]
+  - @flatfile/util-extractor@0.2.1
+
+## 1.3.1
+#### 2023-07-31
+### Patch Changes
+- 4651120: Add @deprecated comment.
+
+## 1.3.0
+#### 2023-07-25
+### Minor Changes
+- 77b9237: Add backwards compatibility for renamed extractors.
+
+## 1.2.0
+#### 2023-07-18
+### Minor Changes
+- 2b15b32: Refactor extractors to share a common extractor. Add .tsv file extractor.
+- Updated dependencies [2b15b32]
+  - @flatfile/util-extractor@0.2.0
+
+## 1.1.0
+#### 2023-06-30
+### Minor Changes
+- e7e5134: DRYing abstract extractor code.
+- Updated dependencies [e7e5134]
+  - @flatfile/plugin-extractor-utils@0.1.0
+
+## 1.0.8
+#### 2023-06-23
+### Patch Changes
+- 3656390: Open up the event typing.
+
+## 1.0.7
+#### 2023-06-18
+### Patch Changes
+- 02b9420: Fixes issue with extracting export files.
+
+## 1.0.6
+#### 2023-06-15
+### Patch Changes
+- c4bf511: Console log not error. New extractor for psv file types.
+
+## 1.0.4
+#### 2023-06-13
+### Patch Changes
+- 749ebdc: Introduce records chunking to xlsx extractor.
+
+## 1.0.3
+#### 2023-06-08
+### Patch Changes
+- 7fa7925: Updating readmes.
+
+## 1.0.2
+#### 2023-05-23
+### Patch Changes
+- 413251a: Progress Improvements and adds xlsxExtractorPlugin.
+
+## 1.0.1
+#### 2023-04-17
+### Patch Changes
+- 41261d0: Build tooling
+
