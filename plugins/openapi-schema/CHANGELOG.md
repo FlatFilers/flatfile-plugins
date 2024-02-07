@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.1.1
+
+### Patch Changes
+
+- 4a417af: Update package.json to have exports and browser
+
 ## 0.1.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-webhook-event-forwarder
 
+## 0.2.1
+
+### Patch Changes
+
+- 4a417af: Update package.json to have exports and browser
+
 ## 0.2.0
 
 ### Minor Changes

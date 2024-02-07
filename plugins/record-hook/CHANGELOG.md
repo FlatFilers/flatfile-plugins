@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.4.1
+
+### Patch Changes
+
+- 4a417af: Update package.json to have exports and browser
+- Updated dependencies [4a417af]
+  - @flatfile/util-common@0.4.1
+
 ## 1.4.0
 
 ### Minor Changes

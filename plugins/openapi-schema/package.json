@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-convert-openapi-schema",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A plugin for converting OpenAPI schema definitions to Flatfile Blueprint.",
   "registryMetadata": {
     "category": "schema-converters"
