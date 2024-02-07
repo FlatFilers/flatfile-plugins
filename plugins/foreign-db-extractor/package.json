@@ -8,13 +8,26 @@
   "engines": {
     "node": ">= 18"
   },
-  "source": "src/index.ts",
-  "main": "dist/main.js",
-  "module": "dist/module.mjs",
-  "types": "dist/types.d.ts",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "parcel build",
-    "dev": "parcel watch",
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
@@ -28,11 +41,9 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-rds": "^3.496.0",
-    "@aws-sdk/client-s3": "^3.496.0",
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.4.0",
-    "@flatfile/util-file-buffer": "^0.2.0",
-    "mssql": "^10.0.1"
+    "@flatfile/api": "^1.7.1",
+    "@flatfile/listener": "^1.0.0",
+    "mssql": "^10.0.1",
+    "node-fetch": "^3.3.2"
   }
 }
