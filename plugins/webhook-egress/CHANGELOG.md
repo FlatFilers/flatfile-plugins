@@ -1,5 +1,15 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.2.1
+
+### Patch Changes
+
+- 4a417af: Update package.json to have exports and browser
+- Updated dependencies [4a417af]
+  - @flatfile/util-response-rejection@1.2.1
+  - @flatfile/plugin-job-handler@0.3.1
+  - @flatfile/util-common@0.4.1
+
 ## 1.2.0
 
 ### Minor Changes
