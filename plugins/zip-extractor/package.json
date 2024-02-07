@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-zip-extractor",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A plugin for unzipping zip files and uploading content back in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -29,7 +29,7 @@
   "dependencies": {
     "@flatfile/api": "^1.6.3",
     "@flatfile/listener": "^1.0.0",
-    "@flatfile/util-common": "^0.3.0",
+    "@flatfile/util-common": "^0.4.0",
     "@flatfile/util-file-buffer": "^0.2.0",
     "adm-zip": "^0.5.10"
   },

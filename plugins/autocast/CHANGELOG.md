@@ -1,5 +1,18 @@
 # @flatfile/plugin-autocast
 
+## 0.7.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
+### Patch Changes
+
+- Updated dependencies [7c1c094]
+- Updated dependencies [7c1c094]
+  - @flatfile/plugin-record-hook@1.4.0
+  - @flatfile/util-common@0.4.0
+
 ## 0.6.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @flatfile/plugin-job-handler
 
+## 0.3.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
+### Patch Changes
+
+- Updated dependencies [7c1c094]
+  - @flatfile/util-common@0.4.0
+
 ## 0.2.1
 
 ### Patch Changes

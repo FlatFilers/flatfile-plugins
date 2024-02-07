@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 0.4.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
 ## 0.3.1
 
 ### Patch Changes
