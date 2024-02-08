@@ -49,7 +49,7 @@ export const foreignDBExtractor = () => {
 
           // Step 1: Upload file to S3
           await tick(10, 'Uploading file to S3 bucket')
-          const arn = await s3Upload(fileId)
+          await s3Upload(fileId)
 
           // Step 2: Create a Workbook
           await tick(45, 'Creating workbook')
@@ -64,7 +64,7 @@ export const foreignDBExtractor = () => {
 
           // Step 3: Restore DB from Backup
           await tick(50, 'Restoring database')
-          const connectionConfig = await restoreDatabase(arn, workbook.id)
+          const connectionConfig = await restoreDatabase(workbook.id, fileId)
 
           // Step 4: Create a Workbook
           // Get column names for all tables, loop through them and create Sheets for each table
