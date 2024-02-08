@@ -1,10 +1,14 @@
+import { Flatfile } from '@flatfile/api'
 import sql from 'mssql'
 
-export async function generateSheets(connConfig: string) {
+export async function generateSheets(
+  connConfig: sql.config
+): Promise<Flatfile.SheetConfigUpdate[]> {
   const tables = await getTablesAndColumns(connConfig)
   return Object.keys(tables).map((tableName) => {
     return {
       name: tableName,
+      slug: tableName,
       fields: tables[tableName].map((columnName) => {
         return {
           key: columnName,
@@ -16,7 +20,7 @@ export async function generateSheets(connConfig: string) {
   })
 }
 
-async function getTablesAndColumns(connConfig: string) {
+async function getTablesAndColumns(connConfig: sql.config) {
   let tables = {}
   let conn
   try {

@@ -1,6 +1,10 @@
+import sql from 'mssql'
 import fetch from 'node-fetch'
 
-export async function restoreDatabase(arn: string, workbookId: string) {
+export async function restoreDatabase(
+  arn: string,
+  workbookId: string
+): Promise<sql.config> {
   const databaseRestoreResponse = await fetch(
     `${process.env.FLATFILE_API_URL}/v1/database/restore`,
     {
@@ -23,10 +27,23 @@ export async function restoreDatabase(arn: string, workbookId: string) {
     throw new Error(jsonResponse.errors[0].message)
   }
 
-  return jsonResponse.connection
+  return {
+    user: jsonResponse.username,
+    password: jsonResponse.password,
+    server: jsonResponse.host,
+    database: jsonResponse.dbname,
+    options: { port: 1433, trustServerCertificate: true },
+    connectionTimeout: 30000,
+    requestTimeout: 90000,
+    timeout: 15000,
+  }
 }
 
 type RestoreDatabaseResponse = {
-  connection: string
+  host: string
+  port: number
+  dbname: string
+  username: string
+  password: string
   errors: { message: string }[]
 }

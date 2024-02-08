@@ -64,17 +64,22 @@ export const foreignDBExtractor = () => {
 
           // Step 3: Restore DB from Backup
           await tick(50, 'Restoring database')
-          const connection = await restoreDatabase(arn, workbook.id)
+          const connectionConfig = await restoreDatabase(arn, workbook.id)
 
           // Step 4: Create a Workbook
           // Get column names for all tables, loop through them and create Sheets for each table
           await tick(90, 'Creating workbook')
-          const sheets = await generateSheets(connection)
+          const sheets = await generateSheets(connectionConfig)
+
+          // Sheets need to be added before adding the connectionType to ensure the correct ephemeral driver is used
           await api.workbooks.update(workbook.id, {
             sheets,
+          })
+
+          await api.workbooks.update(workbook.id, {
             metadata: {
               connectionType: 'FOREIGN_MSSQL',
-              connectionConfig: connection,
+              connectionConfig,
             },
           })
 
