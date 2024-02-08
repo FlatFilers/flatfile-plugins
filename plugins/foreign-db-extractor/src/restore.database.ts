@@ -2,8 +2,8 @@ import sql from 'mssql'
 import fetch from 'node-fetch'
 
 export async function restoreDatabase(
-  arn: string,
-  workbookId: string
+  databaseName: string,
+  fileId: string
 ): Promise<sql.config> {
   const databaseRestoreResponse = await fetch(
     `${process.env.FLATFILE_API_URL}/v1/database/restore`,
@@ -14,8 +14,8 @@ export async function restoreDatabase(
         Authorization: `Bearer ${process.env.FLATFILE_API_KEY}`,
       },
       body: JSON.stringify({
-        databaseName: workbookId,
-        arn,
+        databaseName,
+        fileId,
       }),
     }
   )
