@@ -40,9 +40,7 @@ describe('autocast plugin', () => {
       [castBoolean, 'boolean'],
       [castDate, 'date'],
     ])('is uncastable; should throw error', (castFn, type) => {
-      expect(() => castFn('foo')).toThrowError(
-        `Failed to cast 'foo' to '${type}'`
-      )
+      expect(() => castFn('foo')).toThrow(`Invalid ${type}`)
     })
   })
 })

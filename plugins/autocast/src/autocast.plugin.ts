@@ -81,7 +81,7 @@ export function castNumber(value: TPrimitive): TPrimitive {
       }
     }
   }
-  throw new Error(`Failed to cast '${value}' to 'number'`)
+  throw new Error('Invalid number')
 }
 
 export const TRUTHY_VALUES = ['1', 'yes', 'true', 'on', 't', 'y', 1]
@@ -101,7 +101,7 @@ export function castBoolean(value: TPrimitive): TPrimitive {
       return false
     }
   }
-  throw new Error(`Failed to cast '${value}' to 'boolean'`)
+  throw new Error('Invalid boolean')
 }
 
 export function castDate(value: TPrimitive): TPrimitive {
@@ -115,5 +115,5 @@ export function castDate(value: TPrimitive): TPrimitive {
       return date.toUTCString()
     }
   }
-  throw new Error(`Failed to cast '${value}' to 'date'`)
+  throw new Error('Invalid date')
 }
