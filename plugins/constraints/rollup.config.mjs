@@ -13,11 +13,7 @@ if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
 
-const external = [
-  '@flatfile/api',
-  '@flatfile/listener',
-  '@flatfile/plugin-record-hook',
-]
+const external = ['@flatfile/listener', '@flatfile/plugin-record-hook']
 
 function commonPlugins(browser) {
   return [
