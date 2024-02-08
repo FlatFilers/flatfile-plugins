@@ -21,4 +21,4 @@
 '@flatfile/utils-testing': major
 ---
 
-This release updates the `@flatfile/api` and `@flatfile/listener` dependencies.
+This is a major version update
