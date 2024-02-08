@@ -1,31 +1,31 @@
 ---
-'@flatfile/plugin-webhook-event-forwarder': patch
-'@flatfile/plugin-delimiter-extractor': patch
-'@flatfile/plugin-convert-sql-ddl': patch
-'@flatfile/plugin-connect-via-merge': patch
-'@flatfile/util-response-rejection': patch
-'@flatfile/plugin-export-workbook': patch
-'@flatfile/plugin-space-configure': patch
-'@flatfile/plugin-convert-openapi-schema': patch
-'@flatfile/plugin-webhook-egress': patch
-'@flatfile/plugin-dxp-configure': patch
-'@flatfile/plugin-pdf-extractor': patch
-'@flatfile/plugin-psv-extractor': patch
-'@flatfile/plugin-tsv-extractor': patch
-'@flatfile/plugin-zip-extractor': patch
+'@flatfile/plugin-webhook-event-forwarder': major
+'@flatfile/plugin-delimiter-extractor': major
+'@flatfile/plugin-convert-sql-ddl': major
+'@flatfile/plugin-connect-via-merge': major
+'@flatfile/util-response-rejection': major
+'@flatfile/plugin-export-workbook': major
+'@flatfile/plugin-space-configure': major
+'@flatfile/plugin-convert-openapi-schema': major
+'@flatfile/plugin-webhook-egress': major
+'@flatfile/plugin-dxp-configure': major
+'@flatfile/plugin-pdf-extractor': major
+'@flatfile/plugin-psv-extractor': major
+'@flatfile/plugin-tsv-extractor': major
+'@flatfile/plugin-zip-extractor': major
 '@flatfile/plugin-constraints': patch
-'@flatfile/plugin-job-handler': patch
-'@flatfile/plugin-convert-json-schema': patch
-'@flatfile/plugin-record-hook': patch
-'@flatfile/plugin-convert-yaml-schema': patch
-'@flatfile/util-fetch-schema': patch
-'@flatfile/util-file-buffer': patch
-'@flatfile/plugin-autocast': patch
-'@flatfile/plugin-automap': patch
-'@flatfile/util-extractor': patch
-'@flatfile/plugin-dedupe': patch
-'@flatfile/utils-testing': patch
-'@flatfile/util-common': patch
+'@flatfile/plugin-job-handler': major
+'@flatfile/plugin-convert-json-schema': major
+'@flatfile/plugin-record-hook': major
+'@flatfile/plugin-convert-yaml-schema': major
+'@flatfile/util-fetch-schema': major
+'@flatfile/util-file-buffer': major
+'@flatfile/plugin-autocast': major
+'@flatfile/plugin-automap': major
+'@flatfile/util-extractor': major
+'@flatfile/plugin-dedupe': major
+'@flatfile/utils-testing': major
+'@flatfile/util-common': major
 ---
 
 This release updates the `@flatfile/api` and `@flatfile/listener` dependencies.
