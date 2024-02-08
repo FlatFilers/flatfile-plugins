@@ -27,8 +27,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^1.0.0",
+    "@flatfile/api": "^1.7.1",
+    "@flatfile/listener": "^1.0.1",
     "@flatfile/plugin-job-handler": "^0.3.0",
     "@flatfile/util-common": "^0.4.0",
     "@mergeapi/merge-node-client": "^0.1.6",

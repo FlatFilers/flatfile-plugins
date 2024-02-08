@@ -27,7 +27,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
+    "@flatfile/api": "^1.7.1",
     "@flatfile/util-extractor": "^0.5.0",
     "papaparse": "^5.4.1",
     "remeda": "^1.14.0"
