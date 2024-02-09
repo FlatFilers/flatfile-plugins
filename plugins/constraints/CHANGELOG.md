@@ -1,5 +1,11 @@
 # @flatfile/plugin-constraints
 
+## 1.1.4
+
+### Patch Changes
+
+- 34ac0dd: Make sure to export the externalSheetConstraint()
+
 ## 1.1.3
 
 ### Patch Changes
