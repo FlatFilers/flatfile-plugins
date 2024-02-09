@@ -28,4 +28,4 @@
 '@flatfile/util-common': patch
 ---
 
-This release updates the `@flatfile/api` and `@flatfile/listener` dependencies.
+This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
