@@ -142,5 +142,5 @@ describe('configureSpaceWithJsonSchema() e2e', () => {
     expect(workspaceData.sheets[0].config).toMatchObject(
       expectedWorkbookData.sheets[0].config
     )
-  }, 15_000)
+  })
 })
