@@ -1,5 +1,11 @@
 # @flatfile/plugin-constraints
 
+## 1.1.3
+
+### Patch Changes
+
+- 03176dd: Adds externalSheetConstraint()
+
 ## 1.1.2
 
 ### Patch Changes
