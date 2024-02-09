@@ -77,11 +77,13 @@ export function setupListener(): TestListener {
  *
  * @param spaceId - The space ID where the workbook will be created.
  * @param fields - The list of properties or field keys for the workbook.
+ * @param constraints - an optional list of constraints to add to the sheet
  * @returns A Promise that resolves to created workbook data.
  */
 export async function setupSimpleWorkbook(
   spaceId: string,
-  fields: Array<Flatfile.Property | string>
+  fields: Array<Flatfile.Property | string>,
+  constraints: Flatfile.SheetConstraint[] = []
 ): Promise<Flatfile.Workbook> {
   const res = await api.workbooks.create({
     name: 'ci-wb-' + Date.now(),
@@ -94,6 +96,7 @@ export async function setupSimpleWorkbook(
         fields: fields.map((field) =>
           typeof field === 'string' ? { key: field, type: 'string' } : field
         ),
+        constraints,
       },
     ],
   })
