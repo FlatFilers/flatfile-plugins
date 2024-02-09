@@ -1,5 +1,11 @@
 # @flatfile/plugin-constraints
 
+## 1.1.2
+
+### Patch Changes
+
+- ad2977a: Fix constraints plugin's build.
+
 ## 1.1.1
 
 ### Patch Changes
