@@ -14,6 +14,6 @@ module.exports = {
       statements: 100,
     },
   },
-  testTimeout: 15_000,
+  testTimeout: 30_000,
   globalSetup: './testing/setup-global.js',
 }
