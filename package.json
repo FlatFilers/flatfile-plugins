@@ -39,7 +39,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
     "@flatfile/listener": "^1.0.0",
-    "@flatfile/utils-testing": "^0.0.2",
+    "@flatfile/utils-testing": "^0.1.2",
     "@parcel/packager-ts": "^2.11.0",
     "@parcel/transformer-typescript-types": "^2.11.0",
     "@rollup/plugin-commonjs": "^25.0.7",

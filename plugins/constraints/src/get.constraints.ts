@@ -13,3 +13,12 @@ export function getConstraints(
     return acc
   }, [] as Array<[Flatfile.Property, Flatfile.Constraint.External]>)
 }
+
+export function getSheetConstraints(
+  schema: Flatfile.SheetConfig,
+  validator: string
+) {
+  return (schema.constraints?.filter(
+    (c) => c.type === 'external' && c.validator === validator
+  ) || []) as Array<Flatfile.SheetConstraint.External>
+}
