@@ -26,7 +26,7 @@ describe('externalConstraint()', () => {
           type: 'external',
           validator: 'test',
           fields: ['name', 'email'],
-          config: { flag: true, validator: 'test' },
+          config: { flag: true },
         },
       ]
     )

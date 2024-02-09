@@ -19,8 +19,6 @@ export function getSheetConstraints(
   validator: string
 ) {
   return (schema.constraints?.filter(
-    (c) =>
-      // todo: remove this `|| c.config.validator` once API bug is fixed
-      c.type === 'external' && (c.validator || c.config.validator) === validator
+    (c) => c.type === 'external' && c.validator === validator
   ) || []) as Array<Flatfile.SheetConstraint.External>
 }
