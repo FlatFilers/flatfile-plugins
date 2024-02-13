@@ -27,12 +27,12 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^1.0.0",
-    "remeda": "^1.14.0",
+    "@flatfile/api": "^1.7.1",
+    "@flatfile/listener": "^1.0.1",
+    "remeda": "^1.40.2",
     "ts-pattern": "^5.0.4"
   },
   "devDependencies": {
-    "@faker-js/faker": "^7.6.0"
+    "@faker-js/faker": "^8.4.1"
   }
 }
