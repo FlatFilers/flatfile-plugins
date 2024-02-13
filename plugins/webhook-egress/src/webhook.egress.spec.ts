@@ -12,6 +12,7 @@ import { webhookEgress } from './webhook.egress'
 jest.setTimeout(10_000)
 
 fetchMock.enableMocks()
+fetchMock.dontMock()
 
 describe('webhookEgress() e2e', () => {
   const listener = setupListener()
@@ -53,7 +54,8 @@ describe('webhookEgress() e2e', () => {
   })
 
   it('returns successful outcome message', async () => {
-    fetchMock.mockResponseOnce(
+    fetchMock.doMockIf(
+      'example.com',
       JSON.stringify({
         data: {},
       }),
@@ -80,7 +82,8 @@ describe('webhookEgress() e2e', () => {
   })
 
   it('returns failure outcome message', async () => {
-    fetchMock.mockResponseOnce(
+    fetchMock.doMockIf(
+      'example.com',
       JSON.stringify({
         data: {},
       }),
@@ -119,7 +122,8 @@ describe('webhookEgress() e2e', () => {
 
   describe('webhookEgress() e2e w/ response rejection', () => {
     it('returns no rejections', async () => {
-      fetchMock.mockResponseOnce(
+      fetchMock.doMockIf(
+        'example.com',
         JSON.stringify({
           rejections: {
             deleteSubmitted: true,
@@ -152,7 +156,8 @@ describe('webhookEgress() e2e', () => {
     })
 
     it('returns rejections', async () => {
-      fetchMock.mockResponseOnce(
+      fetchMock.doMockIf(
+        'example.com',
         JSON.stringify({
           rejections: {
             id: workbookId,
