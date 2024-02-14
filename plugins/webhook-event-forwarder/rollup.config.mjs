@@ -13,13 +13,7 @@ if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
 
-const external = [
-  '@flatfile/listener',
-  '@flatfile/plugin-job-handler',
-  '@flatfile/util-response-rejection',
-  '@flatfile/util-common',
-  'node-fetch',
-]
+const external = ['@flatfile/listener', 'node-fetch']
 
 function commonPlugins(browser) {
   return [
