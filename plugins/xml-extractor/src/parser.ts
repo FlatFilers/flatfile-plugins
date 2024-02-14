@@ -1,6 +1,6 @@
-import toJSON from 'xml-json-format'
 import { WorkbookCapture } from '@flatfile/util-extractor'
 import { mapValues } from 'remeda'
+import toJSON from 'xml-json-format'
 
 export function parseBuffer(
   buffer: Buffer,
@@ -51,7 +51,7 @@ export function headersFromObjectList(
 }
 
 function flattenAttributes(obj: Record<string, any>): Record<string, any> {
-  if ('_attributes' in obj) {
+  if (obj && '_attributes' in obj) {
     const attributes = mapObject(obj._attributes, (k, v) => [`#${k}`, v])
     delete obj._attributes
     return { ...obj, ...attributes }
@@ -76,6 +76,7 @@ function flattenObject(
   prefix = ''
 ): Record<string, any> {
   const obj = flattenAttributes(input)
+  if (!obj) return {}
   const result: Record<string, any> = {}
   Object.keys(obj).forEach((k) => {
     const pre = prefix

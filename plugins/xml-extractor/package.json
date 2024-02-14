@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-xml-extractor",
-  "version": "0.5.12",
+  "version": "0.5.13",
   "description": "A plugin for extracting data from XML files.",
   "registryMetadata": {
     "category": "extractors"
