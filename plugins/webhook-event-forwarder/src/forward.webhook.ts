@@ -1,44 +1,47 @@
-import { FlatfileListener } from '@flatfile/listener'
-import axios from 'axios'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 
 export function webhookEventForward(
   url?: string,
-  callback?: (data, event) => Promise<any> | any
+  callback?: (data: any, event: FlatfileEvent) => Promise<any> | any,
+  options?: {
+    debug?: boolean
+  }
 ) {
   return async (listener: FlatfileListener) => {
     return listener.on('**', async (event) => {
       try {
         const apiUrl = url || process.env.WEBHOOK_SITE_URL
+
         if (typeof apiUrl === 'undefined') {
           throw new Error('No url provided')
         }
-        const post = await axios.post(apiUrl, event)
-        if (post.status !== 200) throw new Error('Error forwarding webhook')
-        const contentTypeExists = !!(
-          post?.headers &&
-          post?.headers['content-type'] !== undefined &&
-          post?.headers['content-type'] !== null
-        )
-        const contentTypeIsJson = !!(
-          contentTypeExists &&
-          post?.headers['content-type'] === 'application/json'
-        )
-        const dataIsJson = !!JSON.parse(JSON.stringify(post.data))
-        const checkContentType = contentTypeExists
-          ? contentTypeIsJson
-          : dataIsJson
-        const data = checkContentType
-          ? { ...JSON.parse(JSON.stringify(post.data)) }
-          : { data: post.data }
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(event),
+        })
+
+        if (response.status !== 200) throw new Error('Error forwarding webhook')
+
+        const contentType = response.headers.get('content-type')
+        const isJson = contentType && contentType.includes('application/json')
+        const data = isJson ? await response.json() : await response.text()
+
         callback ? await callback(data, event) : null
       } catch (err) {
-        console.error(err)
+        if (options?.debug) {
+          console.error(err.toString())
+        }
+
         callback
           ? await callback(
               {
                 error: true,
-                message: 'Error recieved, please try again',
-                data: err,
+                message: 'Error received, please try again',
+                data: err.toString(),
               },
               event
             )

@@ -1,7 +1,41 @@
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
-import nodeResolve from '@rollup/plugin-node-resolve'
+import resolve from '@rollup/plugin-node-resolve'
+import terser from '@rollup/plugin-terser'
 import typescript from '@rollup/plugin-typescript'
+import { dts } from 'rollup-plugin-dts'
+
+import dotenv from 'dotenv'
+dotenv.config()
+
+const PROD = process.env.NODE_ENV === 'production'
+if (!PROD) {
+  console.log('Not in production mode - skipping minification')
+}
+
+const external = [
+  '@flatfile/listener',
+  '@flatfile/plugin-job-handler',
+  '@flatfile/util-response-rejection',
+  '@flatfile/util-common',
+  'node-fetch',
+]
+
+function commonPlugins(browser) {
+  return [
+    json(),
+    commonjs({ include: '**/node_modules/**', requireReturnsDefault: 'auto' }),
+    resolve({ browser, preferBuiltins: !browser }),
+    typescript({
+      tsconfig: '../../tsconfig.json',
+      declaration: false,
+      declarationMap: false,
+      declarationDir: './dist',
+      exclude: ['**/tests/*', '**/*.spec.ts'],
+    }),
+    PROD ? terser() : null,
+  ]
+}
 
 export default [
   // Node.js build
@@ -20,18 +54,9 @@ export default [
         format: 'es',
       },
     ],
-    plugins: [
-      json(),
-      commonjs({ include: '../../node_modules/**' }),
-      nodeResolve({ browser: false }),
-      typescript({
-        tsconfig: '../../tsconfig.json',
-        declaration: true,
-        declarationDir: './dist',
-      }),
-    ],
+    plugins: commonPlugins(false),
+    external,
   },
-
   // Browser build
   {
     input: 'src/index.ts',
@@ -48,15 +73,12 @@ export default [
         format: 'es',
       },
     ],
-    plugins: [
-      json(),
-      commonjs({ include: '../../node_modules/**' }),
-      nodeResolve({ browser: true }),
-      typescript({
-        tsconfig: '../../tsconfig.json',
-        declaration: true,
-        declarationDir: './dist',
-      }),
-    ],
+    plugins: commonPlugins(true),
+    external,
+  },
+  {
+    input: 'src/index.ts',
+    output: [{ file: 'dist/index.d.ts', format: 'es' }],
+    plugins: [dts()],
   },
 ]
