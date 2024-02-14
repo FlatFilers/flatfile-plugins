@@ -114,13 +114,9 @@ export const BulkRecordHook = async (
       )
 
       const data = await event.cache.get<Flatfile.RecordsWithLinks>('data')
-      const { records: originalXRecords } = await prepareXRecords(data)
-      const originalRecords: Flatfile.RecordsWithLinks =
-        await prepareFlatfileRecords(originalXRecords)
-
       const modifiedRecords: Flatfile.RecordsWithLinks = records.filter(
         (record: Flatfile.RecordWithLinks) => {
-          const originalRecord: Flatfile.RecordWithLinks = originalRecords.find(
+          const originalRecord: Flatfile.RecordWithLinks = data.find(
             (original: Flatfile.RecordWithLinks) => original.id === record.id
           )!
           return hasChange(record, originalRecord)
@@ -150,6 +146,8 @@ function hasChange(
   originalRecord: Flatfile.RecordWithLinks,
   modifiedRecord: Flatfile.RecordWithLinks
 ): boolean {
+  const ignoredRecordKeys = ['valid', 'updatedAt']
+
   // Check if objects are identical or both null
   if (originalRecord === modifiedRecord) {
     return false
@@ -166,8 +164,12 @@ function hasChange(
   }
 
   // Get keys excluding ignored keys at the current level
-  const keysOriginal = Object.keys(originalRecord)
-  const keysModified = Object.keys(modifiedRecord)
+  const keysOriginal = Object.keys(originalRecord).filter(
+    (key) => !ignoredRecordKeys.includes(key)
+  )
+  const keysModified = Object.keys(modifiedRecord).filter(
+    (key) => !ignoredRecordKeys.includes(key)
+  )
 
   // Check if number of properties is different
   if (keysOriginal.length !== keysModified.length) {
