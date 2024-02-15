@@ -35,7 +35,7 @@
     "build:prod": "rollup -c --environment NODE_ENV:production",
     "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./src/tests/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [],
   "author": "Alex Hollenbeck",
