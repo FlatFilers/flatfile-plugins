@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.4.2
+
+### Patch Changes
+
+- 26cef08: This release fixes a bug that prevented messages from being cleared when the recordHook did not make a modification to the record.
+
 ## 1.4.1
 
 ### Patch Changes
