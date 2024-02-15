@@ -10,8 +10,6 @@ import {
 import { FlatfileRecord } from '.'
 import { bulkRecordHook, recordHook } from './record.hook.plugin'
 
-jest.setTimeout(30_000)
-
 describe('RecordHook e2e', () => {
   const listener = setupListener()
 

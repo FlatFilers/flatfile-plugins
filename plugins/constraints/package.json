@@ -38,7 +38,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.1",
+    "@flatfile/api": "^1.7.3",
     "@flatfile/listener": "^1.0.1",
     "@flatfile/plugin-record-hook": "^1.4.1"
   },

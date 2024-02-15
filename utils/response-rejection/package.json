@@ -41,7 +41,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.1",
+    "@flatfile/api": "^1.7.3",
     "@flatfile/util-common": "^0.4.1"
   }
 }

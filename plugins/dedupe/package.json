@@ -27,7 +27,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.1",
+    "@flatfile/api": "^1.7.3",
     "@flatfile/listener": "^1.0.1",
     "remeda": "^1.14.0",
     "ts-pattern": "^5.0.4"
