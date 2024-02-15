@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "dependencies": {
-    "@flatfile/api": "^1.7.3",
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1",
     "node-fetch": "^3.3.2"
   },
