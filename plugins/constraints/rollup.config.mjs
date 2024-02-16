@@ -18,7 +18,10 @@ const external = ['@flatfile/listener', '@flatfile/plugin-record-hook']
 function commonPlugins(browser) {
   return [
     json(),
-    commonjs({ include: '**/node_modules/**', requireReturnsDefault: 'auto' }),
+    commonjs({
+      include: '**/node_modules/**',
+      requireReturnsDefault: 'preferred',
+    }),
     resolve({ browser, preferBuiltins: !browser }),
     typescript({
       tsconfig: '../../tsconfig.json',
