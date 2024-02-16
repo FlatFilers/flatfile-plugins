@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.4.3
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/util-common@0.4.2
+
 ## 1.4.2
 
 ### Patch Changes

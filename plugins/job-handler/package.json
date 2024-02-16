@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-job-handler",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A plugin for handling Flatfile Jobs.",
   "registryMetadata": {
     "category": "core"
@@ -43,9 +43,9 @@
   "dependencies": {
     "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1",
-    "@flatfile/util-common": "^0.4.1"
+    "@flatfile/util-common": "^0.4.2"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.1.0"
+    "@flatfile/utils-testing": "^0.1.3"
   }
 }
