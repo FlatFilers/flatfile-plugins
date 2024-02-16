@@ -31,8 +31,5 @@
     "@flatfile/listener": "^1.0.1",
     "@flatfile/plugin-space-configure": "^0.3.0",
     "axios": "^1.6.5"
-  },
-  "devDependencies": {
-    "express": "^4.18.2"
   }
 }
