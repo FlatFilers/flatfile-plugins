@@ -8,7 +8,7 @@ import { dts } from 'rollup-plugin-dts'
 import dotenv from 'dotenv'
 dotenv.config()
 
-const PROD = process.env.NODE_ENV === 'production'
+const PROD = process.env.NODE_ENV !== 'development'
 if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
@@ -24,7 +24,10 @@ const external = [
 function commonPlugins(browser) {
   return [
     json(),
-    commonjs({ include: '**/node_modules/**', requireReturnsDefault: 'auto' }),
+    commonjs({
+      include: '**/node_modules/**',
+      requireReturnsDefault: 'preferred',
+    }),
     resolve({ browser, preferBuiltins: !browser }),
     typescript({
       tsconfig: '../../tsconfig.json',

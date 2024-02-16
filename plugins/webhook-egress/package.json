@@ -41,8 +41,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^1.0.0",
+    "@flatfile/api": "^1.7.4",
+    "@flatfile/listener": "^1.0.1",
     "@flatfile/plugin-job-handler": "^0.3.1",
     "@flatfile/util-common": "^0.4.1",
     "@flatfile/util-response-rejection": "^1.2.1",

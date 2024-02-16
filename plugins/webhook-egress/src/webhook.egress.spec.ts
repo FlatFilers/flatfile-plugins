@@ -9,8 +9,6 @@ import {
 import fetchMock from 'jest-fetch-mock'
 import { webhookEgress } from './webhook.egress'
 
-jest.setTimeout(10_000)
-
 fetchMock.enableMocks()
 fetchMock.dontMock()
 
