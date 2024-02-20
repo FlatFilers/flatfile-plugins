@@ -1,5 +1,13 @@
 # @flatfile/plugin-constraints
 
+## 1.1.5
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/plugin-record-hook@1.4.3
+
 ## 1.1.4
 
 ### Patch Changes

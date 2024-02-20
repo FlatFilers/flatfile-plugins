@@ -1,5 +1,12 @@
 # @flatfile/plugin-webhook-event-forwarder
 
+## 0.2.2
+
+### Patch Changes
+
+- cee3fa7: This release updates the @flatfile/plugin-webhook-event-forwarder plugin to use fetch instead of axios.
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,6 +1,15 @@
 # @flatfile/plugin-export-workbook
 
+## 0.1.3
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/util-common@0.4.2
+
 ## 0.1.2
+
 #### 2024-02-07
 
 ### Patch Changes
@@ -9,6 +18,7 @@
   - @flatfile/util-common@0.4.0
 
 ## 0.1.1
+
 #### 2024-01-19
 
 ### Patch Changes
@@ -16,6 +26,7 @@
 - 2849070: Write tmp file to /tmp dir
 
 ## 0.1.0
+
 #### 2024-01-09
 
 ### Minor Changes
@@ -28,6 +39,7 @@
   - @flatfile/util-common@0.3.0
 
 ## 0.0.11
+
 #### 2023-12-18
 
 ### Patch Changes
@@ -39,6 +51,7 @@
   - @flatfile/util-common@0.2.5
 
 ## 0.0.10
+
 #### 2023-11-09
 
 ### Patch Changes
@@ -46,6 +59,7 @@
 - 28820d5: Release to update @flatfile/api dep
 
 ## 0.0.9
+
 #### 2023-10-19
 
 ### Patch Changes
@@ -53,6 +67,7 @@
 - 59cb901: Export parsers
 
 ## 0.0.8
+
 #### 2023-10-18 (21:04)
 
 ### Patch Changes
@@ -60,6 +75,7 @@
 - 53003e9: Add "Next" url to job completion message
 
 ## 0.0.7
+
 #### 2023-10-18 (17:25)
 
 ### Patch Changes
@@ -71,6 +87,7 @@
   delete files after upload
 
 ## 0.0.6
+
 #### 2023-10-17
 
 ### Patch Changes
@@ -78,6 +95,7 @@
 - 4435151: Include recordId in export
 
 ## 0.0.5
+
 #### 2023-10-10
 
 ### Patch Changes
@@ -85,6 +103,7 @@
 - cb25574: Update @flatfile/api dependency
 
 ## 0.0.4
+
 #### 2023-09-27
 
 ### Patch Changes
@@ -92,6 +111,7 @@
 - f2b2f59: @flatfile/api dependency updated to latest version
 
 ## 0.0.3
+
 #### 2023-09-21
 
 ### Patch Changes
@@ -99,6 +119,7 @@
 - 134cf31: Minor bug fixes
 
 ## 0.0.2
+
 #### 2023-08-25
 
 ### Patch Changes
@@ -106,6 +127,7 @@
 - f5efd60: Update @flatfile/listener dependency
 
 ## 0.0.1
+
 #### Created Date (if applicable)
 
 ### Patch Changes

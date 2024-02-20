@@ -1,5 +1,13 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.9.1
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/util-extractor@0.5.3
+
 ## 0.9.0
 
 ### Minor Changes

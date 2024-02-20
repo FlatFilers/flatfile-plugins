@@ -1,5 +1,14 @@
 # @flatfile/plugin-autocast
 
+## 0.7.2
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69] 
+  - @flatfile/plugin-record-hook@1.4.3
+  - @flatfile/util-common@0.4.2
+
 ## 0.7.1
 
 ### Patch Changes

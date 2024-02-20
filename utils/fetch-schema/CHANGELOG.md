@@ -1,5 +1,11 @@
 # @flatfile/util-fetch-schema
 
+## 0.1.2
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+
 ## 0.1.1
 
 ### Patch Changes

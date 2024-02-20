@@ -1,5 +1,16 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.1.2
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/plugin-space-configure@0.3.2
+  - @flatfile/plugin-convert-json-schema@0.2.2
+  - @flatfile/util-fetch-schema@0.1.2
+  - @flatfile/utils-testing@0.1.3
+
 ## 0.1.1
 
 ### Patch Changes

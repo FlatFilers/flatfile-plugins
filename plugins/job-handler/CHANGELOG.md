@@ -1,5 +1,13 @@
 # @flatfile/plugin-job-handler
 
+## 0.3.2
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/util-common@0.4.2
+
 ## 0.3.1
 
 ### Patch Changes
@@ -9,6 +17,7 @@
   - @flatfile/util-common@0.4.1
 
 ## 0.3.0
+
 #### 2024-02-07
 
 ### Minor Changes
@@ -21,6 +30,7 @@
   - @flatfile/util-common@0.4.0
 
 ## 0.2.1
+
 #### 2024-02-05
 
 ### Patch Changes
@@ -30,6 +40,7 @@
   - @flatfile/util-common@0.3.1
 
 ## 0.2.0
+
 #### 2024-01-09
 
 ### Minor Changes
@@ -42,6 +53,7 @@
   - @flatfile/util-common@0.3.0
 
 ## 0.1.7
+
 #### 2023-12-18
 
 ### Patch Changes
@@ -51,6 +63,7 @@
   - @flatfile/util-common@0.2.5
 
 ## 0.1.6
+
 #### 2023-11-28
 
 ### Patch Changes
@@ -58,6 +71,7 @@
 - 3d31680: Display Modal instead of a Toast on Job error
 
 ## 0.1.5
+
 #### 2023-11-09
 
 ### Patch Changes
@@ -68,6 +82,7 @@
   - @flatfile/util-common@0.2.3
 
 ## 0.1.4
+
 #### 2023-10-10
 
 ### Patch Changes
@@ -75,6 +90,7 @@
 - cb25574: Update @flatfile/api dependency
 
 ## 0.1.3
+
 #### 2023-09-27
 
 ### Patch Changes
@@ -82,6 +98,7 @@
 - f2b2f59: @flatfile/api dependency updated to latest version
 
 ## 0.1.2
+
 #### 2023-09-17
 
 ### Patch Changes
@@ -89,6 +106,7 @@
 - 6259301: Introducing the response rejection utility! Webhook egress plugin returns a more usable data structure. Minor bug fixes included.
 
 ## 0.1.1
+
 #### 2023-09-08
 
 ### Patch Changes
@@ -97,6 +115,7 @@
   - @flatfile/util-common@0.2.0
 
 ## 0.1.0
+
 #### 2023-08-30
 
 ### Minor Changes
