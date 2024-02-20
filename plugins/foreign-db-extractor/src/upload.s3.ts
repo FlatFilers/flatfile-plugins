@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 
 export async function s3Upload(fileId: string) {
   const storageUploadResponse = await fetch(
-    `${process.env.FLATFILE_API_URL}/v1/storage/upload`,
+    `${process.env.FLATFILE_API_URL}/v1/storage`,
     {
       method: 'POST',
       headers: {
