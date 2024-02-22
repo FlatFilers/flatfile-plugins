@@ -59,7 +59,7 @@ export const run = async (
         progress: 10,
       })
 
-      for (const sheet of sheets) {
+      for (const [sheetIndex, sheet] of sheets.entries()) {
         try {
           const results = await processRecords<Record<string, any>[]>(
             sheet.id,
@@ -122,7 +122,7 @@ export const run = async (
             workbook,
             worksheet,
             // Limit sheet name to 31 characters
-            sheet.name.substring(0, 31)
+            sanitizeExcelSheetName(sheet.name, sheetIndex)
           )
         } catch (_getRecordsError: unknown) {
           logError(
@@ -255,6 +255,29 @@ export const run = async (
 
     return
   }
+}
+
+function sanitizeExcelSheetName(name: string, index: number): string {
+  // Regular expression to match unsupported Excel characters
+  const invalidChars = /[\\\/\?\*\[\]:<>|"]/g
+
+  // Remove unsupported characters and trim leading or trailing spaces
+  let sanitized = name.replace(invalidChars, '').trim()
+
+  // Remove leading or trailing apostrophes
+  sanitized = sanitized.replace(/^'+|'+$/g, '')
+
+  // Truncate to 31 characters, the maximum length for Excel sheet names
+  if (sanitized.length > 31) {
+    sanitized = sanitized.substring(0, 31)
+  }
+
+  // If the sheet name is empty, use a default name
+  if (sanitized.length === 0) {
+    sanitized = `Sheet${index + 1}` //index is 0-based, default sheet names should be 1-based
+  }
+
+  return sanitized
 }
 
 /**
