@@ -11,14 +11,8 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    if: ${{ github.head_ref != 'changeset-release/main' }}
     steps:
-      - name: Check source branch
-        run: |
-          if [[ "${{ github.head_ref }}" == "changeset-release/main" ]]; then
-            echo "PR is from changeset-release/main, stopping workflow."
-            exit 0
-          fi
-
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:

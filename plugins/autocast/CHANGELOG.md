@@ -1,5 +1,11 @@
 # @flatfile/plugin-autocast
 
+## 0.7.5
+
+### Patch Changes
+
+- 40108fd: This release adds string casting to the autocast plugin.
+
 ## 0.7.4
 
 ### Patch Changes

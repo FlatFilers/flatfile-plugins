@@ -12,14 +12,8 @@ jobs:
     name: Test
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    if: ${{ github.head_ref != 'changeset-release/main' }}
     steps:
-      - name: Check source branch
-        run: |
-          if [[ "${{ github.head_ref }}" == "changeset-release/main" ]]; then
-            echo "PR is from changeset-release/main, stopping workflow."
-            exit 0
-          fi
-
       - name: Check out code
         uses: actions/checkout@v3
         with:
