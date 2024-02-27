@@ -1,5 +1,17 @@
 # @flatfile/util-common
 
+## 1.0.0
+
+### Major Changes
+
+- feb2ced: @flatfile/util-common: This release provides additional record request options such as "filter" and passes the current pageNumber to the cb function. Additionally the cb will be called when no records are found for any wrap-up the cb needs to make.
+
+  @flatfile/util-response-rejection: Since @flatfile/util-common now calls the cb when no records are found, this release updates @flatfile/util-response-rejection to check for records before processing.
+
+  ```
+
+  ```
+
 ## 0.4.2
 
 ### Patch Changes

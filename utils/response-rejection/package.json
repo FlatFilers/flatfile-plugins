@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-response-rejection",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "This plugin handles response rejections returned from an external source.",
   "registryMetadata": {
     "category": "utilities"
@@ -42,6 +42,6 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/util-common": "^0.4.2"
+    "@flatfile/util-common": "^1.0.0"
   }
 }

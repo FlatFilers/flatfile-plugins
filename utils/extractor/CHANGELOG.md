@@ -1,5 +1,12 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+
 ## 0.5.3
 
 ### Patch Changes

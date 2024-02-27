@@ -1,5 +1,12 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+
 ## 0.4.2
 
 ### Patch Changes
