@@ -3,9 +3,10 @@ import api, { Flatfile } from '@flatfile/api'
 export async function processRecords<R>(
   sheetId: string,
   callback: (
-    records: Flatfile.RecordsWithLinks
+    records: Flatfile.RecordsWithLinks,
+    pageNumber?: number
   ) => R | void | Promise<R | void>,
-  recordGetOptions?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
+  getRecordsRequest?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
 ): Promise<R[] | void> {
   let pageNumber = 1
   const results: R[] = []
@@ -14,17 +15,17 @@ export async function processRecords<R>(
     const {
       data: { records },
     } = await api.records.get(sheetId, {
-      ...recordGetOptions,
+      ...getRecordsRequest,
       pageNumber: pageNumber++,
     })
 
-    if (records.length === 0) {
-      break
-    }
-
-    const result = await callback(records)
+    const result = await callback(records, pageNumber - 1)
     if (result !== undefined && result !== null) {
       results.push(result as R)
+    }
+
+    if (records.length === 0) {
+      break
     }
   }
 
