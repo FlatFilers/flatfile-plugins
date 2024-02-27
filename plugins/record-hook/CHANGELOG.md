@@ -1,5 +1,12 @@
 # @flatfile/plugin-record-hook
 
+## 1.4.4
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+
 ## 1.4.3
 
 ### Patch Changes
