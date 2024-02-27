@@ -4,7 +4,8 @@ on:
   pull_request:
     branches:
       - main
-      - '!changeset-release/main'
+    branches-ignore:
+      - changeset-release/main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
