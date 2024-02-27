@@ -1,5 +1,12 @@
 # @flatfile/plugin-job-handler
 
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+
 ## 0.3.2
 
 ### Patch Changes

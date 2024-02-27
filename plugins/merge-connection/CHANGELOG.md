@@ -1,5 +1,13 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+  - @flatfile/plugin-job-handler@0.3.3
+
 ## 0.1.3
 
 ### Patch Changes

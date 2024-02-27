@@ -1,5 +1,14 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.2.3
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+  - @flatfile/util-response-rejection@1.2.3
+  - @flatfile/plugin-job-handler@0.3.3
+
 ## 1.2.2
 
 ### Patch Changes

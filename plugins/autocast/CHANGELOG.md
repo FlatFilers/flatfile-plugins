@@ -1,5 +1,13 @@
 # @flatfile/plugin-autocast
 
+## 0.7.4
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+  - @flatfile/plugin-record-hook@1.4.4
+
 ## 0.7.3
 
 ### Patch Changes
