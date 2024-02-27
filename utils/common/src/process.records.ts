@@ -6,7 +6,7 @@ export async function processRecords<R>(
     records: Flatfile.RecordsWithLinks,
     pageNumber?: number
   ) => R | void | Promise<R | void>,
-  getRecordsRequest?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
+  getRecordsRequest?: GetRecordsRequest
 ): Promise<R[] | void> {
   let pageNumber = 1
   const results: R[] = []
@@ -31,3 +31,8 @@ export async function processRecords<R>(
 
   return results.length ? results : undefined
 }
+
+export type GetRecordsRequest = Omit<
+  Flatfile.records.GetRecordsRequest,
+  'pageNumber'
+>
