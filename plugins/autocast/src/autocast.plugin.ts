@@ -64,9 +64,21 @@ export function autocast(
 const CASTING_FUNCTIONS: {
   [key: string]: (value: TPrimitive) => TPrimitive
 } = {
+  string: castString,
   number: castNumber,
   boolean: castBoolean,
   date: castDate,
+}
+
+export function castString(value: TPrimitive): TPrimitive {
+  if (typeof value === 'string') {
+    return value
+  } else if (typeof value === 'number') {
+    return value.toString()
+  } else if (typeof value === 'boolean') {
+    return value ? 'true' : 'false'
+  }
+  throw new Error(`Failed to cast '${value}' to 'string'`)
 }
 
 export function castNumber(value: TPrimitive): TPrimitive {

@@ -4,10 +4,23 @@ import {
   castBoolean,
   castDate,
   castNumber,
+  castString,
 } from './autocast.plugin'
 
 describe('autocast plugin', () => {
   describe('cast functions', () => {
+    describe('should return the string', () => {
+      expect(castString('foo')).toBe('foo')
+    })
+    describe('should return a numeric value to string', () => {
+      expect(castString(1)).toBe('1')
+      expect(castString(1.1)).toBe('1.1')
+      expect(castString(-1)).toBe('-1')
+    })
+    describe('should return a boolean string', () => {
+      expect(castString(true)).toBe('true')
+      expect(castString(false)).toBe('false')
+    })
     describe.each(['1', 1])('should return a number', (num) => {
       expect(castNumber(num)).toBe(1)
     })
