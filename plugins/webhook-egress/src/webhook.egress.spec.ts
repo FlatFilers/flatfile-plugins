@@ -92,7 +92,15 @@ describe('webhookEgress() e2e', () => {
     )
 
     const logErrorSpy = jest.spyOn(global.console, 'error')
-
+    logErrorSpy.mockImplementation((message) => {
+      if (
+        message.includes(
+          'Data was not successfully submitted to the provided webhook. Status: 400 Bad Request'
+        )
+      ) {
+        console.error(message)
+      }
+    })
     listener.use(webhookEgress('workbook:egressTestFailure', 'example.com'))
 
     const { data: failedJob } = await api.jobs.create({

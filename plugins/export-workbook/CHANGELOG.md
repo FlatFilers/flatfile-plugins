@@ -1,5 +1,12 @@
 # @flatfile/plugin-export-workbook
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+
 ## 0.1.3
 
 ### Patch Changes
