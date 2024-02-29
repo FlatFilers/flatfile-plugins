@@ -38,11 +38,11 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4"
+    "@flatfile/api": "^1.7.4",
+    "@flatfile/plugin-record-hook": "^1.4.4"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.1",
-    "@flatfile/plugin-record-hook": "^1.4.3"
+    "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
     "@flatfile/utils-testing": "^0.1.3",

@@ -14,6 +14,8 @@ if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
 
+const external = ['@flatfile/plugin-record-hook']
+
 function commonPlugins(browser, umd = false) {
   return [
     !umd ? peerDepsExternal() : undefined,
@@ -53,6 +55,7 @@ export default [
       },
     ],
     plugins: commonPlugins(false),
+    external,
   },
   // Browser build
   {
@@ -71,6 +74,7 @@ export default [
       },
     ],
     plugins: commonPlugins(true),
+    external,
   },
   {
     input: 'src/index.ts',
