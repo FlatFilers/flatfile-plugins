@@ -29,7 +29,7 @@
   "dependencies": {
     "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1",
-    "@flatfile/plugin-convert-openapi-schema": "^0.0.5",
+    "@flatfile/plugin-convert-openapi-schema": "^0.1.2",
     "@flatfile/plugin-job-handler": "^0.3.3",
     "@mergeapi/merge-node-client": "^1.0.4"
   }
