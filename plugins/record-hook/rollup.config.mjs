@@ -14,7 +14,7 @@ if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
 
-const external = [
+const internal = [
   '@flatfile/api',
   '@flatfile/hooks',
   '@flatfile/listener',
@@ -23,15 +23,12 @@ const external = [
 
 function commonPlugins(browser, umd = false) {
   return [
-    !umd
-      ? peerDepsExternal({
-          includeDependencies: true,
-        })
-      : undefined,
+    !umd ? peerDepsExternal() : undefined,
     json(),
     commonjs({
       include: '**/node_modules/**',
       requireReturnsDefault: 'preferred',
+      esmExternals: true,
     }),
     resolve({ browser, preferBuiltins: !browser }),
     typescript({
@@ -63,7 +60,6 @@ export default [
       },
     ],
     plugins: commonPlugins(false),
-    external,
   },
   // Browser build
   {
@@ -82,8 +78,8 @@ export default [
       },
     ],
     plugins: commonPlugins(true),
-    external,
   },
+  // UMD build
   {
     input: 'src/index.ts',
     output: [
@@ -94,7 +90,7 @@ export default [
       },
     ],
     plugins: commonPlugins(true, true),
-    internal: external,
+    internal,
   },
   {
     input: 'src/index.ts',

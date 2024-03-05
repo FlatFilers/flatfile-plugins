@@ -4,6 +4,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import terser from '@rollup/plugin-terser'
 import typescript from '@rollup/plugin-typescript'
 import { dts } from 'rollup-plugin-dts'
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -13,10 +14,11 @@ if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
 
-const external = ['@flatfile/listener', '@flatfile/plugin-record-hook']
+const external = ['@flatfile/plugin-record-hook']
 
-function commonPlugins(browser) {
+function commonPlugins(browser, umd = false) {
   return [
+    !umd ? peerDepsExternal() : undefined,
     json(),
     commonjs({
       include: '**/node_modules/**',

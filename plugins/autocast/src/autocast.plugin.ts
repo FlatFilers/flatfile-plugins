@@ -1,10 +1,8 @@
 import api from '@flatfile/api'
-import { TPrimitive } from '@flatfile/hooks'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import {
-  FlatfileRecord,
-  bulkRecordHookPlugin,
-} from '@flatfile/plugin-record-hook'
+import type { TPrimitive } from '@flatfile/hooks'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { FlatfileRecord } from '@flatfile/plugin-record-hook'
+import { bulkRecordHookPlugin } from '@flatfile/plugin-record-hook'
 import { logInfo } from '@flatfile/util-common'
 
 export function autocast(
