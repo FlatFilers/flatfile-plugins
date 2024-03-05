@@ -14,10 +14,15 @@ import * as XLSX from 'xlsx'
 /**
  * Plugin config options.
  *
+ * @property {string[]} excludedSheets - list of sheet names to exclude from the exported data.
+ * @property {Flatfile.Filter} recordFilter - filter to apply to the records before exporting.
  * @property {boolean} includeRecordIds - include record ids in the exported data.
  * @property {boolean} debug - show helpul messages useful for debugging (use intended for development).
  */
 export interface PluginOptions {
+  readonly excludedSheets?: string[]
+  readonly excludeFields?: string[]
+  readonly recordFilter?: Flatfile.Filter
   readonly includeRecordIds?: boolean
   readonly debug?: boolean
 }
@@ -28,14 +33,16 @@ export interface PluginOptions {
  * @param event - Flatfile event
  * @param options - plugin config options
  */
-export const run = async (
+export const exportRecords = async (
   event: FlatfileEvent,
   options: PluginOptions
 ): Promise<void> => {
   const { environmentId, jobId, spaceId, workbookId } = event.context
 
   try {
+    const { data: workbook } = await api.workbooks.get(workbookId)
     const { data: sheets } = await api.sheets.list({ workbookId })
+    const fileName = sanitizeFileName(workbook.name)
 
     if (options.debug) {
       const meta = R.pipe(
@@ -51,7 +58,7 @@ export const run = async (
       )
     }
 
-    const workbook = XLSX.utils.book_new()
+    const xlsxWorkbook = XLSX.utils.book_new()
 
     try {
       await api.jobs.ack(jobId, {
@@ -59,70 +66,93 @@ export const run = async (
         progress: 10,
       })
 
-      for (const sheet of sheets) {
+      for (const [sheetIndex, sheet] of sheets.entries()) {
+        if (options.excludedSheets?.includes(sheet.config.slug)) {
+          if (options.debug) {
+            logInfo(
+              '@flatfile/plugin-export-workbook',
+              `Skipping sheet: ${sheet.name}`
+            )
+          }
+          continue
+        }
         try {
-          const results = await processRecords<Record<string, any>[]>(
+          let results = await processRecords<Record<string, any>[]>(
             sheet.id,
             (records): Record<string, any>[] => {
               return R.pipe(
                 records,
-                R.map(({ id, values: row }) => {
-                  const rowValue = R.pipe(
-                    Object.keys(row),
-                    R.reduce((acc, colName) => {
-                      const formatCell = (cellValue: Flatfile.CellValue) => {
-                        const { value, messages } = cellValue
-                        const cell: XLSX.CellObject = {
-                          t: 's',
-                          v: value,
-                          c: [],
+                R.map(
+                  ({
+                    id: recordId,
+                    values: row,
+                  }: {
+                    id: string
+                    values: any
+                  }) => {
+                    const rowValue = R.pipe(
+                      Object.keys(row),
+                      R.reduce((acc, colName) => {
+                        if (options.excludeFields?.includes(colName)) {
+                          return acc
                         }
-                        if (R.length(messages) > 0) {
-                          cell.c = messages.map((m) => ({
-                            a: 'Flatfile',
-                            t: `[${m.type.toUpperCase()}]: ${m.message}`,
-                            T: true,
-                          }))
-                          cell.c.hidden = true
+                        const formatCell = (cellValue: Flatfile.CellValue) => {
+                          const { value, messages } = cellValue
+                          const cell: XLSX.CellObject = {
+                            t: 's',
+                            v: value,
+                            c: [],
+                          }
+                          if (R.length(messages) > 0) {
+                            cell.c = messages.map((m) => ({
+                              a: 'Flatfile',
+                              t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                              T: true,
+                            }))
+                            cell.c.hidden = true
+                          }
+
+                          return cell
                         }
 
-                        return cell
-                      }
-
-                      return {
-                        ...acc,
-                        [colName]: formatCell(row[colName]),
-                      }
-                    }, {})
-                  )
-                  return options?.includeRecordIds
-                    ? {
-                        id,
-                        ...rowValue,
-                      }
-                    : rowValue
-                })
+                        return {
+                          ...acc,
+                          [colName]: formatCell(row[colName]),
+                        }
+                      }, {})
+                    )
+                    return options?.includeRecordIds
+                      ? {
+                          recordId,
+                          ...rowValue,
+                        }
+                      : rowValue
+                  }
+                )
               )
+            },
+            {
+              filter: options.recordFilter,
             }
           )
-          if (!results) {
-            if (options.debug) {
-              logWarn(
-                '@flatfile/plugin-export-workbook',
-                `No records found for sheet with id: ${sheet.id}. Skipping.`
-              )
+          if (!results || results.every((group) => group.length === 0)) {
+            const emptyCell: XLSX.CellObject = {
+              t: 's',
+              v: '',
+              c: [],
             }
-            continue
+            results = [
+              sheet.config.fields.map((field) => ({ [field.key]: emptyCell })),
+            ]
           }
           const rows = results.flat()
 
           const worksheet = XLSX.utils.json_to_sheet(rows)
 
           XLSX.utils.book_append_sheet(
-            workbook,
+            xlsxWorkbook,
             worksheet,
-            // Limit sheet name to 31 characters
-            sheet.name.substring(0, 31)
+            sanitizeExcelSheetName(sheet.name, sheetIndex)
           )
         } catch (_getRecordsError: unknown) {
           logError(
@@ -155,11 +185,30 @@ export const run = async (
     }
 
     // Lambdas only allow writing to /tmp directory
-    const fileName = path.join('/tmp', `Workbook-${currentEpoch()}.xlsx`)
+    const timestamp = new Date().toISOString()
+    const filePath = path.join('/tmp', `${fileName}-${timestamp}.xlsx`)
+
+    if (xlsxWorkbook.SheetNames.length === 0) {
+      if (options.debug) {
+        logError(
+          '@flatfile/plugin-export-workbook',
+          'No data to write to Excel file'
+        )
+      }
+
+      await api.jobs.fail(jobId, {
+        outcome: {
+          message:
+            'Job failed because there were no data to write to Excel file.',
+        },
+      })
+
+      return
+    }
 
     try {
       XLSX.set_fs(fs)
-      XLSX.writeFileXLSX(workbook, fileName) //, { cellStyles: true })
+      XLSX.writeFile(xlsxWorkbook, filePath)
 
       if (options.debug) {
         logInfo('@flatfile/plugin-export-workbook', 'File written to disk')
@@ -181,7 +230,7 @@ export const run = async (
     }
 
     try {
-      const reader = fs.createReadStream(fileName)
+      const reader = fs.createReadStream(filePath)
 
       await api.files.upload(reader, {
         spaceId,
@@ -191,7 +240,7 @@ export const run = async (
 
       reader.close()
 
-      await fs.promises.unlink(fileName)
+      await fs.promises.unlink(filePath)
 
       if (options.debug) {
         logInfo(
@@ -257,6 +306,42 @@ export const run = async (
   }
 }
 
+function sanitizeFileName(fileName: string): string {
+  // List of invalid characters that are commonly not allowed in file names
+  const invalidChars = /[\/\?%\*:|"<>]/g
+
+  // Remove invalid characters
+  let cleanFileName = fileName.replace(invalidChars, '_')
+
+  // Remove emojis and other non-ASCII characters
+  cleanFileName = cleanFileName.replace(/[^\x00-\x7F]/g, '')
+
+  return cleanFileName
+}
+
+function sanitizeExcelSheetName(name: string, index: number): string {
+  // Regular expression to match unsupported Excel characters
+  const invalidChars = /[\\\/\?\*\[\]:<>|"]/g
+
+  // Remove unsupported characters and trim leading or trailing spaces
+  let sanitized = name.replace(invalidChars, '').trim()
+
+  // Remove leading or trailing apostrophes
+  sanitized = sanitized.replace(/^'+|'+$/g, '')
+
+  // Truncate to 31 characters, the maximum length for Excel sheet names
+  if (sanitized.length > 31) {
+    sanitized = sanitized.substring(0, 31)
+  }
+
+  // If the sheet name is empty, use a default name based on index (i.e. "Sheet1")
+  if (sanitized.length === 0) {
+    sanitized = `Sheet${index + 1}` //index is 0-based, default sheet names should be 1-based
+  }
+
+  return sanitized
+}
+
 /**
  * Generates the alpha pattern ["A", "B", ... "AA", "AB", ..., "AAA", "AAB", ...] to help
  * with accessing cells in a worksheet.
@@ -277,8 +362,4 @@ const genCyclicPattern = (length: number = 104): Array<string> => {
   }
 
   return alphaPattern
-}
-
-const currentEpoch = (): string => {
-  return `${Math.floor(Date.now() / 1000)}`
 }
