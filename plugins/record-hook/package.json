@@ -50,9 +50,7 @@
     "@flatfile/util-common": "^1.0.0"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
-  },
-  "devDependencies": {
-    "@flatfile/api": "^1.7.4"
   }
 }
