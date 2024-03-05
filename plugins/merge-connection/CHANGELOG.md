@@ -1,5 +1,30 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+  - @flatfile/plugin-job-handler@0.3.3
+
+## 0.1.3
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/plugin-job-handler@0.3.2
+  - @flatfile/util-common@0.4.2
+
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [7c1c094]
+  - @flatfile/plugin-job-handler@0.3.0
+  - @flatfile/util-common@0.4.0
+
 ## 0.1.1
 
 ### Patch Changes

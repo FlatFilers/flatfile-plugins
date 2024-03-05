@@ -1,19 +1,32 @@
 {
   "name": "@flatfile/util-common",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "A library containing common utilities and helpers for plugins.",
   "keywords": [],
   "author": "Carl Brugger",
   "engines": {
     "node": ">= 16"
   },
-  "source": "src/index.ts",
-  "main": "dist/main.js",
-  "module": "dist/module.mjs",
-  "types": "dist/types.d.ts",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "parcel build",
-    "dev": "parcel watch",
+    "build": "rollup -c",
+    "build:prod": "rollup -c --environment NODE_ENV:production",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
@@ -24,7 +37,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.4.0"
+    "@flatfile/api": "^1.7.4",
+    "@flatfile/listener": "^1.0.1"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/utils-testing",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "A utility package for testing plugins",
   "engines": {
     "node": ">= 16"
@@ -23,8 +23,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.4.0",
+    "@flatfile/api": "^1.7.4",
+    "@flatfile/listener": "^1.0.1",
     "@flatfile/listener-driver-pubsub": "^2.0.0",
     "@jest/globals": "^29.6.4",
     "axios": "^1.6.5"

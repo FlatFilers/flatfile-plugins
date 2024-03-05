@@ -11,8 +11,8 @@ describe('parser', () => {
     path.join(__dirname, '../ref/test-complex.pound')
   )
 
-  test('colon to WorkbookCapture', () => {
-    expect(parseBuffer(colonBasicBuffer, { delimiter: '#' })).toEqual({
+  test('colon to WorkbookCapture', async () => {
+    expect(await parseBuffer(colonBasicBuffer, { delimiter: '#' })).toEqual({
       Sheet1: {
         headers: ['Code', 'Details', 'BranchName', 'Tenant'],
         required: {
@@ -43,18 +43,19 @@ describe('parser', () => {
       },
     })
   })
-  it('has headers', () => {
-    const headers = parseBuffer(colonBasicBuffer, { delimiter: '#' }).Sheet1
-      .headers
+  it('has headers', async () => {
+    const parsedBuffer = await parseBuffer(colonBasicBuffer, { delimiter: '#' })
+    const headers = parsedBuffer.Sheet1.headers
     expect(headers).toEqual(['Code', 'Details', 'BranchName', 'Tenant'])
   })
-  test('transform', () => {
-    const data = parseBuffer(colonBasicBuffer, {
+  test('transform', async () => {
+    const parsedBuffer = await parseBuffer(colonBasicBuffer, {
       delimiter: '#',
       transform: (v: string) => {
         return v.toUpperCase()
       },
-    }).Sheet1.data
+    })
+    const data = parsedBuffer.Sheet1.data
     expect(data).toEqual([
       {
         Code: { value: 'PERSONAL CARE' },
@@ -75,11 +76,12 @@ describe('parser', () => {
       },
     ])
   })
-  test('dynamicTyping', () => {
-    const data = parseBuffer(colonBasicBuffer, {
+  test('dynamicTyping', async () => {
+    const parsedBuffer = await parseBuffer(colonBasicBuffer, {
       delimiter: '#',
       dynamicTyping: true,
-    }).Sheet1.data
+    })
+    const data = parsedBuffer.Sheet1.data
     expect(data).toEqual([
       {
         Code: { value: 'Personal Care' },
@@ -100,11 +102,12 @@ describe('parser', () => {
       },
     ])
   })
-  test('skipEmptyLines', () => {
-    const data = parseBuffer(colonBasicBuffer, {
+  test('skipEmptyLines', async () => {
+    const parsedBuffer = await parseBuffer(colonBasicBuffer, {
       delimiter: '#',
       skipEmptyLines: true,
-    }).Sheet1.data
+    })
+    const data = parsedBuffer.Sheet1.data
     expect(data).toEqual([
       {
         Code: { value: 'Personal Care' },
@@ -125,12 +128,12 @@ describe('parser', () => {
       },
     ])
   })
-  test('empty buffer', () => {
+  test('empty buffer', async () => {
     const emptyBuffer = Buffer.from('', 'utf8')
     const logSpy = jest.spyOn(global.console, 'log')
-    parseBuffer(emptyBuffer, { delimiter: '#' })
+    const parsedBuffer = await parseBuffer(emptyBuffer, { delimiter: '#' })
     expect(logSpy).toHaveBeenCalledWith('No data found in the file')
-    expect(parseBuffer(emptyBuffer, { delimiter: '#' })).toEqual({})
+    expect(parsedBuffer).toEqual({})
   })
   test('parsing of basic equals parsing of complex', () => {
     expect(parseBuffer(colonComplexBuffer, { delimiter: '#' })).toEqual(

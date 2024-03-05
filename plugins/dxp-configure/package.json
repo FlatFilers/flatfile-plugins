@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-dxp-configure",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "description": "A plugin for using DXP class-based configurations.",
   "registryMetadata": {
     "category": "utilities"
@@ -13,13 +13,20 @@
     "last 2 versions",
     "not dead"
   ],
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
   "browser": {
     "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
   },
-  "types": "dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
@@ -38,8 +45,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.4.0"
+    "@flatfile/api": "^1.7.4",
+    "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
     "@flatfile/configure": "^0.5.39",

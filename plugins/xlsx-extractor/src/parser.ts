@@ -1,4 +1,3 @@
-import { Flatfile } from '@flatfile/api'
 import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
@@ -11,13 +10,37 @@ export async function parseBuffer(
     raw?: boolean
     rawNumbers?: boolean
     headerDetectionOptions?: GetHeadersOptions
+    dateNF?: string
+    debug?: boolean
   }
 ): Promise<WorkbookCapture> {
-  const workbook = XLSX.read(buffer, {
-    type: 'buffer',
-    cellDates: true,
-    dense: true,
-  })
+  let workbook: XLSX.WorkBook
+  try {
+    workbook = XLSX.read(buffer, {
+      type: 'buffer',
+      cellDates: true,
+      dense: true,
+      dateNF: options?.dateNF || null,
+      // SheetJS intends the 'WTF' option to be used for development purposes only.
+      // We use it here to specifically capture the ERR_STRING_TOO_LONG error.
+      WTF: true,
+    })
+  } catch (e) {
+    // catch the error if the file is too large to parse, and throw a more helpful error. Otherwise, supress the error.
+    // ref: https://docs.sheetjs.com/docs/miscellany/errors/#invalid-string-length-or-err_string_too_long
+    // i.e. 'Cannot create a string longer than 0x1fffffe8 characters'
+    if (e.code === 'ERR_STRING_TOO_LONG') {
+      if (options?.debug) {
+        console.log(
+          'File is too large to parse. Try converting this file to CSV.'
+        )
+      }
+      throw new Error(
+        'File is too large to parse. Try converting this file to CSV.'
+      )
+    }
+  }
+
   const sheetNames = Object.keys(workbook.Sheets)
   try {
     const processedSheets = (

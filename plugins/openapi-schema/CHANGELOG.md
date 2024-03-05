@@ -1,5 +1,29 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.1.2
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/plugin-space-configure@0.3.2
+
+## 0.1.1
+
+### Patch Changes
+
+- 4a417af: Update package.json to have exports and browser
+
+## 0.1.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
+### Patch Changes
+
+- @flatfile/plugin-space-configure@0.3.1
+
 ## 0.0.5
 
 ### Patch Changes

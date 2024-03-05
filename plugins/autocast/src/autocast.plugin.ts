@@ -1,7 +1,8 @@
 import api from '@flatfile/api'
-import { TPrimitive } from '@flatfile/hooks'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { BulkRecordHook, FlatfileRecord } from '@flatfile/plugin-record-hook'
+import type { TPrimitive } from '@flatfile/hooks'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { FlatfileRecord } from '@flatfile/plugin-record-hook'
+import { bulkRecordHookPlugin } from '@flatfile/plugin-record-hook'
 import { logInfo } from '@flatfile/util-common'
 
 export function autocast(
@@ -14,50 +15,46 @@ export function autocast(
   }
 ) {
   return (listener: FlatfileListener) => {
-    listener.on(
-      'commit:created',
-      { sheetSlug },
-      async (event: FlatfileEvent) => {
-        await BulkRecordHook(
-          event,
-          async (records: FlatfileRecord[]) => {
-            const sheetId = event.context.sheetId
-            const sheet = await api.sheets.get(sheetId)
-            if (!sheet) {
-              logInfo('@flatfile/plugin-autocast', 'Failed to fetch sheet')
-              return
-            }
+    listener.use(
+      bulkRecordHookPlugin(
+        sheetSlug,
+        async (records: FlatfileRecord[], event: FlatfileEvent) => {
+          const sheetId = event.context.sheetId
+          const sheet = await api.sheets.get(sheetId)
+          if (!sheet) {
+            logInfo('@flatfile/plugin-autocast', 'Failed to fetch sheet')
+            return
+          }
 
-            const castableFields = sheet.data.config.fields.filter((field) =>
-              fieldFilters
-                ? fieldFilters.includes(field.key)
-                : field.type !== 'string'
-            )
-            records.forEach((record) => {
-              castableFields.forEach((field) => {
-                const originalValue = record.get(field.key)
-                const caster = CASTING_FUNCTIONS[field.type]
+          const castableFields = sheet.data.config.fields.filter((field) =>
+            fieldFilters
+              ? fieldFilters.includes(field.key)
+              : field.type !== 'string'
+          )
+          records.forEach((record) => {
+            castableFields.forEach((field) => {
+              const originalValue = record.get(field.key)
+              const caster = CASTING_FUNCTIONS[field.type]
 
-                if (
-                  originalValue &&
-                  caster &&
-                  typeof originalValue !== field.type
-                ) {
-                  try {
-                    record.computeIfPresent(field.key, caster)
-                  } catch (e) {
-                    record.addError(
-                      field.key,
-                      e.message || 'Failed to cast value'
-                    )
-                  }
+              if (
+                originalValue &&
+                caster &&
+                typeof originalValue !== field.type
+              ) {
+                try {
+                  record.computeIfPresent(field.key, caster)
+                } catch (e) {
+                  record.addError(
+                    field.key,
+                    e.message || 'Failed to cast value'
+                  )
                 }
-              })
+              }
             })
-          },
-          options
-        )
-      }
+          })
+        },
+        options
+      )
     )
   }
 }
@@ -65,9 +62,21 @@ export function autocast(
 const CASTING_FUNCTIONS: {
   [key: string]: (value: TPrimitive) => TPrimitive
 } = {
+  string: castString,
   number: castNumber,
   boolean: castBoolean,
   date: castDate,
+}
+
+export function castString(value: TPrimitive): TPrimitive {
+  if (typeof value === 'string') {
+    return value
+  } else if (typeof value === 'number') {
+    return value.toString()
+  } else if (typeof value === 'boolean') {
+    return value ? 'true' : 'false'
+  }
+  throw new Error(`Failed to cast '${value}' to 'string'`)
 }
 
 export function castNumber(value: TPrimitive): TPrimitive {
@@ -82,7 +91,7 @@ export function castNumber(value: TPrimitive): TPrimitive {
       }
     }
   }
-  throw new Error(`Failed to cast '${value}' to 'number'`)
+  throw new Error('Invalid number')
 }
 
 export const TRUTHY_VALUES = ['1', 'yes', 'true', 'on', 't', 'y', 1]
@@ -102,15 +111,19 @@ export function castBoolean(value: TPrimitive): TPrimitive {
       return false
     }
   }
-  throw new Error(`Failed to cast '${value}' to 'boolean'`)
+  throw new Error('Invalid boolean')
 }
 
 export function castDate(value: TPrimitive): TPrimitive {
-  if (typeof value === 'string' || typeof value === 'number') {
-    const date = new Date(value)
+  // Check if value is a number and if so use the numeric value instead of a string
+  const numericTimestamp = Number(value)
+  let finalValue = !isNaN(numericTimestamp) ? numericTimestamp : value
+
+  if (typeof finalValue === 'string' || typeof finalValue === 'number') {
+    const date = new Date(finalValue)
     if (!isNaN(date.getTime())) {
       return date.toUTCString()
     }
   }
-  throw new Error(`Failed to cast '${value}' to 'date'`)
+  throw new Error('Invalid date')
 }

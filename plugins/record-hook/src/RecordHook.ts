@@ -85,7 +85,10 @@ export const BulkRecordHook = async (
   }
 
   try {
-    const data = await fetchData()
+    const data = await event.cache.init<Flatfile.RecordsWithLinks>(
+      'data',
+      async () => await fetchData()
+    )
 
     if (!data || data.length === 0) {
       if (options.debug) {
@@ -94,11 +97,6 @@ export const BulkRecordHook = async (
       await completeCommit()
       return
     }
-
-    await event.cache.init<FlatfileRecords<any>>(
-      'originalRecords',
-      async () => await prepareXRecords(data)
-    )
 
     const batch = await event.cache.init<FlatfileRecords<any>>(
       'records',
@@ -115,14 +113,10 @@ export const BulkRecordHook = async (
         batch
       )
 
-      const { records: originalBatch } =
-        event.cache.get<FlatfileRecords<any>>('originalRecords')
-      const originalRecords: Flatfile.RecordsWithLinks =
-        await prepareFlatfileRecords(originalBatch)
-
+      const data = await event.cache.get<Flatfile.RecordsWithLinks>('data')
       const modifiedRecords: Flatfile.RecordsWithLinks = records.filter(
         (record: Flatfile.RecordWithLinks) => {
-          const originalRecord: Flatfile.RecordWithLinks = originalRecords.find(
+          const originalRecord: Flatfile.RecordWithLinks = data.find(
             (original: Flatfile.RecordWithLinks) => original.id === record.id
           )!
           return hasChange(record, originalRecord)
@@ -152,6 +146,8 @@ function hasChange(
   originalRecord: Flatfile.RecordWithLinks,
   modifiedRecord: Flatfile.RecordWithLinks
 ): boolean {
+  const ignoredRecordKeys = ['valid', 'updatedAt']
+
   // Check if objects are identical or both null
   if (originalRecord === modifiedRecord) {
     return false
@@ -168,8 +164,12 @@ function hasChange(
   }
 
   // Get keys excluding ignored keys at the current level
-  const keysOriginal = Object.keys(originalRecord)
-  const keysModified = Object.keys(modifiedRecord)
+  const keysOriginal = Object.keys(originalRecord).filter(
+    (key) => !ignoredRecordKeys.includes(key)
+  )
+  const keysModified = Object.keys(modifiedRecord).filter(
+    (key) => !ignoredRecordKeys.includes(key)
+  )
 
   // Check if number of properties is different
   if (keysOriginal.length !== keysModified.length) {

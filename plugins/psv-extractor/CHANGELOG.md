@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.7.1
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+
 ## 1.7.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-file-buffer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A utility for extracting data from any file and making it available as a buffer",
   "registryMetadata": {
     "category": "utilities"
@@ -27,7 +27,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.4.0"
+    "@flatfile/api": "^1.7.4",
+    "@flatfile/listener": "^1.0.1"
   }
 }

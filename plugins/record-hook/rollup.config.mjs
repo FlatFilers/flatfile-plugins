@@ -4,26 +4,32 @@ import resolve from '@rollup/plugin-node-resolve'
 import terser from '@rollup/plugin-terser'
 import typescript from '@rollup/plugin-typescript'
 import { dts } from 'rollup-plugin-dts'
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
 import dotenv from 'dotenv'
 dotenv.config()
 
-const PROD = process.env.NODE_ENV === 'production'
+const PROD = process.env.NODE_ENV !== 'development'
 if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
 
-const external = [
+const internal = [
   '@flatfile/api',
   '@flatfile/hooks',
   '@flatfile/listener',
   '@flatfile/util-common',
 ]
 
-function commonPlugins(browser) {
+function commonPlugins(browser, umd = false) {
   return [
+    !umd ? peerDepsExternal() : undefined,
     json(),
-    commonjs({ include: '**/node_modules/**', requireReturnsDefault: 'auto' }),
+    commonjs({
+      include: '**/node_modules/**',
+      requireReturnsDefault: 'preferred',
+      esmExternals: true,
+    }),
     resolve({ browser, preferBuiltins: !browser }),
     typescript({
       tsconfig: '../../tsconfig.json',
@@ -54,7 +60,6 @@ export default [
       },
     ],
     plugins: commonPlugins(false),
-    external,
   },
   // Browser build
   {
@@ -71,14 +76,21 @@ export default [
         sourcemap: false,
         format: 'es',
       },
+    ],
+    plugins: commonPlugins(true),
+  },
+  // UMD build
+  {
+    input: 'src/index.ts',
+    output: [
       {
         file: 'dist/index.js',
         format: 'umd',
         name: 'PluginRecordHook',
       },
     ],
-    plugins: commonPlugins(true),
-    external,
+    plugins: commonPlugins(true, true),
+    internal,
   },
   {
     input: 'src/index.ts',

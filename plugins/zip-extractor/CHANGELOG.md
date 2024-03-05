@@ -1,5 +1,28 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+
+## 0.4.2
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/util-file-buffer@0.2.1
+  - @flatfile/util-common@0.4.2
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [7c1c094]
+  - @flatfile/util-common@0.4.0
+
 ## 0.4.0
 
 ### Minor Changes

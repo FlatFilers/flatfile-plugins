@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.5.13
+
+### Patch Changes
+
+- b62ba2b: This release fixes the `Extractor error: Cannot use 'in' operator to search for '_attributes' in null` bug in the XML extractor exposed with some XML files.
+
 ## 0.5.12
 
 ### Patch Changes

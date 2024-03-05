@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-      - '!changeset-release/main'
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -13,6 +12,7 @@ jobs:
     name: Test
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    if: ${{ github.head_ref != 'changeset-release/main' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3

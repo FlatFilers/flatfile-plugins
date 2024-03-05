@@ -1,140 +1,100 @@
-import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
 import { FlatfileEvent } from '@flatfile/listener'
-import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
-import axios from 'axios'
+import {
+  createRecords,
+  deleteSpace,
+  setupListener,
+  setupSimpleWorkbook,
+  setupSpace,
+} from '@flatfile/utils-testing'
+import fetchMock from 'jest-fetch-mock'
 import { webhookEventForward } from '../src'
 
-jest.mock('axios')
+fetchMock.enableMocks()
+fetchMock.dontMock()
 
 describe('forward-webhook() e2e', () => {
-  let spaceId: string
   const listener = setupListener()
 
-  const mockedAxiosPost = axios.post as jest.MockedFunction<typeof axios.post>
+  let spaceId
+  let workbookId
+  let sheetId
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const space = await setupSpace()
     spaceId = space.id
+    const workbook = await setupSimpleWorkbook(space.id, [
+      'name',
+      'email',
+      'notes',
+    ])
+    workbookId = workbook.id
+    sheetId = workbook.sheets[0].id
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     await deleteSpace(spaceId)
   })
 
-  it('should mock axios', async () => {
-    mockedAxiosPost.mockResolvedValue({
-      status: 200,
-      data: {},
+  let callback: jest.Mock
+  beforeEach(async () => {
+    fetchMock.resetMocks()
+
+    callback = jest.fn((data: any, event: FlatfileEvent) => {
+      return { topic: event.topic, data }
     })
-    const data = await axios.post('https://example.com', { test: true })
-    expect(data.status).toBe(200)
+    listener.use(webhookEventForward('example.com', callback))
   })
 
-  it('should forward webhook', async () => {
-    mockedAxiosPost.mockResolvedValue({
-      status: 200,
-      data: {},
-    })
+  afterEach(() => {
+    listener.reset()
+  })
 
-    listener.use(
-      webhookEventForward('https://example.com', (data, event) => {
-        if (event.topic === 'job:outcome-acknowledged') {
-          return
-        }
-        api.events.create({
-          domain: event.domain as Flatfile.Domain,
-          topic: 'job:outcome-acknowledged',
-          context: {
-            ...event.context,
-            actionName: 'forward-webhook',
-          },
-          payload: data,
-        })
-      })
-    )
-
-    const waitForWebhookCompletion = new Promise((resolve) => {
-      listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
-        resolve(e)
-      })
-    })
-
-    return (
-      await waitForWebhookCompletion.then((e: FlatfileEvent) => {
-        return expect(e).toBeTruthy(), expect(e.payload.error).toBeFalsy()
+  it('should pass event', async () => {
+    fetchMock.doMockIf(
+      'example.com',
+      JSON.stringify({
+        hello: 'Flatfile',
       }),
-      expect.hasAssertions()
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    )
+
+    await createRecords(sheetId, [{ name: 'John' }])
+    await listener.waitFor('commit:created')
+
+    const callbackReturnValue = callback.mock.results.filter(
+      (result) => result.value.topic === 'commit:created'
+    )
+    expect(callbackReturnValue[0].value).toEqual(
+      expect.objectContaining({
+        topic: 'commit:created',
+        data: {
+          hello: 'Flatfile',
+        },
+      })
     )
   })
 
-  it('should send data and receive a resolution', async () => {
-    let testData
-
-    const waitForWebhookCompletion = new Promise((resolve) => {
-      listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
-        resolve(e)
-      })
-    })
-    listener.use(
-      webhookEventForward('https://example.com', (data, event) => {
-        if (event.topic === 'job:outcome-acknowledged') {
-          return
-        }
-        api.events.create({
-          domain: event.domain as Flatfile.Domain,
-          topic: 'job:outcome-acknowledged',
-          context: {
-            ...event.context,
-            actionName: 'forward-webhook',
-          },
-          payload: data,
-        })
-      })
-    )
-    return (
-      await waitForWebhookCompletion.then((e: FlatfileEvent) => {
-        return expect(testData).toBeTruthy, expect(e.payload.error).toBeFalsy()
-      }),
-      expect.hasAssertions()
-    )
-  })
-
-  it('should error on error received', async () => {
-    mockedAxiosPost.mockResolvedValue({
+  it('should error', async () => {
+    fetchMock.doMockIf('example.com', JSON.stringify({}), {
       status: 500,
-      data: {},
+      headers: { 'Content-Type': 'application/json' },
     })
-    let testData
 
-    listener.use(
-      webhookEventForward('https://example.com', (data, event) => {
-        if (event.topic === 'job:outcome-acknowledged') {
-          return
-        }
-        api.events.create({
-          domain: event.domain as Flatfile.Domain,
-          topic: 'job:outcome-acknowledged',
-          context: {
-            ...event.context,
-            actionName: 'forward-webhook',
-          },
-          payload: data,
-        })
-      })
+    await createRecords(sheetId, [{ name: 'Jane' }])
+    await listener.waitFor('commit:created')
+
+    const callbackReturnValue = callback.mock.results.filter(
+      (result) => result.value.topic === 'commit:created'
     )
-    const waitForWebhookCompletion = new Promise((resolve) => {
-      listener.on('job:outcome-acknowledged', (e: FlatfileEvent) => {
-        resolve(e)
+    expect(callbackReturnValue[0].value).toEqual(
+      expect.objectContaining({
+        topic: 'commit:created',
+        data: {
+          data: 'Error: Error forwarding webhook',
+          error: true,
+          message: 'Error received, please try again',
+        },
       })
-    })
-    return (
-      await waitForWebhookCompletion.then((e: FlatfileEvent) => {
-        return (
-          expect(e.payload.error).toBe(true), expect(testData).toBeUndefined()
-        )
-      }),
-      expect.hasAssertions()
     )
   })
 })

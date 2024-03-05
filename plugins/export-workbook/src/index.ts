@@ -1,19 +1,15 @@
 import { FlatfileListener } from '@flatfile/listener'
-import { PluginOptions, run } from './plugin'
+import { PluginOptions, exportRecords } from './plugin'
 
 /**
- * Workbook export plugin for Flatfile.
+ * Export records plugin for Flatfile.
  *
  * @param opts - plugin config options
  */
-export const exportWorkbookPlugin = (opts: PluginOptions = {}) => {
+export const exportRecordsPlugin = (job, opts: PluginOptions = {}) => {
   return (listener: FlatfileListener) => {
-    listener.on(
-      'job:ready',
-      { job: 'workbook:downloadWorkbook' },
-      async (event) => {
-        await run(event, opts)
-      }
-    )
+    listener.on('job:ready', job, async (event) => {
+      await exportRecords(event, opts)
+    })
   }
 }

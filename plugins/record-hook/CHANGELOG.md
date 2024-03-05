@@ -1,5 +1,58 @@
 # @flatfile/plugin-record-hook
 
+## 1.4.5
+
+### Patch Changes
+
+- 16f314f: This release fixes the builds of plugins utilizing the recordHook package by including recordHook as an external. This also moves the listener dep to peerDependencies which are considered externals.
+
+## 1.4.4
+
+### Patch Changes
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+
+## 1.4.3
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/util-common@0.4.2
+
+## 1.4.2
+
+### Patch Changes
+
+- 26cef08: This release fixes a bug that prevented messages from being cleared when the recordHook did not make a modification to the record.
+
+## 1.4.1
+
+### Patch Changes
+
+- 4a417af: Update package.json to have exports and browser
+- Updated dependencies [4a417af]
+  - @flatfile/util-common@0.4.1
+
+## 1.4.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
+### Patch Changes
+
+- 7c1c094: Update UMD build
+- Updated dependencies [7c1c094]
+  - @flatfile/util-common@0.4.0
+
+## 1.3.2
+
+### Patch Changes
+
+- 675f0ca: Optimizes data fetch
+
 ## 1.3.1
 
 ### Patch Changes

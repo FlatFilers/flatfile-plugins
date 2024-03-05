@@ -1,5 +1,21 @@
 # @flatfile/plugin-json-extractor
 
+## 0.7.1
+
+### Patch Changes
+
+- 4a417af: Update package.json to have exports and browser
+
+## 0.7.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
+### Patch Changes
+
+- @flatfile/util-extractor@0.5.2
+
 ## 0.6.12
 
 ### Patch Changes

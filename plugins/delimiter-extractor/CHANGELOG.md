@@ -1,5 +1,24 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.9.1
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/util-extractor@0.5.3
+
+## 0.9.0
+
+### Minor Changes
+
+- 3b25c6a: @flatfile/plugin-delimiter-extractor can now guess the delimiter if one is not provided. Also the header detection logic has been upgraded.
+  @flatfile/plugin-xlsx-extractor has updated header detection logic.
+
+  ```
+
+  ```
+
 ## 0.8.0
 
 ### Minor Changes

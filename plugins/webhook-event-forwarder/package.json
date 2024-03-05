@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-webhook-event-forwarder",
-  "version": "0.1.1",
+  "version": "0.2.2",
   "description": "A plugin to forward events via webhook for clients to manipulate at their endpoints in a language-agnostic way.",
   "registryMetadata": {
     "category": "automation"
@@ -8,13 +8,20 @@
   "engines": {
     "node": ">= 16"
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
   "browser": {
     "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
   },
-  "types": "dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
@@ -37,16 +44,11 @@
   },
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "dependencies": {
-    "@flatfile/api": "^1.6.3",
-    "@flatfile/listener": "^0.4.0",
-    "@types/express": "^4.17.21",
-    "axios": "^1.6.5"
+    "@flatfile/api": "^1.7.4",
+    "@flatfile/listener": "^1.0.1",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "rollup": "^4.3.0"
+    "jest-fetch-mock": "^3.0.3"
   }
 }

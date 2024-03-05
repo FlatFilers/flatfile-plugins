@@ -6,7 +6,6 @@ import {
   RejectionResponse,
   responseRejectionHandler,
 } from '@flatfile/util-response-rejection'
-import axios from 'axios'
 
 export function webhookEgress(job: string, webhookUrl?: string) {
   return function (listener: FlatfileListener) {
@@ -31,23 +30,23 @@ export function webhookEgress(job: string, webhookUrl?: string) {
 
         try {
           const webhookReceiver = webhookUrl || process.env.WEBHOOK_SITE_URL
-          const response = await axios.post(
-            webhookReceiver,
-            {
+          const response = await fetch(webhookReceiver, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
               workbook: {
                 ...workbook,
                 sheets,
               },
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }
-          )
+            }),
+          })
 
           if (response.status === 200) {
-            const rejections: RejectionResponse = response.data.rejections
+            const responseData = await response.json()
+            const rejections: RejectionResponse = responseData.rejections
+
             if (rejections) {
               return await responseRejectionHandler(rejections)
             }

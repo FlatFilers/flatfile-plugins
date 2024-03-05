@@ -73,9 +73,49 @@ async function updateSheet(
     await addSubmissionStatusField(sheetRejections.sheetId)
   }
 
-  await processRecords(sheetRejections.sheetId, async (records) => {
-    await updateRecords(sheetRejections, records, deleteSubmitted)
-  })
+  const recordIds = sheetRejections.rejectedRecords.map((record) => record.id)
+  await processRecords(
+    sheetRejections.sheetId,
+    async (records: Flatfile.RecordsWithLinks, _pageNumber?: number) => {
+      if (!records.length) {
+        return
+      }
+      records.forEach((record) => {
+        const rejectedRecord = sheetRejections.rejectedRecords.find(
+          (item) => item.id === record.id
+        )
+
+        rejectedRecord?.values.forEach((value) => {
+          if (record.values[value.field]) {
+            record.values[value.field].messages = [
+              { type: 'error', message: value.message },
+            ]
+          }
+        })
+
+        if (!deleteSubmitted) {
+          record.values['submissionStatus'].value = rejectedRecord
+            ? 'rejected'
+            : 'submitted'
+        }
+      })
+
+      try {
+        await api.records.update(sheetRejections.sheetId, records)
+      } catch (error) {
+        console.error('Error updating records:', error)
+        throw new Error('Error updating records')
+      }
+
+      if (
+        deleteSubmitted &&
+        records.length !== sheetRejections.rejectedRecords.length
+      ) {
+        await deleteValidRecords(sheetRejections.sheetId)
+      }
+    },
+    { ids: recordIds }
+  )
 
   return sheetRejections.rejectedRecords.length
 }
@@ -103,43 +143,6 @@ async function addSubmissionStatusField(sheetId: string): Promise<void> {
   } catch (error) {
     console.error('Error adding rejection status field:', error)
     throw 'Error adding rejection status field'
-  }
-}
-
-async function updateRecords(
-  rejections: SheetRejections,
-  records: Flatfile.RecordsWithLinks,
-  deleteSubmitted: boolean
-): Promise<void> {
-  records.forEach((record) => {
-    const rejectedRecord = rejections.rejectedRecords.find(
-      (item) => item.id === record.id
-    )
-
-    rejectedRecord?.values.forEach((value) => {
-      if (record.values[value.field]) {
-        record.values[value.field].messages = [
-          { type: 'error', message: value.message },
-        ]
-      }
-    })
-
-    if (!deleteSubmitted) {
-      record.values['submissionStatus'].value = rejectedRecord
-        ? 'rejected'
-        : 'submitted'
-    }
-  })
-
-  try {
-    await api.records.update(rejections.sheetId, records)
-  } catch (error) {
-    console.error('Error updating records:', error)
-    throw new Error('Error updating records')
-  }
-
-  if (deleteSubmitted && records.length !== rejections.rejectedRecords.length) {
-    await deleteValidRecords(rejections.sheetId)
   }
 }
 

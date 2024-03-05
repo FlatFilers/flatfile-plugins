@@ -1,5 +1,55 @@
 # @flatfile/util-response-rejection
 
+## 1.2.3
+
+### Patch Changes
+
+- feb2ced: @flatfile/util-common: This release provides additional record request options such as "filter" and passes the current pageNumber to the cb function. Additionally the cb will be called when no records are found for any wrap-up the cb needs to make.
+
+  @flatfile/util-response-rejection: Since @flatfile/util-common now calls the cb when no records are found, this release updates @flatfile/util-response-rejection to check for records before processing.
+
+  ```
+
+  ```
+
+- Updated dependencies [feb2ced]
+  - @flatfile/util-common@1.0.0
+
+## 1.2.2
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+- Updated dependencies [c7f2d69]
+  - @flatfile/util-common@0.4.2
+
+## 1.2.1
+
+### Patch Changes
+
+- 4a417af: Update package.json to have exports and browser
+- Updated dependencies [4a417af]
+  - @flatfile/util-common@0.4.1
+
+## 1.2.0
+
+### Minor Changes
+
+- 7c1c094: Update package.json exports
+
+### Patch Changes
+
+- Updated dependencies [7c1c094]
+  - @flatfile/util-common@0.4.0
+
+## 1.1.1
+
+### Patch Changes
+
+- 0d63b1f: This release add browser builds to the `@flatfile/util-response-rejection`, `@flatfile/plugin-webhook-egress`, `@flatfile/plugin-job-handler` & `@flatfile/util-common` plugins can be used in client-side apps.
+- Updated dependencies [0d63b1f]
+  - @flatfile/util-common@0.3.1
+
 ## 1.1.0
 
 ### Minor Changes

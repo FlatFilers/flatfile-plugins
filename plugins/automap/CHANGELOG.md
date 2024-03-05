@@ -1,5 +1,17 @@
 # @flatfile/plugin-automap
 
+## 0.2.2
+
+### Patch Changes
+
+- c7f2d69: This release updates the `@flatfile/api` and `@flatfile/listener` dependencies
+
+## 0.2.1
+
+### Patch Changes
+
+- 9fa31e2: Update defaultTargetSheet return value
+
 ## 0.2.0
 
 ### Minor Changes
