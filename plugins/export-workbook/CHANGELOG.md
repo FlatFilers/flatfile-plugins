@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.1.5
+
+### Patch Changes
+
+- c1018d5: Excel places size and character limitations on worksheet names. This release strips invalid characters from the sheet name.
+
 ## 0.1.4
 
 ### Patch Changes
