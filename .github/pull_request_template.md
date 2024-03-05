@@ -1,3 +1,3 @@
-## Tell code reviewer what to test:
+## Please explain how to summarize this PR for the Changelog:
 
-## Tell Chat GPT how to summarize this pull request:
+## Tell code reviewer how and what to test:
