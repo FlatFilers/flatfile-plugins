@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.2.3
+
+### Patch Changes
+
+- 39a2b13: Account for undefined settings
+
 ## 0.2.2
 
 ### Patch Changes
