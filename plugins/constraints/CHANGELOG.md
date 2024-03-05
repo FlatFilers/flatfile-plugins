@@ -1,5 +1,13 @@
 # @flatfile/plugin-constraints
 
+## 1.1.6
+
+### Patch Changes
+
+- 16f314f: This release fixes the builds of plugins utilizing the recordHook package by including recordHook as an external. This also moves the listener dep to peerDependencies which are considered externals.
+- Updated dependencies [16f314f]
+  - @flatfile/plugin-record-hook@1.4.5
+
 ## 1.1.5
 
 ### Patch Changes
