@@ -33,9 +33,10 @@ export const dxpConfigure = (workbook: Workbook) => {
         spaceId: spaceId,
         environmentId: environmentId,
         name,
-        settings,
         // @ts-ignore
         sheets,
+        ...(settings ? { settings } : {}),
+        ...(namespace ? { namespace } : {}),
       })
 
       await api.jobs.complete(jobId, { info: 'Configured' })
