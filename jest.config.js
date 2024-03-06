@@ -2,9 +2,11 @@ const path = require('path')
 
 module.exports = {
   verbose: true,
+  preset: 'ts-jest/presets/js-with-ts-esm',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
+  transformIgnorePatterns: ['node_modules/(?!node-fetch|fetch-blob)'],
   setupFiles: [path.join(__dirname, './testing/setup-tests.js')],
   coverageThreshold: {
     global: {
