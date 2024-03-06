@@ -10,7 +10,7 @@ export const exportRecordsPlugin = (opts: PluginOptions = {}) => {
   return (listener: FlatfileListener) => {
     listener.on(
       'job:ready',
-      { job: 'workbook:downloadWorkbook' },
+      { job: opts.jobName || 'workbook:downloadWorkbook' },
       async (event) => {
         await exportRecords(event, opts)
       }

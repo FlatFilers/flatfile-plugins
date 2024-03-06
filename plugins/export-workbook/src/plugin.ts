@@ -1,11 +1,6 @@
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileEvent } from '@flatfile/listener'
-import {
-  logError,
-  logInfo,
-  logWarn,
-  processRecords,
-} from '@flatfile/util-common'
+import { logError, logInfo, processRecords } from '@flatfile/util-common'
 import * as fs from 'fs'
 import path from 'path'
 import * as R from 'remeda'
@@ -15,11 +10,13 @@ import * as XLSX from 'xlsx'
  * Plugin config options.
  *
  * @property {string[]} excludedSheets - list of sheet names to exclude from the exported data.
+ * @property {string[]} excludeFields - list of field names to exclude from the exported data. This applies to all sheets.
  * @property {Flatfile.Filter} recordFilter - filter to apply to the records before exporting.
  * @property {boolean} includeRecordIds - include record ids in the exported data.
  * @property {boolean} debug - show helpul messages useful for debugging (use intended for development).
  */
 export interface PluginOptions {
+  readonly jobName?: string
   readonly excludedSheets?: string[]
   readonly excludeFields?: string[]
   readonly recordFilter?: Flatfile.Filter
