@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.1.6
+
+### Patch Changes
+
+- f168f4d: This release fixes a break in backwards compatability created by the previous release
+
 ## 0.1.5
 
 ### Patch Changes
