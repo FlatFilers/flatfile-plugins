@@ -6,10 +6,16 @@ import { PluginOptions, exportRecords } from './plugin'
  *
  * @param opts - plugin config options
  */
-export const exportRecordsPlugin = (job, opts: PluginOptions = {}) => {
+export const exportRecordsPlugin = (opts: PluginOptions = {}) => {
   return (listener: FlatfileListener) => {
-    listener.on('job:ready', job, async (event) => {
-      await exportRecords(event, opts)
-    })
+    listener.on(
+      'job:ready',
+      { job: opts.jobName || 'workbook:downloadWorkbook' },
+      async (event) => {
+        await exportRecords(event, opts)
+      }
+    )
   }
 }
+
+export { exportRecordsPlugin as exportWorkbookPlugin }
