@@ -3,7 +3,10 @@ import type { Workbook } from '@flatfile/configure'
 import type { FlatfileListener } from '@flatfile/listener'
 import { shimTarget } from './shim.target'
 
-export const dxpConfigure = (workbook: Workbook) => {
+export const dxpConfigure = (
+  workbook: Workbook,
+  { isPrimaryWorkbook = true } = {}
+) => {
   return (listener: FlatfileListener) => {
     listener.on('**', (event) => {
       // @ts-ignore
@@ -29,7 +32,7 @@ export const dxpConfigure = (workbook: Workbook) => {
         .map((key) => originalSheets[key].toBlueprint(namespace, key))
         .map((sheet) => ({ ...sheet, actions: sheet.actions || [] }))
 
-      await api.workbooks.create({
+      const { data: newWorkbook } = await api.workbooks.create({
         spaceId: spaceId,
         environmentId: environmentId,
         name,
@@ -38,6 +41,11 @@ export const dxpConfigure = (workbook: Workbook) => {
         ...(settings ? { settings } : {}),
         ...(namespace ? { namespace } : {}),
       })
+      if (isPrimaryWorkbook) {
+        await api.spaces.update(spaceId, {
+          primaryWorkbookId: newWorkbook.id,
+        })
+      }
 
       await api.jobs.complete(jobId, { info: 'Configured' })
     })
