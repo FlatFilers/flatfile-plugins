@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 1.0.0
+
+### Major Changes
+
+- 5de5811: Update space with the included workbook as the Primary Workbook Id
+
 ## 0.2.3
 
 ### Patch Changes
