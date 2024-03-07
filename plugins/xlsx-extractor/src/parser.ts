@@ -38,6 +38,8 @@ export async function parseBuffer(
       throw new Error(
         'File is too large to parse. Try converting this file to CSV.'
       )
+    } else if (e.message === 'File is password-protected') {
+      throw new Error('File is password-protected')
     }
   }
 
