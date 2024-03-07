@@ -99,6 +99,10 @@ async function convertSheet(
   const headerizer = Headerizer.create(headerDetectionOptions)
   const headerStream = Readable.from(extractValues(rows))
   const { header, skip } = await headerizer.getHeaders(headerStream)
+  const headerKey = skip - 1
+  const columnKeys = Object.keys(rows[headerKey]).filter((key) =>
+    Boolean(rows[headerKey][key])
+  )
 
   rows.splice(0, skip)
   // return if there are no rows
@@ -112,7 +116,6 @@ async function convertSheet(
       return result
     }, {})
 
-  const columnKeys = Object.keys(rows[0])
   const excelHeader = toExcelHeader(header, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
   const required = Object.fromEntries(
