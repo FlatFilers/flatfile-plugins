@@ -3,20 +3,20 @@ import fetch from 'node-fetch'
 
 /**
  * The restoreDatabase function is responsible for initiating the database restore process. It sends a POST request to
- * the foreigndb API to restore the database from the given fileId. The databaseName should be the workbookId for the
+ * the foreigndb API to restore the database from the given fileId. The workbookId should be the workbookId for the
  * Workbook that will be associated to the file being restored.
  *
- * @param databaseName
+ * @param workbookId
  * @param fileId
  * @returns
  */
 export async function restoreDatabase(
-  databaseName: string,
+  workbookId: string,
   fileId: string
 ): Promise<sql.config | Error> {
   try {
     const response = await fetch(
-      `${process.env.AGENT_INTERNAL_URL}/v1/foreigndb/${databaseName}`,
+      `${process.env.AGENT_INTERNAL_URL}/v1/foreigndb/${workbookId}`,
       {
         method: 'POST',
         headers: {
@@ -55,15 +55,15 @@ export async function restoreDatabase(
  * The getDatabaseInfo function is responsible for retrieving the status of the database restore process. It sends a GET
  * request to the foreigndb API to retrieve the status of the database restore process.
  *
- * @param databaseName
+ * @param workbookId
  * @returns
  */
 export async function getDatabaseInfo(
-  databaseName: string
+  workbookId: string
 ): Promise<Task | Error> {
   try {
     const response = await fetch(
-      `${process.env.AGENT_INTERNAL_URL}/v1/foreigndb/${databaseName}`,
+      `${process.env.AGENT_INTERNAL_URL}/v1/foreigndb/${workbookId}`,
       {
         method: 'GET',
         headers: {
@@ -90,13 +90,13 @@ export async function getDatabaseInfo(
  * the foreigndb API to retrieve the user credentials for the database. This must be called after the database restore
  * is complete.
  *
- * @param databaseName
+ * @param workbookId
  * @returns
  */
-export async function getUser(databaseName: string): Promise<DBUser | Error> {
+export async function getUser(workbookId: string): Promise<DBUser | Error> {
   try {
     const userResponse = await fetch(
-      `${process.env.AGENT_INTERNAL_URL}/v1/foreigndb/${databaseName}/user`,
+      `${process.env.AGENT_INTERNAL_URL}/v1/foreigndb/${workbookId}/user`,
       {
         method: 'GET',
         headers: {
