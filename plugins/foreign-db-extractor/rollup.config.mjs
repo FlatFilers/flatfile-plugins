@@ -14,8 +14,6 @@ if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
 
-const external = ['@flatfile/api', '@flatfile/listener', 'mssql']
-
 function commonPlugins(browser, umd = false) {
   return [
     !umd
@@ -55,7 +53,6 @@ export default [
       },
     ],
     plugins: commonPlugins(false),
-    external,
   },
   // Browser build
   {
@@ -74,7 +71,6 @@ export default [
       },
     ],
     plugins: commonPlugins(true),
-    external,
   },
   {
     input: 'src/index.ts',

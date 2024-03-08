@@ -1,14 +1,11 @@
 import api, { Flatfile } from '@flatfile/api'
 import FlatfileListener, { FlatfileEvent } from '@flatfile/listener'
 import sql from 'mssql'
-import { generateSheets } from './generate.sheets'
-import {
-  DBUser,
-  getUser,
-  pollDatabaseStatus,
-  restoreDatabase,
-} from './restore.database'
-import { s3Upload } from './upload.s3'
+import { pollDatabaseStatus } from './database.poll.status'
+import { restoreDatabase } from './database.restore'
+import { DBUser, getUser } from './database.user'
+import { s3Upload } from './s3.upload'
+import { generateSheets } from './sheets.generator'
 
 export const foreignDBExtractor = () => {
   return (listener: FlatfileListener) => {
