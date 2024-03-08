@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-foreign-db-extractor",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A plugin for extracting MSSQL DBs from a .bak file.",
   "registryMetadata": {
     "category": "extractor"
