@@ -3,6 +3,7 @@ import type { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import type { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch } from '@flatfile/util-common'
 import { RecordTranslator } from './record.translator'
+import { cleanRecord, deepEqual } from './record.utils'
 
 export interface RecordHookOptions {
   concurrency?: number
@@ -118,8 +119,17 @@ export const BulkRecordHook = async (
         (record: Flatfile.RecordWithLinks) => {
           const originalRecord: Flatfile.RecordWithLinks = data.find(
             (original: Flatfile.RecordWithLinks) => original.id === record.id
-          )!
-          return hasChange(record, originalRecord)
+          )
+          cleanRecord(originalRecord) // Remove fields that should not be compared
+          const hasChanges = !deepEqual(record, originalRecord)
+          if (options.debug) {
+            console.log(
+              `Record ${record.id} ${
+                hasChanges ? 'has' : 'does not have'
+              } changes`
+            )
+          }
+          return hasChanges
         }
       )
 
@@ -140,65 +150,6 @@ export const BulkRecordHook = async (
   } catch (e) {
     console.error(`An error occurred while running the handler: ${e.message}`)
   }
-}
-
-function hasChange(
-  originalRecord: Flatfile.RecordWithLinks,
-  modifiedRecord: Flatfile.RecordWithLinks
-): boolean {
-  const ignoredRecordKeys = ['valid', 'updatedAt']
-
-  // Check if objects are identical or both null
-  if (originalRecord === modifiedRecord) {
-    return false
-  }
-
-  // Check if one of them is null or not an object
-  if (
-    typeof originalRecord !== 'object' ||
-    typeof modifiedRecord !== 'object' ||
-    originalRecord == null ||
-    modifiedRecord == null
-  ) {
-    return true
-  }
-
-  // Get keys excluding ignored keys at the current level
-  const keysOriginal = Object.keys(originalRecord).filter(
-    (key) => !ignoredRecordKeys.includes(key)
-  )
-  const keysModified = Object.keys(modifiedRecord).filter(
-    (key) => !ignoredRecordKeys.includes(key)
-  )
-
-  // Check if number of properties is different
-  if (keysOriginal.length !== keysModified.length) {
-    return true
-  }
-
-  // Iterate over keys and check for changes, including nested objects
-  for (const key of keysOriginal) {
-    if (!keysModified.includes(key)) {
-      return true
-    }
-
-    // Check if the current property is an object and needs recursive comparison
-    if (
-      typeof originalRecord[key] === 'object' &&
-      typeof modifiedRecord[key] === 'object' &&
-      originalRecord[key] !== null &&
-      modifiedRecord[key] !== null
-    ) {
-      if (hasChange(originalRecord[key], modifiedRecord[key])) {
-        return true
-      }
-    } else if (originalRecord[key] !== modifiedRecord[key]) {
-      // Direct comparison for non-object or primitive types
-      return true
-    }
-  }
-
-  return false
 }
 
 const prepareFlatfileRecords = async (
