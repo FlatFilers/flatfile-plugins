@@ -1,5 +1,11 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.2.0
+
+### Minor Changes
+
+- 9535565: This release provides support for additional Merge.dev integrations.
+
 ## 0.1.4
 
 ### Patch Changes
