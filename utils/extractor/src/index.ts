@@ -65,14 +65,24 @@ export const Extractor = (
             ...options,
             fileId,
           })
+
+          await tick(5, 'Creating workbook')
           const workbook = await createWorkbook(
             event.context.environmentId,
             file,
             capture
           )
+
+          // Add workbook to file so if the extraction fails and the file is deleted, the workbook is also deleted
+          // instead of being orphaned
+          await api.files.update(file.id, {
+            workbookId: workbook.id,
+          })
+
           if (!workbook.sheets || workbook.sheets.length === 0) {
             throw new Error('No Sheets found')
           }
+
           await tick(10, 'Adding records to Sheets')
 
           let processedRecords = 0
@@ -101,7 +111,7 @@ export const Extractor = (
             )
           }
           await api.files.update(file.id, {
-            workbookId: workbook.id,
+            status: 'complete',
           })
           await api.jobs.complete(jobId, {
             info: 'Extraction complete',
@@ -109,9 +119,13 @@ export const Extractor = (
               message: 'Extracted file',
             },
           })
-          console.log(workbook)
         } catch (e) {
-          console.log(`Extractor error: ${e.message}`)
+          if (debug) {
+            console.log(`Extractor error: ${e.message}`)
+          }
+          await api.files.update(fileId, {
+            status: 'failed',
+          })
           await api.jobs.fail(jobId, {
             info: 'Extraction failed',
             outcome: {
@@ -135,13 +149,8 @@ async function createWorkbook(
     environmentId,
     workbookCapture
   )
-  const workbook = await api.workbooks.create(workbookConfig)
-
-  if (!workbook.data.sheets || workbook.data.sheets.length === 0) {
-    throw new Error('No Sheets found')
-  }
-
-  return workbook.data
+  const { data: workbook } = await api.workbooks.create(workbookConfig)
+  return workbook
 }
 
 function getWorkbookConfig(
