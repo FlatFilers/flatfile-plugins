@@ -1,8 +1,5 @@
 import { Flatfile } from '@flatfile/api'
-import { RUNTIME } from '@flatfile/api/core'
-import nodeFetch from 'node-fetch'
-
-const fetchFn = RUNTIME.type === 'node' ? nodeFetch : fetch
+import fetch from 'cross-fetch'
 
 const PAGE_SIZE = 5_000
 
@@ -54,7 +51,7 @@ export async function getRecordsRaw(
     process.env.FLATFILE_API_URL || process.env.AGENT_INTERNAL_URL
   }/v1/sheets/${sheetId}/records`
 
-  const httpResponse = await fetchFn(`${baseUrl}?${query}`, {
+  const httpResponse = await fetch(`${baseUrl}?${query}`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${
