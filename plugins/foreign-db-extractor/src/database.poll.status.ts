@@ -1,4 +1,3 @@
-import sql from 'mssql'
 import fetch from 'node-fetch'
 
 /**
@@ -6,21 +5,21 @@ import fetch from 'node-fetch'
  * request to the foreigndb API to retrieve the status of the database restore process. It will continue to poll until
  * the status is either 'SUCCESS' or 'ERROR'.
  *
- * @param connectionConfig
+ * @param workbookId
  * @returns
  */
-export async function pollDatabaseStatus(
-  connectionConfig: sql.config
-): Promise<void> {
+export async function pollDatabaseStatus(workbookId: string): Promise<void> {
   const maxAttempts = 36 // 3 minutes
   const retryDelay = 5_000
   let attempts = 0
   let status
   while (attempts < maxAttempts && !['SUCCESS', 'ERROR'].includes(status)) {
-    const task = (await getDatabaseInfo(connectionConfig.database)) as Task
-    status = task.status
-    await new Promise((resolve) => setTimeout(resolve, retryDelay))
-    attempts++
+    try {
+      const task = (await getDatabaseInfo(workbookId)) as Task
+      status = task.status
+      await new Promise((resolve) => setTimeout(resolve, retryDelay))
+      attempts++
+    } catch (error) {}
   }
 
   if (!status || status === 'ERROR') {
