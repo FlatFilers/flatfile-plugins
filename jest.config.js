@@ -5,7 +5,6 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
-  moduleNameMapper: { 'node-fetch': '<rootDir>/node_modules/node-fetch-jest' },
   setupFiles: [path.join(__dirname, './testing/setup-tests.js')],
   coverageThreshold: {
     global: {

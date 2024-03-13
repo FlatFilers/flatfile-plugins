@@ -37,8 +37,9 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
-    "@flatfile/listener": "^1.0.1",
-    "node-fetch": "^3.3.2"
+    "@flatfile/api": "^1.7.4"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   }
 }
