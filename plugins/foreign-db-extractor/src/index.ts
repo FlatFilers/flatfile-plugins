@@ -58,9 +58,6 @@ export const foreignDBExtractor = () => {
             spaceId,
             environmentId,
           })
-          await api.files.update(fileId, {
-            workbookId: workbook.id,
-          })
 
           // Step 2.2: Upload file to S3, this is required to restore to RDS
           await tick(10, 'Uploading file to S3 bucket')
@@ -75,7 +72,7 @@ export const foreignDBExtractor = () => {
 
           // Step 2.4: Poll for database availability
           await tick(60, 'Polling for database availability')
-          await pollDatabaseStatus(connectionConfig.database)
+          await pollDatabaseStatus(connectionConfig)
 
           // Step 2.5: Retrieve user credentials for the database
           await tick(85, 'Retrieving database user credentials')
@@ -108,7 +105,7 @@ export const foreignDBExtractor = () => {
           // Step 2.7: Update file with workbookId
           await tick(95, 'Updating file')
           await api.files.update(fileId, {
-            status: 'complete',
+            workbookId: workbook.id,
           })
 
           await api.jobs.complete(jobId, {
@@ -118,9 +115,6 @@ export const foreignDBExtractor = () => {
             },
           })
         } catch (e) {
-          await api.files.update(fileId, {
-            status: 'failed',
-          })
           await api.jobs.fail(jobId, {
             info: e.message,
           })

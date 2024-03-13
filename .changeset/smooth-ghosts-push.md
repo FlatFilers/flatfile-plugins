@@ -1,5 +1,4 @@
 ---
-'@flatfile/plugin-foreign-db-extractor': patch
 '@flatfile/util-extractor': patch
 ---
 

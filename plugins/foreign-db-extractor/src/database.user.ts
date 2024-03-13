@@ -1,3 +1,4 @@
+import sql from 'mssql'
 import fetch from 'node-fetch'
 
 /**

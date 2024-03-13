@@ -1,3 +1,4 @@
+import sql from 'mssql'
 import fetch from 'node-fetch'
 
 /**
@@ -8,13 +9,15 @@ import fetch from 'node-fetch'
  * @param connectionConfig
  * @returns
  */
-export async function pollDatabaseStatus(database: string): Promise<void> {
+export async function pollDatabaseStatus(
+  connectionConfig: sql.config
+): Promise<void> {
   const maxAttempts = 36 // 3 minutes
   const retryDelay = 5_000
   let attempts = 0
   let status
   while (attempts < maxAttempts && !['SUCCESS', 'ERROR'].includes(status)) {
-    const task = (await getDatabaseInfo(database)) as Task
+    const task = (await getDatabaseInfo(connectionConfig.database)) as Task
     status = task.status
     await new Promise((resolve) => setTimeout(resolve, retryDelay))
     attempts++

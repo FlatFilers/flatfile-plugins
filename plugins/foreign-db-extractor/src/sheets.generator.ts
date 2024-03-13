@@ -42,10 +42,12 @@ async function getTablesAndColumns(connConfig: sql.config) {
       tables[row.TABLE_NAME].push(row.COLUMN_NAME)
     })
   } catch (error) {
+    console.log('Error connecting to SQL:', error)
     throw error
   } finally {
     if (conn) {
       conn.close()
+      console.log('Closed SQL connection.')
     }
   }
 
