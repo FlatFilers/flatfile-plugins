@@ -80,7 +80,7 @@ describe('all.records', () => {
       expect(emptyResults).toEqual([0])
 
       const populatedResults = await processRecords(populatedSheetId, callback)
-      expect(populatedResults).toEqual([3000, 0])
+      expect(populatedResults).toEqual([3000])
     })
 
     it('should filter records by "valid" status', async () => {
@@ -98,7 +98,7 @@ describe('all.records', () => {
           filter: 'valid',
         }
       )
-      expect(populatedResults).toEqual([3000, 0])
+      expect(populatedResults).toEqual([3000])
     })
 
     it('should filter records by "error" status', async () => {
@@ -126,6 +126,7 @@ describe('all.records', () => {
         pageSize: 500,
       })
       expect(emptyResults).toEqual([0])
+      expect(callback).toHaveBeenCalledTimes(1)
 
       const populatedResults = await processRecords(
         populatedSheetId,
@@ -134,7 +135,9 @@ describe('all.records', () => {
           pageSize: 500,
         }
       )
-      expect(populatedResults).toEqual([500, 500, 500, 500, 500, 500, 0])
+      console.log(populatedResults)
+      expect(populatedResults).toEqual([500, 500, 500, 500, 500, 500])
+      expect(callback).toHaveBeenCalledTimes(7)
     })
   })
 })

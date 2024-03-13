@@ -1,50 +1,15 @@
-import { Flatfile } from '@flatfile/api'
+import api, { Flatfile } from '@flatfile/api'
 import fetch from 'cross-fetch'
+import { get } from 'http'
 
-const PAGE_SIZE = 5_000
-
-export async function processRecords<R>(
-  sheetId: string,
-  callback: (
-    records: Flatfile.RecordsWithLinks,
-    pageNumber?: number
-  ) => R | void | Promise<R | void>,
-  getRecordsRequest?: GetRecordsRequest
-): Promise<R[] | void> {
-  let pageNumber = 0
-  const results: R[] = []
-
-  while (true) {
-    pageNumber++
-    const records = await getRecordsRaw(sheetId, {
-      ...getRecordsRequest,
-      pageNumber: pageNumber,
-    })
-
-    const result = await callback(records, pageNumber)
-    if (result !== undefined && result !== null) {
-      results.push(result as R)
-    }
-
-    if (records.length === 0) {
-      break
-    }
-  }
-
-  return results.length ? results : undefined
-}
-
-export type GetRecordsRequest = Omit<
-  Flatfile.records.GetRecordsRequest,
-  'pageNumber'
->
+const DEFAULT_PAGE_SIZE = 10_000
 
 export async function getRecordsRaw(
   sheetId: string,
   options: Flatfile.records.GetRecordsRequest = {}
 ): Promise<Array<Flatfile.Record_>> {
   const pageNumber = String(options.pageNumber || 1)
-  const pageSize = String(options.pageSize || PAGE_SIZE)
+  const pageSize = String(options.pageSize || DEFAULT_PAGE_SIZE)
   // @ts-ignore
   const query = new URLSearchParams({ ...options, pageNumber, pageSize })
   const baseUrl = `${
@@ -72,4 +37,43 @@ export async function getRecordsRaw(
     console.log(e)
     return []
   }
+}
+
+export async function getSheetLength(sheetId: string): Promise<number> {
+  const {
+    data: { counts },
+  } = await api.sheets.getRecordCounts(sheetId)
+  return counts.total
+}
+
+export async function processRecords<R>(
+  sheetId: string,
+  callback: (
+    records: Flatfile.RecordsWithLinks,
+    pageNumber?: number,
+    totalPageCount?: number
+  ) => R | void | Promise<R | void>,
+  getRecordsRequest?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
+): Promise<R[] | void> {
+  const pageSize = getRecordsRequest.pageSize || DEFAULT_PAGE_SIZE
+  getRecordsRequest.pageSize = pageSize
+  const totalRecords = await getSheetLength(sheetId)
+  const totalPageCount = Math.ceil(totalRecords / pageSize) || 1
+  const results: R[] = []
+
+  let pageNumber = 0
+  while (pageNumber < totalPageCount) {
+    pageNumber++
+    const records = await getRecordsRaw(sheetId, {
+      ...getRecordsRequest,
+      pageNumber: pageNumber,
+    })
+
+    const result = await callback(records, pageNumber, totalPageCount)
+    if (result !== undefined && result !== null) {
+      results.push(result as R)
+    }
+  }
+
+  return results.length ? results : undefined
 }
