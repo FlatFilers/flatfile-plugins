@@ -135,7 +135,6 @@ describe('all.records', () => {
           pageSize: 500,
         }
       )
-      console.log(populatedResults)
       expect(populatedResults).toEqual([500, 500, 500, 500, 500, 500])
       expect(callback).toHaveBeenCalledTimes(7)
     })

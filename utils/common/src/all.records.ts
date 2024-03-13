@@ -1,6 +1,5 @@
 import api, { Flatfile } from '@flatfile/api'
 import fetch from 'cross-fetch'
-import { get } from 'http'
 
 const DEFAULT_PAGE_SIZE = 10_000
 
@@ -53,19 +52,19 @@ export async function processRecords<R>(
     pageNumber?: number,
     totalPageCount?: number
   ) => R | void | Promise<R | void>,
-  getRecordsRequest?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
+  options?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
 ): Promise<R[] | void> {
-  const pageSize = getRecordsRequest.pageSize || DEFAULT_PAGE_SIZE
-  getRecordsRequest.pageSize = pageSize
+  options = options || {}
+  options.pageSize = options?.pageSize ? options.pageSize : DEFAULT_PAGE_SIZE
   const totalRecords = await getSheetLength(sheetId)
-  const totalPageCount = Math.ceil(totalRecords / pageSize) || 1
+  const totalPageCount = Math.ceil(totalRecords / options.pageSize) || 1
   const results: R[] = []
 
   let pageNumber = 0
   while (pageNumber < totalPageCount) {
     pageNumber++
     const records = await getRecordsRaw(sheetId, {
-      ...getRecordsRequest,
+      ...options,
       pageNumber: pageNumber,
     })
 
