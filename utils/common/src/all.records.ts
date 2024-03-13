@@ -7,8 +7,8 @@ export async function getRecordsRaw(
   sheetId: string,
   options: Flatfile.records.GetRecordsRequest = {}
 ): Promise<Array<Flatfile.Record_>> {
-  const pageNumber = String(options.pageNumber || 1)
-  const pageSize = String(options.pageSize || DEFAULT_PAGE_SIZE)
+  const pageNumber = String(options.pageNumber ?? 1)
+  const pageSize = String(options.pageSize ?? DEFAULT_PAGE_SIZE)
   // @ts-ignore
   const query = new URLSearchParams({ ...options, pageNumber, pageSize })
   const baseUrl = `${
@@ -55,7 +55,7 @@ export async function processRecords<R>(
   options?: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'>
 ): Promise<R[] | void> {
   options = options || {}
-  options.pageSize = options?.pageSize ? options.pageSize : DEFAULT_PAGE_SIZE
+  options.pageSize = options?.pageSize ?? DEFAULT_PAGE_SIZE
   const totalRecords = await getSheetLength(sheetId)
   const totalPageCount = Math.ceil(totalRecords / options.pageSize) || 1
   const results: R[] = []
