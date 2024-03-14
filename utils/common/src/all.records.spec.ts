@@ -1,6 +1,6 @@
-import api from '@flatfile/api'
+import api, { Flatfile } from '@flatfile/api'
 import { getEnvironmentId, setupSpace } from '@flatfile/utils-testing'
-import { processRecords } from './all.records'
+import { getRecordsRaw, processRecords } from './all.records'
 
 describe('all.records', () => {
   describe('processRecords', () => {
@@ -137,6 +137,38 @@ describe('all.records', () => {
       )
       expect(populatedResults).toEqual([500, 500, 500, 500, 500, 500])
       expect(callback).toHaveBeenCalledTimes(7)
+    })
+
+    it('should return no results', async () => {
+      await expect(getRecordsRaw(emptySheetId)).resolves.toEqual([])
+
+      await expect(
+        getRecordsRaw(emptySheetId, { pageNumber: 2 })
+      ).resolves.toEqual([])
+    })
+
+    it('should return results', async () => {
+      await expect(
+        getRecordsRaw(populatedSheetId, { pageNumber: 1 })
+      ).resolves.toHaveLength(3000)
+    })
+
+    it('should return results filtered by record ids', async () => {
+      const records = (await getRecordsRaw(populatedSheetId, {
+        pageSize: 10,
+      })) as Flatfile.Record_[]
+      const recordIds = records.map((record) => record.id)
+
+      await expect(
+        getRecordsRaw(populatedSheetId, { ids: recordIds })
+      ).resolves.toHaveLength(10)
+    })
+
+    it('should throw error', async () => {
+      const sheetId = 'badid'
+      await expect(getRecordsRaw(sheetId)).rejects.toThrow(
+        `Reading 1 of ${sheetId} failed.`
+      )
     })
   })
 })
