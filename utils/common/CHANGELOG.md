@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.0.1
+
+### Patch Changes
+
+- 3fbca85: This release changes how the records are fetched to decrease fetch time for large responses.
+
 ## 1.0.0
 
 ### Major Changes
