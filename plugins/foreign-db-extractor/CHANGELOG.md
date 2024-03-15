@@ -1,5 +1,11 @@
 # @flatfile/plugin-foreign-db-extractor
 
+## 0.0.2
+
+### Patch Changes
+
+- 5da734d: This release improves the ForeignDB extractor's error handling and retrieval of DB user.
+
 ## 0.0.1
 
 ### Patch Changes
