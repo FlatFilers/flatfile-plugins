@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 1.11.3
+
+### Patch Changes
+
+- 6cc4ac2: This release fixes column selection when there is a blank header column by removing the column with a blank header rather than the last column.
+- Updated dependencies [c92f126]
+  - @flatfile/util-extractor@0.5.5
+
 ## 1.11.2
 
 ### Patch Changes

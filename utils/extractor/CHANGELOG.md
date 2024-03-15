@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.5.5
+
+### Patch Changes
+
+- c92f126: This release correctly sets the file's status based on the success of extraction
+
 ## 0.5.4
 
 ### Patch Changes
