@@ -3,7 +3,7 @@ import FlatfileListener, { FlatfileEvent } from '@flatfile/listener'
 import sql from 'mssql'
 import { pollDatabaseStatus } from './database.poll.status'
 import { restoreDatabase } from './database.restore'
-import { DBUser, getUser } from './database.user'
+import { DBUser, pollForUser } from './database.user'
 import { s3Upload } from './s3.upload'
 import { generateSheets } from './sheets.generator'
 
@@ -59,6 +59,10 @@ export const foreignDBExtractor = () => {
             environmentId,
           })
 
+          await api.files.update(fileId, {
+            workbookId: workbook.id,
+          })
+
           // Step 2.2: Upload file to S3, this is required to restore to RDS
           await tick(10, 'Uploading file to S3 bucket')
           await s3Upload(workbook.id, fileId)
@@ -72,17 +76,13 @@ export const foreignDBExtractor = () => {
 
           // Step 2.4: Poll for database availability
           await tick(60, 'Polling for database availability')
-          await pollDatabaseStatus(connectionConfig)
+          await pollDatabaseStatus(connectionConfig.database)
 
           // Step 2.5: Retrieve user credentials for the database
           await tick(85, 'Retrieving database user credentials')
-          try {
-            const user = (await getUser(connectionConfig.database)) as DBUser
-            connectionConfig.user = user.username
-            connectionConfig.password = user.password
-          } catch (e) {
-            throw e
-          }
+          const user = (await pollForUser(connectionConfig.database)) as DBUser
+          connectionConfig.user = user.username
+          connectionConfig.password = user.password
 
           // Step 2.6: Create a Workbook
           // Get column names for all tables, loop through them and create Sheets for each table
@@ -105,7 +105,7 @@ export const foreignDBExtractor = () => {
           // Step 2.7: Update file with workbookId
           await tick(95, 'Updating file')
           await api.files.update(fileId, {
-            workbookId: workbook.id,
+            status: 'complete',
           })
 
           await api.jobs.complete(jobId, {
@@ -115,6 +115,9 @@ export const foreignDBExtractor = () => {
             },
           })
         } catch (e) {
+          await api.files.update(fileId, {
+            status: 'failed',
+          })
           await api.jobs.fail(jobId, {
             info: e.message,
           })
