@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-common",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A library containing common utilities and helpers for plugins.",
   "keywords": [],
   "author": "Carl Brugger",
@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "build:prod": "rollup -c --environment NODE_ENV:production",
+    "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
@@ -38,6 +38,9 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
+    "cross-fetch": "^4.0.0"
+  },
+  "peerDependencies": {
     "@flatfile/listener": "^1.0.1"
   }
 }
