@@ -26,7 +26,7 @@ export async function parseBuffer(
       WTF: true,
     })
   } catch (e) {
-    // catch the error if the file is too large to parse, and throw a more helpful error. Otherwise, supress the error.
+    // catch the error if the file is too large to parse, and throw a more helpful error.
     // ref: https://docs.sheetjs.com/docs/miscellany/errors/#invalid-string-length-or-err_string_too_long
     // i.e. 'Cannot create a string longer than 0x1fffffe8 characters'
     if (e.code === 'ERR_STRING_TOO_LONG') {
@@ -39,6 +39,7 @@ export async function parseBuffer(
         'File is too large to parse. Try converting this file to CSV.'
       )
     }
+    throw e
   }
 
   const sheetNames = Object.keys(workbook.Sheets)
