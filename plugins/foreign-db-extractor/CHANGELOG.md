@@ -1,5 +1,11 @@
 # @flatfile/plugin-foreign-db-extractor
 
+## 0.0.3
+
+### Patch Changes
+
+- 96cf254: This release fixes a build issue and switches node-fetch out for cross-fetch
+
 ## 0.0.2
 
 ### Patch Changes
