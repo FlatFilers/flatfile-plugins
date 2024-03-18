@@ -43,7 +43,7 @@
   "dependencies": {
     "@flatfile/api": "^1.7.1",
     "mssql": "^10.0.1",
-    "node-fetch": "^3.3.2"
+    "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.1"

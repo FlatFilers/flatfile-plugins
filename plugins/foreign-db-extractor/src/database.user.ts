@@ -1,4 +1,4 @@
-import fetch from 'node-fetch'
+import fetch from 'cross-fetch'
 
 /**
  * The getUser function is responsible for retrieving the user credentials for the database. It sends a GET request to
