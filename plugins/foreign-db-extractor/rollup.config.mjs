@@ -16,13 +16,13 @@ if (!PROD) {
 
 function commonPlugins(browser, umd = false) {
   return [
-    !umd
-      ? peerDepsExternal({
-          includeDependencies: true,
-        })
-      : undefined,
+    !umd ? peerDepsExternal() : undefined,
     json(),
-    commonjs({ include: '**/node_modules/**', requireReturnsDefault: 'auto' }),
+    commonjs({
+      include: '**/node_modules/**',
+      requireReturnsDefault: 'preferred',
+      esmExternals: true,
+    }),
     resolve({ browser, preferBuiltins: !browser }),
     typescript({
       tsconfig: '../../tsconfig.json',

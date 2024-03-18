@@ -1,5 +1,5 @@
+import fetch from 'cross-fetch'
 import sql from 'mssql'
-import fetch from 'node-fetch'
 
 /**
  * The restoreDatabase function is responsible for initiating the database restore process. It sends a POST request to

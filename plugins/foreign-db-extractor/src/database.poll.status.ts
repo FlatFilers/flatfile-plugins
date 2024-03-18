@@ -1,4 +1,4 @@
-import fetch from 'node-fetch'
+import fetch from 'cross-fetch'
 
 /**
  * The pollDatabaseStatus function is responsible for polling the database status until it is complete. It sends a GET
