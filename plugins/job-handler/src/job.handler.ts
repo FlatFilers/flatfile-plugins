@@ -1,5 +1,9 @@
 import api, { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import {
+  EventFilter,
+  FlatfileEvent,
+  FlatfileListener,
+} from '@flatfile/listener'
 import { log, logError } from '@flatfile/util-common'
 
 export interface PluginOptions {
@@ -26,7 +30,7 @@ export interface PluginOptions {
  * listener for the "job:ready" event and processing the job with the provided handler.
  */
 export function jobHandler(
-  job: string,
+  job: string | EventFilter,
   handler: (
     event: FlatfileEvent,
     tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
@@ -34,7 +38,8 @@ export function jobHandler(
   opts: PluginOptions = {}
 ) {
   return (listener: FlatfileListener) => {
-    listener.on('job:ready', { job }, async (event) => {
+    const filter = typeof job === 'string' ? { job } : job
+    listener.on('job:ready', filter, async (event) => {
       const { jobId } = event.context
 
       await api.jobs.ack(jobId, {
