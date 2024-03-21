@@ -99,7 +99,7 @@ async function convertSheet(
   const headerizer = Headerizer.create(headerDetectionOptions)
   const headerStream = Readable.from(extractValues(rows))
   const { header, skip } = await headerizer.getHeaders(headerStream)
-  const headerKey = skip - 1
+  const headerKey = skip > 0 ? skip - 1 : 0
   const columnKeys = Object.keys(rows[headerKey]).filter((key) =>
     Boolean(rows[headerKey][key])
   )
