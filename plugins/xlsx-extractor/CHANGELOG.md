@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 1.11.4
+
+### Patch Changes
+
+- c632128: This release fixes a bug in @flatfile/plugin-excel-extractor when using the explicitHeaders header detection algorithm.
+
 ## 1.11.3
 
 ### Patch Changes
