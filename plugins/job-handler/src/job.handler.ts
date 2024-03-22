@@ -15,7 +15,7 @@ export interface PluginOptions {
  * the Flatfile API. This function will take a string representing a job name and
  * a handler that will process the job, returning either void or a JobOutcome object.
  *
- * @param {string} job - The job name.
+ * @param {string | EventFilter} job - The job name or event filter.
  *
  * @param {Function} handler - A function that takes an `event` and a `tick()` callback to
  * allow updating of the job's progress, returning a promise that resolves to either
