@@ -1,5 +1,12 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [ed308f5]
+  - @flatfile/plugin-job-handler@0.4.0
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-space-configure",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A plugin for configuring a Flatfile Space.",
   "registryMetadata": {
     "category": "core"
@@ -29,7 +29,7 @@
   "dependencies": {
     "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1",
-    "@flatfile/plugin-job-handler": "^0.3.2"
+    "@flatfile/plugin-job-handler": "^0.4.0"
   },
   "devDependencies": {
     "@flatfile/utils-testing": "^0.1.3"
