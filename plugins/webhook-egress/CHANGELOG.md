@@ -1,5 +1,13 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.2.4
+
+### Patch Changes
+
+- Updated dependencies [ed308f5]
+  - @flatfile/plugin-job-handler@0.4.0
+  - @flatfile/util-common@1.0.2
+
 ## 1.2.3
 
 ### Patch Changes
