@@ -1,4 +1,5 @@
 import api, { Flatfile } from '@flatfile/api'
+import { CrossEnvConfig } from '@flatfile/cross-env-config'
 import fetch from 'cross-fetch'
 
 const DEFAULT_PAGE_SIZE = 10_000
@@ -21,15 +22,19 @@ export async function getRecordsRaw(
     }
   })
 
-  const baseUrl = process.env.FLATFILE_API_URL || process.env.AGENT_INTERNAL_URL
-  const url = `${baseUrl}/v1/sheets/${sheetId}/records?${queryParams}`
+  const baseUrl =
+    CrossEnvConfig.get('AGENT_INTERNAL_URL') ||
+    CrossEnvConfig.get('FLATFILE_API_URL') ||
+    'https://platform.flatfile.com/api'
+  const token =
+    CrossEnvConfig.get('FLATFILE_BEARER_TOKEN') ||
+    CrossEnvConfig.get('FLATFILE_API_KEY')
 
+  const url = `${baseUrl}/v1/sheets/${sheetId}/records?${queryParams}`
   const httpResponse = await fetch(url, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${
-        process.env.FLATFILE_API_KEY || process.env.FLATFILE_BEARER_TOKEN
-      }`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   })

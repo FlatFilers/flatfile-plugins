@@ -74,6 +74,10 @@ export const dedupe = async (
     }
   )
 
+  if (duplicates.length === 0) {
+    return { info: 'No duplicates found' }
+  }
+
   await api.jobs.create({
     type: 'workbook',
     operation: 'delete-records',
