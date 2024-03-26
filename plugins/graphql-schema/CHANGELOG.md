@@ -1,6 +1,6 @@
-# @flatfile/plugin-graphql
+# @flatfile/plugin-graphql-schema
 
-## 0.0.2
+## 0.0.0
 
 ### Patch Changes
 
