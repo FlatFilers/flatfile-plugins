@@ -1,12 +1,13 @@
 import type { Flatfile } from '@flatfile/api'
 import { capitalCase } from 'change-case'
 import { generateField } from './generate.field'
+import { PartialSheetConfig } from './types'
 
 export function generateSheets(
   graphQLObjects,
-  sheetConfigArray
+  sheetConfigArray: PartialSheetConfig[]
 ): Flatfile.SheetConfig[] {
-  return graphQLObjects
+  const sheets = graphQLObjects
     .map((object) => {
       let sheetConfig =
         sheetConfigArray?.find((config) => config.slug === object.name) || {}
@@ -14,9 +15,6 @@ export function generateSheets(
       const fields = object.fields
         .map((field) => generateField(field, object.name))
         .filter(Boolean)
-      if (!fields.some((field) => field.key === 'id')) {
-        fields.unshift({ key: 'id', label: 'Id', type: 'number' })
-      }
 
       return fields.length
         ? {
@@ -38,4 +36,20 @@ export function generateSheets(
               graphQLObjects.some((obj) => obj.name === field.config.ref)
           ))
     )
+
+  sheets.map((sheet) => {
+    sheet.fields.map((field) => {
+      if (field.type === 'reference') {
+        const refSheet = sheets.find((s) => s.slug === field.config.ref)
+        if (refSheet) {
+          // TODO: what is a better way to get the config.key?
+          field.config.key = refSheet.fields.find(
+            (f) => f.type !== 'reference'
+          )?.key
+        }
+      }
+    })
+  })
+
+  return sheets
 }
