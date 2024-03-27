@@ -34,7 +34,10 @@ export async function syncData(
 async function deleteSheetRecords(sheetId: string) {
   try {
     const { data: sheet } = await api.sheets.get(sheetId)
-    if (sheet.countRecords.total > 0) {
+    const {
+      data: { counts },
+    } = await api.sheets.getRecordCounts(sheetId)
+    if (counts.total > 0) {
       await api.jobs.create({
         type: 'workbook',
         operation: 'delete-records',
