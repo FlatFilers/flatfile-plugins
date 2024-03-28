@@ -26,7 +26,7 @@ function commonPlugins(browser) {
     json(),
     commonjs({
       include: '**/node_modules/**',
-      requireReturnsDefault: 'preferred',
+      requireReturnsDefault: 'auto',
     }),
     resolve({ browser, preferBuiltins: !browser }),
     typescript({
