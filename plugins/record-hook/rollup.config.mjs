@@ -27,7 +27,7 @@ function commonPlugins(browser, umd = false) {
     json(),
     commonjs({
       include: '**/node_modules/**',
-      requireReturnsDefault: 'preferred',
+      requireReturnsDefault: 'auto',
       esmExternals: true,
     }),
     resolve({ browser, preferBuiltins: !browser }),

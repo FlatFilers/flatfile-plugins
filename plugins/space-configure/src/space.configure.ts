@@ -1,5 +1,6 @@
-import api, { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import api from '@flatfile/api'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 
 /**
@@ -71,9 +72,9 @@ export function configureSpace(
 export type SetupFactory =
   | Setup
   | ((event: FlatfileEvent) => Setup | Promise<Setup>)
-type Setup = {
+export type Setup = {
   workbooks: PartialWb[]
   space?: Partial<Flatfile.spaces.SpaceConfig>
   documents?: Flatfile.DocumentConfig[]
 }
-type PartialWb = Partial<Flatfile.CreateWorkbookConfig>
+export type PartialWb = Partial<Flatfile.CreateWorkbookConfig>
