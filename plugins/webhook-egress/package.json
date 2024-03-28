@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-webhook-egress",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "A plugin for egressing a Flatfile Workbook via a webhook.",
   "registryMetadata": {
     "category": "egress"
@@ -43,9 +43,9 @@
   "dependencies": {
     "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1",
-    "@flatfile/plugin-job-handler": "^0.4.0",
-    "@flatfile/util-common": "^1.0.2",
-    "@flatfile/util-response-rejection": "^1.2.3",
+    "@flatfile/plugin-job-handler": "^0.4.1",
+    "@flatfile/util-common": "^1.0.3",
+    "@flatfile/util-response-rejection": "^1.2.4",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {

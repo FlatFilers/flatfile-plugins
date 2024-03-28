@@ -1,5 +1,17 @@
 # @flatfile/plugin-autocast
 
+## 0.7.7
+
+### Patch Changes
+
+- 87711c6: `@flatfile/plugin-connect-via-merge`: `@flatfile/api@1.7.10` removes `countRecords` from the get sheet endpoint. This release switches to the get record count endpoint.
+
+  This release also includes bundling fixes across the Flatfile plugin ecosystem.
+
+- Updated dependencies [87711c6]
+  - @flatfile/plugin-record-hook@1.4.6
+  - @flatfile/util-common@1.0.3
+
 ## 0.7.6
 
 ### Patch Changes
