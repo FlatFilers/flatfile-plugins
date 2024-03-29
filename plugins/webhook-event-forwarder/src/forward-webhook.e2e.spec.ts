@@ -1,4 +1,4 @@
-import { FlatfileEvent } from '@flatfile/listener'
+import type { FlatfileEvent } from '@flatfile/listener'
 import {
   createRecords,
   deleteSpace,
