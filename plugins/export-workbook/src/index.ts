@@ -1,4 +1,4 @@
-import { FlatfileListener } from '@flatfile/listener'
+import type { FlatfileListener } from '@flatfile/listener'
 import { PluginOptions, exportRecords } from './plugin'
 
 /**

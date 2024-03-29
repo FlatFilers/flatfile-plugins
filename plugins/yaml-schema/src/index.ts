@@ -1,5 +1,5 @@
-import { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { generateFields } from '@flatfile/plugin-convert-json-schema'
 import {
   Setup,

@@ -28,11 +28,13 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/listener": "^1.0.1",
     "@flatfile/util-file-buffer": "^0.2.1",
     "axios": "^1.6.5",
     "fs-extra": "^11.1.1",
     "remeda": "^1.14.0"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1"

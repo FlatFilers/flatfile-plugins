@@ -1,4 +1,4 @@
-import { FlatfileEvent } from '@flatfile/listener'
+import type { FlatfileEvent } from '@flatfile/listener'
 import { asyncBatch, chunkify } from './async.batch'
 
 describe('asyncBatch', () => {

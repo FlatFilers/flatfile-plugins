@@ -44,6 +44,9 @@
     "@flatfile/plugin-space-configure": "^0.3.2",
     "axios": "^1.6.5"
   },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.0.1",

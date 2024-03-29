@@ -1,5 +1,6 @@
-import api, { Flatfile } from '@flatfile/api'
-import { FlatfileEvent } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import api from '@flatfile/api'
+import type { FlatfileEvent } from '@flatfile/listener'
 import {
   PartialSheetConfig,
   SetupFactory,

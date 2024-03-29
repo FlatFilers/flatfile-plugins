@@ -1,11 +1,7 @@
 import type { FlatfileRecord } from '@flatfile/hooks'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import {
-  BulkRecordHook,
-  BulkRecordHookOptions,
-  RecordHook,
-  RecordHookOptions,
-} from './RecordHook'
+import type { BulkRecordHookOptions, RecordHookOptions } from './RecordHook'
+import { BulkRecordHook, RecordHook } from './RecordHook'
 
 export const recordHookPlugin = (
   sheetSlug: string,

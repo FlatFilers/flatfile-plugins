@@ -42,11 +42,13 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/listener": "^1.0.1",
     "@flatfile/plugin-job-handler": "^0.4.1",
     "@flatfile/util-common": "^1.0.3",
     "@flatfile/util-response-rejection": "^1.2.4",
-    "node-fetch": "^3.3.2"
+    "cross-fetch": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
     "@flatfile/utils-testing": "^0.1.3",

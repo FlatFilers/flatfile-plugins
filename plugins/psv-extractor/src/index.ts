@@ -1,5 +1,5 @@
-import { Flatfile } from '@flatfile/api'
-import { FlatfileListener } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import type { FlatfileListener } from '@flatfile/listener'
 
 /*
  * @deprecated
