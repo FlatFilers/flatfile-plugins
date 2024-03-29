@@ -29,7 +29,7 @@
     "build": "rollup -c",
     "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "TZ=UTC jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [],
   "author": "Morgan Daley",

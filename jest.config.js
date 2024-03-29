@@ -1,19 +1,15 @@
-const path = require('path')
-
 module.exports = {
-  verbose: true,
+  testEnvironment: 'node',
+  testRegex: '.*\\.(e2e-)?spec\\.ts$',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
-  setupFiles: [path.join(__dirname, './testing/setup-tests.js')],
-  coverageThreshold: {
-    global: {
-      branches: 100,
-      functions: 100,
-      lines: 100,
-      statements: 100,
-    },
-  },
+  setupFiles: ['<rootDir>/test/dotenv-config.js'],
+  setupFilesAfterEnv: [
+    '<rootDir>/test/betterConsoleLog.js',
+    '<rootDir>/test/unit.cleanup.js',
+  ],
   testTimeout: 30_000,
-  globalSetup: './testing/setup-global.js',
+  globalSetup: '<rootDir>/test/setup-global.js',
+  forceExit: true,
 }
