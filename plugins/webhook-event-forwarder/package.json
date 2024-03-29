@@ -29,7 +29,7 @@
     "build": "rollup -c",
     "dev": "rollup -c --watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "TZ=UTC jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [],
   "author": "Morgan Daley",
@@ -45,7 +45,7 @@
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "node-fetch": "^3.3.2"
+    "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.1"

@@ -1,6 +1,6 @@
 import { Flatfile } from '@flatfile/api'
 import { SetupFactory } from '@flatfile/plugin-space-configure'
-import axios from 'axios'
+import fetch from 'cross-fetch'
 
 export type JsonSetupFactory = {
   workbooks: PartialWorkbookConfig[]
@@ -219,13 +219,18 @@ export function resolveLocalReference(schema: any, ref: string): any {
 
 export async function fetchExternalReference(url: string): Promise<any> {
   try {
-    const { status, data } = await axios.get(url, {
-      validateStatus: () => true,
-    })
-    if (status !== 200)
-      throw new Error(`API returned status ${status}: ${data.statusText}`)
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error(
+        `API returned status ${response.status}: ${response.statusText}`
+      )
+    }
+
+    const data = await response.json()
     return data
   } catch (error) {
-    throw new Error(`Error fetching external reference: ${error.message}`)
+    throw new Error(
+      `Error fetching external reference: ${(error as any).message}`
+    )
   }
 }
