@@ -6,7 +6,7 @@
     "category": "records"
   },
   "engines": {
-    "node": ">= 12"
+    "node": ">= 16"
   },
   "browserslist": [
     "> 0.5%",
