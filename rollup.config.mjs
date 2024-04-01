@@ -1,8 +1,8 @@
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
+import sucrase from '@rollup/plugin-sucrase'
 import terser from '@rollup/plugin-terser'
-import typescript from '@rollup/plugin-typescript'
 import { dts } from 'rollup-plugin-dts'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
@@ -24,12 +24,9 @@ function commonPlugins(browser, umd = false) {
       esmExternals: true,
     }),
     resolve({ browser, preferBuiltins: !browser }),
-    typescript({
-      tsconfig: '../../tsconfig.json',
-      declaration: false,
-      declarationMap: false,
-      declarationDir: './dist',
-      exclude: ['**/tests/*', '**/*.spec.ts'],
+    sucrase({
+      exclude: ['node_modules/**'],
+      transforms: ['typescript'],
     }),
     PROD && terser(),
   ]
@@ -39,7 +36,7 @@ export function buildConfig({
   external = [],
   includeBrowser = true,
   includeUmd = false,
-  umdConfig = { name: undefined, internal: [] },
+  umdConfig = { name: undefined, external: [] },
 }) {
   return [
     // Node.js build
@@ -103,7 +100,7 @@ export function buildConfig({
               },
             ],
             plugins: commonPlugins(true, true),
-            internal: umdConfig.internal,
+            external: umdConfig.external,
           },
         ]
       : []),

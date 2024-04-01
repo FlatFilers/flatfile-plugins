@@ -46,12 +46,5 @@
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.1"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "rollup": "^4.3.0"
   }
 }

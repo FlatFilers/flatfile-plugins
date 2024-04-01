@@ -1,6 +1,6 @@
 import { buildConfig } from '../../rollup.config.mjs'
 
-const internal = [
+const umdExternals = [
   '@flatfile/api',
   '@flatfile/hooks',
   '@flatfile/listener',
@@ -9,7 +9,7 @@ const internal = [
 
 const config = buildConfig({
   includeUmd: true,
-  umdConfig: { name: 'PluginRecordHook', internal },
+  umdConfig: { name: 'PluginRecordHook', external: umdExternals },
 })
 
 export default config
