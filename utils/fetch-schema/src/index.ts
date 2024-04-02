@@ -5,17 +5,13 @@ export interface ModelToSheetConfig extends PartialSheetConfig {
   sourceUrl: string
 }
 
-export type PartialSheetConfig = Omit<
-  Flatfile.SheetConfig,
-  'fields' | 'name'
-> & {
+export interface PartialSheetConfig
+  extends Omit<Flatfile.SheetConfig, 'fields' | 'name'> {
   name?: string
 }
 
-export type PartialWorkbookConfig = Omit<
-  Flatfile.CreateWorkbookConfig,
-  'sheets' | 'name'
-> & {
+export interface PartialWorkbookConfig
+  extends Omit<Flatfile.CreateWorkbookConfig, 'sheets' | 'name'> {
   name?: string
 }
 

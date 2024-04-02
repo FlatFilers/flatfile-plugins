@@ -8,19 +8,15 @@ export type OpenAPISetupFactory = {
   debug?: boolean
 }
 
-export type PartialWorkbookConfig = Omit<
-  Flatfile.CreateWorkbookConfig,
-  'name' | 'sheets'
-> & {
+export interface PartialWorkbookConfig
+  extends Omit<Flatfile.CreateWorkbookConfig, 'name' | 'sheets'> {
   name?: string
   sheets: PartialSheetConfig[]
   source: string
 }
 
-export type PartialSheetConfig = Omit<
-  Flatfile.SheetConfig,
-  'fields' | 'name' | 'slug'
-> & {
+export interface PartialSheetConfig
+  extends Omit<Flatfile.SheetConfig, 'fields' | 'name' | 'slug'> {
   name?: string
   slug?: string
   model: string

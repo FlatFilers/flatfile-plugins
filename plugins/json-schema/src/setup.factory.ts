@@ -7,17 +7,13 @@ export type JsonSetupFactory = {
   space?: Partial<Flatfile.spaces.SpaceConfig>
 }
 
-export type PartialWorkbookConfig = Omit<
-  Flatfile.CreateWorkbookConfig,
-  'sheets'
-> & {
+export interface PartialWorkbookConfig
+  extends Omit<Flatfile.CreateWorkbookConfig, 'sheets'> {
   sheets: PartialSheetConfig[]
 }
 
-export type PartialSheetConfig = Omit<
-  Flatfile.SheetConfig,
-  'fields' | 'name'
-> & {
+export interface PartialSheetConfig
+  extends Omit<Flatfile.SheetConfig, 'fields' | 'name'> {
   name?: string
   source: object | string | (() => object | Promise<object>)
 }
