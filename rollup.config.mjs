@@ -25,7 +25,8 @@ function commonPlugins(browser, umd = false) {
     }),
     resolve({ browser, preferBuiltins: !browser }),
     sucrase({
-      exclude: ['node_modules/**'],
+      include: ['src/**'],
+      exclude: ['**/node_modules/**', '**/.*/', '**/*.spec.ts'],
       transforms: ['typescript'],
     }),
     PROD && terser(),
