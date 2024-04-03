@@ -1,5 +1,11 @@
 # @flatfile/plugin-autocast
 
+## 0.7.8
+
+### Patch Changes
+
+- 4574c86: Adding keywords
+
 ## 0.7.7
 
 ### Patch Changes
