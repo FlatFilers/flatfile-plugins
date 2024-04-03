@@ -31,7 +31,7 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
-  "keywords": ["flatfile-plugins", "category-extractors", "featured"],
+  "keywords": ["flatfile-plugins", "category-transform", "featured"],
   "author": "Alex Hollenbeck",
   "repository": {
     "type": "git",
