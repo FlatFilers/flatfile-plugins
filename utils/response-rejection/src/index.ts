@@ -1,4 +1,5 @@
-import api, { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
+import api from '@flatfile/api'
 import { processRecords } from '@flatfile/util-common'
 
 export interface RejectionResponse {
@@ -21,17 +22,17 @@ export interface RecordRejections {
 export async function responseRejectionHandler(
   responseRejection: RejectionResponse
 ): Promise<Flatfile.JobCompleteDetails> {
-  let totalRejectedRecords = 0
+  const { deleteSubmitted, message, sheets } = responseRejection
 
-  for (const sheet of responseRejection.sheets || []) {
-    const count = await updateSheet(sheet, responseRejection.deleteSubmitted)
+  let totalRejectedRecords = 0
+  for (const sheet of sheets || []) {
+    const count = await updateSheet(sheet, deleteSubmitted ?? false)
     totalRejectedRecords += count
   }
 
-  const message = responseRejection.message ?? getMessage(totalRejectedRecords)
   let next
-  if (!responseRejection.deleteSubmitted && totalRejectedRecords > 0) {
-    next = getNext(totalRejectedRecords, responseRejection.sheets[0].sheetId)
+  if (!deleteSubmitted && totalRejectedRecords > 0) {
+    next = getNext(totalRejectedRecords, sheets[0].sheetId)
   }
 
   return {
@@ -39,8 +40,8 @@ export async function responseRejectionHandler(
       buttonText: 'Close',
       heading: totalRejectedRecords > 0 ? 'Rejected Records' : 'Success!',
       acknowledge: true,
-      ...(next && !responseRejection.deleteSubmitted && { next }),
-      message,
+      ...(next && !deleteSubmitted && { next }),
+      message: message ?? getMessage(totalRejectedRecords),
     },
   }
 }

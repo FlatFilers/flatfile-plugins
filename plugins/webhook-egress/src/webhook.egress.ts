@@ -1,13 +1,12 @@
+import type { Flatfile } from '@flatfile/api'
 import api from '@flatfile/api'
-import { FlatfileListener } from '@flatfile/listener'
+import type { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
-import {
-  RejectionResponse,
-  responseRejectionHandler,
-} from '@flatfile/util-response-rejection'
+import type { RejectionResponse } from '@flatfile/util-response-rejection'
+import { responseRejectionHandler } from '@flatfile/util-response-rejection'
 
-export function webhookEgress(job: string, webhookUrl?: string) {
+export function webhookEgress(job: string, url: string) {
   return function (listener: FlatfileListener) {
     listener.use(
       jobHandler(job, async (event, tick) => {
@@ -17,11 +16,14 @@ export function webhookEgress(job: string, webhookUrl?: string) {
 
         await tick(30, 'Getting workbook data')
 
-        const sheets = []
-        for (const [_, element] of workbookSheets.entries()) {
-          const { data: records } = await api.records.get(element.id)
+        interface EnhancedSheet extends Flatfile.Sheet {
+          records: Flatfile.RecordsWithLinks
+        }
+        const sheets: Array<EnhancedSheet> = []
+        for (const [_, sheet] of workbookSheets.entries()) {
+          const { data: records } = await api.records.get(sheet.id)
           sheets.push({
-            ...element,
+            ...sheet,
             ...records,
           })
         }
@@ -29,8 +31,7 @@ export function webhookEgress(job: string, webhookUrl?: string) {
         await tick(60, 'Posting data to webhook')
 
         try {
-          const webhookReceiver = webhookUrl || process.env.WEBHOOK_SITE_URL
-          const response = await fetch(webhookReceiver, {
+          const response = await fetch(url, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -53,13 +54,13 @@ export function webhookEgress(job: string, webhookUrl?: string) {
 
             return {
               outcome: {
-                message: `Data was successfully submitted to the provided webhook. Go check it out at ${webhookReceiver}.`,
+                message: `Data was successfully submitted to ${url}.`,
               },
             }
           } else {
             logError(
               '@flatfile/plugin-webhook-egress',
-              `Failed to submit data to ${webhookReceiver}. Status: ${response.status} ${response.statusText}`
+              `Failed to submit data to ${url}. Status: ${response.status} ${response.statusText}`
             )
             return {
               outcome: {
