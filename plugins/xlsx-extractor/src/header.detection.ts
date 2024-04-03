@@ -209,9 +209,9 @@ class SpecificRows extends Headerizer {
 // row as the header. If the data row cannot be detected due to all of the sample
 // rows being full and not castable to a number or boolean type, it also will attempt
 // to detect a sub header row by checking following rows after a header is detected
-// for significant fuzzy matching. if over half of the fields in a possible sub header
+// for significant fuzzy matching. If over half of the fields in a possible sub header
 // row fuzzy match with the originally detected header row, the sub header row becomes
-// the new header
+// the new header.
 class DataRowAndSubHeaderDetection extends Headerizer {
   private rowsToSearch: number
 

@@ -2,17 +2,15 @@ import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
+import { ExcelExtractorOptions } from '.'
 import { GetHeadersOptions, Headerizer } from './header.detection'
+import { isNullOrWhitespace, prependNonUniqueHeaderColumns } from './utils'
+
+type ParseBufferOptions = Omit<ExcelExtractorOptions, 'chunkSize' | 'parallel'>
 
 export async function parseBuffer(
   buffer: Buffer,
-  options?: {
-    raw?: boolean
-    rawNumbers?: boolean
-    headerDetectionOptions?: GetHeadersOptions
-    dateNF?: string
-    debug?: boolean
-  }
+  options?: ParseBufferOptions
 ): Promise<WorkbookCapture> {
   let workbook: XLSX.WorkBook
   try {
@@ -20,7 +18,7 @@ export async function parseBuffer(
       type: 'buffer',
       cellDates: true,
       dense: true,
-      dateNF: options?.dateNF || null,
+      dateNF: options?.dateNF || undefined,
       // SheetJS intends the 'WTF' option to be used for development purposes only.
       // We use it here to specifically capture the ERR_STRING_TOO_LONG error.
       WTF: true,
@@ -48,21 +46,23 @@ export async function parseBuffer(
       await Promise.all(
         sheetNames.map(async (sheetName) => {
           const sheet = workbook.Sheets[sheetName]
-          const processedSheet = await convertSheet(
+          const processedSheet = await convertSheet({
             sheet,
-            options?.rawNumbers || false,
-            options?.raw || false,
-            options?.headerDetectionOptions || {
+            sheetName,
+            rawNumbers: options?.rawNumbers || false,
+            raw: options?.raw || false,
+            headerDetectionOptions: options?.headerDetectionOptions || {
               algorithm: 'default',
-            }
-          )
+            },
+            debug: options?.debug,
+          })
           if (!processedSheet) {
             return
           }
           return [sheetName, processedSheet]
         })
       )
-    ).filter(Boolean)
+    ).filter(Boolean) as [PropertyKey, SheetCapture][]
     return Object.fromEntries(processedSheets)
   } catch (e) {
     console.error(e)
@@ -70,17 +70,28 @@ export async function parseBuffer(
   }
 }
 
+type ConvertSheetArgs = {
+  sheet: XLSX.WorkSheet
+  sheetName: string
+  rawNumbers: boolean
+  raw: boolean
+  headerDetectionOptions: GetHeadersOptions
+  debug?: boolean
+}
+
 /**
  * Convert a template sheet using a special template format
  *
  * @param sheet
  */
-async function convertSheet(
-  sheet: XLSX.WorkSheet,
-  rawNumbers: boolean = false,
-  raw: boolean = false,
-  headerDetectionOptions?: GetHeadersOptions
-): Promise<SheetCapture | undefined> {
+async function convertSheet({
+  sheet,
+  sheetName,
+  rawNumbers,
+  raw,
+  headerDetectionOptions,
+  debug,
+}: ConvertSheetArgs): Promise<SheetCapture | undefined> {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
     defval: null,
@@ -90,6 +101,9 @@ async function convertSheet(
 
   // return if there are no rows
   if (!rows || rows.length === 0) {
+    if (debug) {
+      console.log(`No rows found in '${sheetName}'`)
+    }
     return
   }
 
@@ -99,6 +113,9 @@ async function convertSheet(
   const headerizer = Headerizer.create(headerDetectionOptions)
   const headerStream = Readable.from(extractValues(rows))
   const { header, skip } = await headerizer.getHeaders(headerStream)
+  if (debug) {
+    console.log('Detected header:', header)
+  }
   const headerKey = Math.max(0, skip - 1)
   const columnKeys = Object.keys(rows[headerKey]).filter((key) =>
     Boolean(rows[headerKey][key])
@@ -107,6 +124,9 @@ async function convertSheet(
   rows.splice(0, skip)
   // return if there are no rows
   if (rows.length === 0) {
+    if (debug) {
+      console.log(`No rows found in '${sheetName}'`)
+    }
     return
   }
 
@@ -140,25 +160,3 @@ async function convertSheet(
     data,
   }
 }
-
-function prependNonUniqueHeaderColumns(
-  record: Record<string, string>
-): Record<string, string> {
-  const counts: Record<string, number> = {}
-  const result: Record<string, string> = {}
-  for (const [key, value] of Object.entries(record)) {
-    const cleanValue = value?.toString().replace('*', '')
-    if (cleanValue && counts[value]) {
-      result[key] = `${cleanValue}_${counts[value]}`
-      counts[value]++
-    } else {
-      result[key] = cleanValue
-      counts[value] = 1
-    }
-  }
-
-  return result
-}
-
-const isNullOrWhitespace = (value: any) =>
-  value === null || (typeof value === 'string' && value.trim() === '')
