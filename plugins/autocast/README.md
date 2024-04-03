@@ -25,7 +25,7 @@ The `sheetSlug` indicates the slug name of the sheet you want to monitor.
 
 Use the `fieldFilters` parameter to select specific fields to monitor. Without
 any specified `fieldFilters`, the plugin will automatically monitor
-castable-field (number, boolean & Date).
+all castable-field (string, number, boolean & Date).
 
 
 #### `options.chunkSize` default="10_000" *number*
@@ -52,7 +52,7 @@ in parallel.
 
 ## Usage
 
-The `autocast` plugin will listen for the `commit:created` event and cast numbers, booleans,
+The `autocast` plugin will listen for the `commit:created` event and cast strings, numbers, booleans,
 and dates to the appropriate Blueprint type. Note that the `recordHook` and `bulkRecordHook` plugins
 listen for the same event type. Plugins will fire in the order they are placed in the listener.
 
