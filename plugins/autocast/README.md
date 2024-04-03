@@ -1,5 +1,5 @@
 # @flatfile/plugin-autocast
-**A plugin for automatically casting values in Flatfile.**
+**This plugin automatically casts values in Flatfile to their appropriate types.**
 
 
 The `@flatfile/plugin-autocast` plugin is an opinionated transformer that will
@@ -58,7 +58,7 @@ listen for the same event type. Plugins will fire in the order they are placed i
 
 ### Strings
 
-Numbers and booleans are cast to strings (i.e `'1'` -> `1`, `true` -> `"true"`).
+Numbers and booleans are transformed from strings to their respective types (i.e., `'1'` to `1`, `"true"` to `true`).
 
 ### Numbers
 
@@ -73,7 +73,7 @@ are interpreted as numbers.
 
 ### Dates
 
-Date strings and numbers are cast to a UTC string. These are example of dates that will be cast (note: `YYYY-MM-DD...` is interpreted as an ISO 8601 date and is treated as treated as UTC, while other formats are treated as local time and converted to UTC):
+Date strings and numbers are cast to a UTC string. The following are examples of date transformations (note: `YYYY-MM-DD...` is interpreted as an ISO 8601 date and is treated as UTC, while other formats are treated as local time and converted to UTC):
 
 - `'2023-08-16'` => `'Wed, 16 Aug 2023 00:00:00 GMT'`
 - `'08-16-2023'` => `'Wed, 16 Aug 2023 00:00:00 GMT'`
