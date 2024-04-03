@@ -1,5 +1,5 @@
 # @flatfile/plugin-autocast
-**This plugin automatically casts values in Flatfile to their appropriate types.**
+**Automatically cast values in Flatfile to their appropriate types with this plugin.**
 
 
 The `@flatfile/plugin-autocast` plugin is an opinionated transformer that will
@@ -25,7 +25,7 @@ The `sheetSlug` indicates the slug name of the sheet you want to monitor.
 
 Use the `fieldFilters` parameter to select specific fields to monitor. Without
 any specified `fieldFilters`, the plugin will automatically monitor
-all castable-field (string, number, boolean & Date).
+all castable fields, including strings, numbers, booleans, and dates.
 
 
 #### `options.chunkSize` default="10_000" *number*
@@ -73,7 +73,7 @@ are interpreted as numbers.
 
 ### Dates
 
-Date strings and numbers are cast to a UTC string. The following are examples of date transformations (note: `YYYY-MM-DD...` is interpreted as an ISO 8601 date and is treated as UTC, while other formats are treated as local time and converted to UTC):
+Date strings and numbers are cast to UTC strings. For example, `YYYY-MM-DD...` formats are treated as ISO 8601 dates (UTC), whereas other formats are considered local time and converted to UTC:
 
 - `'2023-08-16'` => `'Wed, 16 Aug 2023 00:00:00 GMT'`
 - `'08-16-2023'` => `'Wed, 16 Aug 2023 00:00:00 GMT'`
