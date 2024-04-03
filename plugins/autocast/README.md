@@ -1,5 +1,5 @@
 # @flatfile/plugin-autocast
-**A plugin for automatically casting values in Flatfile.**
+**This plugin automatically casts values in Flatfile to their appropriate types.**
 
 
 The `@flatfile/plugin-autocast` plugin is an opinionated transformer that will
