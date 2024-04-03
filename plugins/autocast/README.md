@@ -58,7 +58,7 @@ listen for the same event type. Plugins will fire in the order they are placed i
 
 ### Strings
 
-Numbers and booleans are cast from strings to their respective types (i.e., `'1'` to `1`, `"true"` to `true`).
+Numbers and booleans are transformed from strings to their respective types (i.e., `'1'` to `1`, `"true"` to `true`).
 
 ### Numbers
 
