@@ -110,8 +110,3 @@ listener.use(
   })
 );
 ```
-
-
-## See the code
-
-https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/autocast
