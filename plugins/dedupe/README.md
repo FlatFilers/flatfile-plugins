@@ -19,7 +19,7 @@ The `jobOperation` parameter specifies the name of the job operation to match on
 
 ### `opt.on` *string*
 
-The `on` parameter specifieds which field key to match on.
+The `on` parameter specifies which field key to match on.
 
 ### `opt.keep` *'first' | 'last'*
 
