@@ -1,4 +1,4 @@
-# flatfile-plugins
+# Flatfile Plugins
 
 Library of open-source plugins for developing with the Flatfile Platform
 
@@ -9,9 +9,9 @@ To get started building plugins:
 
 Additional Commands
 
-There are more commands that you can run on every plugin at the root level. For instance, the release is run by Github so you don't have to do this manually.
+There are more commands that you can run on every plugin at the root level. For instance, the release is run by GitHub, so you don't have to do this manually.
 
 
 Each plugin has its own package.json that you can run.
 
-1. `build` command uses what's in index.ts and builds a minified compiled version of the code using tsup. That is what gets published to npm.
+1. The `npm run build` command uses what's in index.ts and builds a minified compiled version of the code using Rollup. That is what gets published to npm.
