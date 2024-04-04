@@ -7,10 +7,7 @@ export async function asyncBatch<T, R>(
   event?: FlatfileEvent
 ): Promise<R[]> {
   const { chunkSize = 10_000, parallel = 1, debug = false } = options
-  const chunks = Array.from(
-    { length: Math.ceil(arr.length / chunkSize) },
-    (_, i) => arr.slice(i * chunkSize, i * chunkSize + chunkSize)
-  )
+  const chunks = chunkify<T>(arr, chunkSize)
 
   if (debug) {
     console.log(`${chunks.length} chunks to be processed`)
@@ -49,4 +46,14 @@ export async function asyncBatch<T, R>(
   }
 
   return Array.from(results.values())
+}
+
+export function chunkify<T>(arr: T[], chunkSize: number): T[][] {
+  if (chunkSize <= 0) {
+    return []
+  }
+
+  return Array.from({ length: Math.ceil(arr.length / chunkSize) }, (_, i) =>
+    arr.slice(i * chunkSize, i * chunkSize + chunkSize)
+  )
 }

@@ -68,8 +68,8 @@ export async function processRecords<R>(
   ) => R | void | Promise<R | void>,
   options: Omit<Flatfile.records.GetRecordsRequest, 'pageNumber'> = {}
 ): Promise<R[] | void> {
-  const totalRecords = await getSheetLength(sheetId)
   const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE
+  const totalRecords = await getSheetLength(sheetId)
   const totalPageCount = Math.ceil(totalRecords / pageSize) || 1
   const results: R[] = []
 
@@ -77,8 +77,17 @@ export async function processRecords<R>(
     try {
       const records = (await getRecordsRaw(sheetId, {
         ...options,
+        pageSize,
         pageNumber,
       })) as Flatfile.Record_[]
+
+      // Delete updatedAt
+      records.forEach((record) =>
+        Object.values(record.values).forEach(
+          (value: Record<string, Flatfile.CellValue>) => delete value.updatedAt
+        )
+      )
+
       const result = await callback(records, pageNumber, totalPageCount)
       if (result !== undefined && result !== null) {
         results.push(result as R)
