@@ -1,3 +1,5 @@
+<!-- START_INFOCARD -->
+
 # @flatfile/plugin-autocast
 **Automatically cast values in Flatfile to their appropriate types with this plugin.**
 
@@ -13,6 +15,8 @@ Blueprint.
 
 **Supported field types:**
 `number`, `boolean`, `date`
+
+<!-- END_INFOCARD -->
 
 
 ## Parameters
@@ -43,12 +47,6 @@ in parallel.
 
 - `api.sheets.get`
 
-## Imported NPM Packages
-
-- [`@flatfile/api@1.7.4+`](https://www.npmjs.com/package/@flatfile/api)
-- [`@flatfile/listener@1.0.1+`](https://www.npmjs.com/package/@flatfile/listener)
-- [`@flatfile/plugin-record-hook@1.4.4+`](./record-hook)
-- `@flatfile/util-common@1.0.0+`
 
 ## Usage
 
