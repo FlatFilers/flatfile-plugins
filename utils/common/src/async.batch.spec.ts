@@ -1,5 +1,5 @@
 import { FlatfileEvent } from '@flatfile/listener'
-import { asyncBatch } from './async.batch'
+import { asyncBatch, chunkify } from './async.batch'
 
 describe('asyncBatch', () => {
   it('should split the array into chunks and call the callback for each chunk', async () => {
@@ -111,5 +111,42 @@ describe('asyncBatch', () => {
     expect(callback).toHaveBeenNthCalledWith(1, [1, 2], undefined)
     expect(callback).toHaveBeenNthCalledWith(2, [3], undefined)
     expect(results).toEqual([3, 3])
+  })
+
+  describe('chunkify()', () => {
+    it('chunks an array of 10 items into parts of 2', () => {
+      const arr = Array.from({ length: 10 }, (_, i) => i + 1)
+      const chunked = chunkify(arr, 2)
+      expect(chunked.length).toBe(5)
+      expect(chunked[0]).toEqual([1, 2])
+      expect(chunked[4]).toEqual([9, 10])
+    })
+
+    it('handles an array with length not perfectly divisible by chunk size', () => {
+      const arr = [1, 2, 3, 4, 5]
+      const chunked = chunkify(arr, 2)
+      expect(chunked.length).toBe(3)
+      expect(chunked[0]).toEqual([1, 2])
+      expect(chunked[2]).toEqual([5])
+    })
+
+    it('returns the original array if chunk size is greater than array length', () => {
+      const arr = [1, 2, 3]
+      const chunked = chunkify(arr, 5)
+      expect(chunked.length).toBe(1)
+      expect(chunked[0]).toEqual([1, 2, 3])
+    })
+
+    it('returns an empty array when chunk size is 0', () => {
+      const arr = [1, 2, 3]
+      const chunked = chunkify(arr, 0)
+      expect(chunked).toEqual([])
+    })
+
+    it('returns an empty array when the input array is empty', () => {
+      const arr = []
+      const chunked = chunkify(arr, 3)
+      expect(chunked).toEqual([])
+    })
   })
 })
