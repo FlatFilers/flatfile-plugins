@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.1.0
+
+### Minor Changes
+
+- 7796706: This release adds more common utilities and fixes a bug in processRecords when updating record values.
+
 ## 1.0.3
 
 ### Patch Changes
