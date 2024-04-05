@@ -1,4 +1,4 @@
-import { buildConfig } from '../../rollup.config.mjs'
+import { buildConfig } from '@flatfile/rollup-config'
 
 const config = buildConfig({})
 

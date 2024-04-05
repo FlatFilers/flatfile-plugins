@@ -48,6 +48,7 @@
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/rollup-config": "0.0.0",
     "@flatfile/utils-testing": "^0.1.3"
   }
 }
