@@ -1,0 +1,40 @@
+{
+  "name": "@flatfile/plugin-zip-egress",
+  "version": "0.0.0",
+  "description": "A plugin for egressing a Flatfile Workbook as a collection of zipped CSV files.",
+  "registryMetadata": {
+    "category": "egress"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "dev": "parcel watch",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest --passWithNoTests"
+  },
+  "keywords": [],
+  "author": "Flatfile, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/zip-egress"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.7.4",
+    "@flatfile/listener": "^1.0.1",
+    "@flatfile/plugin-job-handler": "^0.4.1",
+    "@flatfile/util-common": "^1.0.0",
+    "adm-zip": "^0.5.12",
+    "csv-stringify": "^6.4.6"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
+  }
+}
