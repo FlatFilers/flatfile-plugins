@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-webhook-event-forwarder",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A plugin to forward events via webhook for clients to manipulate at their endpoints in a language-agnostic way.",
   "registryMetadata": {
     "category": "automation"
@@ -57,7 +57,7 @@
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "0.0.0",
+    "@flatfile/rollup-config": "0.1.0",
     "jest-fetch-mock": "^3.0.3"
   }
 }

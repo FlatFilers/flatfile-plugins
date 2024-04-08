@@ -1,5 +1,13 @@
 # @flatfile/plugin-constraints
 
+## 1.1.8
+
+### Patch Changes
+
+- e9ea2d8: This release refactors and optimizes import statements across all plugins and utility files, particularly emphasizing the use of TypeScript's type keyword for type-only imports. Additionally, this release centralizes the Rollup configuration and replaces axios with cross-fetch for HTTP requests. These changes streamline the codebase, enhance type safety, and unify HTTP request handling across the project.
+- Updated dependencies [e9ea2d8]
+  - @flatfile/plugin-record-hook@1.4.7
+
 ## 1.1.7
 
 ### Patch Changes

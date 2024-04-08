@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-convert-yaml-schema",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A plugin for converting YAML Schema definitions to Flatfile Blueprint.",
   "registryMetadata": {
     "category": "schema-converters"
@@ -28,8 +28,8 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/plugin-convert-json-schema": "^0.2.2",
-    "@flatfile/plugin-space-configure": "^0.3.2",
+    "@flatfile/plugin-convert-json-schema": "^0.2.3",
+    "@flatfile/plugin-space-configure": "^0.3.5",
     "cross-fetch": "^4.0.0",
     "js-yaml": "^4.1.0"
   },
@@ -37,7 +37,7 @@
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.1.3",
+    "@flatfile/utils-testing": "^0.1.4",
     "express": "^4.18.2",
     "jest-fetch-mock": "^3.0.3"
   }
