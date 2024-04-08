@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-constraints",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "A plugin for extending blueprint with external constraints",
   "engines": {
     "node": ">= 16"
@@ -48,12 +48,12 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/plugin-record-hook": "^1.4.6"
+    "@flatfile/plugin-record-hook": "^1.4.7"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "0.0.0"
+    "@flatfile/rollup-config": "0.1.0"
   }
 }
