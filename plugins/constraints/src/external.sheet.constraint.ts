@@ -1,11 +1,12 @@
-import api, { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import api from '@flatfile/api'
+import type { TPrimitive } from '@flatfile/hooks'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import {
-  bulkRecordHookPlugin,
   FlatfileRecord,
+  bulkRecordHookPlugin,
 } from '@flatfile/plugin-record-hook'
 import { getSheetConstraints } from './get.constraints'
-import { TPrimitive } from '@flatfile/hooks'
 
 /**
  * External sheet constraints can be registered on a combination of fields. Unlike the single

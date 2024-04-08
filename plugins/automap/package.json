@@ -29,8 +29,10 @@
   "dependencies": {
     "@flatfile/api": "^1.7.4",
     "@flatfile/common-plugin-utils": "^1.0.1",
-    "@flatfile/listener": "^1.0.1",
     "remeda": "^1.23.0"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
     "@flatfile/utils-testing": "^0.1.3"

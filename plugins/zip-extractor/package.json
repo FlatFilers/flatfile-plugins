@@ -28,10 +28,12 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/listener": "^1.0.1",
     "@flatfile/util-common": "^1.0.0",
     "@flatfile/util-file-buffer": "^0.2.1",
     "adm-zip": "^0.5.10"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
     "@flatfile/utils-testing": "^0.1.3",

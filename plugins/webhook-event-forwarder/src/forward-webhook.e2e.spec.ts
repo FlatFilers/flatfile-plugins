@@ -1,4 +1,4 @@
-import { FlatfileEvent } from '@flatfile/listener'
+import type { FlatfileEvent } from '@flatfile/listener'
 import {
   createRecords,
   deleteSpace,
@@ -7,7 +7,7 @@ import {
   setupSpace,
 } from '@flatfile/utils-testing'
 import fetchMock from 'jest-fetch-mock'
-import { webhookEventForward } from '../src'
+import { webhookEventForward } from '.'
 
 fetchMock.enableMocks()
 fetchMock.dontMock()

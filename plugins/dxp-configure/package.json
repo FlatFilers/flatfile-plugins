@@ -6,7 +6,7 @@
     "category": "utilities"
   },
   "engines": {
-    "node": ">= 12"
+    "node": ">= 16"
   },
   "browserslist": [
     "> 0.5%",
@@ -19,8 +19,14 @@
   },
   "exports": {
     "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
     "default": "./dist/index.mjs"
   },
   "main": "./dist/index.cjs",
@@ -45,15 +51,13 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
+    "@flatfile/api": "^1.7.4"
+  },
+  "peerDependencies": {
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
     "@flatfile/configure": "^0.5.39",
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "rollup": "^4.3.0"
+    "@flatfile/rollup-config": "0.0.0"
   }
 }

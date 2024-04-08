@@ -14,8 +14,14 @@
   },
   "exports": {
     "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
     "default": "./dist/index.mjs"
   },
   "main": "./dist/index.cjs",
@@ -43,5 +49,8 @@
   "dependencies": {
     "@flatfile/api": "^1.7.4",
     "@flatfile/util-common": "^1.0.3"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "0.0.0"
   }
 }

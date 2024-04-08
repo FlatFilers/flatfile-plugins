@@ -1,4 +1,4 @@
-import { FlatfileEvent } from '@flatfile/listener'
+import type { FlatfileEvent } from '@flatfile/listener'
 
 export async function asyncBatch<T, R>(
   arr: T[],

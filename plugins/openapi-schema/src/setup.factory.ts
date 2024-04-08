@@ -1,6 +1,6 @@
 import { Flatfile } from '@flatfile/api'
 import { PartialWb, SetupFactory } from '@flatfile/plugin-space-configure'
-import axios from 'axios'
+import fetch from 'cross-fetch'
 
 export type OpenAPISetupFactory = {
   workbooks: PartialWorkbookConfig[]
@@ -8,19 +8,15 @@ export type OpenAPISetupFactory = {
   debug?: boolean
 }
 
-export type PartialWorkbookConfig = Omit<
-  Flatfile.CreateWorkbookConfig,
-  'name' | 'sheets'
-> & {
+export interface PartialWorkbookConfig
+  extends Omit<Flatfile.CreateWorkbookConfig, 'name' | 'sheets'> {
   name?: string
   sheets: PartialSheetConfig[]
   source: string
 }
 
-export type PartialSheetConfig = Omit<
-  Flatfile.SheetConfig,
-  'fields' | 'name' | 'slug'
-> & {
+export interface PartialSheetConfig
+  extends Omit<Flatfile.SheetConfig, 'fields' | 'name' | 'slug'> {
   name?: string
   slug?: string
   model: string
@@ -48,14 +44,15 @@ export async function generateSetup(
   try {
     const workbooks: PartialWb[] = await Promise.all(
       setupFactory.workbooks.map(async (workbook) => {
-        const { status, data } = await axios.get(workbook.source, {
-          validateStatus: () => true,
-        })
+        const response = await fetch(workbook.source)
 
-        if (status !== 200) {
-          throw new Error(`API returned status ${status}: ${data.statusText}`)
+        if (!response.ok) {
+          throw new Error(
+            `API returned status ${response.status}: ${response.statusText}`
+          )
         }
 
+        const data = await response.json()
         const schemas: ApiSchemas = data.components.schemas
 
         const sheets: Flatfile.SheetConfig[] = (

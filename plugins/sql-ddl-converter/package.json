@@ -30,7 +30,9 @@
     "@flatfile/api": "^1.7.4",
     "@flatfile/plugin-convert-json-schema": "^0.2.2",
     "@flatfile/plugin-space-configure": "^0.3.2",
-    "axios": "^1.5.1",
     "sql-ddl-to-json-schema": "^4.1.0"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   }
 }

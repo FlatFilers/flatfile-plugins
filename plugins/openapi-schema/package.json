@@ -14,8 +14,14 @@
   },
   "exports": {
     "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
     "default": "./dist/index.mjs"
   },
   "main": "./dist/index.cjs",
@@ -42,13 +48,12 @@
   "dependencies": {
     "@flatfile/api": "^1.7.4",
     "@flatfile/plugin-space-configure": "^0.3.2",
-    "axios": "^1.6.5"
+    "cross-fetch": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "rollup": "^4.3.0"
+    "@flatfile/rollup-config": "0.0.0"
   }
 }

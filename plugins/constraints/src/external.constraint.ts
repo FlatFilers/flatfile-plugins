@@ -1,5 +1,6 @@
-import api, { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import api from '@flatfile/api'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import {
   FlatfileRecord,
   bulkRecordHookPlugin,

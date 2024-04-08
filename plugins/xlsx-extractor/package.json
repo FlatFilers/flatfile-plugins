@@ -6,7 +6,7 @@
     "category": "extractors"
   },
   "engines": {
-    "node": ">= 12"
+    "node": ">= 16"
   },
   "source": "src/index.ts",
   "main": "dist/main.js",
@@ -30,5 +30,8 @@
     "@flatfile/util-extractor": "^0.5.5",
     "remeda": "^1.14.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   }
 }
