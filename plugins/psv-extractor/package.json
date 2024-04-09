@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-psv-extractor",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "A plugin for parsing a psv file and extracting it into Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -27,7 +27,9 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
+    "@flatfile/api": "^1.7.4"
+  },
+  "peerDependencies": {
     "@flatfile/listener": "^1.0.1"
   }
 }

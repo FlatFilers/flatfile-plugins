@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-foreign-db-extractor",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A plugin for extracting MSSQL DBs from a .bak file.",
   "registryMetadata": {
     "category": "extractor"
@@ -14,8 +14,14 @@
   },
   "exports": {
     "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
     "default": "./dist/index.mjs"
   },
   "main": "./dist/index.cjs",
@@ -47,5 +53,8 @@
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.1"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "0.1.0"
   }
 }

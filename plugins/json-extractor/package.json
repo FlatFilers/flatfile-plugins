@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-json-extractor",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "A plugin for parsing json files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -15,8 +15,14 @@
   },
   "exports": {
     "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
     "default": "./dist/index.mjs"
   },
   "main": "./dist/index.cjs",
@@ -41,13 +47,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^0.5.2"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "rollup": "^4.3.0"
+    "@flatfile/util-extractor": "^0.5.6",
+    "@flatfile/rollup-config": "0.1.0"
   }
 }

@@ -1,22 +1,17 @@
-import axios from 'axios'
-
-import { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
+import fetch from 'cross-fetch'
 
 export interface ModelToSheetConfig extends PartialSheetConfig {
   sourceUrl: string
 }
 
-export type PartialSheetConfig = Omit<
-  Flatfile.SheetConfig,
-  'fields' | 'name'
-> & {
+export interface PartialSheetConfig
+  extends Omit<Flatfile.SheetConfig, 'fields' | 'name'> {
   name?: string
 }
 
-export type PartialWorkbookConfig = Omit<
-  Flatfile.CreateWorkbookConfig,
-  'sheets' | 'name'
-> & {
+export interface PartialWorkbookConfig
+  extends Omit<Flatfile.CreateWorkbookConfig, 'sheets' | 'name'> {
   name?: string
 }
 
@@ -30,14 +25,19 @@ export async function getSchemas(models?: ModelToSheetConfig[]) {
 
 export async function fetchExternalReference(url: string): Promise<any> {
   try {
-    const { status, data } = await axios.get(url, {
-      validateStatus: () => true,
-    })
-    if (status !== 200)
-      throw new Error(`API returned status ${status}: ${data.statusText}`)
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error(
+        `API returned status ${response.status}: ${response.statusText}`
+      )
+    }
+
+    const data = await response.json()
     return data
-  } catch (error: any) {
-    throw new Error(`Error fetching external reference: ${error.message}`)
+  } catch (error) {
+    throw new Error(
+      `Error fetching external reference: ${(error as any).message}`
+    )
   }
 }
 

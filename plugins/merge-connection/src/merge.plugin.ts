@@ -1,4 +1,4 @@
-import { FlatfileListener } from '@flatfile/listener'
+import type { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { handleCreateConnectedWorkbooks } from './create.workbook'
 import { handleConnectedWorkbookSync } from './sync.workbook'

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-response-rejection",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "This plugin handles response rejections returned from an external source.",
   "registryMetadata": {
     "category": "utilities"
@@ -14,8 +14,14 @@
   },
   "exports": {
     "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
     "default": "./dist/index.mjs"
   },
   "main": "./dist/index.cjs",
@@ -42,6 +48,9 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/util-common": "^1.0.3"
+    "@flatfile/util-common": "^1.1.1"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "0.1.0"
   }
 }

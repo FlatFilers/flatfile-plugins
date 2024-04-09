@@ -1,5 +1,5 @@
-import { Flatfile } from '@flatfile/api'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 import { OpenAPISetupFactory, generateSetup } from './setup.factory'
 

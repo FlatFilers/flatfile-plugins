@@ -1,7 +1,7 @@
 import api, { Flatfile } from '@flatfile/api'
 import { PubSubDriver } from '@flatfile/listener-driver-pubsub'
 import { afterAll, afterEach, beforeAll, beforeEach } from '@jest/globals'
-import axios from 'axios'
+import fetch from 'cross-fetch'
 import { TestListener } from './test.listener'
 
 /**
@@ -126,23 +126,30 @@ export async function createRecords(
   sheetId: string,
   records: Array<Record<string, any>>
 ) {
-  await axios.post(
-    `${process.env.AGENT_INTERNAL_URL}/v1/sheets/${sheetId}/records`,
-
-    records.map((r) =>
-      Object.keys(r).reduce((acc: Record<string, any>, k) => {
-        acc[k] = { value: r[k] }
-        return acc
-      }, {})
-    ),
-
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.FLATFILE_API_KEY}`,
-        'X-Force-Hooks': 'true',
-      },
-    }
+  const url = `${process.env.AGENT_INTERNAL_URL}/v1/sheets/${sheetId}/records`
+  const modifiedRecords = records.map((r) =>
+    Object.keys(r).reduce((acc: Record<string, any>, k) => {
+      acc[k] = { value: r[k] }
+      return acc
+    }, {})
   )
+
+  const response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(modifiedRecords),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.FLATFILE_API_KEY}`,
+      'X-Force-Hooks': 'true',
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  } else {
+    const data = await response.json()
+    return data
+  }
 }
 
 export async function getFiles(spaceId: string): Promise<Flatfile.File_[]> {

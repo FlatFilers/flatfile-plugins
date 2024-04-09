@@ -1,6 +1,6 @@
 import api, { Flatfile } from '@flatfile/api'
 import { asyncMap } from '@flatfile/common-plugin-utils'
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import * as R from 'remeda'
 import { AutomapOptions } from './automap.plugin'
 

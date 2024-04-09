@@ -1,4 +1,5 @@
-import api, { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
+import api from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 
 export const fileBuffer = (

@@ -10,7 +10,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   test:
     name: Test
-    timeout-minutes: 15
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     steps:

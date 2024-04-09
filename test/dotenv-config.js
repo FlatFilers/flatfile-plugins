@@ -8,6 +8,3 @@ const env = dotenv.config({
 })
 
 dotenvExpand.expand(env)
-
-console.log = (...msgs) =>
-  msgs.forEach((msg) => process.stdout.write(msg + '\n'))

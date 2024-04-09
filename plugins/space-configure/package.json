@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-space-configure",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A plugin for configuring a Flatfile Space.",
   "registryMetadata": {
     "category": "core"
@@ -14,8 +14,14 @@
   },
   "exports": {
     "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
     "default": "./dist/index.mjs"
   },
   "main": "./dist/index.cjs",
@@ -41,12 +47,13 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/plugin-job-handler": "^0.4.1"
+    "@flatfile/plugin-job-handler": "^0.4.2"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.1.3"
+    "@flatfile/rollup-config": "0.1.0",
+    "@flatfile/utils-testing": "^0.1.4"
   }
 }

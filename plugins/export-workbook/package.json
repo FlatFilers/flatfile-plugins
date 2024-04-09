@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-export-workbook",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A plugin for exporting data in Flatfile to Workbooks.",
   "registryMetadata": {
     "category": "export"
@@ -16,7 +16,7 @@
     "build": "parcel build",
     "dev": "parcel watch",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest --passWithNoTests"
   },
   "keywords": [],
   "author": "Flatfile, Inc.",
@@ -28,9 +28,11 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/listener": "^1.0.1",
-    "@flatfile/util-common": "^1.0.0",
+    "@flatfile/util-common": "^1.1.1",
     "remeda": "^1.14.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
   }
 }

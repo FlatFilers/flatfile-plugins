@@ -11,18 +11,14 @@ export type SqlSetupFactory = {
   space?: Partial<Flatfile.spaces.SpaceConfig>
 }
 
-export type PartialWorkbookConfig = Omit<
-  Flatfile.CreateWorkbookConfig,
-  'sheets'
-> & {
+export interface PartialWorkbookConfig
+  extends Omit<Flatfile.CreateWorkbookConfig, 'sheets'> {
   sheets: PartialSheetConfig[]
   source: string //object | string | (() => object | Promise<object>)
 }
 
-export type PartialSheetConfig = Omit<
-  Flatfile.SheetConfig,
-  'fields' | 'slug'
-> & {
+export interface PartialSheetConfig
+  extends Omit<Flatfile.SheetConfig, 'fields' | 'slug'> {
   slug: string
 }
 

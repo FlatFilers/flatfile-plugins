@@ -1,4 +1,4 @@
-import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 
 export function webhookEventForward(
   url?: string,
