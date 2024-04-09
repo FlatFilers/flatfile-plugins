@@ -19,7 +19,7 @@ The `sheetSlug` parameter is the slug of the sheet you want to listen to.
 ### `callback` *function*
 The `callback` parameter takes a function that will be run on the record or records.
 
-### `options.chunkSize" *number* *default: 10_000* (optional)
+### `options.chunkSize` *number* *default: 10_000* (optional)
 The `chunkSize` parameter allows you to specify the quantity of records to in each chunk.
 
 ### `options.parallel" *number* *default: 1* (optional)
