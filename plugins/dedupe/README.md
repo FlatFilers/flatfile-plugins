@@ -45,7 +45,7 @@ The `debug` parameter lets you toggle on/off helpful debugging messages for deve
 
 ## Usage
 
-An action with the operation name of "dedupe-email" must be configured on a Sheet in order to the plugin to be triggered.
+An action with the operation name of "dedupe-email" must be configured on a Sheet for the plugin to be triggered.
 
 ```bash install
 npm i @flatfile/plugin-dedupe
