@@ -1,6 +1,7 @@
 {
   "name": "@flatfile/plugin-export-workbook",
   "version": "0.1.7",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/export-workbook",
   "description": "A plugin for exporting data in Flatfile to Workbooks.",
   "registryMetadata": {
     "category": "export"
