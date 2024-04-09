@@ -18,7 +18,10 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-export"
+  ],
   "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
