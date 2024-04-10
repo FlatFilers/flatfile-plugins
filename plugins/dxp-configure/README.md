@@ -15,7 +15,7 @@ The `workbook` parameter takes a Flatfile Workbook.
 
 ## Usage
 
-You can simply attach any existing workbook configuration you have to a listener and it'll automatically apply to your next Space.
+You can simply attach any existing workbook configuration you have to a listener, and it'll automatically apply to your next Space.
 
 ### Install
 
