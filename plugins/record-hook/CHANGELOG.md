@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.4.8
+
+### Patch Changes
+
+- 0dcdfb1: Update package keywords and readme content
+
 ## 1.4.7
 
 ### Patch Changes
