@@ -1,5 +1,11 @@
 # @flatfile/plugin-dedupe
 
+## 1.0.3
+
+### Patch Changes
+
+- e4b8f1c: update readme and keywords
+
 ## 1.0.2
 
 ### Patch Changes

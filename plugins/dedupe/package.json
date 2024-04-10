@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-dedupe",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Dedupe records in a sheet via a sheet level custom action.",
   "registryMetadata": {
     "category": "transform"
@@ -37,7 +37,10 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-transform"
+  ],
   "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
