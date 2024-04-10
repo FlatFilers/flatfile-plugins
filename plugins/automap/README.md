@@ -1,9 +1,85 @@
-# @flatfile/plugin-automap
+<!-- START_INFOCARD -->
 
-The purpose of this plugin is to provide automapping for headless workflows. 
+The `@flatfile/plugin-automap` plugin listens for and responds to file extraction jobs and then creates a mapping job for automation. Currently, every field in the Job Execution plan must meet the minimum confidence level specified by the `accuracy` config prop.
 
-`npm i @flatfile/plugin-automap`
+<!-- END_INFOCARD -->
 
-## Get Started
+> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](https://flatfile.com/docs/orchestration/listeners#listener-types)
 
-Follow [this guide](https://flatfile.com/docs/plugins/automation/automap) to learn how to use the plugin.
+
+## Parameters
+
+### `accuracy` *'confident' | 'exact'* (required)
+
+The `accuracy` parameter match columns either by 'confident' (> 90% match) or 'exact' (100% match).
+
+
+### `debug` *boolean*
+
+The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
+
+
+### `defaultTargetSheet` *'string' | '(fileName: string) => string | Promise'*
+
+The `defaultTargetSheet` parameter takes the exact sheet slug or a callback function that resolves to the exact sheet slug to import data to.
+
+
+### `matchFilename` *RegExp*
+
+The `matchFilename` parameter takes a regular expression to match specific files to perform automapping on.
+
+
+### `onFailure` *(event: FlatfileEvent) => void*
+
+The `onFailure` parameter takes a callback function to be executed when plugin bails.
+
+
+### `targetWorkbook` *string*
+
+The `targetWorkbook` parameter specifies destination Workbook id or name.
+
+
+## API Calls
+
+- `api.files.get`
+- `api.files.update`
+- `api.jobs.create`
+- `api.jobs.execute`
+- `api.jobs.getExecutionPlan`
+- `api.workbooks.list`
+- `api.workbooks.get`
+
+
+## Usage
+
+For automation workflows, upload a file using the `files` endpoint. For testing, you import via the Files area in the UI and use the `debug` config property.
+
+**Install**  
+
+```bash install
+npm i @flatfile/plugin-automap
+```
+
+**Import**  
+
+```ts
+import { automap } from "@flatfile/plugin-automap";
+```
+
+**listener.ts**  
+
+```ts listener.ts
+listener.use(
+  automap({
+    accuracy: "confident",
+    defaultTargetSheet: "Contact",
+    matchFilename: /test.csv$/g,
+    onFailure: (event: FlatfileEvent) => {
+      // send an SMS, an email, post to an endpoint, etc.
+      console.error(
+        `Please visit https://spaces.flatfile.com/space/${event.context.spaceId}/files?mode=import to manually import file.`
+      );
+    },
+  })
+);
+```
