@@ -1,6 +1,6 @@
 <!-- START_INFOCARD -->
 
-The `@flatfile/plugin-export-workbook` plugin exports data in a Flatfile Workbook.
+The `@flatfile/plugin-export-workbook` plugin exports data in a Flatfile Workbook to a downloadable `.xlsx` file.
 
 **Event Type:**
 `listener.on('job:ready')` 
