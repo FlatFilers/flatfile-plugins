@@ -10,12 +10,12 @@ The `@flatfile/plugin-webhook-egress` plugin egresses Flatfile Workbooks to a we
 
 ## Parameters
 
-### `job` *string* (required)
+#### `job` - `string` - (required)
 
 The `job` parameter takes the job name.  
 
 
-### `webhookUrl` *string*
+#### `webhookUrl` - `string`
 
 The `webhookUrl` parameter takes the webhook url.  
 
@@ -26,13 +26,13 @@ The `webhookEgress` plugin creates an action that will export workbook data via 
 It requires an operation parameter which specifies the event that will initiate the egress. The
 webhook url can either be passed in as a parameter or set as an environment variable `WEBHOOK_SITE_URL`.
 
-### Install
+#### Install
 
 ```bash install
 npm i @flatfile/plugin-webhook-egress
 ```
 
-### Import
+#### Import
 
 ```ts import
 import { webhookEgress } from "@flatfile/plugin-webhook-egress";
@@ -43,7 +43,7 @@ import { webhookEgress } from "@flatfile/plugin-webhook-egress";
 
 
 
-### `workbook.config.json`
+#### `workbook.config.json`
 
 ```ts workbook.config.json
   // ... inside Workbook configuration
@@ -60,7 +60,7 @@ import { webhookEgress } from "@flatfile/plugin-webhook-egress";
   // ...
 ```
 
-### `listener.js`
+#### `listener.js`
 
 ```ts listener.js
 // Using the WEBHOOK_SITE_URL environment variable
