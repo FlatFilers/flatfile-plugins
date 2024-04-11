@@ -12,9 +12,9 @@ export const recordHookPlugin = (
   options: RecordHookOptions = {}
 ) => {
   return (listener: FlatfileListener) => {
-    listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
-      return RecordHook(event, callback, options)
-    })
+    listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) =>
+      RecordHook(event, callback, options)
+    )
   }
 }
 
@@ -27,9 +27,9 @@ export const bulkRecordHookPlugin = (
   options: BulkRecordHookOptions = {}
 ) => {
   return (listener: FlatfileListener) => {
-    listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) => {
-      return BulkRecordHook(event, callback, options)
-    })
+    listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) =>
+      BulkRecordHook(event, callback, options)
+    )
   }
 }
 

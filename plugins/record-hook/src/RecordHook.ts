@@ -1,9 +1,14 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import type { FlatfileEvent } from '@flatfile/listener'
-import { asyncBatch } from '@flatfile/util-common'
-import { RecordTranslator } from './record.translator'
-import { cleanRecord, deepEqual } from './record.utils'
+import { asyncBatch, logError, logInfo } from '@flatfile/util-common'
+import {
+  cleanRecord,
+  completeCommit,
+  deepEqual,
+  prepareFlatfileRecords,
+  prepareXRecords,
+} from './record.utils'
 
 export interface RecordHookOptions {
   concurrency?: number
@@ -55,48 +60,24 @@ export const BulkRecordHook = async (
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
-  const { commitId } = event.context
-  const { trackChanges } = event.payload
-
-  const completeCommit = async () => {
-    if (trackChanges) {
-      try {
-        await event.fetch(`v1/commits/${commitId}/complete`, {
-          method: 'POST',
-        })
-        if (options.debug) {
-          console.log('Commit completed successfully')
-        }
-      } catch (e) {
-        console.log(`Error completing commit: ${e}`)
-      }
-    }
-  }
-
-  const fetchData = async (): Promise<
-    Flatfile.RecordsWithLinks | undefined
-  > => {
-    try {
-      const data = await event.data
-      return data.records && data.records.length ? data.records : undefined
-    } catch (e) {
-      console.log(`Error fetching records: ${e}`)
-    }
-    return undefined
-  }
+  const { debug = false } = options
 
   try {
     const data = await event.cache.init<Flatfile.RecordsWithLinks>(
       'data',
-      async () => await fetchData()
+      async (): Promise<Flatfile.RecordsWithLinks> => {
+        try {
+          const data = await event.data
+          return data.records && data.records.length ? data.records : undefined
+        } catch (e) {
+          throw new Error('Error fetching records')
+        }
+      }
     )
 
     if (!data || data.length === 0) {
-      if (options.debug) {
-        console.log('No records to process')
-      }
-      await completeCommit()
-      return
+      logInfo('@flatfile/plugin-record-hook', 'No records to process')
+      await completeCommit(event, debug)
     }
 
     const batch = await event.cache.init<FlatfileRecords<any>>(
@@ -117,13 +98,15 @@ export const BulkRecordHook = async (
       const data = await event.cache.get<Flatfile.RecordsWithLinks>('data')
       const modifiedRecords: Flatfile.RecordsWithLinks = records.filter(
         (record: Flatfile.RecordWithLinks) => {
-          const originalRecord: Flatfile.RecordWithLinks = data.find(
-            (original: Flatfile.RecordWithLinks) => original.id === record.id
-          )
+          const originalRecord: Flatfile.RecordWithLinks | undefined =
+            data.find(
+              (original: Flatfile.RecordWithLinks) => original.id === record.id
+            )
           cleanRecord(originalRecord) // Remove fields that should not be compared
           const hasChanges = !deepEqual(record, originalRecord)
-          if (options.debug) {
-            console.log(
+          if (debug) {
+            logInfo(
+              '@flatfile/plugin-record-hook',
               `Record ${record.id} ${
                 hasChanges ? 'has' : 'does not have'
               } changes`
@@ -134,32 +117,18 @@ export const BulkRecordHook = async (
       )
 
       if (!modifiedRecords || modifiedRecords.length === 0) {
-        if (options.debug) {
-          console.log('No records modified')
-        }
-        await completeCommit()
-        return
+        logInfo('@flatfile/plugin-record-hook', 'No records modified')
+        return await completeCommit(event, debug)
       }
 
       try {
         return await event.update(modifiedRecords)
       } catch (e) {
-        console.log(`Error updating records: ${e}`)
+        throw new Error('Error updating records')
       }
     })
   } catch (e) {
-    console.error(`An error occurred while running the handler: ${e.message}`)
+    logError('@flatfile/plugin-record-hook', (e as Error).message)
+    await completeCommit(event, debug)
   }
-}
-
-const prepareFlatfileRecords = async (
-  records: any
-): Promise<Flatfile.RecordsWithLinks> => {
-  const fromFlatfile = new RecordTranslator<FlatfileRecord<any>>(records)
-  return fromFlatfile.toXRecords()
-}
-
-const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
-  const fromX = new RecordTranslator<Flatfile.RecordWithLinks>(records)
-  return fromX.toFlatfileRecords()
 }

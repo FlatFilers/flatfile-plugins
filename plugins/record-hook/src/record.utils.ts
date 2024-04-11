@@ -1,4 +1,8 @@
 import type { Flatfile } from '@flatfile/api'
+import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
+import type { FlatfileEvent } from '@flatfile/listener'
+import { logError, logInfo } from '@flatfile/util-common'
+import { RecordTranslator } from './record.translator'
 
 // deepEqual is a generic object comparison function that is ambivalent to the key order
 export function deepEqual(obj1, obj2) {
@@ -40,7 +44,10 @@ export function deepEqual(obj1, obj2) {
 //
 // This function is intended to remove fields that will never be set on a modified record, specifically 'valid' at the
 // the root level, updatedAt at all levels, and any message that does not have a source of 'custom-logic'.
-export function cleanRecord(record: Flatfile.RecordWithLinks) {
+export function cleanRecord(record: Flatfile.RecordWithLinks | undefined) {
+  if (!record) {
+    return
+  }
   // Remove 'valid' at the root level of the Record, but not on the Record's fields
   if (Object.keys(record).includes('valid')) {
     delete record.valid
@@ -69,4 +76,42 @@ function deleteKeys(obj, keys) {
       deleteKeys(obj[key], keys)
     }
   })
+}
+
+export async function completeCommit(
+  event: FlatfileEvent,
+  debug: boolean
+): Promise<void> {
+  const { commitId } = event.context
+  const { trackChanges } = event.payload
+
+  if (trackChanges) {
+    try {
+      await event.fetch(`v1/commits/${commitId}/complete`, {
+        method: 'POST',
+      })
+      if (debug) {
+        logInfo('@flatfile/plugin-record-hook', 'Commit completed successfully')
+      }
+    } catch (e) {
+      logError(
+        '@flatfile/plugin-record-hook',
+        `Error completing commit ${commitId}`
+      )
+    }
+  }
+}
+
+export async function prepareFlatfileRecords(
+  records: any
+): Promise<Flatfile.RecordsWithLinks> {
+  const fromFlatfile = new RecordTranslator<FlatfileRecord<any>>(records)
+  return fromFlatfile.toXRecords()
+}
+
+export async function prepareXRecords(
+  records: any
+): Promise<FlatfileRecords<any>> {
+  const fromX = new RecordTranslator<Flatfile.RecordWithLinks>(records)
+  return fromX.toFlatfileRecords()
 }
