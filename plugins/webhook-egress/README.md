@@ -39,7 +39,7 @@ import { webhookEgress } from "@flatfile/plugin-webhook-egress";
 ```
 
 
-![workbook_actions_primary](https://github-production-user-asset-6210df.s3.amazonaws.com/19697744/239029887-c747495a-19e9-4333-88f3-e94239cfe47b.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240409%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240409T175957Z&X-Amz-Expires=300&X-Amz-Signature=b3193a39e3f8db97bd9f6693d34e26c3a71a92a4e498499391cb74f214d7564b&X-Amz-SignedHeaders=host&actor_id=308142&key_id=0&repo_id=628274084)
+![workbook_actions_primary](https://github.com/FlatFilers/Guides/assets/19697744/c747495a-19e9-4333-88f3-e94239cfe47b)
 
 
 

@@ -16,9 +16,30 @@ The `@flatfile/plugin-export-workbook` plugin exports data in a Flatfile Workboo
 
 ## Parameters
 
-### `debug` *boolean*
+### `debug` *boolean* (optional)
 
 The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
+
+### `jobName` *string* (optional) 
+
+The name of job that the plugin will fire on. If not provided, `workbook:downloadWorkbook` will be used.
+
+### `excludedSheets` *string[]* (optional) 
+
+An array of sheets to be excluded from the export
+
+### `excludeFields` *string[]* (optional) 
+
+An array of fields to be excluded from the export
+
+### `recordFilter` *Flatfile.Filter* (optional) 
+
+Allows filtering exported records to `valid` or `error`. By default all records will be exported
+
+### `includeRecordIds` *boolean* (optional) 
+
+Includes the record's ID
+
 
 
 ## Usage
