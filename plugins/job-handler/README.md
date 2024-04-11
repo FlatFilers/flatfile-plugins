@@ -48,7 +48,7 @@ When a `job:ready` event occurs:
 npm i @flatfile/plugin-job-handler
 ```
 
-#### Inport
+#### Import
 
 ```js import
 import { jobHandler } from "@flatfile/plugin-job-handler";
