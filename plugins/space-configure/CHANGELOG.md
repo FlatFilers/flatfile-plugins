@@ -1,5 +1,13 @@
 # @flatfile/plugin-space-configure
 
+## 0.3.6
+
+### Patch Changes
+
+- 9c905ce: Add readme and keywords for core plugins
+- Updated dependencies [9c905ce]
+  - @flatfile/plugin-job-handler@0.4.3
+
 ## 0.3.5
 
 ### Patch Changes

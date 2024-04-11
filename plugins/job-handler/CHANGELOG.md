@@ -1,5 +1,11 @@
 # @flatfile/plugin-job-handler
 
+## 0.4.3
+
+### Patch Changes
+
+- 9c905ce: Add readme and keywords for core plugins
+
 ## 0.4.2
 
 ### Patch Changes
