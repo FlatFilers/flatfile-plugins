@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 1.0.2
+
+### Patch Changes
+
+- 67b1555: Add keywords and readme to dxp-config plugin
+
 ## 1.0.1
 
 ### Patch Changes
