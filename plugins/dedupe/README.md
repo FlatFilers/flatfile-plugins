@@ -13,23 +13,23 @@ This plugin dedupes records in a sheet via a sheet level custom action.
 
 ## Parameters
 
-### `jobOperation` *string* (required)
+#### `jobOperation` - `string` - (required)
 
 The `jobOperation` parameter specifies the name of the job operation to match on.
 
-### `opt.on` *string*
+#### `opt.on` - `string`
 
 The `on` parameter specifies which field key to match on.
 
-### `opt.keep` *'first' | 'last'*
+#### `opt.keep` - `'first' | 'last'`
 
 The `keep` option lets you choose whether to keep the first or last duplicate record.
 
-### `opt.custom` *function()*
+#### `opt.custom` - `function()`
 
 The `custom` parameter accepts a custom dedupe function. This will override the `keep` parameter.
 
-### `opt.debug` *boolean*
+#### `opt.debug` - `boolean`
 
 The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
 
