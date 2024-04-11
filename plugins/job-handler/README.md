@@ -9,12 +9,12 @@ The `@flatfile/plugin-job-handler` package is a plugin designed to streamline ha
 
 ## Parameters
 
-### `job` *string* (required)
+#### `job` - `string` - (required)
 
 The `job` parameter is applied as a filter when listening for `job:ready`.
 
 
-### `handler` *function* (required)
+#### `handler` - `function` - (required)
 
 The `handler` parameter is a callback where you execute your code. It accepts two arguments: `event` and `tick`.
 
@@ -26,7 +26,7 @@ The `handler` parameter is a callback where you execute your code. It accepts tw
 Invoking the `tick` function returns a promise that resolves to a JobResponse object. However, using the `tick` function is optional.
 
 
-### `opts.debug` *boolean* `default: false`
+#### `opts.debug` - `boolean` - `default: false`
 
 The `debug` parameter is used to enable debug logging for the plugin.
 
@@ -42,13 +42,13 @@ When a `job:ready` event occurs:
 - This `tick` function, if used, updates the Job's progress.
 - The `handler` may yield a promise that culminates in a `JobResponse` object, allowing for a customized successful Job status.
 
-### Install
+#### Install
 
 ```bash install
 npm i @flatfile/plugin-job-handler
 ```
 
-### Inport
+#### Inport
 
 ```js import
 import { jobHandler } from "@flatfile/plugin-job-handler";
@@ -57,7 +57,7 @@ import { jobHandler } from "@flatfile/plugin-job-handler";
 Replace `"domain:operation"` with the domain and operation you want to listen for.
 
 
-### `listener.js`
+#### `listener.js`
 
 ```js listener.js
 listener.use(

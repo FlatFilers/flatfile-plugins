@@ -13,12 +13,12 @@ The @flatfile/plugin-space-configure plugin streamlines the setup of a new Flatf
 
 ## Parameters
 
-### `setup` *SetupFactory* (required)
+#### `setup` - `SetupFactory` - (required)
 
 The `setup` parameter holds the configuration settings for the new Space.
 
 
-### `callback` *function*
+#### `callback` - `function`
 
 The `callback` parameter receives three arguments: `event`, `workbookIds`, and a `tick` function. The `tick` function can be used to update the Job's progress. The `callback` function is invoked once the Space and Workbooks are fully configured.
 
@@ -36,19 +36,19 @@ The @flatfile/plugin-space-configure plugin simplifies the setup of new Flatfile
 
 Designed for server-side listeners, it auto-configures the Space using the supplied settings.
 
-### Install
+#### Install
 
 ```bash install
 npm i @flatfile/plugin-space-configure
 ```
 
-### Import
+#### Import
 
 ```js import
 import { configureSpace } from "@flatfile/plugin-space-configure";
 ```
 
-### `listener.js` with no workbooks
+#### `listener.js` with no workbooks
 
 ```js listener.js w/ no workbooks
 listener.use(
@@ -58,7 +58,7 @@ listener.use(
 );
 ```
 
-### `listener.js` with workbooks
+#### `listener.js` with workbooks
 
 ```js listener.js /w workbooks
 listener.use(
@@ -103,7 +103,7 @@ listener.use(
 
 ## Full Example
 
-### `contactsSheet.ts`
+#### `contactsSheet.ts`
 
 ```typescript contactsSheet.ts
 import { Flatfile } from "@flatfile/api";
@@ -156,7 +156,7 @@ export const contactsSheet: Flatfile.SheetConfig = {
 };
 ```
 
-### `companiesSheet.ts`
+#### `companiesSheet.ts`
 
 ```typescript companiesSheet.ts
 import { Flatfile } from "@flatfile/api";
@@ -180,7 +180,7 @@ export const companiesSheet: Flatfile.SheetConfig = {
 };
 ```
 
-### `listener.ts`
+#### `listener.ts`
 
 ```typescript listener.ts
 import api from "@flatfile/api";
