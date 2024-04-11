@@ -1,5 +1,11 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.2.7
+
+### Patch Changes
+
+- 6567f6c: Add package keywords and readme content
+
 ## 1.2.6
 
 ### Patch Changes

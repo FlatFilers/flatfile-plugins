@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.2.4
+
+### Patch Changes
+
+- d676204: Add readme and update package keywords for automap plugin
+
 ## 0.2.3
 
 ### Patch Changes
