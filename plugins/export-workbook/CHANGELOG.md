@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.1.8
+
+### Patch Changes
+
+- 6567f6c: Add package keywords and readme content
+
 ## 0.1.7
 
 ### Patch Changes
