@@ -44,7 +44,7 @@ Includes the record's ID
 
 ## Usage
 
-An action with the operation name of "downloadWorkbook" must be configured on a Workbook (not a Sheet) in order to the plugin to be triggered.
+An action with the operation name of "downloadWorkbook" must be configured on a Workbook (not a Sheet) in order for the plugin to be triggered.
 
 ### Install
 
