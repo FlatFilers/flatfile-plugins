@@ -1,7 +1,7 @@
 {
   "name": "@flatfile/plugin-graphql-schema",
   "version": "1.0.0",
-  "description": "A plugin for converting Graphql to Flatfile blueprint.",
+  "description": "A plugin for converting GraphQL to Flatfile blueprint.",
   "registryMetadata": {
     "category": "core"
   },

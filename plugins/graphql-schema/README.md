@@ -1,6 +1,6 @@
 # @flatfile/plugin-graphql-schema
 
-This package automatically converts Graphql to the Flatfile Blueprint, a powerful DDL (Data Definition Language) created by Flatfile with a focus on validation and data preparation.
+This package automatically converts GraphQL to the Flatfile Blueprint, a powerful DDL (Data Definition Language) created by Flatfile with a focus on validation and data preparation.
 
 ## Get Started
 
