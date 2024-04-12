@@ -21,23 +21,23 @@ Blueprint.
 
 ## Parameters
 
-#### `sheetSlug` *string* (required)
+#### `sheetSlug` - `string` - (required)
 
 The `sheetSlug` indicates the slug name of the sheet you want to monitor.
 
-#### `fieldFilters` *string[]*
+#### `fieldFilters` - `string[]`
 
 Use the `fieldFilters` parameter to select specific fields to monitor. Without
 any specified `fieldFilters`, the plugin will automatically monitor
 all castable fields, including strings, numbers, booleans, and dates.
 
 
-#### `options.chunkSize` default="10_000" *number*
+#### `options.chunkSize` - `default: "10_000"` - `number`
 
 The `chunkSize` parameter allows you to specify the quantity of records to in
 each chunk.
 
-#### `options.parallel` default="1" *number*
+#### `options.parallel` - `default: "1"` - `number`
 
 The `parallel` parameter allows you to specify the number of chunks to process
 in parallel.

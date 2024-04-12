@@ -1,5 +1,11 @@
 # @flatfile/plugin-dedupe
 
+## 1.0.4
+
+### Patch Changes
+
+- 6d45649: Readme markup changes for better styling
+
 ## 1.0.3
 
 ### Patch Changes

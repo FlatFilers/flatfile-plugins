@@ -1,5 +1,13 @@
 # @flatfile/plugin-autocast
 
+## 0.7.11
+
+### Patch Changes
+
+- 6d45649: Readme markup changes for better styling
+- Updated dependencies [6d45649]
+  - @flatfile/plugin-record-hook@1.4.9
+
 ## 0.7.10
 
 ### Patch Changes
