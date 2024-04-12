@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.5.7
+
+### Patch Changes
+
+- 59099ae: Add package keywords and readme content to utils
+- Updated dependencies [59099ae]
+  - @flatfile/util-file-buffer@0.2.3
+
 ## 0.5.6
 
 ### Patch Changes

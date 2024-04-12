@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.2.3
+
+### Patch Changes
+
+- 59099ae: Add package keywords and readme content to utils
+
 ## 0.2.2
 
 ### Patch Changes
