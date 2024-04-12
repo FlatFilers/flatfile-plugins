@@ -1,5 +1,11 @@
 # @flatfile/util-response-rejection
 
+## 1.2.6
+
+### Patch Changes
+
+- 59099ae: Add package keywords and readme content to utils
+
 ## 1.2.5
 
 ### Patch Changes
