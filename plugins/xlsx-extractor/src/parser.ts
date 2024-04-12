@@ -7,6 +7,7 @@ import { GetHeadersOptions, Headerizer } from './header.detection'
 import { isNullOrWhitespace, prependNonUniqueHeaderColumns } from './utils'
 
 type ParseBufferOptions = Omit<ExcelExtractorOptions, 'chunkSize' | 'parallel'>
+type ProcessedSheet = [PropertyKey, SheetCapture]
 
 export async function parseBuffer(
   buffer: Buffer,
@@ -62,7 +63,7 @@ export async function parseBuffer(
           return [sheetName, processedSheet]
         })
       )
-    ).filter(Boolean) as [PropertyKey, SheetCapture][]
+    ).filter(Boolean) as ProcessedSheet[]
     return Object.fromEntries(processedSheets)
   } catch (e) {
     console.error(e)
