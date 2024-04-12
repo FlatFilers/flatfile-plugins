@@ -21,7 +21,8 @@
   },
   "keywords": [
     "flatfile-plugins",
-    "category-schemas"
+    "category-schemas",
+    "featured"
   ],
   "author": "Flatfile, Inc.",
   "repository": {
