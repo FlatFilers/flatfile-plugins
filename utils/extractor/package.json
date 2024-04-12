@@ -1,8 +1,12 @@
 {
   "name": "@flatfile/util-extractor",
   "version": "0.5.6",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/extractor",
   "description": "A library containing common utilities and helpers for extractors.",
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-utils"
+  ],
   "author": "Carl Brugger",
   "engines": {
     "node": ">= 16"
