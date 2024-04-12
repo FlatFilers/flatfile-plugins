@@ -1,6 +1,7 @@
 {
   "name": "@flatfile/util-file-buffer",
   "version": "0.2.2",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/file-buffer",
   "description": "A utility for extracting data from any file and making it available as a buffer",
   "registryMetadata": {
     "category": "utilities"
@@ -18,7 +19,10 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-utils"
+  ],
   "author": "David Boskovic",
   "repository": {
     "type": "git",
