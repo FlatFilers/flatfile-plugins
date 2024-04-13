@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- 9342781: This release adds more/better messaging when in debug mode.
+- 9342781: This release adds better messaging when in debug mode.
 
 ## 1.11.5
 
