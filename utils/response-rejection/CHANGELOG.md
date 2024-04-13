@@ -1,5 +1,11 @@
 # @flatfile/util-response-rejection
 
+## 1.2.7
+
+### Patch Changes
+
+- 7424e3c: This release resolves a bug that prevented the submission status of valid fields from being updated correctly.
+
 ## 1.2.6
 
 ### Patch Changes

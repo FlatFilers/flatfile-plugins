@@ -114,7 +114,7 @@ async function updateSheet(
         await deleteValidRecords(sheetRejections.sheetId)
       }
     },
-    { ids: recordIds }
+    deleteSubmitted ? { ids: recordIds } : {}
   )
 
   return sheetRejections.rejectedRecords.length
