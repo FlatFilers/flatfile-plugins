@@ -1,7 +1,8 @@
 {
   "name": "@flatfile/plugin-xlsx-extractor",
   "version": "1.11.5",
-  "description": "A plugin for parsing xlsx files in Flatfile.",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/xlsx-extractor",
+  "description": "A plugin for parsing Excel files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
   },
@@ -18,7 +19,10 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-extractors"
+  ],
   "author": "David Boskovic",
   "repository": {
     "type": "git",
