@@ -76,7 +76,6 @@ export class RecordTranslator<
           }
         }
         const metadata = recordWithInfo.row.metadata
-        // @ts-ignore
         const config = recordWithInfo.config
         return {
           id: String(record.rowId),
