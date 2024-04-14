@@ -76,10 +76,12 @@ export class RecordTranslator<
           }
         }
         const metadata = recordWithInfo.row.metadata
+        const config = recordWithInfo.config
         return {
           id: String(record.rowId),
           values,
           metadata,
+          config,
         }
       }) as Flatfile.RecordsWithLinks
     } else {
