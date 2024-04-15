@@ -1,6 +1,7 @@
 {
   "name": "@flatfile/plugin-json-extractor",
   "version": "0.7.2",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/json-extractor",
   "description": "A plugin for parsing json files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -38,7 +39,10 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-extractors"
+  ],
   "author": "Carl Brugger",
   "repository": {
     "type": "git",

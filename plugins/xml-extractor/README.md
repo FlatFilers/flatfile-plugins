@@ -1,46 +1,40 @@
-# @flatfile/plugin-xml-extractor
+<!-- START_INFOCARD -->
 
-This plugin lets you easily extract data from XML files.
+The `@flatfile/xml-extractor` plugin is designed to extract structured data from
+XML files. It utilizes various libraries to parse XML files and retrieve the
+structured data efficiently.
+
+**Event Type:**
+`listener.on('file:created')`
+
+**Supported file types:**
+`.xml`
+
+<!-- END_INFOCARD -->
 
 
-## Get Started
+> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](/docs/orchestration/listeners#listener-types)
 
-Follow [this guide](https://flatfile.com/docs/plugins/extractors/xml-extractor) to learn how to use the plugin.
 
-`listener.js`
+## Parameters
 
-```js
-import { XMLExtractor } from '@flatfile/plugin-xml-extractor'
-
-export default (listener) => {
-  listener.use(XMLExtractor())
-}
-```
-
-```js
-import { XMLExtractor } from '@flatfile/plugin-xml-extractor'
-
-export default (listener) => {
-  listener.use(
-    XMLExtractor({
-      separator: '/',
-      attributePrefix: '#',
-      transform: (row: Record<string, any>) => {
-      },
-    })
-  )
-}
-```
-
-## Configuration
-
-### `separator: string` (default `/`)
-
+#### `separator` - `string` - `default="/" ` - (optional)
 The separator to use when joining or flattening nested attributes.
 
-#### Example with default `/` separator
 
-```xml
+#### `options.chunkSize` - `default="10_000"` - `number` - (optional)
+The `chunkSize` parameter allows you to specify the quantity of records to in
+each chunk.
+
+
+#### `options.parallel` - `default="1"` - `number` - (optional)
+The `parallel` parameter allows you to specify the number of chunks to process
+in parallel.
+
+
+**Before:**  
+
+```xml before
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
     <person>
@@ -54,7 +48,9 @@ The separator to use when joining or flattening nested attributes.
 </root>
 ```
 
-```json
+**After:**  
+
+```json after
 [
   {
     "name": "John",
@@ -65,13 +61,13 @@ The separator to use when joining or flattening nested attributes.
 ]
 ```
 
-## `attributePrefix: string` (default `#`)
 
-The prefix to use when flattening attributes of XML tags.
+#### `attributePrefix` - `string` - `default: "#"` - (optional)
+The prefix to use when flattening attributes of XML tags.  
 
-#### Example with default `#` prefix
+**Before:** 
 
-```xml
+```xml before
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
     <person>
@@ -82,7 +78,9 @@ The prefix to use when flattening attributes of XML tags.
 </root>
 ```
 
-```json
+**After:**  
+
+```json after
 [
   {
     "name": "John",
@@ -93,14 +91,15 @@ The prefix to use when flattening attributes of XML tags.
 ]
 ```
 
-## `transform: (row) => Record<string, any>`
 
-A function that takes a row and returns a transformed row. This is useful for adjusting the data before it is loaded
-into Flatfile.
+#### `transform` - `(row) => Record<string, any>` - (optional)
+A function that takes a row and returns a transformed row. This is useful for
+adjusting the data before it is loaded into Flatfile.
 
-#### Example with transform
 
-```xml
+**Before:** 
+
+```xml before
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
     <person>
@@ -114,11 +113,14 @@ into Flatfile.
         <country code="CA">Canada</country>
 
     </person>
+
 </root>
 ```
 
-```js
-import { XMLExtractor } from '@flatfile/plugin-xml-extractor'
+**listener.js** 
+
+```js listener.js
+import { XMLExtractor } from "@flatfile/plugin-xml-extractor";
 
 export default (listener) => {
   listener.use(
@@ -127,14 +129,16 @@ export default (listener) => {
         return {
           ...row,
           age: parseInt(row.age),
-        }
+        };
       },
     })
-  )
-}
+  );
+};
 ```
 
-```json
+**After:**  
+
+```json after
 [
   {
     "name": "John",
@@ -149,4 +153,38 @@ export default (listener) => {
     "country#code": "CA"
   }
 ]
+```
+
+
+## Usage
+
+Listen for an XML file to be uploaded to Flatfile. The platform will then extract the file automatically. Once complete, the file will be ready for import in the Files area.
+
+```bash install
+npm i @flatfile/plugin-xml-extractor
+```
+
+```js import
+import { XMLExtractor } from "@flatfile/plugin-xml-extractor";
+```
+
+**listener.js** 
+
+```js listener.js
+listener.use(XMLExtractor());
+```
+
+
+### Additional Options
+
+The extractor can accept additional properties. Props will be passed along to the Sheet.js parsing engine.
+
+```js
+listener.use(
+  XMLExtractor({
+    separator: "/",
+    attributePrefix: "#",
+    transform: (row: Record<string, any>) => {},
+  })
+);
 ```
