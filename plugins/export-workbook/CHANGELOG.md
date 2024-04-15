@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 0.1.9
+
+### Patch Changes
+
+- 0ea5a28: This release updates the SheetJS dependency to resolve a security issue.
+
 ## 0.1.8
 
 ### Patch Changes
