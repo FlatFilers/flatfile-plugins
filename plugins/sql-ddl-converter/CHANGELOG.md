@@ -1,5 +1,13 @@
 # @flatfile/plugin-convert-sql-ddl
 
+## 0.0.7
+
+### Patch Changes
+
+- fd5252b: update readme and package keywords
+- Updated dependencies [fd5252b]
+  - @flatfile/plugin-convert-json-schema@0.2.4
+
 ## 0.0.6
 
 ### Patch Changes

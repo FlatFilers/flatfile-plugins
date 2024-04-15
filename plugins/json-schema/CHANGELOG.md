@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-json-schema
 
+## 0.2.4
+
+### Patch Changes
+
+- fd5252b: update readme and package keywords
+
 ## 0.2.3
 
 ### Patch Changes
