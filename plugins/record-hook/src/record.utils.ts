@@ -35,15 +35,19 @@ export function deepEqual(obj1, obj2) {
   return true
 }
 
-// BACKGROUND:
-// Prior to the recordHook's callback being called, the RecordTranslator's toFlatfileRecords() method is called
-// which converts the records into a FlatfileRecords object. This removes fields that the recordHook's callback is
-// expected to check and re-add (i.e. custom-logic messages) and also removes system fields like 'updatedAt'. After all
-// callbacks have run, the toXRecords() method is called to convert the records back into the original format, adds
-// 'source: custom-logic' to all messages and sets all fields to 'valid: true'.
-//
-// This function is intended to remove fields that will never be set on a modified record, specifically 'valid' at the
-// the root level, updatedAt at all levels, and any message that does not have a source of 'custom-logic'.
+/**
+ * This function is used to clean a the original record before it compared to the modified/updated record.
+ *
+ * @remarks
+ * Prior to the recordHook's callback being called, the RecordTranslator's toFlatfileRecords() method is called
+ * which converts the records into a FlatfileRecords object. This removes fields that the recordHook's callback is
+ * expected to check and re-add (i.e. custom-logic messages) and also removes system fields like 'updatedAt'. After all
+ * callbacks have run, the toXRecords() method is called to convert the records back into the original format, adds
+ * 'source: custom-logic' to all messages and sets all fields to 'valid: true'.
+ *
+ * This function is intended to remove fields that will never be set on a modified record, specifically 'valid' at the
+ * the root level, updatedAt at all levels, and any message that does not have a source of 'custom-logic'.
+ */
 export function cleanRecord(record: Flatfile.RecordWithLinks | undefined) {
   if (!record) {
     return
@@ -100,6 +104,7 @@ export async function completeCommit(
       )
     }
   }
+  return
 }
 
 export async function prepareFlatfileRecords(

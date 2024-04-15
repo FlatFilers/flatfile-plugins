@@ -78,6 +78,7 @@ export const BulkRecordHook = async (
     if (!data || data.length === 0) {
       logInfo('@flatfile/plugin-record-hook', 'No records to process')
       await completeCommit(event, debug)
+      return
     }
 
     const batch = await event.cache.init<FlatfileRecords<any>>(
@@ -118,7 +119,8 @@ export const BulkRecordHook = async (
 
       if (!modifiedRecords || modifiedRecords.length === 0) {
         logInfo('@flatfile/plugin-record-hook', 'No records modified')
-        return await completeCommit(event, debug)
+        await completeCommit(event, debug)
+        return
       }
 
       try {
@@ -130,5 +132,6 @@ export const BulkRecordHook = async (
   } catch (e) {
     logError('@flatfile/plugin-record-hook', (e as Error).message)
     await completeCommit(event, debug)
+    return
   }
 }
