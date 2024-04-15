@@ -1,7 +1,8 @@
 {
   "name": "@flatfile/plugin-delimiter-extractor",
-  "version": "0.9.1",
-  "description": "A plugin for parsing a delimited file and extracting it into Flatfile.",
+  "version": "0.9.2",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/delimiter-extractor",
+  "description": "A plugin for parsing .delimiter files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
   },
@@ -18,7 +19,10 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-extractors"
+  ],
   "author": "Carl Brugger",
   "repository": {
     "type": "git",

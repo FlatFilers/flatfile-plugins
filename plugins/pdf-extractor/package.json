@@ -1,6 +1,7 @@
 {
   "name": "@flatfile/plugin-pdf-extractor",
-  "version": "0.1.3",
+  "version": "0.1.4",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/pdf-extractor",
   "description": "A plugin for parsing PDF files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -18,7 +19,10 @@
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-extractors"
+  ],
   "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
