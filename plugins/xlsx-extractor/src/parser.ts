@@ -38,7 +38,14 @@ export async function parseBuffer(
         'File is too large to parse. Try converting this file to CSV.'
       )
     }
-    throw e
+
+    // Try reading the file again without the 'WTF' option.
+    workbook = XLSX.read(buffer, {
+      type: 'buffer',
+      cellDates: true,
+      dense: true,
+      dateNF: options?.dateNF || undefined,
+    })
   }
 
   const sheetNames = Object.keys(workbook.Sheets)
