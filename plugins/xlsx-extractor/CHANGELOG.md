@@ -1,5 +1,17 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 1.11.7
+
+### Patch Changes
+
+- 0ea5a28: This release updates the SheetJS dependency to resolve a security issue.
+
+## 1.11.6
+
+### Patch Changes
+
+- 9342781: This release adds better messaging when in debug mode.
+
 ## 1.11.5
 
 ### Patch Changes
