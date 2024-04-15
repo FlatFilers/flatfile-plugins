@@ -1,5 +1,11 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.1.4
+
+### Patch Changes
+
+- a4666a6: Add readme content and package keywords
+
 ## 0.1.3
 
 ### Patch Changes

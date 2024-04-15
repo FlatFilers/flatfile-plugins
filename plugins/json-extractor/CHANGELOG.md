@@ -1,5 +1,11 @@
 # @flatfile/plugin-json-extractor
 
+## 0.7.3
+
+### Patch Changes
+
+- a4666a6: Add readme content and package keywords
+
 ## 0.7.2
 
 ### Patch Changes

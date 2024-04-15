@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.9.2
+
+### Patch Changes
+
+- a4666a6: Add readme content and package keywords
+
 ## 0.9.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.5.15
+
+### Patch Changes
+
+- a4666a6: Add readme content and package keywords
+
 ## 0.5.14
 
 ### Patch Changes
