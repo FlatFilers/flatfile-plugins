@@ -1,5 +1,11 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.4.5
+
+### Patch Changes
+
+- a4666a6: Add readme content and package keywords
+
 ## 0.4.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 1.11.8
+
+### Patch Changes
+
+- a4666a6: Add readme content and package keywords
+
 ## 1.11.7
 
 ### Patch Changes
