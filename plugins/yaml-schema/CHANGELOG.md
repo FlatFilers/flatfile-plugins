@@ -1,5 +1,13 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.1.4
+
+### Patch Changes
+
+- fd5252b: update readme and package keywords
+- Updated dependencies [fd5252b]
+  - @flatfile/plugin-convert-json-schema@0.2.4
+
 ## 0.1.3
 
 ### Patch Changes

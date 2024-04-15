@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.1.4
+
+### Patch Changes
+
+- fd5252b: update readme and package keywords
+
 ## 0.1.3
 
 ### Patch Changes
