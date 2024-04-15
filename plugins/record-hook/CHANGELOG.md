@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.5.0
+
+### Minor Changes
+
+- 4805dce: Add support for new readonly record and field configurations
+
 ## 1.4.9
 
 ### Patch Changes
