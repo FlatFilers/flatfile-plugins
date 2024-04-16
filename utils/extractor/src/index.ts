@@ -1,6 +1,6 @@
 import api, { Flatfile } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
-import { asyncBatch } from '@flatfile/util-common'
+import { asyncBatch, slugify } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
 
 export const Extractor = (
@@ -178,6 +178,7 @@ function getSheetConfig(
 ): Flatfile.SheetConfig {
   return {
     name,
+    slug: slugify(name),
     fields: headers.map((key) => ({
       key,
       label: key,
