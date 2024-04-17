@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.5.8
+
+### Patch Changes
+
+- b2984b1: This release sets the extracted sheet's slug.
+- Updated dependencies [b2984b1]
+  - @flatfile/util-common@1.2.0
+
 ## 0.5.7
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.2.0
+
+### Minor Changes
+
+- b2984b1: This release sets the extracted sheet's slug.
+
 ## 1.1.1
 
 ### Patch Changes

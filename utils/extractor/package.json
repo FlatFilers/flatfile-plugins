@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-extractor",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/extractor",
   "description": "A library containing common utilities and helpers for extractors.",
   "keywords": [
@@ -29,7 +29,7 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.7.4",
-    "@flatfile/util-common": "^1.1.1",
+    "@flatfile/util-common": "^1.2.0",
     "@flatfile/util-file-buffer": "^0.2.3"
   },
   "peerDependencies": {
