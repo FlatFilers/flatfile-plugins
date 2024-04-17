@@ -14,8 +14,8 @@ export async function generateSetup(
       )
     )
     return {
+      ...setupFactory,
       workbooks,
-      space: setupFactory.space,
     }
   } catch (error) {
     console.error('Error generating workbook:', error)

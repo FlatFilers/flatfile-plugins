@@ -1,10 +1,10 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+import type { Setup } from '@flatfile/plugin-space-configure'
 import type { GraphQLSchema } from 'graphql'
 
-export type GraphQLSetupFactory = {
+export type GraphQLSetupFactory = Omit<Setup, 'workbooks'> & {
   workbooks: PartialWorkbookConfig[]
-  space?: Partial<Flatfile.spaces.SpaceConfig>
 }
 
 export type PartialWorkbookConfig = Omit<
