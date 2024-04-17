@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 1.0.3
+
+### Patch Changes
+
+- f3fcc96: Update dependency to a non-vunerable version
+
 ## 1.0.2
 
 ### Patch Changes
