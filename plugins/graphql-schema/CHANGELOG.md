@@ -1,5 +1,11 @@
 # @flatfile/plugin-graphql-schema
 
+## 1.1.2
+
+### Patch Changes
+
+- 868df3b: This release adds the ability to create documents
+
 ## 1.1.1
 
 ### Patch Changes
