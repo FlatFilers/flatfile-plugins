@@ -27,12 +27,15 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "@flatfile/plugin-convert-openapi-schema": "^0.1.3",
     "@flatfile/plugin-job-handler": "^0.4.2",
     "@mergeapi/merge-node-client": "^1.0.4"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
+  },
+  "devDependencies": {
+    "@flatfile/api": "^1.7.4"
   }
 }

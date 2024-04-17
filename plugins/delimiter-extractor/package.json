@@ -31,12 +31,15 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "@flatfile/util-extractor": "^0.5.3",
     "papaparse": "^5.4.1",
     "remeda": "^1.14.0"
   },
+  "peerDependencies": {
+    "@flatfile/api": "^1.7.4"
+  },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@types/flat": "^5.0.2",
     "@types/papaparse": "^5.3.7"
   }

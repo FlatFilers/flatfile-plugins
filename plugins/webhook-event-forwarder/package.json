@@ -50,13 +50,14 @@
   },
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/rollup-config": "0.1.0",
     "jest-fetch-mock": "^3.0.3"
   }

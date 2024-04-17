@@ -31,15 +31,16 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "@flatfile/util-common": "^1.1.1",
     "@flatfile/util-file-buffer": "^0.2.2",
     "adm-zip": "^0.5.10"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/utils-testing": "^0.1.4",
     "@types/adm-zip": "^0.4.3"
   }

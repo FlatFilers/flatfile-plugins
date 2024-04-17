@@ -47,14 +47,15 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.1",
     "mssql": "^10.0.1",
     "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/rollup-config": "0.1.0"
   }
 }

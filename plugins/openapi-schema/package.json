@@ -50,14 +50,15 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "@flatfile/plugin-space-configure": "^0.3.5",
     "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/rollup-config": "0.1.0"
   }
 }

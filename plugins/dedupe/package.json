@@ -49,14 +49,15 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "@flatfile/plugin-job-handler": "^0.4.2",
     "@flatfile/util-common": "^1.1.1"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@faker-js/faker": "^7.6.0",
     "@flatfile/rollup-config": "0.1.0"
   }
