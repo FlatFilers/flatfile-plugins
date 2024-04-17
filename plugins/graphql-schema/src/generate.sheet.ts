@@ -9,8 +9,11 @@ export function generateSheets(
 ): Flatfile.SheetConfig[] {
   const sheets = graphQLObjects
     .map((object) => {
-      let sheetConfig =
-        sheetConfigArray?.find((config) => config.slug === object.name) || {}
+      const sheetConfig = sheetConfigArray?.find(
+        (config) => config.slug === object.name
+      )
+
+      if (sheetConfigArray?.length > 0 && !sheetConfig) return
 
       const fields = object.fields
         .map((field) => generateField(field, object.name))
