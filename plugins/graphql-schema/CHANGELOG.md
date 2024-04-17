@@ -1,5 +1,11 @@
 # @flatfile/plugin-graphql-schema
 
+## 1.1.1
+
+### Patch Changes
+
+- e156b41: This release fixes filtering of GraphQL objects by providing Sheet slugs
+
 ## 1.1.0
 
 ### Minor Changes
