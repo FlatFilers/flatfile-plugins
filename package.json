@@ -20,7 +20,7 @@
     "lint": "prettier --check **/*.ts",
     "changeset": "changeset",
     "changeset-apply": "changeset version",
-    "release": "turbo build && changeset publish"
+    "release": "NODE_ENV=production turbo build && changeset publish"
   },
   "repository": {
     "type": "git",

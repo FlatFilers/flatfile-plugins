@@ -1,36 +1,36 @@
 name: Changesets
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    release:
-        name: Release
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v2
-              with:
-                  fetch-depth: 0
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 18.x
-                  cache: npm
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: npm
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Create Release Pull Request or Publish to npm
-              id: changesets
-              uses: changesets/action@v1
-              with:
-                  commit: "chore: update versions"
-                  title: "chore: update versions"
-                  publish: npm run release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN  }}
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          commit: 'chore: update versions'
+          title: 'chore: update versions'
+          publish: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN  }}

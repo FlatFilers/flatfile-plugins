@@ -9,14 +9,14 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import dotenv from 'dotenv'
 dotenv.config()
 
-const PROD = process.env.NODE_ENV !== 'development'
+const PROD = process.env.NODE_ENV === 'production'
 if (!PROD) {
   console.log('Not in production mode - skipping minification')
 }
 
 function commonPlugins(browser, umd = false) {
   return [
-    !umd && peerDepsExternal(),
+    !umd && PROD && peerDepsExternal(),
     json(),
     commonjs({
       include: '**/node_modules/**',
