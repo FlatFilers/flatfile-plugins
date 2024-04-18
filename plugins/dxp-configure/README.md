@@ -8,7 +8,7 @@ The `@flatfile/plugin-dxp-configure` plugin lets you easily attach your implemen
 
 ## Parameters
 
-### `workbook` *Workbook*
+#### `workbook` - `Workbook`
 
 The `workbook` parameter takes a Flatfile Workbook.
 

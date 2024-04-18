@@ -16,7 +16,7 @@ The @flatfile/plugin-convert-json-schema plugin will automatically convert JSON 
 The `setupFactory` parameter holds the Workbook and Sheet configuration options and JSON Schema source.
 
 
-#### `callback` - `function`>
+#### `callback` - `function`
 The `callback` parameter receives three arguments: `event`, `workbookIds`, and a `tick` function. The `tick` function can be used to update the Job's progress. The `callback` function is invoked once the Space and Workbooks are fully configured.
 
 
