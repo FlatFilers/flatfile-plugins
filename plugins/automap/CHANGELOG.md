@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.2.5
+
+### Patch Changes
+
+- 6207eb5: Cleanup and update readme
+
 ## 0.2.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 1.0.4
+
+### Patch Changes
+
+- 6207eb5: Cleanup and update readme
+
 ## 1.0.3
 
 ### Patch Changes
