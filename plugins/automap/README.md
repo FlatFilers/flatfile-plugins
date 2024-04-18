@@ -9,32 +9,32 @@ The `@flatfile/plugin-automap` plugin listens for and responds to file extractio
 
 ## Parameters
 
-### `accuracy` *'confident' | 'exact'* (required)
+#### `accuracy` - `'confident' | 'exact'` - (required)
 
 The `accuracy` parameter match columns either by 'confident' (> 90% match) or 'exact' (100% match).
 
 
-### `debug` *boolean*
+#### `debug` - `boolean`
 
 The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
 
 
-### `defaultTargetSheet` *'string' | '(fileName: string) => string | Promise'*
+#### `defaultTargetSheet` - `'string' | '(fileName: string) => string | Promise'`
 
 The `defaultTargetSheet` parameter takes the exact sheet slug or a callback function that resolves to the exact sheet slug to import data to.
 
 
-### `matchFilename` *RegExp*
+#### `matchFilename` - `RegExp`
 
 The `matchFilename` parameter takes a regular expression to match specific files to perform automapping on.
 
 
-### `onFailure` *(event: FlatfileEvent) => void*
+#### `onFailure` - `(event: FlatfileEvent) => void`
 
 The `onFailure` parameter takes a callback function to be executed when plugin bails.
 
 
-### `targetWorkbook` *string*
+#### `targetWorkbook` - `string`
 
 The `targetWorkbook` parameter specifies destination Workbook id or name.
 
