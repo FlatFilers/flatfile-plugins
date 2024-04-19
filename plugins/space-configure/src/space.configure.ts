@@ -34,7 +34,7 @@ export function configureSpace(
       jobHandler('space:configure', async (event, tick) => {
         const { spaceId, environmentId } = event.context
         const config = typeof setup === 'function' ? await setup(event) : setup
-        let workbookIds: string[]
+        let workbookIds: string[] = []
         for (let i = 0; i < config.workbooks.length; i++) {
           const workbook = await api.workbooks.create({
             spaceId,
