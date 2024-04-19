@@ -34,17 +34,16 @@ export function configureSpace(
       jobHandler('space:configure', async (event, tick) => {
         const { spaceId, environmentId } = event.context
         const config = typeof setup === 'function' ? await setup(event) : setup
-        const workbookIds = await Promise.all(
-          config.workbooks.map(async (workbookConfig) => {
-            const workbook = await api.workbooks.create({
-              spaceId,
-              environmentId,
-              name: 'Workbook',
-              ...workbookConfig,
-            })
-            return workbook.data.id
+        let workbookIds: string[]
+        for (let i = 0; i < config.workbooks.length; i++) {
+          const workbook = await api.workbooks.create({
+            spaceId,
+            environmentId,
+            name: 'Workbook',
+            ...config.workbooks[i],
           })
-        )
+          workbookIds.push(workbook.data.id)
+        }
         await tick(50, 'Workbook created')
 
         await api.spaces.update(spaceId, {
