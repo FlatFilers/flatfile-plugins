@@ -34,8 +34,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "build:prod": "rollup -c --environment NODE_ENV:production",
-    "dev": "rollup -c --watch",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
@@ -51,13 +51,14 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "@flatfile/util-common": "^1.1.1"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/rollup-config": "0.1.0",
     "@flatfile/utils-testing": "^0.1.4"
   }

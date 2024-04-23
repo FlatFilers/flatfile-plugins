@@ -15,7 +15,8 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "build": "parcel build",
-    "dev": "parcel watch",
+    "build:watch": "parcel watch",
+    "build:prod": "NODE_ENV=production parcel build",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
@@ -31,16 +32,17 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "@flatfile/plugin-convert-json-schema": "^0.2.4",
     "@flatfile/plugin-space-configure": "^0.3.5",
     "cross-fetch": "^4.0.0",
     "js-yaml": "^4.1.0"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/utils-testing": "^0.1.4",
     "express": "^4.18.2",
     "jest-fetch-mock": "^3.0.3"

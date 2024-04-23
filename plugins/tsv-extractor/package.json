@@ -14,7 +14,8 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "build": "parcel build",
-    "dev": "parcel watch",
+    "build:watch": "parcel watch",
+    "build:prod": "NODE_ENV=production parcel build",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
@@ -27,9 +28,12 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.7.4"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
+  },
+  "devDependencies": {
+    "@flatfile/api": "^1.7.4"
   }
 }

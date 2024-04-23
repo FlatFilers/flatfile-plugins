@@ -33,7 +33,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c --watch",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
@@ -50,13 +51,14 @@
   },
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "dependencies": {
-    "@flatfile/api": "^1.7.4",
     "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
+    "@flatfile/api": "^1.7.4",
     "@flatfile/rollup-config": "0.1.0",
     "jest-fetch-mock": "^3.0.3"
   }
