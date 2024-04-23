@@ -1,4 +1,4 @@
-import { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
 
 /**
  * Keep the last record encountered based on the specified key.
@@ -12,7 +12,10 @@ export const keepLast = (
 ): Array<string> => {
   try {
     const seen = records.reduce(
-      (acc, record) => {
+      (
+        acc: Record<string, Array<string>>,
+        record: Flatfile.RecordWithLinks
+      ) => {
         if (record.values[key].value == null) {
           return acc
         }

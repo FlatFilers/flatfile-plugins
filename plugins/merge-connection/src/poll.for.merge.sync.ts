@@ -14,8 +14,12 @@ export async function waitForMergeSync(
     let syncStatusComplete = false
 
     while (attempts <= MAX_SYNC_ATTEMPTS && !syncStatusComplete) {
-      const { allComplete, completedSyncs, totalModels, syncedModels } =
-        await checkAllSyncsComplete(mergeClient, category)
+      const result = await checkAllSyncsComplete(mergeClient, category)
+      if (!result) {
+        attempts++
+        continue
+      }
+      const { allComplete, completedSyncs, totalModels, syncedModels } = result
 
       if (!syncStatusComplete) {
         syncStatusComplete = allComplete

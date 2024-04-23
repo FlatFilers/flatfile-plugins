@@ -1,6 +1,7 @@
-import { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
+import type { PartialWb, SetupFactory } from '@flatfile/plugin-space-configure'
+
 import { generateFields } from '@flatfile/plugin-convert-json-schema'
-import { PartialWb, SetupFactory } from '@flatfile/plugin-space-configure'
 import { Parser } from 'sql-ddl-to-json-schema'
 
 import * as fs from 'fs'
@@ -38,9 +39,9 @@ export async function generateSetup(
         .feed(sql)
         .toJsonSchemaArray({ useRef: true }, compactJsonTablesArray)
 
-      const sheets: Flatfile.SheetConfig[] = (
+      const sheets: (Flatfile.SheetConfig | undefined)[] = (
         await Promise.all(
-          workbook.sheets.map(async (sheet) => {
+          workbook.sheets.map(async (sheet: PartialSheetConfig) => {
             const schema = schemas.find((schema) => schema.$id === sheet.slug)
             if (!schema) {
               console.error(`Schema not found for table name ${sheet.slug}`)
@@ -62,8 +63,6 @@ export async function generateSetup(
           })
         )
       ).filter(Boolean)
-
-      delete workbook.source
 
       return {
         ...workbook,

@@ -1,4 +1,4 @@
-import { WorkbookCapture } from '@flatfile/util-extractor'
+import type { WorkbookCapture } from '@flatfile/util-extractor'
 
 export function parseBuffer(buffer: Buffer): WorkbookCapture {
   try {
@@ -42,13 +42,16 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
     // Flatten and filter all rows
     const filteredData = filteredResults.map((row) => {
       const flattedRow = flattenObject(row)
-      return headers.reduce((filteredRow, header) => {
-        const cell = flattedRow[header]
-        filteredRow[header] = {
-          value: Array.isArray(cell) ? JSON.stringify(cell) : cell,
-        }
-        return filteredRow
-      }, {})
+      return headers.reduce(
+        (filteredRow: Record<string, Object>, header: string) => {
+          const cell = flattedRow[header]
+          filteredRow[header] = {
+            value: Array.isArray(cell) ? JSON.stringify(cell) : cell,
+          }
+          return filteredRow
+        },
+        {}
+      )
     })
 
     return {

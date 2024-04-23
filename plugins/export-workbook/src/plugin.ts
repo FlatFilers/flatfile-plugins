@@ -50,12 +50,12 @@ export const exportRecords = async (
 
     const { data: workbook } = await api.workbooks.get(workbookId)
     const { data: sheets } = await api.sheets.list({ workbookId })
-    const sanitizedName = sanitize(workbook.name)
+    const sanitizedName = sanitize(workbook.name!)
 
     if (options.debug) {
       const meta = R.pipe(
         sheets,
-        R.reduce((acc, sheet) => {
+        R.reduce((acc: string, sheet: { name: any; id: any }) => {
           return acc + `\n\t'${sheet.name}' (${sheet.id})`
         }, '')
       )
@@ -69,7 +69,7 @@ export const exportRecords = async (
     const xlsxWorkbook = XLSX.utils.book_new()
 
     for (const [sheetIndex, sheet] of sheets.entries()) {
-      if (options.excludedSheets?.includes(sheet.config.slug)) {
+      if (options.excludedSheets?.includes(sheet.config.slug!)) {
         if (options.debug) {
           logInfo(
             '@flatfile/plugin-export-workbook',
@@ -105,10 +105,10 @@ export const exportRecords = async (
                           v: Array.isArray(value) ? value.join(', ') : value,
                           c: [],
                         }
-                        if (R.length(messages) > 0) {
+                        if (messages && R.length(messages) > 0) {
                           cell.c = messages.map((m) => ({
                             a: 'Flatfile',
-                            t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                            t: `[${m.type?.toUpperCase()}]: ${m.message}`,
                             T: true,
                           }))
                           cell.c.hidden = true
@@ -265,9 +265,9 @@ export const exportRecords = async (
             },
           },
         }
-  } catch (error) {
-    logError('@flatfile/plugin-export-workbook', error)
+  } catch (e) {
+    logError('@flatfile/plugin-export-workbook', (e as Error).message)
 
-    throw new Error((error as Error).message)
+    throw new Error((e as Error).message)
   }
 }

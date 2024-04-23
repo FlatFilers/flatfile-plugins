@@ -5,7 +5,7 @@ import type { ModelToSheetConfig, PartialWorkbookConfig } from './setup.factory'
 import { generateSetup } from './setup.factory'
 
 export function configureSpaceWithYamlSchema(
-  models?: ModelToSheetConfig[],
+  models: ModelToSheetConfig[],
   options?: {
     workbookConfig?: PartialWorkbookConfig
     debug?: boolean

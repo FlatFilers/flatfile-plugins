@@ -1,5 +1,6 @@
-import { Flatfile } from '@flatfile/api'
-import { SetupFactory } from '@flatfile/plugin-space-configure'
+import type { Flatfile } from '@flatfile/api'
+import type { SetupFactory } from '@flatfile/plugin-space-configure'
+
 import fetch from 'cross-fetch'
 
 export type JsonSetupFactory = {
@@ -26,7 +27,6 @@ export async function generateSetup(
       const sheets = await Promise.all(
         workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) => {
           const model = await getModel(partialSheetConfig.source)
-          delete partialSheetConfig.source
           const fields = await generateFields(model)
 
           return {

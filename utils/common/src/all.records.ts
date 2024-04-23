@@ -81,7 +81,7 @@ export async function processRecords<R>(
       // Delete updatedAt
       records.forEach((record) =>
         Object.values(record.values).forEach(
-          (value: Record<string, Flatfile.CellValue>) => delete value.updatedAt
+          (value: Flatfile.CellValue, _, __) => delete value.updatedAt
         )
       )
 

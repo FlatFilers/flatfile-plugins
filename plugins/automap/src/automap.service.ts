@@ -1,8 +1,9 @@
+import type { AutomapOptions } from './automap.plugin'
+
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { logError, logInfo, logWarn } from '@flatfile/util-common'
 import { asyncMap } from 'modern-async'
-import { AutomapOptions } from './automap.plugin'
 
 const api = new FlatfileClient()
 
@@ -84,7 +85,7 @@ export class AutomapService {
               return
             }
 
-            destinationSheet = destinationWorkbook.sheets.find(
+            destinationSheet = destinationWorkbook.sheets!.find(
               (s) =>
                 s.name === target || s.id === target || s.config.slug === target
             )
@@ -96,7 +97,7 @@ export class AutomapService {
               const { data: job } = await api.jobs.create({
                 type: 'workbook',
                 operation: 'map',
-                source: file.workbookId,
+                source: file.workbookId!,
                 managed: true,
                 destination: destinationWorkbook.id,
 
@@ -331,7 +332,7 @@ export class AutomapService {
         : defaultTargetSheet
 
     if (sheets.length === 1 && !this.isNil(targetSheet)) {
-      return [{ source: sheets[0].id, target: targetSheet }]
+      return [{ source: sheets[0]!.id, target: targetSheet }]
     } else {
       return []
     }

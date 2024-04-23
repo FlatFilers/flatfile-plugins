@@ -57,7 +57,9 @@ export async function getDatabaseInfo(
     }
     return jsonResponse.data.task
   } catch (e) {
-    throw new Error(`An error occurred retrieving DB info: ${e.message}`)
+    throw new Error(
+      `An error occurred retrieving DB info: ${(e as Error).message}`
+    )
   }
 }
 

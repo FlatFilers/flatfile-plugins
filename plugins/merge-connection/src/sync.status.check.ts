@@ -10,7 +10,8 @@ export async function checkAllSyncsComplete(
     const allSyncs = await fetchAllSyncStatuses(mergeClient, category)
     const syncedModels = allSyncs.filter(
       (syncStatus) =>
-        syncStatus.status !== Merge[category].SyncStatusStatusEnum.Syncing
+        syncStatus.status !==
+        Merge[category as keyof typeof Merge].SyncStatusStatusEnum.Syncing
     )
     const completedSyncs = syncedModels.length
     const totalModels = allSyncs.length

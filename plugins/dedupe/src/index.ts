@@ -1,7 +1,9 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { PluginOptions } from './dedupe.plugin'
+
 import { jobHandler } from '@flatfile/plugin-job-handler'
-import { PluginOptions, dedupe } from './dedupe.plugin'
+import { dedupe } from './dedupe.plugin'
 
 /**
  * Dedupe plugin for Flatfile.
