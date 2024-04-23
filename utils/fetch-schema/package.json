@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-fetch-schema",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "A utility for fetching schemas for processing",
   "registryMetadata": {
     "category": "utilities"

@@ -1,5 +1,16 @@
 # @flatfile/util-response-rejection
 
+## 1.3.0
+
+### Minor Changes
+
+- 9257c54: This release moves `@flatfile/api` to the plugin's `peerDependencies`. Most plugins use the `@flatfile/api` SDK, and as such, we don’t want to bundle it with every plugin. By moving `@flatfile/api` to `peerDependencies`, it won’t be bundled. However, the consuming project will be required to install it. Depending on the npm version, `peerDependencies` may be auto-installed or a warning given when `npm install` is run. Additionally, this significantly reduces the bundle size.
+
+### Patch Changes
+
+- Updated dependencies [9257c54]
+  - @flatfile/util-common@1.3.0
+
 ## 1.2.7
 
 ### Patch Changes
