@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.5.1
+
+### Patch Changes
+
+- cd92793: This release improves the recordHook original to modified record comparison and completes the commit when an exception is thrown.
+
 ## 1.5.0
 
 ### Minor Changes
