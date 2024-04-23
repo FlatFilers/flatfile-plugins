@@ -26,7 +26,7 @@ export async function responseRejectionHandler(
   let totalRejectedRecords = 0
 
   for (const sheet of responseRejection.sheets || []) {
-    const count = await updateSheet(sheet, responseRejection.deleteSubmitted)
+    const count = await updateSheet(sheet, !!responseRejection.deleteSubmitted)
     totalRejectedRecords += count
   }
 
@@ -47,7 +47,7 @@ export async function responseRejectionHandler(
   }
 }
 
-function getMessage(totalRejectedRecords) {
+function getMessage(totalRejectedRecords: number) {
   return totalRejectedRecords > 0
     ? `During the data submission process, ${totalRejectedRecords} records were rejected. Please review and correct these records before resubmitting.`
     : 'The data has been successfully submitted without any rejections. This task is now complete.'

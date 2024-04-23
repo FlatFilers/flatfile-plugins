@@ -1,7 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
-import { generateFields } from '@flatfile/plugin-convert-json-schema'
-import { Setup, SetupFactory } from '@flatfile/plugin-space-configure'
+import type { Setup, SetupFactory } from '@flatfile/plugin-space-configure'
 
+import { generateFields } from '@flatfile/plugin-convert-json-schema'
 import jsYaml from 'js-yaml'
 
 export interface ModelToSheetConfig extends PartialSheetConfig {
@@ -19,20 +19,20 @@ export interface PartialWorkbookConfig
 }
 
 export async function generateSetup(
-  models?: ModelToSheetConfig[],
+  models: ModelToSheetConfig[],
   options?: {
     workbookConfig?: PartialWorkbookConfig
     debug?: boolean
   }
 ): Promise<SetupFactory> {
   const schemas = await getSchemas(models)
-  const asdf = schemas.map((schema) => jsYaml.load(schema))
+  const jsonSchemas = schemas.map((schema) => jsYaml.load(schema))
 
   const sheets = await Promise.all(
     models.map(async (model: ModelToSheetConfig, i) => {
-      const data = asdf[i]
+      const data: any = jsonSchemas[i]
       const fields = await generateFields(data)
-      delete model.sourceUrl
+
       return {
         name: model?.name || data.title,
         ...(data?.description && { description: data.description }),
@@ -56,7 +56,7 @@ export async function generateSetup(
   return setup
 }
 
-async function getSchemas(models?: ModelToSheetConfig[]) {
+async function getSchemas(models: ModelToSheetConfig[]) {
   const schemas = models.map(async (model: ModelToSheetConfig) => {
     return await fetchExternalReference(model.sourceUrl)
   })

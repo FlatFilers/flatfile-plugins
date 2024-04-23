@@ -1,14 +1,16 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { OpenAPISetupFactory } from './setup.factory'
+
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { OpenAPISetupFactory, generateSetup } from './setup.factory'
+import { generateSetup } from './setup.factory'
 
 export function configureSpaceWithOpenAPI(
   setupFactory: OpenAPISetupFactory,
   callback?: (
     event: FlatfileEvent,
     workbookIds: string[],
-    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
+    tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => any | Promise<any>
 ) {
   return async function (listener: FlatfileListener) {

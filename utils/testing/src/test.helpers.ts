@@ -10,7 +10,7 @@ const api = new FlatfileClient()
  *
  * @returns The environment id string.
  */
-export function getEnvironmentId(): string {
+export function getEnvironmentId(): string | undefined {
   return process.env.FLATFILE_ENVIRONMENT_ID
 }
 
@@ -42,6 +42,9 @@ export async function deleteSpace(spaceId: string): Promise<Flatfile.Success> {
  */
 export function streamEvents(listener: TestListener) {
   const environmentId = getEnvironmentId()
+  if (!environmentId) {
+    throw new Error('environmentId is not defined')
+  }
 
   const driver = new PubSubDriver(environmentId)
 

@@ -51,7 +51,7 @@ export const foreignDBExtractor = () => {
         }
         try {
           const job = await api.jobs.get(jobId)
-          const { fileName } = job.data.input
+          const { fileName } = job.data.input as { fileName: string }
 
           // Step 2.1: Create a workbook so we can use the workbookId to name the database
           await tick(5, 'Creating workbook')
@@ -72,18 +72,18 @@ export const foreignDBExtractor = () => {
 
           // Step 2.3: Restore DB from Backup on S3
           await tick(50, 'Restoring database')
-          const connectionConfig: sql.config = await restoreDatabase(
+          const connectionConfig = (await restoreDatabase(
             workbook.id,
             fileId
-          )
+          )) as sql.config
 
           // Step 2.4: Poll for database availability
           await tick(60, 'Polling for database availability')
-          await pollDatabaseStatus(connectionConfig.database)
+          await pollDatabaseStatus(connectionConfig.database!)
 
           // Step 2.5: Retrieve user credentials for the database
           await tick(85, 'Retrieving database user credentials')
-          const user = (await pollForUser(connectionConfig.database)) as DBUser
+          const user = (await pollForUser(connectionConfig.database!)) as DBUser
           connectionConfig.user = user.username
           connectionConfig.password = user.password
 
@@ -123,7 +123,7 @@ export const foreignDBExtractor = () => {
             status: 'failed',
           })
           await api.jobs.fail(jobId, {
-            info: e.message,
+            info: (e as Error).message,
           })
         }
       }

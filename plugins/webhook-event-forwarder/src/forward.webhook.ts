@@ -33,7 +33,7 @@ export function webhookEventForward(
         callback ? await callback(data, event) : null
       } catch (err) {
         if (options?.debug) {
-          console.error(err.toString())
+          console.error((err as Error).toString())
         }
 
         callback
@@ -41,7 +41,7 @@ export function webhookEventForward(
               {
                 error: true,
                 message: 'Error received, please try again',
-                data: err.toString(),
+                data: (err as Error).toString(),
               },
               event
             )

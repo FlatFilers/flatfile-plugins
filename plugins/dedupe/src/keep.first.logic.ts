@@ -1,4 +1,4 @@
-import { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
 
 /**
  * Keep the first record encountered based on the specified key.

@@ -142,7 +142,7 @@ export const Extractor = (
           })
         } catch (e) {
           if (debug) {
-            console.log(`Extractor error: ${e.message}`)
+            console.log(`Extractor error: ${(e as Error).message}`)
           }
           await api.files.update(fileId, {
             status: 'failed',
@@ -150,7 +150,7 @@ export const Extractor = (
           await api.jobs.fail(jobId, {
             info: 'Extraction failed',
             outcome: {
-              message: e.message,
+              message: (e as Error).message,
             },
           })
         }

@@ -93,7 +93,7 @@ export const ZipExtractor = (options: PluginOptions = {}) => {
             } as Flatfile.JobCompleteDetails
           } catch (e) {
             logInfo('@flatfile/plugin-zip-extractor', `error ${e}`)
-            throw new Error(`Extraction failed ${e.message}`)
+            throw new Error(`Extraction failed ${(e as Error).message}`)
           }
         }
       )

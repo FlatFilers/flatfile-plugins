@@ -1,9 +1,11 @@
-import { Flatfile } from '@flatfile/api'
-import { WorkbookCapture } from '@flatfile/util-extractor'
-import Papa, { ParseResult } from 'papaparse'
+import type { Flatfile } from '@flatfile/api'
+import type { WorkbookCapture } from '@flatfile/util-extractor'
+import type { ParseResult } from 'papaparse'
+import type { DelimiterOptions } from '.'
+
+import Papa from 'papaparse'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
-import { DelimiterOptions } from '.'
 import { Headerizer } from './header.detection'
 
 type ParseBufferOptions = Omit<DelimiterOptions, 'chunkSize' | 'parallel'> & {
@@ -60,12 +62,12 @@ export async function parseBuffer(
 
     // return if there are no rows
     if (rows.length === 0) {
-      return
+      return {} as WorkbookCapture
     }
 
     while (
       rows.length > 0 &&
-      Object.values(rows[rows.length - 1]).every(isNullOrWhitespace)
+      Object.values(rows[rows.length - 1]!).every(isNullOrWhitespace)
     ) {
       rows.pop()
     }
@@ -85,13 +87,13 @@ export async function parseBuffer(
         return !isEmpty
       })
       .map((row) => {
-        const mappedRow = mapKeys(row, (key) => headers[key])
+        const mappedRow = mapKeys(row, (key) => headers[key]!)
         return mapValues(mappedRow, (value) => ({
           value: transform(value),
         })) as Flatfile.RecordData
       })
 
-    let metadata: { rowHeaders: number[] } | null
+    let metadata: { rowHeaders: number[] } | null = null
 
     if (options?.headerSelectionEnabled) {
       metadata = {
@@ -100,22 +102,25 @@ export async function parseBuffer(
     }
 
     const sheetName = 'Sheet1'
-    return {
+    const workbook: WorkbookCapture = {
       [sheetName]: {
         headers,
         data,
         metadata,
       },
-    } as WorkbookCapture
+    }
+    return workbook
   } catch (error) {
     console.log('An error occurred:', error)
     throw error
   }
 }
 
-function prependNonUniqueHeaderColumns(record: string[]): string[] {
+function prependNonUniqueHeaderColumns(
+  record: string[]
+): Record<string, string> {
   const counts: Record<string, number> = {}
-  const result: string[] = []
+  const result: Record<string, string> = {}
   for (const [key, value] of Object.entries(record)) {
     const cleanValue = value?.toString().replace('*', '')
     if (cleanValue && counts[value]) {
