@@ -195,7 +195,9 @@ describe('RecordHook e2e', () => {
       await createRecords(sheetId, [{ email: 'john@doe.com' }])
 
       await listener.waitFor('commit:created')
-      expect(logSpy).toHaveBeenCalledWith('No records modified')
+      expect(logSpy).toHaveBeenCalledWith(
+        '[@flatfile/plugin-record-hook]:[INFO] No records modified'
+      )
     })
 
     it('sets metadata', async () => {
@@ -222,7 +224,7 @@ describe('RecordHook e2e', () => {
 
       await listener.waitFor('commit:created')
       expect(logErrorSpy).toHaveBeenCalledWith(
-        'An error occurred while running the handler: oops'
+        '[@flatfile/plugin-record-hook]:[FATAL] oops'
       )
     })
   })
@@ -368,7 +370,9 @@ describe('RecordHook e2e', () => {
       await createRecords(sheetId, [{ email: 'john@doe.com' }])
 
       await listener.waitFor('commit:created')
-      expect(logSpy).toHaveBeenCalledWith('No records modified')
+      expect(logSpy).toHaveBeenCalledWith(
+        '[@flatfile/plugin-record-hook]:[INFO] No records modified'
+      )
     })
 
     it('sets metadata', async () => {
@@ -399,7 +403,7 @@ describe('RecordHook e2e', () => {
 
       await listener.waitFor('commit:created')
       expect(logErrorSpy).toHaveBeenCalledWith(
-        'An error occurred while running the handler: oops'
+        '[@flatfile/plugin-record-hook]:[FATAL] oops'
       )
     })
 

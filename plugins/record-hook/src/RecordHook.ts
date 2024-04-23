@@ -1,8 +1,14 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 import type { FlatfileEvent } from '@flatfile/listener'
-import { asyncBatch } from '@flatfile/util-common'
-import { RecordTranslator } from './record.translator'
+import { asyncBatch, logError, logInfo } from '@flatfile/util-common'
+import {
+  cleanRecord,
+  completeCommit,
+  deepEqual,
+  prepareFlatfileRecords,
+  prepareXRecords,
+} from './record.utils'
 
 export interface RecordHookOptions {
   concurrency?: number
@@ -54,47 +60,24 @@ export const BulkRecordHook = async (
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
-  const { commitId } = event.context
-  const { trackChanges } = event.payload
-
-  const completeCommit = async () => {
-    if (trackChanges) {
-      try {
-        await event.fetch(`v1/commits/${commitId}/complete`, {
-          method: 'POST',
-        })
-        if (options.debug) {
-          console.log('Commit completed successfully')
-        }
-      } catch (e) {
-        console.log(`Error completing commit: ${e}`)
-      }
-    }
-  }
-
-  const fetchData = async (): Promise<
-    Flatfile.RecordsWithLinks | undefined
-  > => {
-    try {
-      const data = await event.data
-      return data.records && data.records.length ? data.records : undefined
-    } catch (e) {
-      console.log(`Error fetching records: ${e}`)
-    }
-    return undefined
-  }
+  const { debug = false } = options
 
   try {
     const data = await event.cache.init<Flatfile.RecordsWithLinks>(
       'data',
-      async () => await fetchData()
+      async (): Promise<Flatfile.RecordsWithLinks> => {
+        try {
+          const data = await event.data
+          return data.records && data.records.length ? data.records : undefined
+        } catch (e) {
+          throw new Error('Error fetching records')
+        }
+      }
     )
 
     if (!data || data.length === 0) {
-      if (options.debug) {
-        console.log('No records to process')
-      }
-      await completeCommit()
+      logInfo('@flatfile/plugin-record-hook', 'No records to process')
+      await completeCommit(event, debug)
       return
     }
 
@@ -116,99 +99,39 @@ export const BulkRecordHook = async (
       const data = await event.cache.get<Flatfile.RecordsWithLinks>('data')
       const modifiedRecords: Flatfile.RecordsWithLinks = records.filter(
         (record: Flatfile.RecordWithLinks) => {
-          const originalRecord: Flatfile.RecordWithLinks = data.find(
-            (original: Flatfile.RecordWithLinks) => original.id === record.id
-          )!
-          return hasChange(record, originalRecord)
+          const originalRecord: Flatfile.RecordWithLinks | undefined =
+            data.find(
+              (original: Flatfile.RecordWithLinks) => original.id === record.id
+            )
+          cleanRecord(originalRecord) // Remove fields that should not be compared
+          const hasChanges = !deepEqual(record, originalRecord)
+          if (debug) {
+            logInfo(
+              '@flatfile/plugin-record-hook',
+              `Record ${record.id} ${
+                hasChanges ? 'has' : 'does not have'
+              } changes`
+            )
+          }
+          return hasChanges
         }
       )
 
       if (!modifiedRecords || modifiedRecords.length === 0) {
-        if (options.debug) {
-          console.log('No records modified')
-        }
-        await completeCommit()
+        logInfo('@flatfile/plugin-record-hook', 'No records modified')
+        await completeCommit(event, debug)
         return
       }
 
       try {
         return await event.update(modifiedRecords)
       } catch (e) {
-        console.log(`Error updating records: ${e}`)
+        throw new Error('Error updating records')
       }
     })
   } catch (e) {
-    console.error(`An error occurred while running the handler: ${e.message}`)
+    logError('@flatfile/plugin-record-hook', (e as Error).message)
+    await completeCommit(event, debug)
+    return
   }
-}
-
-function hasChange(
-  originalRecord: Flatfile.RecordWithLinks,
-  modifiedRecord: Flatfile.RecordWithLinks
-): boolean {
-  const ignoredRecordKeys = ['valid', 'updatedAt']
-
-  // Check if objects are identical or both null
-  if (originalRecord === modifiedRecord) {
-    return false
-  }
-
-  // Check if one of them is null or not an object
-  if (
-    typeof originalRecord !== 'object' ||
-    typeof modifiedRecord !== 'object' ||
-    originalRecord == null ||
-    modifiedRecord == null
-  ) {
-    return true
-  }
-
-  // Get keys excluding ignored keys at the current level
-  const keysOriginal = Object.keys(originalRecord).filter(
-    (key) => !ignoredRecordKeys.includes(key)
-  )
-  const keysModified = Object.keys(modifiedRecord).filter(
-    (key) => !ignoredRecordKeys.includes(key)
-  )
-
-  // Check if number of properties is different
-  if (keysOriginal.length !== keysModified.length) {
-    return true
-  }
-
-  // Iterate over keys and check for changes, including nested objects
-  for (const key of keysOriginal) {
-    if (!keysModified.includes(key)) {
-      return true
-    }
-
-    // Check if the current property is an object and needs recursive comparison
-    if (
-      typeof originalRecord[key] === 'object' &&
-      typeof modifiedRecord[key] === 'object' &&
-      originalRecord[key] !== null &&
-      modifiedRecord[key] !== null
-    ) {
-      if (hasChange(originalRecord[key], modifiedRecord[key])) {
-        return true
-      }
-    } else if (originalRecord[key] !== modifiedRecord[key]) {
-      // Direct comparison for non-object or primitive types
-      return true
-    }
-  }
-
-  return false
-}
-
-const prepareFlatfileRecords = async (
-  records: any
-): Promise<Flatfile.RecordsWithLinks> => {
-  const fromFlatfile = new RecordTranslator<FlatfileRecord<any>>(records)
-  return fromFlatfile.toXRecords()
-}
-
-const prepareXRecords = async (records: any): Promise<FlatfileRecords<any>> => {
-  const fromX = new RecordTranslator<Flatfile.RecordWithLinks>(records)
-  return fromX.toFlatfileRecords()
 }
