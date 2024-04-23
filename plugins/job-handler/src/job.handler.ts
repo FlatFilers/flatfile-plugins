@@ -73,14 +73,14 @@ export function jobHandler(
           }
         )
       } catch (error) {
-        logError('@flatfile/plugin-job-handler', error.message)
+        logError('@flatfile/plugin-job-handler', (error as Error).message)
         await api.jobs.fail(
           jobId,
           outcome ?? {
-            info: String(error.message),
+            info: String((error as Error).message),
             outcome: {
               acknowledge: true,
-              message: String(error.message),
+              message: String((error as Error).message),
             },
           }
         )

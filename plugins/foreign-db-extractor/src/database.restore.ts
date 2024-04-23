@@ -47,7 +47,9 @@ export async function restoreDatabase(
       timeout: 15000,
     }
   } catch (e) {
-    throw new Error(`An error occurred during DB restore: ${e.message}`)
+    throw new Error(
+      `An error occurred during DB restore: ${(e as Error).message}`
+    )
   }
 }
 

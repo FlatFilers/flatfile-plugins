@@ -13,7 +13,7 @@ export class TestListener extends FlatfileListener {
     number,
     (num: number) => void,
     string,
-    string,
+    string | undefined,
   ][] = []
 
   /**
@@ -21,7 +21,7 @@ export class TestListener extends FlatfileListener {
    *
    * @param event The event being dispatched
    */
-  async dispatchEvent(event: any): Promise<void> {
+  override async dispatchEvent(event: any): Promise<void> {
     const currentCount = this.invocations.get(event.topic) || 0
     this.invocations.set(event.topic, currentCount + 1)
 
@@ -50,8 +50,9 @@ export class TestListener extends FlatfileListener {
     return new Promise((resolve) => {
       this.invocationWatchers.push([count, resolve, event, job])
 
-      if (this.invocations.get(event) >= count) {
-        resolve(this.invocations.get(event))
+      const eventInvocations = this.invocations.get(event)
+      if (eventInvocations && eventInvocations >= count) {
+        resolve(eventInvocations)
       }
     })
   }

@@ -1,8 +1,9 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+import type { PluginOptions } from './plugin'
 
 import { jobHandler } from '@flatfile/plugin-job-handler'
-import { PluginOptions, exportRecords } from './plugin'
+import { exportRecords } from './plugin'
 
 /**
  * Export records plugin for Flatfile.
