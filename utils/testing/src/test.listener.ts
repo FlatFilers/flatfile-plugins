@@ -29,11 +29,11 @@ export class TestListener extends FlatfileListener {
    *
    * @param event The event being dispatched
    */
-  async dispatchEvent(event: any): Promise<void> {
+  override async dispatchEvent(event: any): Promise<void> {
     await super.dispatchEvent(event)
 
     if (this.invocations.has(event.topic)) {
-      this.invocations.get(event.topic).push(event)
+      this.invocations.get(event.topic)?.push(event)
     } else {
       this.invocations.set(event.topic, [event])
     }

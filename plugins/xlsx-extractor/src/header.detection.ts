@@ -146,7 +146,7 @@ class OriginalDetector extends Headerizer {
 // This implementation simply returns an explicit list of headers
 // it was provided with.
 class ExplicitHeaders extends Headerizer {
-  headers: string[]
+  headers: string[] = []
   constructor(private readonly options: ExplicitHeadersOptions) {
     super()
 

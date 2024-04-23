@@ -20,8 +20,8 @@ export function autocast(
     listener.use(
       bulkRecordHookPlugin(
         sheetSlug,
-        async (records: FlatfileRecord[], event: FlatfileEvent) => {
-          const sheetId = event.context.sheetId
+        async (records: FlatfileRecord[], event?: FlatfileEvent) => {
+          const { sheetId } = event?.context
           const sheet = await api.sheets.get(sheetId)
           if (!sheet) {
             logInfo('@flatfile/plugin-autocast', 'Failed to fetch sheet')
@@ -48,7 +48,7 @@ export function autocast(
                 } catch (e) {
                   record.addError(
                     field.key,
-                    e.message || 'Failed to cast value'
+                    (e as Error).message || 'Failed to cast value'
                   )
                 }
               }

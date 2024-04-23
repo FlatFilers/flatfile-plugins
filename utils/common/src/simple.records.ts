@@ -1,9 +1,9 @@
 import { Flatfile } from '@flatfile/api'
+import type { TickHelper } from './all.records'
 import {
   createAllRecords,
   getRecordsRaw,
   getSheetLength,
-  TickHelper,
   updateAllRecords,
 } from './all.records'
 import { asyncLimitSeries } from './async.helpers'
