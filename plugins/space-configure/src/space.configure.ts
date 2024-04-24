@@ -47,6 +47,14 @@ export function configureSpace(
         )
         await tick(50, 'Workbook created')
 
+        if (config.space.maintainWorkbookOrder) {
+          config.space.settings = {
+            sidebarConfig: {
+              workbookSidebarOrder: workbookIds,
+            },
+          }
+        }
+
         await api.spaces.update(spaceId, {
           environmentId: environmentId,
           primaryWorkbookId:
@@ -74,7 +82,9 @@ export type SetupFactory =
   | ((event: FlatfileEvent) => Setup | Promise<Setup>)
 export type Setup = {
   workbooks: PartialWb[]
-  space?: Partial<Flatfile.spaces.SpaceConfig>
+  space?: Partial<
+    Flatfile.spaces.SpaceConfig & { maintainWorkbookOrder?: boolean }
+  >
   documents?: Flatfile.DocumentConfig[]
 }
 export type PartialWb = Partial<Flatfile.CreateWorkbookConfig>
