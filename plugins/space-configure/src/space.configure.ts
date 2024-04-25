@@ -48,6 +48,10 @@ export function configureSpace(
         await tick(50, 'Workbook created')
 
         if (config.maintainWorkbookOrder) {
+          if (!config.space) {
+            config.space = {}
+          }
+
           config.space.settings = {
             sidebarConfig: {
               workbookSidebarOrder: workbookIds,
