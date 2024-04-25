@@ -22,7 +22,7 @@ import { jobHandler } from '@flatfile/plugin-job-handler'
  * and configuring the space when the event is emitted.
  */
 export function configureSpace(
-  setup: SetupFactory,
+  setupFactory: SetupFactory,
   callback?: (
     event: FlatfileEvent,
     workbookIds: string[],
@@ -33,9 +33,12 @@ export function configureSpace(
     listener.use(
       jobHandler('space:configure', async (event, tick) => {
         const { spaceId, environmentId } = event.context
-        const config = typeof setup === 'function' ? await setup(event) : setup
+        const setup =
+          typeof setupFactory === 'function'
+            ? await setupFactory(event)
+            : setupFactory
         const workbookIds = await Promise.all(
-          config.workbooks.map(async (workbookConfig) => {
+          setup.workbooks.map(async (workbookConfig) => {
             const workbook = await api.workbooks.create({
               spaceId,
               environmentId,
@@ -47,15 +50,27 @@ export function configureSpace(
         )
         await tick(50, 'Workbook created')
 
+        if (setup.config?.maintainWorkbookOrder) {
+          if (!setup.space) {
+            setup.space = {}
+          }
+
+          setup.space.settings = {
+            sidebarConfig: {
+              workbookSidebarOrder: workbookIds,
+            },
+          }
+        }
+
         await api.spaces.update(spaceId, {
           environmentId: environmentId,
           primaryWorkbookId:
             workbookIds && workbookIds.length > 0 ? workbookIds[0] : '',
-          ...config.space,
+          ...setup.space,
         })
 
-        if (config.documents) {
-          for (const document of config.documents) {
+        if (setup.documents) {
+          for (const document of setup.documents) {
             await api.documents.create(spaceId, document)
           }
         }
@@ -74,7 +89,10 @@ export type SetupFactory =
   | ((event: FlatfileEvent) => Setup | Promise<Setup>)
 export type Setup = {
   workbooks: PartialWb[]
-  space?: Partial<Flatfile.spaces.SpaceConfig>
+  space?: Partial<Flatfile.SpaceConfig>
   documents?: Flatfile.DocumentConfig[]
+  config?: {
+    maintainWorkbookOrder?: boolean
+  }
 }
 export type PartialWb = Partial<Flatfile.CreateWorkbookConfig>
