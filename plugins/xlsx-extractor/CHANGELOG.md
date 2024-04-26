@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 1.11.10
+
+### Patch Changes
+
+- e1e79a9: This release reattempts to read XLSX files that may have emitted an error that could be handled.
+
 ## 1.11.9
 
 ### Patch Changes

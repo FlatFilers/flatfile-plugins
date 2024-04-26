@@ -1,5 +1,11 @@
 # @flatfile/plugin-space-configure
 
+## 0.5.0
+
+### Minor Changes
+
+- 5f77620: Adds Support for Configuring Workbook Order for Spaces UI Sidebar
+
 ## 0.4.0
 
 ### Minor Changes
