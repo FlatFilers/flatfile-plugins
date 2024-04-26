@@ -1,5 +1,13 @@
 # @flatfile/plugin-convert-sql-ddl
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [5f77620]
+  - @flatfile/plugin-space-configure@0.5.0
+  - @flatfile/plugin-convert-json-schema@0.3.1
+
 ## 0.1.0
 
 ### Minor Changes
