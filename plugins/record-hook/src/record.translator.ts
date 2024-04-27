@@ -8,7 +8,7 @@ import type {
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 
 export class RecordTranslator<
-  T extends FlatfileRecord | Flatfile.RecordWithLinks
+  T extends FlatfileRecord | Flatfile.RecordWithLinks,
 > {
   constructor(private readonly records: T[]) {
     this.records = records

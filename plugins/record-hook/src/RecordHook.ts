@@ -92,9 +92,8 @@ export const BulkRecordHook = async (
     event.afterAll(async () => {
       const { records: batch } =
         event.cache.get<FlatfileRecords<any>>('records')
-      const records: Flatfile.RecordsWithLinks = await prepareFlatfileRecords(
-        batch
-      )
+      const records: Flatfile.RecordsWithLinks =
+        await prepareFlatfileRecords(batch)
 
       const data = await event.cache.get<Flatfile.RecordsWithLinks>('data')
       const modifiedRecords: Flatfile.RecordsWithLinks = records.filter(

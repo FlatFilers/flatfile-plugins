@@ -11,21 +11,24 @@ export const keepLast = (
   uniques: Set<unknown>
 ): Array<string> => {
   try {
-    const seen = records.reduce((acc, record) => {
-      if (record.values[key].value == null) {
+    const seen = records.reduce(
+      (acc, record) => {
+        if (record.values[key].value == null) {
+          return acc
+        }
+
+        const value = String(record.values[key].value)
+        uniques.add(value) // Add value to uniques set
+
+        if (acc[value] == null) {
+          acc[value] = [record.id]
+        } else {
+          acc[value].push(record.id)
+        }
         return acc
-      }
-
-      const value = String(record.values[key].value)
-      uniques.add(value) // Add value to uniques set
-
-      if (acc[value] == null) {
-        acc[value] = [record.id]
-      } else {
-        acc[value].push(record.id)
-      }
-      return acc
-    }, {} as Record<string, Array<string>>)
+      },
+      {} as Record<string, Array<string>>
+    )
 
     return Object.keys(seen).reduce((acc, keyValue) => {
       const ids = seen[keyValue]

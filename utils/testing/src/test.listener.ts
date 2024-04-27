@@ -13,7 +13,7 @@ export class TestListener extends FlatfileListener {
     number,
     (num: number) => void,
     string,
-    string
+    string,
   ][] = []
 
   /**
