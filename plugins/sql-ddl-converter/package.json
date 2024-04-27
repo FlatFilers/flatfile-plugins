@@ -37,10 +37,7 @@
     "sql-ddl-to-json-schema": "^4.1.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.7.4",
+    "@flatfile/api": "^1.8.0",
     "@flatfile/listener": "^1.0.1"
-  },
-  "devDependencies": {
-    "@flatfile/api": "^1.7.4"
   }
 }

@@ -1,11 +1,13 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import { logError, logInfo, processRecords } from '@flatfile/util-common'
 import * as fs from 'fs'
 import path from 'path'
 import * as R from 'remeda'
 import * as XLSX from 'xlsx'
+
+const api = new FlatfileClient()
 
 /**
  * Plugin config options.

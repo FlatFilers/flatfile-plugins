@@ -1,8 +1,10 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
 import type { SetupFactory } from '.'
 import { configureSpace } from '.'
 import { gettingStartedSheet } from '../ref/getting_started'
+
+const api = new FlatfileClient()
 
 const setup: SetupFactory = {
   workbooks: [

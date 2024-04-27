@@ -37,10 +37,9 @@
     "remeda": "^1.14.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.7.4"
+    "@flatfile/api": "^1.8.0"
   },
   "devDependencies": {
-    "@flatfile/api": "^1.7.4",
     "@types/flat": "^5.0.2",
     "@types/papaparse": "^5.3.7"
   }

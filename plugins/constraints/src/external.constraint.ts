@@ -1,11 +1,13 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import {
   FlatfileRecord,
   bulkRecordHookPlugin,
 } from '@flatfile/plugin-record-hook'
 import { getConstraints } from './get.constraints'
+
+const api = new FlatfileClient()
 
 export const externalConstraint = (
   validator: string,

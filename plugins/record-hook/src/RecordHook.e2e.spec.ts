@@ -1,4 +1,4 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import {
   createRecords,
   deleteSpace,
@@ -9,6 +9,8 @@ import {
 } from '@flatfile/utils-testing'
 import { FlatfileRecord } from '.'
 import { bulkRecordHook, recordHook } from './record.hook.plugin'
+
+const api = new FlatfileClient()
 
 describe('RecordHook e2e', () => {
   const listener = setupListener()

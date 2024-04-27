@@ -1,4 +1,4 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import sql from 'mssql'
 import { pollDatabaseStatus } from './database.poll.status'
@@ -7,6 +7,8 @@ import type { DBUser } from './database.user'
 import { pollForUser } from './database.user'
 import { s3Upload } from './s3.upload'
 import { generateSheets } from './sheets.generator'
+
+const api = new FlatfileClient()
 
 export const foreignDBExtractor = () => {
   return (listener: FlatfileListener) => {

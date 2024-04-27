@@ -1,10 +1,12 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import { MERGE_ACCESS_KEY } from './config'
 import { waitForMergeSync } from './poll.for.merge.sync'
 import { syncData } from './sync.data'
 import { getMergeClient, getSecret, handleError } from './utils'
+
+const api = new FlatfileClient()
 
 export function handleConnectedWorkbookSync() {
   return async (

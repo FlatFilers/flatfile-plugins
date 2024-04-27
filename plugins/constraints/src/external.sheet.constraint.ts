@@ -1,5 +1,5 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { TPrimitive } from '@flatfile/hooks'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import {
@@ -7,6 +7,8 @@ import {
   bulkRecordHookPlugin,
 } from '@flatfile/plugin-record-hook'
 import { getSheetConstraints } from './get.constraints'
+
+const api = new FlatfileClient()
 
 /**
  * External sheet constraints can be registered on a combination of fields. Unlike the single
@@ -75,8 +77,11 @@ function partialProperties(
 }
 
 function partialObject(record: FlatfileRecord, keys: string[]) {
-  return keys.reduce((acc, key) => {
-    acc[key] = record.get(key)
-    return acc
-  }, {} as Record<string, TPrimitive>)
+  return keys.reduce(
+    (acc, key) => {
+      acc[key] = record.get(key)
+      return acc
+    },
+    {} as Record<string, TPrimitive>
+  )
 }

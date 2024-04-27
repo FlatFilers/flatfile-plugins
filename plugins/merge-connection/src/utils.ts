@@ -1,5 +1,7 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { MergeClient, MergeEnvironment } from '@mergeapi/merge-node-client'
+
+const api = new FlatfileClient()
 
 export function getMergeClient(apiKey: string, accountToken?: string) {
   return new MergeClient({

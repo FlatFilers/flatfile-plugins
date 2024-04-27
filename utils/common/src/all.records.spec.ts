@@ -1,6 +1,8 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { getEnvironmentId, setupSpace } from '@flatfile/utils-testing'
 import { getRecordsRaw, processRecords } from './all.records'
+
+const api = new FlatfileClient()
 
 describe('all.records', () => {
   describe('processRecords', () => {

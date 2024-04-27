@@ -1,6 +1,8 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+
+const api = new FlatfileClient()
 
 export const fileBuffer = (
   matchFile: string | RegExp,

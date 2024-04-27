@@ -1,5 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
+
+const api = new FlatfileClient()
 
 export async function deleteRecords(
   sheetId: string,

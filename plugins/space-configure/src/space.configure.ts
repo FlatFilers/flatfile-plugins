@@ -1,7 +1,9 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
+
+const api = new FlatfileClient()
 
 /**
  * `configureSpace` is a higher-order function that creates a plugin to configure a

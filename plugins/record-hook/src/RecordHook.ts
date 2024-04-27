@@ -131,6 +131,7 @@ export const BulkRecordHook = async (
     })
   } catch (e) {
     logError('@flatfile/plugin-record-hook', (e as Error).message)
+    console.log(e)
     await completeCommit(event, debug)
     return
   }

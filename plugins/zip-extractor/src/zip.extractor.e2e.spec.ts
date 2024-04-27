@@ -1,4 +1,4 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import {
   deleteSpace,
   getEnvironmentId,
@@ -9,6 +9,8 @@ import {
 import * as fs from 'fs'
 import * as path from 'path'
 import { ZipExtractor } from '.'
+
+const api = new FlatfileClient()
 
 describe('ZipExtractor e2e', () => {
   const listener = setupListener()

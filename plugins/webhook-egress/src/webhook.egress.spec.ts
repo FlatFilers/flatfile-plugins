@@ -1,4 +1,4 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import {
   createRecords,
   deleteSpace,
@@ -8,6 +8,8 @@ import {
 } from '@flatfile/utils-testing'
 import fetchMock from 'jest-fetch-mock'
 import { webhookEgress } from './webhook.egress'
+
+const api = new FlatfileClient()
 
 fetchMock.enableMocks()
 fetchMock.dontMock()

@@ -5,6 +5,10 @@
             "outputs": ["dist/**"],
             "dependsOn": ["^build"]
         },
+        "build:prod": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["^build:prod"]
+        },
         "test": {
             "inputs": ["**/*.spec.ts"],
             "dependsOn": ["^build"]
