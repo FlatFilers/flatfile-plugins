@@ -1,6 +1,6 @@
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 
-import { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logInfo } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
