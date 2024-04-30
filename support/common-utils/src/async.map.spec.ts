@@ -1,10 +1,11 @@
+import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import { asyncMap } from './async.map'
 
 describe('asyncMap', () => {
   const mockArray = ['a', 'b', 'c']
-  const mockCallback = jest
-    .fn()
-    .mockImplementation((item) => Promise.resolve(item.toUpperCase()))
+  const mockCallback = mock().mockImplementation((item) =>
+    Promise.resolve(item.toUpperCase())
+  )
 
   beforeEach(() => {
     mockCallback.mockClear()
@@ -28,7 +29,7 @@ describe('asyncMap', () => {
 
   it('rejects when any callback function rejects', async () => {
     const mockError = new Error('Error')
-    const mockCallbackWithError = jest.fn().mockRejectedValueOnce(mockError)
+    const mockCallbackWithError = mock().mockRejectedValueOnce(mockError)
     await expect(
       asyncMap(mockArray, mockCallbackWithError)
     ).rejects.toBeTruthy()
@@ -36,11 +37,9 @@ describe('asyncMap', () => {
 
   it('times out when any callback function takes too long', async () => {
     const LONG_TIMEOUT = 100
-    const mockSlowCallback = jest
-      .fn()
-      .mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, LONG_TIMEOUT + 10))
-      )
+    const mockSlowCallback = mock().mockImplementation(
+      () => new Promise((resolve) => setTimeout(resolve, LONG_TIMEOUT + 10))
+    )
     await expect(
       asyncMap(mockArray, mockSlowCallback, { timeout: LONG_TIMEOUT })
     ).rejects.toThrow('timed out')

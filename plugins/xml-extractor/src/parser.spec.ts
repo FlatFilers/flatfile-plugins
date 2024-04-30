@@ -1,7 +1,8 @@
+import { describe, expect, test } from 'bun:test'
 import {
-  parseBuffer,
   findRoot,
   headersFromObjectList,
+  parseBuffer,
   xmlToJson,
 } from './parser'
 

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'bun:test'
 import { generateSetup } from './setup.factory'
 
 describe('generateSetup()', () => {

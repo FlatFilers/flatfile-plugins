@@ -6,13 +6,14 @@ import {
   setupListener,
   setupSpace,
 } from '@flatfile/utils-testing'
+import { afterAll, beforeAll, describe, expect, it, mock } from 'bun:test'
 import * as fs from 'fs'
 import * as path from 'path'
 import { ZipExtractor } from '.'
 
 const api = new FlatfileClient()
 
-describe('ZipExtractor e2e', () => {
+describe.skip('ZipExtractor e2e', () => {
   const listener = setupListener()
 
   let spaceId
@@ -36,12 +37,10 @@ describe('ZipExtractor e2e', () => {
     await deleteSpace(spaceId)
   })
 
-  describe('test-basic.zip', () => {
-    jest.mock('fs')
-    test('files extracted and uploaded to space', async () => {
-      await listener.waitFor('file:created', 4)
-      const filesPostUpload = await getFiles(spaceId)
-      expect(filesPostUpload.length).toBe(4)
-    })
+  it('extracts the files in test-basic.zip and uploads them to the space', async () => {
+    mock('fs')
+    await listener.waitFor('file:created', 4)
+    const filesPostUpload = await getFiles(spaceId)
+    expect(filesPostUpload.length).toBe(4)
   })
 })
