@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 1.1.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+
 ## 1.1.0
 
 ### Minor Changes

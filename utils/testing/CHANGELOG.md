@@ -1,5 +1,11 @@
 # @flatfile/utils-testing
 
+## 0.1.5
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+
 ## 0.1.4
 
 ### Patch Changes

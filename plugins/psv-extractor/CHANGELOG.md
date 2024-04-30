@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.8.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+
 ## 1.8.0
 
 ### Minor Changes

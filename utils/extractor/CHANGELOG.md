@@ -1,5 +1,14 @@
 # @flatfile/plugin-extractor-utils
 
+## 0.6.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/util-file-buffer@0.3.1
+  - @flatfile/util-common@1.3.1
+
 ## 0.6.0
 
 ### Minor Changes

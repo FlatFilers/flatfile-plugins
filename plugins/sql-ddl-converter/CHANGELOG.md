@@ -1,5 +1,14 @@
 # @flatfile/plugin-convert-sql-ddl
 
+## 0.1.2
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/plugin-space-configure@0.5.1
+  - @flatfile/plugin-convert-json-schema@0.3.2
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.3.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @flatfile/plugin-constraints
 
+## 1.2.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/plugin-record-hook@1.5.2
+
 ## 1.2.0
 
 ### Minor Changes
