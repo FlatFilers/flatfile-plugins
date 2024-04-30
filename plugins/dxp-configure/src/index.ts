@@ -1,7 +1,9 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { Workbook } from '@flatfile/configure'
 import type { FlatfileListener } from '@flatfile/listener'
 import { shimTarget } from './shim.target'
+
+const api = new FlatfileClient()
 
 export const dxpConfigure = (
   workbook: Workbook,

@@ -1,5 +1,5 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import { logError, logInfo } from '@flatfile/util-common'
 import fetch from 'cross-fetch'
@@ -7,6 +7,7 @@ import FormData from 'form-data'
 import * as fs from 'fs-extra'
 import * as R from 'remeda'
 
+const api = new FlatfileClient()
 export interface PluginOptions {
   readonly apiKey: string
   readonly debug?: boolean

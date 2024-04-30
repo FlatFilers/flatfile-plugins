@@ -1,8 +1,10 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { PubSubDriver } from '@flatfile/listener-driver-pubsub'
 import { afterAll, afterEach, beforeAll, beforeEach } from '@jest/globals'
 import fetch from 'cross-fetch'
 import { TestListener } from './test.listener'
+
+const api = new FlatfileClient()
 
 /**
  * Retrieves the environment ID from the process environment.

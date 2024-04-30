@@ -13,6 +13,6 @@ export function shimTarget(event: any) {
   return domain === 'file'
     ? 'space(*)'
     : actionName
-    ? actionTarget
-    : `sheet(${sheetSlug?.split('/').pop()})` // workbook(PrimaryCRMWorkbook)
+      ? actionTarget
+      : `sheet(${sheetSlug?.split('/').pop()})` // workbook(PrimaryCRMWorkbook)
 }

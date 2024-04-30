@@ -16,7 +16,7 @@ if (!PROD) {
 
 function commonPlugins(browser, umd = false) {
   return [
-    !umd && PROD && peerDepsExternal(),
+    !umd && peerDepsExternal(),
     json(),
     commonjs({
       include: '**/node_modules/**',

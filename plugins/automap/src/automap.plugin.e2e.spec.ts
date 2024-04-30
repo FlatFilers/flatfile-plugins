@@ -1,4 +1,4 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import {
   getEnvironmentId,
   setupListener,
@@ -8,6 +8,8 @@ import {
 import fs from 'fs'
 import path from 'path'
 import { automap } from './automap.plugin'
+
+const api = new FlatfileClient()
 
 describe('automap() e2e', () => {
   const listener = setupListener()

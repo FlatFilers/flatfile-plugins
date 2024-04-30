@@ -16,7 +16,7 @@
   "scripts": {
     "build": "parcel build",
     "build:watch": "parcel watch",
-    "build:prod": "NODE_ENV=production rollup -c",
+    "build:prod": "NODE_ENV=production parcel build",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
     "test": "jest --passWithNoTests"
   },
@@ -37,10 +37,7 @@
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.7.4",
+    "@flatfile/api": "^1.8.0",
     "@flatfile/listener": "^1.0.1"
-  },
-  "devDependencies": {
-    "@flatfile/api": "^1.7.4"
   }
 }

@@ -1,4 +1,4 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
@@ -6,6 +6,8 @@ import {
   RejectionResponse,
   responseRejectionHandler,
 } from '@flatfile/util-response-rejection'
+
+const api = new FlatfileClient()
 
 export function webhookEgress(job: string, webhookUrl?: string) {
   return function (listener: FlatfileListener) {

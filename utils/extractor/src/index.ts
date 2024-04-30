@@ -1,7 +1,9 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import { asyncBatch, slugify } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
+
+const api = new FlatfileClient()
 
 export const Extractor = (
   fileExt: string | RegExp,

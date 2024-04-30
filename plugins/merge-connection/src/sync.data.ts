@@ -1,6 +1,8 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import { MergeClient } from '@mergeapi/merge-node-client'
 import { handleError, mapRecords } from './utils'
+
+const api = new FlatfileClient()
 
 export async function syncData(
   mergeClient: MergeClient,

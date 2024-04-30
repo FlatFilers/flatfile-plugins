@@ -48,7 +48,6 @@
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/api": "^1.7.4",
     "@flatfile/rollup-config": "0.1.0"
   }
 }

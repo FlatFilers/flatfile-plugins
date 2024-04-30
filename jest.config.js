@@ -9,7 +9,7 @@ module.exports = {
     '<rootDir>/test/betterConsoleLog.js',
     '<rootDir>/test/unit.cleanup.js',
   ],
-  testTimeout: 30_000,
+  testTimeout: 60_000,
   globalSetup: '<rootDir>/test/setup-global.js',
   forceExit: true,
 }

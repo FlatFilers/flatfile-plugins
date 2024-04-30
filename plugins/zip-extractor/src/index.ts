@@ -1,12 +1,13 @@
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
-import { fileBuffer } from '@flatfile/util-file-buffer'
-import api from '@flatfile/api'
-import * as fs from 'fs'
-import path from 'path'
-import AdmZip from 'adm-zip'
-import { tmpdir } from 'os'
 import { logInfo } from '@flatfile/util-common'
+import { fileBuffer } from '@flatfile/util-file-buffer'
+import AdmZip from 'adm-zip'
+import * as fs from 'fs'
+import { tmpdir } from 'os'
+import path from 'path'
 
+const api = new FlatfileClient()
 export interface PluginOptions {
   readonly debug?: boolean
 }

@@ -1,11 +1,13 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type {
   EventFilter,
   FlatfileEvent,
   FlatfileListener,
 } from '@flatfile/listener'
 import { log, logError } from '@flatfile/util-common'
+
+const api = new FlatfileClient()
 
 export interface PluginOptions {
   readonly debug?: boolean

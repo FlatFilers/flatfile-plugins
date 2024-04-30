@@ -1,9 +1,11 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { TPrimitive } from '@flatfile/hooks'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import type { FlatfileRecord } from '@flatfile/plugin-record-hook'
 import { bulkRecordHookPlugin } from '@flatfile/plugin-record-hook'
 import { logInfo } from '@flatfile/util-common'
+
+const api = new FlatfileClient()
 
 export function autocast(
   sheetSlug: string,

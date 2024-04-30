@@ -1,5 +1,5 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import {
   PartialSheetConfig,
@@ -14,6 +14,8 @@ import {
 } from './config'
 import { checkAllSyncsComplete } from './sync.status.check'
 import { getMergeClient, getSecret, handleError, snakeToCamel } from './utils'
+
+const api = new FlatfileClient()
 
 export function handleCreateConnectedWorkbooks() {
   return async (
@@ -43,9 +45,10 @@ export function handleCreateConnectedWorkbooks() {
       const mergeCategories = Object.keys(CATEGORY_MODELS)
       for (const categoryAttempt of mergeCategories) {
         try {
-          accountTokenObj = await tmpMergeClient[
-            categoryAttempt as keyof typeof mergeClient
-          ].accountToken.retrieve(publicToken)
+          accountTokenObj =
+            await tmpMergeClient[
+              categoryAttempt as keyof typeof mergeClient
+            ].accountToken.retrieve(publicToken)
           if (accountTokenObj) {
             break // break out of the loop as soon as a valid account token is retrieved
           }

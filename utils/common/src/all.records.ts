@@ -1,6 +1,8 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { CrossEnvConfig } from '@flatfile/cross-env-config'
 import fetch from 'cross-fetch'
+
+const api = new FlatfileClient()
 
 const DEFAULT_PAGE_SIZE = 10_000
 

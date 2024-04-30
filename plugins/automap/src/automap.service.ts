@@ -1,8 +1,10 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { asyncMap } from '@flatfile/common-plugin-utils'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import * as R from 'remeda'
 import { AutomapOptions } from './automap.plugin'
+
+const api = new FlatfileClient()
 
 export class AutomapService {
   constructor(public readonly options: AutomapOptions) {}

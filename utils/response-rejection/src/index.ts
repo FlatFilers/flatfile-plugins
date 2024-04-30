@@ -1,5 +1,7 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { processRecords } from '@flatfile/util-common'
+
+const api = new FlatfileClient()
 
 export interface RejectionResponse {
   id: string

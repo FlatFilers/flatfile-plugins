@@ -1,9 +1,11 @@
 import type { Flatfile } from '@flatfile/api'
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import { processRecords } from '@flatfile/util-common'
 import { keepFirst } from './keep.first.logic'
 import { keepLast } from './keep.last.logic'
+
+const api = new FlatfileClient()
 
 /**
  * Plugin config options.
