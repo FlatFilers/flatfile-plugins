@@ -10,8 +10,7 @@
             "dependsOn": ["^build:prod"]
         },
         "test": {
-            "inputs": ["**/*.spec.ts"],
-            "dependsOn": ["^build"]
+            "inputs": ["**/*.spec.ts"]
         }
     }
 }
