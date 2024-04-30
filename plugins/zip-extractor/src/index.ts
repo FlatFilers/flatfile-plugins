@@ -1,9 +1,12 @@
-import { FlatfileClient } from '@flatfile/api'
-import type { FlatfileListener } from '@flatfile/listener'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+
+import { Flatfile, FlatfileClient } from '@flatfile/api'
+import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logInfo } from '@flatfile/util-common'
-import { fileBuffer } from '@flatfile/util-file-buffer'
+import { getFileBuffer } from '@flatfile/util-file-buffer'
 import AdmZip from 'adm-zip'
-import * as fs from 'fs'
+import fs from 'fs'
+import { asyncForEach } from 'modern-async'
 import { tmpdir } from 'os'
 import path from 'path'
 
@@ -13,37 +16,55 @@ export interface PluginOptions {
 }
 
 export const ZipExtractor = (options: PluginOptions = {}) => {
-  return (handler: FlatfileListener) => {
-    handler.use(
-      fileBuffer('.zip', async (file, buffer, event) => {
-        const { spaceId, environmentId } = event.context
-        const job = await api.jobs.create({
-          type: 'file',
-          operation: 'extract',
-          status: 'ready',
-          source: event.context.fileId,
-        })
-        try {
-          await api.jobs.update(job.data.id, { status: 'executing' })
-          await api.jobs.ack(job.data.id, {
-            progress: 10,
-            info: 'Unzipping file',
-          })
-          const zip = new AdmZip(buffer)
-          if (options.debug) {
-            logInfo('@flatfile/plugin-zip-extractor', `tmpdir ${tmpdir()}`)
-          }
-          const zipEntries = zip.getEntries()
-          await api.jobs.ack(job.data.id, {
-            progress: 50,
-            info: 'Uploading files',
-          })
-          const uploadPromises = zipEntries.map(async (zipEntry) => {
-            if (
-              !zipEntry.name.startsWith('.') &&
-              !zipEntry.entryName.startsWith('__MACOSX') &&
-              !zipEntry.isDirectory
-            ) {
+  return (listener: FlatfileListener) => {
+    listener.on('file:created', async (event) => {
+      const { fileId } = event.context
+      const { data: file } = await api.files.get(fileId)
+      if (file.mode === 'export') {
+        return
+      }
+
+      if (!file.name.endsWith('.zip')) {
+        return
+      }
+
+      const jobs = await api.jobs.create({
+        type: Flatfile.JobType.File,
+        operation: 'extract-plugin-zip',
+        status: Flatfile.JobStatus.Ready,
+        source: fileId,
+      })
+      await api.jobs.execute(jobs.data.id)
+    })
+    listener.use(
+      jobHandler(
+        { operation: 'extract-plugin-zip' },
+        async (
+          event: FlatfileEvent,
+          tick: (
+            progress: number,
+            message?: string
+          ) => Promise<Flatfile.JobResponse>
+        ) => {
+          const { spaceId, environmentId } = event.context
+
+          try {
+            await tick(1, 'Unzipping file')
+            const buffer = await getFileBuffer(event)
+            const zip = new AdmZip(buffer)
+            const zipEntries = zip
+              .getEntries()
+              .filter(
+                (zipEntry) =>
+                  !zipEntry.name.startsWith('.') &&
+                  !zipEntry.entryName.startsWith('__MACOSX') &&
+                  !zipEntry.isDirectory
+              )
+            const zipEntryCount = zipEntries.length
+
+            await tick(10, 'Uploading files')
+            let i = 0
+            await asyncForEach(zipEntries, async (zipEntry) => {
               zip.extractEntryTo(zipEntry, tmpdir(), false, true)
               const filePath = path.join(tmpdir(), zipEntry.name)
               if (options.debug) {
@@ -58,19 +79,24 @@ export const ZipExtractor = (options: PluginOptions = {}) => {
                 environmentId,
               })
               await fs.promises.unlink(filePath)
-            }
-          })
-          await Promise.all(uploadPromises)
-          await api.jobs.complete(job.data.id, {
-            info: 'Extraction complete',
-          })
-        } catch (e) {
-          logInfo('@flatfile/plugin-zip-extractor', `error ${e}`)
-          await api.jobs.fail(job.data.id, {
-            info: `Extraction failed ${e.message}`,
-          })
+              await tick(
+                10 + Math.round(((i + 1) / zipEntryCount) * 89),
+                'File uploaded'
+              )
+              i++
+            })
+
+            return {
+              outcome: {
+                message: 'Extraction complete',
+              },
+            } as Flatfile.JobCompleteDetails
+          } catch (e) {
+            logInfo('@flatfile/plugin-zip-extractor', `error ${e}`)
+            throw new Error(`Extraction failed ${e.message}`)
+          }
         }
-      })
+      )
     )
   }
 }
