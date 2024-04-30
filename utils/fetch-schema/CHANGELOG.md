@@ -1,5 +1,11 @@
 # @flatfile/util-fetch-schema
 
+## 0.2.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+
 ## 0.2.0
 
 ### Minor Changes

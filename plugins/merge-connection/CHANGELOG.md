@@ -1,5 +1,14 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.3.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/plugin-convert-openapi-schema@0.2.2
+  - @flatfile/plugin-job-handler@0.5.1
+
 ## 0.3.0
 
 ### Minor Changes

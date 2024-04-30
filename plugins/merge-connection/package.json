@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-connect-via-merge",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A connect plugin for Merge.dev",
   "registryMetadata": {
     "category": "connect"
@@ -28,8 +28,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-convert-openapi-schema": "^0.2.0",
-    "@flatfile/plugin-job-handler": "^0.5.0",
+    "@flatfile/plugin-convert-openapi-schema": "^0.2.2",
+    "@flatfile/plugin-job-handler": "^0.5.1",
     "@mergeapi/merge-node-client": "^1.0.4"
   },
   "peerDependencies": {

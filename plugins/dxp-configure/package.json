@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-dxp-configure",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/dxp-configure",
   "description": "A plugin for using DXP class-based configurations.",
   "registryMetadata": {
@@ -62,6 +62,6 @@
   },
   "devDependencies": {
     "@flatfile/configure": "^1.0.1",
-    "@flatfile/rollup-config": "0.1.0"
+    "@flatfile/rollup-config": "0.1.1"
   }
 }

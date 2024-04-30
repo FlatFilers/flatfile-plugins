@@ -1,5 +1,13 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 0.10.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/util-extractor@0.6.1
+
 ## 0.10.0
 
 ### Minor Changes

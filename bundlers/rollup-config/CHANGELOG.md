@@ -1,5 +1,11 @@
 # @flatfile/rollup-config
 
+## 0.1.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+
 ## 0.1.0
 
 ### Minor Changes

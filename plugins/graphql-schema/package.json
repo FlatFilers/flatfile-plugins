@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-graphql-schema",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A plugin for converting GraphQL to Flatfile blueprint.",
   "registryMetadata": {
     "category": "core"
@@ -39,7 +39,7 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-space-configure": "^0.5.0",
+    "@flatfile/plugin-space-configure": "^0.5.1",
     "change-case": "^5.4.3",
     "cross-fetch": "^4.0.0",
     "graphql": "^16.8.1"
@@ -48,6 +48,6 @@
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "0.1.0"
+    "@flatfile/rollup-config": "0.1.1"
   }
 }

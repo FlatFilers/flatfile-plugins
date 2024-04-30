@@ -1,5 +1,13 @@
 # @flatfile/plugin-export-workbook
 
+## 0.2.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/util-common@1.3.1
+
 ## 0.2.0
 
 ### Minor Changes

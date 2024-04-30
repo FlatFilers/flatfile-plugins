@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.5.2
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/util-common@1.3.1
+
 ## 1.5.1
 
 ### Patch Changes

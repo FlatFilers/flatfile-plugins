@@ -1,5 +1,14 @@
 # @flatfile/plugin-autocast
 
+## 0.8.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/plugin-record-hook@1.5.2
+  - @flatfile/util-common@1.3.1
+
 ## 0.8.0
 
 ### Minor Changes

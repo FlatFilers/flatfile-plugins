@@ -1,5 +1,14 @@
 # @flatfile/plugin-dedupe
 
+## 1.1.1
+
+### Patch Changes
+
+- 1dcdfea: This release fixes the bundling of plugins
+- Updated dependencies [1dcdfea]
+  - @flatfile/plugin-job-handler@0.5.1
+  - @flatfile/util-common@1.3.1
+
 ## 1.1.0
 
 ### Minor Changes
