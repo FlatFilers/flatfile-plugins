@@ -1,3 +1,4 @@
+import { describe, expect, it, test } from 'bun:test'
 import * as fs from 'fs'
 import * as path from 'path'
 import { parseBuffer } from './parser'

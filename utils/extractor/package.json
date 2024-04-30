@@ -20,7 +20,7 @@
     "build:watch": "parcel watch",
     "build:prod": "NODE_ENV=production parcel build",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest --passWithNoTests"
+    "test": "bun --env-file=../../.env.defaults test"
   },
   "repository": {
     "type": "git",

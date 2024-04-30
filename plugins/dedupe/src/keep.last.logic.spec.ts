@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'bun:test'
 import { records } from './fake.data'
 import { keepLast } from './keep.last.logic'
 

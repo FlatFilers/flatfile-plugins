@@ -1,3 +1,4 @@
+import { describe, expect, it, spyOn, test } from 'bun:test'
 import * as fs from 'fs'
 import * as path from 'path'
 import { parseBuffer } from './parser'
@@ -125,7 +126,7 @@ describe('parser', () => {
   })
   test('empty buffer', async () => {
     const emptyBuffer = Buffer.from('', 'utf8')
-    const logSpy = jest.spyOn(global.console, 'log')
+    const logSpy = spyOn(global.console, 'log')
     const parsedBuffer = await parseBuffer(emptyBuffer, { delimiter: '#' })
     expect(logSpy).toHaveBeenCalledWith('No data found in the file')
     expect(parsedBuffer).toEqual({})

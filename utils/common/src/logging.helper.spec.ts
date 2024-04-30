@@ -1,10 +1,11 @@
+import { describe, expect, spyOn, test } from 'bun:test'
 import { log, logError, logInfo, logWarn } from '.'
 
 describe('logging', () => {
   test('log()', () => {
-    const logSpy = jest.spyOn(global.console, 'log')
-    const logWarnSpy = jest.spyOn(global.console, 'warn')
-    const logErrorSpy = jest.spyOn(global.console, 'error')
+    const logSpy = spyOn(global.console, 'log')
+    const logWarnSpy = spyOn(global.console, 'warn')
+    const logErrorSpy = spyOn(global.console, 'error')
 
     log('@flatfile/util-common', 'Log an INFO message')
     expect(logSpy).toHaveBeenCalled()
@@ -30,7 +31,7 @@ describe('logging', () => {
   })
 
   test('logInfo()', () => {
-    const logSpy = jest.spyOn(global.console, 'log')
+    const logSpy = spyOn(global.console, 'log')
 
     logInfo('@flatfile/util-common', 'Log an INFO message')
     expect(logSpy).toHaveBeenCalled()
@@ -42,7 +43,7 @@ describe('logging', () => {
   })
 
   test('logWarn()', () => {
-    const logWarnSpy = jest.spyOn(global.console, 'warn')
+    const logWarnSpy = spyOn(global.console, 'warn')
 
     logWarn('@flatfile/util-common', 'Log a WARN message')
     expect(logWarnSpy).toHaveBeenCalled()
@@ -54,7 +55,7 @@ describe('logging', () => {
   })
 
   test('logError()', () => {
-    const logErrorSpy = jest.spyOn(global.console, 'error')
+    const logErrorSpy = spyOn(global.console, 'error')
 
     logError('@flatfile/util-common', 'Log a FATAL message')
     expect(logErrorSpy).toHaveBeenCalled()

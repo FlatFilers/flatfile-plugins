@@ -7,7 +7,33 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'bun:test'
 import { externalConstraint } from './external.constraint'
+
+export const defaultSimpleValueSchema: Array<Flatfile.Property> = [
+  {
+    key: 'name',
+    type: 'string',
+    constraints: [
+      { type: 'external', validator: 'test', config: { flag: true } },
+    ],
+  },
+  {
+    key: 'age',
+    type: 'number',
+  },
+]
+
+export const defaultSimpleValueData = [
+  {
+    name: 'John Doe',
+    age: 1,
+  },
+  {
+    name: 'Jane Doe',
+    age: 1,
+  },
+]
 
 describe('externalConstraint()', () => {
   const listener = setupListener()
@@ -71,28 +97,3 @@ describe('externalConstraint()', () => {
     expect(records[0].values['name'].value).toEqual('JOHN DOE')
   })
 })
-
-export const defaultSimpleValueSchema: Array<Flatfile.Property> = [
-  {
-    key: 'name',
-    type: 'string',
-    constraints: [
-      { type: 'external', validator: 'test', config: { flag: true } },
-    ],
-  },
-  {
-    key: 'age',
-    type: 'number',
-  },
-]
-
-export const defaultSimpleValueData = [
-  {
-    name: 'John Doe',
-    age: 1,
-  },
-  {
-    name: 'Jane Doe',
-    age: 1,
-  },
-]

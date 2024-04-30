@@ -6,11 +6,18 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-import fetchMock from 'jest-fetch-mock'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+} from 'bun:test'
+import fetchMock from 'fetch-mock'
 import { webhookEventForward } from '.'
-
-fetchMock.enableMocks()
-fetchMock.dontMock()
 
 describe('forward-webhook() e2e', () => {
   const listener = setupListener()
@@ -28,18 +35,20 @@ describe('forward-webhook() e2e', () => {
       'notes',
     ])
     workbookId = workbook.id
-    sheetId = workbook.sheets[0].id
+    sheetId = workbook.sheets![0].id
   })
 
   afterAll(async () => {
     await deleteSpace(spaceId)
   })
 
-  let callback: jest.Mock
-  beforeEach(async () => {
-    fetchMock.resetMocks()
+  afterEach(() => {
+    fetchMock.restore()
+  })
 
-    callback = jest.fn((data: any, event: FlatfileEvent) => {
+  let callback
+  beforeEach(async () => {
+    callback = mock((data: any, event: FlatfileEvent) => {
       return { topic: event.topic, data }
     })
     listener.use(webhookEventForward('example.com', callback))
@@ -50,13 +59,13 @@ describe('forward-webhook() e2e', () => {
   })
 
   it('should pass event', async () => {
-    fetchMock.doMockIf(
-      'example.com',
-      JSON.stringify({
+    fetchMock.mock('example.com', {
+      body: JSON.stringify({
         hello: 'Flatfile',
       }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    )
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
 
     await createRecords(sheetId, [{ name: 'John' }])
     await listener.waitFor('commit:created')
@@ -75,7 +84,8 @@ describe('forward-webhook() e2e', () => {
   })
 
   it('should error', async () => {
-    fetchMock.doMockIf('example.com', JSON.stringify({}), {
+    fetchMock.mock('example.com', {
+      body: JSON.stringify({}),
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })

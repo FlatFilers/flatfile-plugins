@@ -37,7 +37,7 @@
     "build:watch": "rollup -c --watch",
     "build:prod": "NODE_ENV=production rollup -c",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "bun --env-file=../../.env.defaults test"
   },
   "keywords": [
     "flatfile-plugins",
@@ -63,6 +63,6 @@
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1",
     "@flatfile/utils-testing": "^0.2.1",
-    "jest-fetch-mock": "^3.0.3"
+    "fetch-mock": "^9.11.0"
   }
 }

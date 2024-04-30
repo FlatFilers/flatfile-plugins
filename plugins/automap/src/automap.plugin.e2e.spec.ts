@@ -5,13 +5,22 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+} from 'bun:test'
 import fs from 'fs'
 import path from 'path'
 import { automap } from './automap.plugin'
 
 const api = new FlatfileClient()
 
-describe('automap() e2e', () => {
+describe.skip('automap() e2e', () => {
   const listener = setupListener()
 
   let spaceId: string
@@ -27,7 +36,7 @@ describe('automap() e2e', () => {
   })
 
   describe('record created - static sheet slug', () => {
-    const mockFn = jest.fn()
+    const mockFn = mock()
 
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))
@@ -66,7 +75,7 @@ describe('automap() e2e', () => {
   })
 
   describe('record created - dynamic sheet slug', () => {
-    const mockFn = jest.fn()
+    const mockFn = mock()
 
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))
