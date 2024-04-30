@@ -1,5 +1,11 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.5.2
+
+### Patch Changes
+
+- 4e016fd: This release fixes an async issue that caused the zip extractor to fail when deployed.
+
 ## 0.5.1
 
 ### Patch Changes
