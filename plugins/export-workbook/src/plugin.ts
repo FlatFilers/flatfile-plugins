@@ -240,13 +240,12 @@ export const exportRecords = async (
     return options.autoDownload
       ? {
           outcome: {
-            acknowledge: true,
+            heading: 'Success!',
             message:
               'Data was successfully written to Excel file and uploaded. The download should start automatically.',
             next: {
-              type: 'file',
-              fileId,
-              fileName,
+              type: 'files',
+              file: [{ fileId }],
             },
           },
         }
