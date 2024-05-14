@@ -1,5 +1,5 @@
 import { FlatfileClient } from '@flatfile/api'
-import type { TPrimitive } from '@flatfile/hooks'
+import type { TRecordValue } from '@flatfile/hooks'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import type { FlatfileRecord } from '@flatfile/plugin-record-hook'
 import { bulkRecordHookPlugin } from '@flatfile/plugin-record-hook'
@@ -62,7 +62,7 @@ export function autocast(
 }
 
 const CASTING_FUNCTIONS: {
-  [key: string]: (value: TPrimitive) => TPrimitive
+  [key: string]: (value: TRecordValue) => TRecordValue
 } = {
   string: castString,
   number: castNumber,
@@ -70,7 +70,7 @@ const CASTING_FUNCTIONS: {
   date: castDate,
 }
 
-export function castString(value: TPrimitive): TPrimitive {
+export function castString(value: TRecordValue): TRecordValue {
   if (typeof value === 'string') {
     return value
   } else if (typeof value === 'number') {
@@ -81,7 +81,7 @@ export function castString(value: TPrimitive): TPrimitive {
   throw new Error(`Failed to cast '${value}' to 'string'`)
 }
 
-export function castNumber(value: TPrimitive): TPrimitive {
+export function castNumber(value: TRecordValue): TRecordValue {
   if (typeof value === 'number') {
     return value
   } else if (typeof value === 'string') {
@@ -98,7 +98,7 @@ export function castNumber(value: TPrimitive): TPrimitive {
 
 export const TRUTHY_VALUES = ['1', 'yes', 'true', 'on', 't', 'y', 1]
 export const FALSY_VALUES = ['-1', '0', 'no', 'false', 'off', 'f', 'n', 0, -1]
-export function castBoolean(value: TPrimitive): TPrimitive {
+export function castBoolean(value: TRecordValue): TRecordValue {
   if (typeof value === 'boolean') {
     return value
   } else if (typeof value === 'string' || typeof value === 'number') {
@@ -116,7 +116,7 @@ export function castBoolean(value: TPrimitive): TPrimitive {
   throw new Error('Invalid boolean')
 }
 
-export function castDate(value: TPrimitive): TPrimitive {
+export function castDate(value: TRecordValue): TRecordValue {
   // Check if value is a number and if so use the numeric value instead of a string
   const numericTimestamp = Number(value)
   let finalValue = !isNaN(numericTimestamp) ? numericTimestamp : value

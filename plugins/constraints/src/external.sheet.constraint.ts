@@ -1,6 +1,6 @@
 import type { Flatfile } from '@flatfile/api'
 import { FlatfileClient } from '@flatfile/api'
-import type { TPrimitive } from '@flatfile/hooks'
+import type { TRecordValue } from '@flatfile/hooks'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import {
   FlatfileRecord,
@@ -21,7 +21,7 @@ const api = new FlatfileClient()
 export const externalSheetConstraint = (
   validator: string,
   cb: (
-    values: Record<string, TPrimitive>,
+    values: Record<string, TRecordValue>,
     keys: string[],
     support: {
       config: any
@@ -82,6 +82,6 @@ function partialObject(record: FlatfileRecord, keys: string[]) {
       acc[key] = record.get(key)
       return acc
     },
-    {} as Record<string, TPrimitive>
+    {} as Record<string, TRecordValue>
   )
 }
