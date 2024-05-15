@@ -1,0 +1,36 @@
+{
+  "name": "@private/sandbox",
+  "private": true,
+  "version": "0.0.0",
+  "author": "Carl Brugger",
+  "main": "src/index.ts",
+  "description": "",
+  "license": "ISC",
+  "scripts": {
+    "dev": "node --enable-source-maps --inspect ../../node_modules/.bin/flatfile develop",
+    "dev:local": "dotenvx run --env-file=.env.local -- npm run dev",
+    "dev:staging": "dotenvx run --env-file=.env.staging -- npm run dev",
+    "dev:prod": "dotenvx run --env-file=.env.prod -- npm run dev",
+    "deploy": "flatfile deploy",
+    "deploy:local": "dotenvx run --env-file=.env.local -- npm run deploy",
+    "deploy:staging": "dotenvx run --env-file=.env.staging -- npm run deploy",
+    "deploy:prod": "dotenvx run --env-file=.env.prod -- npm run deploy",
+    "list": "flatfile list",
+    "list:local": "dotenvx run --env-file=.env.local -- npm run list",
+    "list:staging": "dotenvx run --env-file=.env.staging -- npm run list",
+    "list:prod": "dotenvx run --env-file=.env.prod -- npm run list",
+    "delete": "flatfile delete",
+    "delete:local": "dotenvx run --env-file=.env.local -- npm run delete",
+    "delete:staging": "dotenvx run --env-file=.env.staging -- npm run delete",
+    "delete:prod": "dotenvx run --env-file=.env.prod -- npm run delete"
+  },
+  "dependencies": {
+    "@flatfile/api": "^1.8.6",
+    "@flatfile/listener": "^1.0.1",
+    "modern-async": "^2.0.0"
+  },
+  "devDependencies": {
+    "@dotenvx/dotenvx": "^0.39.0",
+    "flatfile": "^3.6.1"
+  }
+}
