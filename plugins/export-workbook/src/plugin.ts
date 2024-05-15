@@ -1,7 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
-import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 
+import { FlatfileClient } from '@flatfile/api'
 import { logError, logInfo, processRecords } from '@flatfile/util-common'
 import * as fs from 'fs'
 import path from 'path'
@@ -245,7 +245,7 @@ export const exportRecords = async (
               'Data was successfully written to Excel file and uploaded. The download should start automatically.',
             next: {
               type: 'files',
-              file: [{ fileId }],
+              files: [{ fileId }],
             },
           },
         }
