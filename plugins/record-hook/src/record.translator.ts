@@ -1,6 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
 import type {
   IRawRecord,
+  TPrimitive,
   TRecordData,
   TRecordDataWithLinks,
   TRecordValue,
@@ -28,7 +29,7 @@ export class RecordTranslator<
               const links = v.links.map((link) => {
                 let linkedRawData: TRecordData = {}
                 for (let [lk, lv] of Object.entries(link.values)) {
-                  linkedRawData[lk] = lv.value as TRecordValue
+                  linkedRawData[lk] = lv.value as TPrimitive
                 }
                 return linkedRawData
               })
@@ -37,7 +38,7 @@ export class RecordTranslator<
                 links,
               }
             } else {
-              rawData[k] = v.value as TRecordValue
+              rawData[k] = v.value as TPrimitive
             }
           }
           const metadata = record.metadata
@@ -67,6 +68,7 @@ export class RecordTranslator<
               message: info.message,
               type: info.level,
               source: 'custom-logic',
+              path: info.path,
             }))
 
           values[k] = {
