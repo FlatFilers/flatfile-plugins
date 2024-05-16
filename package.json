@@ -7,6 +7,7 @@
   },
   "workspaces": [
     "bundlers/*",
+    "codegen/*",
     "flatfilers/*",
     "plugins/*",
     "support/*",
