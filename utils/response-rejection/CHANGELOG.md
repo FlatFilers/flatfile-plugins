@@ -1,5 +1,11 @@
 # @flatfile/util-response-rejection
 
+## 1.3.2
+
+### Patch Changes
+
+- 816f871: This release fixes the deletion of valid records when the deleteSubmitted flag is "true" in the response-rejection response.
+
 ## 1.3.1
 
 ### Patch Changes
