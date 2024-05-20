@@ -14,10 +14,12 @@ const api = new FlatfileClient()
 /**
  * Plugin config options.
  *
+ * @property {string} jobName - name of the job
  * @property {string[]} excludedSheets - list of sheet names to exclude from the exported data.
  * @property {string[]} excludeFields - list of field names to exclude from the exported data. This applies to all sheets.
  * @property {Flatfile.Filter} recordFilter - filter to apply to the records before exporting.
  * @property {boolean} includeRecordIds - include record ids in the exported data.
+ * @property {boolean} autoDownload - auto download the file after exporting
  * @property {boolean} debug - show helpul messages useful for debugging (use intended for development).
  */
 export interface PluginOptions {
