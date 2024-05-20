@@ -10,16 +10,21 @@ npm run build
 Navigate to the plugin you're working on and run:
 
 ```bash
+cd plugins/<plugin_name>
 npm run build:watch
 ```
 
-Then navigate to the sandbox folder and copy `.env.example` to `.env` and update it with your environment variables.
+Running the `build:watch` script automatically updates the sandbox whenever you make changes to the plugin(s).
+
+Now navigate to the sandbox folder and copy `.env.example` to `.env` and update it with your environment variables.
 
 Finally, run the sandbox with:
 
 ```bash
+cd ../.. # go to the repo root
+cd flatfilers/sandbox
 npm run dev
 ```
 
-As you make changes to the plugin, the sandbox will update automatically.
+If you have multiple environments, you can create a new `.env.prod`, `.env.staging`, and `.env.local` files with the appropriate environment variables and run `npm run dev:<environment>`.
 
