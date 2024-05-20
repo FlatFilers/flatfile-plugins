@@ -14,7 +14,7 @@ cd plugins/<plugin_name>
 npm run build:watch
 ```
 
-Running the `build:watch` script automatically updates the sandbox whenever you make changes to the plugin(s).
+Running the `build:watch` script automatically updates the sandbox on any changes to the plugin(s).
 
 Now navigate to the sandbox folder and copy `.env.example` to `.env` and update it with your environment variables.
 
