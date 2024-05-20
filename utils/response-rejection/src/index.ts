@@ -1,5 +1,5 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
-import { processRecords } from '@flatfile/util-common'
+import { deleteRecords, processRecords } from '@flatfile/util-common'
 
 const api = new FlatfileClient()
 
@@ -71,13 +71,13 @@ async function updateSheet(
   sheetRejections: SheetRejections,
   deleteSubmitted: boolean
 ): Promise<number> {
+  const sheetId = sheetRejections.sheetId
   if (!deleteSubmitted) {
-    await addSubmissionStatusField(sheetRejections.sheetId)
+    await addSubmissionStatusField(sheetId)
   }
 
-  const recordIds = sheetRejections.rejectedRecords.map((record) => record.id)
   await processRecords(
-    sheetRejections.sheetId,
+    sheetId,
     async (records: Flatfile.RecordsWithLinks, _pageNumber?: number) => {
       if (!records.length) {
         return
@@ -103,21 +103,18 @@ async function updateSheet(
       })
 
       try {
-        await api.records.update(sheetRejections.sheetId, records)
+        await api.records.update(sheetId, records)
       } catch (error) {
         console.error('Error updating records:', error)
         throw new Error('Error updating records')
       }
-
-      if (
-        deleteSubmitted &&
-        records.length !== sheetRejections.rejectedRecords.length
-      ) {
-        await deleteValidRecords(sheetRejections.sheetId)
-      }
-    },
-    deleteSubmitted ? { ids: recordIds } : {}
+    }
   )
+
+  deleteSubmitted &&
+    (await deleteRecords(sheetId, {
+      filter: 'valid',
+    }))
 
   return sheetRejections.rejectedRecords.length
 }
@@ -145,24 +142,5 @@ async function addSubmissionStatusField(sheetId: string): Promise<void> {
   } catch (error) {
     console.error('Error adding rejection status field:', error)
     throw 'Error adding rejection status field'
-  }
-}
-
-async function deleteValidRecords(sheetId: string): Promise<void> {
-  try {
-    const { data: sheet } = await api.sheets.get(sheetId)
-    await api.jobs.create({
-      type: 'workbook',
-      operation: 'delete-records',
-      trigger: 'immediate',
-      source: sheet.workbookId,
-      config: {
-        sheet: sheetId,
-        filter: 'valid',
-      },
-    })
-  } catch (error) {
-    console.error('Error deleting all records:', error)
-    throw new Error('Error deleting all records')
   }
 }
