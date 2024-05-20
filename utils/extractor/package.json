@@ -33,7 +33,7 @@
     "@flatfile/util-file-buffer": "^0.3.1"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.8.0",
+    "@flatfile/api": "^1.8.9",
     "@flatfile/listener": "^1.0.1"
   }
 }

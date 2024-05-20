@@ -29,7 +29,7 @@
   "license": "ISC",
   "dependencies": {},
   "peerDependencies": {
-    "@flatfile/api": "^1.8.0",
+    "@flatfile/api": "^1.8.9",
     "@flatfile/listener": "^1.0.1"
   }
 }

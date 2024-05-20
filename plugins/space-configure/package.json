@@ -54,11 +54,11 @@
     "@flatfile/plugin-job-handler": "^0.5.1"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.8.4",
+    "@flatfile/api": "^1.8.9",
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/api": "^1.8.4",
+    "@flatfile/api": "^1.8.9",
     "@flatfile/rollup-config": "0.1.1",
     "@flatfile/utils-testing": "^0.1.5"
   }
