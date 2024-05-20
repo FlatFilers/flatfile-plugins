@@ -83,8 +83,7 @@ listener.use(
   })
 );
 
-// user specified dedupe function using RemedaJS
-// must return a list a record id's for deletion
+// user specified dedupe function must return a list a record id's for deletion
 listener.use(
   dedupePlugin("dedupe-email", {
     custom: (records) => {
@@ -121,8 +120,7 @@ listener.use(
   })
 );
 
-// user specified dedupe function using RemedaJS
-// must return a list a record id's for deletion
+// user specified dedupe function must return a list a record id's for deletion
 listener.use(
   dedupePlugin("dedupe-email", {
     custom: (records: Flatfile.RecordsWithLinks) => {
