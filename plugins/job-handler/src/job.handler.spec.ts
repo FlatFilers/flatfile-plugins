@@ -1,10 +1,19 @@
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  mock,
+  spyOn,
+  test,
+} from 'bun:test'
 import { jobHandler } from '.'
 
 describe('JobHandler plugin e2e tests', () => {
   describe('jobHandler() successful', () => {
     const listener = setupListener()
-    const mockFn = jest.fn()
+    const mockFn = mock()
     let spaceId: string
 
     beforeAll(async () => {
@@ -26,9 +35,9 @@ describe('JobHandler plugin e2e tests', () => {
   })
 
   describe('jobHandler() failure', () => {
-    const logErrorSpy = jest.spyOn(global.console, 'error')
+    const logErrorSpy = spyOn(global.console, 'error')
     const listener = setupListener()
-    const mockErrorFn = jest.fn(() => {
+    const mockErrorFn = mock(() => {
       throw new Error('trigger job:failed')
     })
     let spaceId: string

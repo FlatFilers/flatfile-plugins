@@ -6,6 +6,7 @@ import {
   RejectionResponse,
   responseRejectionHandler,
 } from '@flatfile/util-response-rejection'
+import fetch from 'cross-fetch'
 
 const api = new FlatfileClient()
 
