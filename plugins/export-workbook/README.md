@@ -16,10 +16,6 @@ The `@flatfile/plugin-export-workbook` plugin exports data in a Flatfile Workboo
 
 ## Parameters
 
-#### `debug` - `boolean` - (optional)
-
-The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
-
 #### `jobName` - `string` - (optional) 
 
 The name of job that the plugin will fire on. If not provided, `workbook:downloadWorkbook` will be used.
@@ -40,27 +36,23 @@ Allows filtering exported records to `valid` or `error`. By default all records 
 
 Includes the record's ID
 
+#### `autoDownload` - `boolean` - (optional) 
+
+Automatically download the file after exporting
+
+#### `debug` - `boolean` - (optional)
+
+The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
+
 
 
 ## Usage
 
 An action with the operation name of "downloadWorkbook" must be configured on a Workbook (not a Sheet) in order for the plugin to be triggered.
 
-#### Install
-
-```bash install
-npm i @flatfile/plugin-export-workbook
-```
-
-#### Import
-
-```ts import
-import { exportWorkbookPlugin } from "@flatfile/plugin-export-workbook";
-```
-
 #### `workbook.config.json`
 
-```ts workbook.config.json
+```json workbook.config.json
   // ... inside Workbook configuration
   "actions": [
     {
@@ -74,9 +66,21 @@ import { exportWorkbookPlugin } from "@flatfile/plugin-export-workbook";
   // ...
 ```
 
+#### Install
+
+```bash install
+npm i @flatfile/plugin-export-workbook
+```
+
 #### `listener.js`
 
 ```ts listener.js
-listener.use(exportWorkbookPlugin());
+import type { FlatfileListener } from "@flatfile/listener";
+
+import { exportWorkbookPlugin } from "@flatfile/plugin-export-workbook";
+
+export default function (listener: FlatfileListener) {
+  listener.use(exportWorkbookPlugin());
+}
 ```
 
