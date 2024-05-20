@@ -35,7 +35,7 @@ export const dedupe = async (
   await tick(0, 'Dedupe started')
   const coreKeepOptionSelected = ['first', 'last'].includes(opts.keep)
   if (coreKeepOptionSelected && opts.on === undefined) {
-    throw new Error('`on` is required when `keep` is `${opts.keep}`')
+    throw new Error(`\`on\` is required when \`keep\` is ${opts.keep}`)
   }
 
   if (coreKeepOptionSelected && opts.on !== undefined) {

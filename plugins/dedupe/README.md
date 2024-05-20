@@ -70,7 +70,7 @@ import { dedupePlugin } from "@flatfile/plugin-dedupe";
 
 ### JavaScript
 
-#### linstener.js 
+#### listener.js 
 
 ```js listener.js
 // common usage
@@ -89,20 +89,18 @@ listener.use(
   dedupePlugin("dedupe-email", {
     custom: (records) => {
       let uniques = new Set();
-      return R.pipe(
-        records,
-        R.reduce((acc, record) => {
-          const { value } = record.values["email"];
+      let toDelete = [];
 
-          if (uniques.has(value)) {
-            return [...acc, record.id];
-          } else {
-            uniques.add(value);
+      records.forEach(record => {
+        const { value } = record.values["email"];
+        if (uniques.has(value)) {
+          toDelete.push(record.id);
+        } else {
+          uniques.add(value);
+        }
+      });
 
-            return acc;
-          }
-        }, [] as Array<string>)
-      );
+      return toDelete;
     },
   })
 );
@@ -129,21 +127,18 @@ listener.use(
   dedupePlugin("dedupe-email", {
     custom: (records: Flatfile.RecordsWithLinks) => {
       let uniques = new Set();
+      let toDelete = [];
 
-      return R.pipe(
-        records,
-        R.reduce((acc, record) => {
-          const { value } = record.values["email"];
+      records.forEach(record => {
+        const { value } = record.values["email"];
+        if (uniques.has(value)) {
+          toDelete.push(record.id);
+        } else {
+          uniques.add(value);
+        }
+      });
 
-          if (uniques.has(value)) {
-            return [...acc, record.id];
-          } else {
-            uniques.add(value);
-
-            return acc;
-          }
-        }, [] as Array<string>)
-      );
+      return toDelete;
     },
   })
 );
