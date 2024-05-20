@@ -1,5 +1,11 @@
 # @flatfile/plugin-dedupe
 
+## 1.1.2
+
+### Patch Changes
+
+- 3cb2665: This release updates the plugin's documentation with an example that doesn't require another library.
+
 ## 1.1.1
 
 ### Patch Changes
