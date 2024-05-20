@@ -1,5 +1,17 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.3.2
+
+### Patch Changes
+
+- 1d253d8: This release updates the @flatfile/api dependency on all plugins.
+
+  @flatfile/plugin-export-workbook: a new option has been added to the plugin to automatically download the file after exporting.
+
+- Updated dependencies [1d253d8]
+  - @flatfile/plugin-convert-openapi-schema@0.2.3
+  - @flatfile/plugin-job-handler@0.5.2
+
 ## 0.3.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.8.2
+
+### Patch Changes
+
+- 1d253d8: This release updates the @flatfile/api dependency on all plugins.
+
+  @flatfile/plugin-export-workbook: a new option has been added to the plugin to automatically download the file after exporting.
+
 ## 1.8.1
 
 ### Patch Changes

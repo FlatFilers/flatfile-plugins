@@ -1,5 +1,13 @@
 # @flatfile/utils-testing
 
+## 0.1.6
+
+### Patch Changes
+
+- 1d253d8: This release updates the @flatfile/api dependency on all plugins.
+
+  @flatfile/plugin-export-workbook: a new option has been added to the plugin to automatically download the file after exporting.
+
 ## 0.1.5
 
 ### Patch Changes
