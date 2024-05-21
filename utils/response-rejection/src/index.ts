@@ -1,5 +1,8 @@
-import { Flatfile, FlatfileClient } from '@flatfile/api'
-import { deleteRecords, processRecords } from '@flatfile/util-common'
+import type { Flatfile } from '@flatfile/api'
+
+import { FlatfileClient } from '@flatfile/api'
+import { addSubmissionStatusField } from './prepare.sheet'
+import { updateSheet } from './update.sheet'
 
 const api = new FlatfileClient()
 
@@ -7,47 +10,55 @@ export interface RejectionResponse {
   id: string
   message?: string
   deleteSubmitted?: boolean
-  sheets: SheetRejections[]
+  rejectedRecords: RejectedRecord[]
 }
 
-export interface SheetRejections {
-  sheetId: string
-  rejectedRecords: RecordRejections[]
-}
-
-export interface RecordRejections {
+export interface RejectedRecord {
   id: string
   values: { field: string; message: string }[]
 }
 
+export interface RejectionHandlerResponse {
+  rejectedRecordsCount: number
+  jobCompleteDetails: Flatfile.JobCompleteDetails
+}
+
 export async function responseRejectionHandler(
   responseRejection: RejectionResponse
-): Promise<Flatfile.JobCompleteDetails> {
-  let totalRejectedRecords = 0
+): Promise<RejectionHandlerResponse> {
+  const {
+    id: sheetId,
+    deleteSubmitted,
+    message,
+    rejectedRecords,
+  } = responseRejection
 
-  for (const sheet of responseRejection.sheets || []) {
-    const count = await updateSheet(sheet, responseRejection.deleteSubmitted)
-    totalRejectedRecords += count
+  if (!deleteSubmitted) {
+    await addSubmissionStatusField(sheetId)
   }
 
-  const message = responseRejection.message ?? getMessage(totalRejectedRecords)
+  await updateSheet(sheetId, rejectedRecords, deleteSubmitted ?? false)
+
   let next
-  if (!responseRejection.deleteSubmitted && totalRejectedRecords > 0) {
-    next = getNext(totalRejectedRecords, responseRejection.sheets[0].sheetId)
+  if (!deleteSubmitted && rejectedRecords.length > 0) {
+    next = getNext(rejectedRecords.length, sheetId)
   }
 
   return {
-    outcome: {
-      buttonText: 'Close',
-      heading: totalRejectedRecords > 0 ? 'Rejected Records' : 'Success!',
-      acknowledge: true,
-      ...(next && !responseRejection.deleteSubmitted && { next }),
-      message,
+    rejectedRecordsCount: rejectedRecords.length,
+    jobCompleteDetails: {
+      outcome: {
+        buttonText: 'Close',
+        heading: rejectedRecords.length > 0 ? 'Rejected Records' : 'Success!',
+        acknowledge: true,
+        ...(next && !deleteSubmitted && { next }),
+        message: message ?? getMessage(rejectedRecords.length),
+      },
     },
   }
 }
 
-function getMessage(totalRejectedRecords) {
+function getMessage(totalRejectedRecords: number) {
   return totalRejectedRecords > 0
     ? `During the data submission process, ${totalRejectedRecords} records were rejected. Please review and correct these records before resubmitting.`
     : 'The data has been successfully submitted without any rejections. This task is now complete.'
@@ -65,82 +76,4 @@ function getNext(
         query: 'searchField=submissionStatus&searchValue=rejected',
       }
     : undefined
-}
-
-async function updateSheet(
-  sheetRejections: SheetRejections,
-  deleteSubmitted: boolean
-): Promise<number> {
-  const sheetId = sheetRejections.sheetId
-  if (!deleteSubmitted) {
-    await addSubmissionStatusField(sheetId)
-  }
-
-  await processRecords(
-    sheetId,
-    async (records: Flatfile.RecordsWithLinks, _pageNumber?: number) => {
-      if (!records.length) {
-        return
-      }
-      records.forEach((record) => {
-        const rejectedRecord = sheetRejections.rejectedRecords.find(
-          (item) => item.id === record.id
-        )
-
-        rejectedRecord?.values.forEach((value) => {
-          if (record.values[value.field]) {
-            record.values[value.field].messages = [
-              { type: 'error', message: value.message },
-            ]
-          }
-        })
-
-        if (!deleteSubmitted) {
-          record.values['submissionStatus'].value = rejectedRecord
-            ? 'rejected'
-            : 'submitted'
-        }
-      })
-
-      try {
-        await api.records.update(sheetId, records)
-      } catch (error) {
-        console.error('Error updating records:', error)
-        throw new Error('Error updating records')
-      }
-    }
-  )
-
-  deleteSubmitted &&
-    (await deleteRecords(sheetId, {
-      filter: 'valid',
-    }))
-
-  return sheetRejections.rejectedRecords.length
-}
-
-async function addSubmissionStatusField(sheetId: string): Promise<void> {
-  try {
-    const { data: sheet } = await api.sheets.get(sheetId)
-    if (
-      !sheet.config.fields.some((field) => field.key === 'submissionStatus')
-    ) {
-      await api.sheets.addField(sheet.id, {
-        key: 'submissionStatus',
-        label: 'Submission Status',
-        type: 'enum',
-        readonly: true,
-        config: {
-          allowCustom: false,
-          options: [
-            { label: 'Rejected', value: 'rejected' },
-            { label: 'Submitted', value: 'submitted' },
-          ],
-        },
-      })
-    }
-  } catch (error) {
-    console.error('Error adding rejection status field:', error)
-    throw 'Error adding rejection status field'
-  }
 }

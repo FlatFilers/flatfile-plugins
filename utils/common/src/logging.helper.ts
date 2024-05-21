@@ -24,3 +24,8 @@ export const logWarn = (packageName: string, msg: string): void => {
 export const logError = (packageName: string, msg: string): void => {
   log(packageName, msg, 'error')
 }
+
+export function handleError(error: any, message: string) {
+  console.error(error)
+  throw new Error(`${message}: ${error.message}`)
+}
