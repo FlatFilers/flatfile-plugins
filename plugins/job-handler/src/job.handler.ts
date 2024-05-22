@@ -47,7 +47,7 @@ export function jobHandler(
 
       await api.jobs.ack(jobId, {
         info: 'Accepted',
-        progress: 10,
+        progress: 0,
       })
 
       const tick = async (progress: number, info?: string) => {
