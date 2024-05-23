@@ -24,7 +24,7 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
     try {
       // Get the workbook details
       const { data: workbook } = await api.workbooks.get(workbookId)
-      // Filter out excluded sheets
+      // Filter out excluded sheets based on the provided options
       const sheets = workbook.sheets.filter(
         (sheet) => !opts.excludedSheets?.includes(sheet.config.slug)
       )
@@ -34,7 +34,7 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
       for (const sheet of sheets) {
         const { fields } = sheet.config
         const columns: ColumnOption[] = []
-        // Prepare the columns for CSV export
+        // Prepare the columns for CSV export, excluding fields marked as excludeFromExport
         fields.forEach((field) => {
           if (!!field.metadata?.excludeFromExport) return
           columns.push({ key: field.key, header: field.label })
@@ -58,7 +58,7 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
               return result
             })
 
-            // Handle empty records for the first page
+            // Handle empty records for the first page by creating an empty record with all fields
             if (pageNumber === 1 && records?.length === 0) {
               const emptyRecord = fields.reduce(
                 (acc, { key }) => ({ ...acc, [key]: '' }),
@@ -97,7 +97,7 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
       zip.writeZip(zipFilePath)
       const stream = fs.createReadStream(zipFilePath)
 
-      // Upload the ZIP file
+      // Upload the ZIP file to Flatfile
       await api.files.upload(stream, {
         spaceId,
         environmentId,

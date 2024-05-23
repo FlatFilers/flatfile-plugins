@@ -13,8 +13,13 @@ const api = new FlatfileClient()
 /**
  * Registers an external sheet constraint that can be applied to a combination of fields.
  *
+ * This function allows you to register a custom constraint validator that will be executed
+ * on a combination of fields in a Flatfile sheet. The validator function is provided as a
+ * callback and will be triggered during the record processing pipeline.
+ *
  * @param validator - The name or identifier of the validator.
  * @param cb - The callback function to be executed for the sheet constraint.
+ *              It receives the field values, field keys, and additional support data.
  * @returns A function that takes a FlatfileListener and sets up the necessary event listeners and plugins.
  */
 export const externalSheetConstraint = (
