@@ -4,6 +4,7 @@ import type {
   TPrimitive,
   TRecordData,
   TRecordDataWithLinks,
+  TRecordValue,
 } from '@flatfile/hooks'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 
@@ -33,7 +34,7 @@ export class RecordTranslator<
                 return linkedRawData
               })
               rawData[k] = {
-                value: v.value as TPrimitive,
+                value: v.value as TRecordValue,
                 links,
               }
             } else {
@@ -67,10 +68,14 @@ export class RecordTranslator<
               message: info.message,
               type: info.level,
               source: 'custom-logic',
+              path: info.path,
             }))
 
           values[k] = {
-            value: v !== null && typeof v === 'object' ? v.value : v,
+            value:
+              v !== null && typeof v === 'object' && !Array.isArray(v)
+                ? v.value
+                : v,
             messages: messages,
             valid: true,
           }
