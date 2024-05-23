@@ -7,6 +7,15 @@ import { logInfo } from '@flatfile/util-common'
 
 const api = new FlatfileClient()
 
+/**
+ * Autocast plugin for Flatfile.
+ * Automatically casts field values to their specified types based on the sheet configuration.
+ *
+ * @param sheetSlug - The slug of the sheet to apply the autocast plugin to.
+ * @param fieldFilters - Optional array of field keys to filter the fields to be casted.
+ * @param options - Optional options for the bulkRecordHookPlugin.
+ * @returns A function that takes a FlatfileListener and applies the autocast plugin to it.
+ */
 export function autocast(
   sheetSlug: string,
   fieldFilters?: string[],
@@ -28,16 +37,19 @@ export function autocast(
             return
           }
 
+          // Filter the fields to be casted based on the fieldFilters or field type
           const castableFields = sheet.data.config.fields.filter((field) =>
             fieldFilters
               ? fieldFilters.includes(field.key)
               : field.type !== 'string'
           )
+
           records.forEach((record) => {
             castableFields.forEach((field) => {
               const originalValue = record.get(field.key)
               const caster = CASTING_FUNCTIONS[field.type]
 
+              // Check if the value exists, can be casted, and is not already of the target type
               if (
                 originalValue &&
                 caster &&
@@ -61,6 +73,7 @@ export function autocast(
   }
 }
 
+// Object containing casting functions for each supported field type
 const CASTING_FUNCTIONS: {
   [key: string]: (value: TPrimitive) => TPrimitive
 } = {
@@ -70,6 +83,13 @@ const CASTING_FUNCTIONS: {
   date: castDate,
 }
 
+/**
+ * Casts a value to a string.
+ *
+ * @param value - The value to be casted.
+ * @returns The casted string value.
+ * @throws An error if the value cannot be casted to a string.
+ */
 export function castString(value: TPrimitive): TPrimitive {
   if (typeof value === 'string') {
     return value
@@ -81,6 +101,13 @@ export function castString(value: TPrimitive): TPrimitive {
   throw new Error(`Failed to cast '${value}' to 'string'`)
 }
 
+/**
+ * Casts a value to a number.
+ *
+ * @param value - The value to be casted.
+ * @returns The casted number value.
+ * @throws An error if the value cannot be casted to a number.
+ */
 export function castNumber(value: TPrimitive): TPrimitive {
   if (typeof value === 'number') {
     return value
@@ -96,8 +123,19 @@ export function castNumber(value: TPrimitive): TPrimitive {
   throw new Error('Invalid number')
 }
 
+// Array of truthy values for boolean casting
 export const TRUTHY_VALUES = ['1', 'yes', 'true', 'on', 't', 'y', 1]
+
+// Array of falsy values for boolean casting
 export const FALSY_VALUES = ['-1', '0', 'no', 'false', 'off', 'f', 'n', 0, -1]
+
+/**
+ * Casts a value to a boolean.
+ *
+ * @param value - The value to be casted.
+ * @returns The casted boolean value.
+ * @throws An error if the value cannot be casted to a boolean.
+ */
 export function castBoolean(value: TPrimitive): TPrimitive {
   if (typeof value === 'boolean') {
     return value
@@ -116,6 +154,13 @@ export function castBoolean(value: TPrimitive): TPrimitive {
   throw new Error('Invalid boolean')
 }
 
+/**
+ * Casts a value to a date string.
+ *
+ * @param value - The value to be casted.
+ * @returns The casted date string in UTC format.
+ * @throws An error if the value cannot be casted to a date.
+ */
 export function castDate(value: TPrimitive): TPrimitive {
   // Check if value is a number and if so use the numeric value instead of a string
   const numericTimestamp = Number(value)

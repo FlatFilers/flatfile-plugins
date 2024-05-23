@@ -9,6 +9,12 @@ import fs from 'fs'
 import path from 'path'
 import { castBoolean } from './utils'
 
+/**
+ * Plugin function for exporting a workbook as a ZIP file.
+ * @param job - The job object.
+ * @param opts - Plugin options.
+ * @returns A job handler function.
+ */
 export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
   return jobHandler(job, async (event: FlatfileEvent, tick) => {
     const { workbookId, spaceId, environmentId } = event.context
@@ -16,7 +22,9 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
     await tick(0, 'Preparing workbook...')
 
     try {
+      // Get the workbook details
       const { data: workbook } = await api.workbooks.get(workbookId)
+      // Filter out excluded sheets
       const sheets = workbook.sheets.filter(
         (sheet) => !opts.excludedSheets?.includes(sheet.config.slug)
       )
@@ -26,16 +34,19 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
       for (const sheet of sheets) {
         const { fields } = sheet.config
         const columns: ColumnOption[] = []
+        // Prepare the columns for CSV export
         fields.forEach((field) => {
           if (!!field.metadata?.excludeFromExport) return
           columns.push({ key: field.key, header: field.label })
         })
 
+        // Create a temporary CSV file for the sheet
         const csvFilePath = path.join(
           '/tmp',
           `${sheet.config.slug}-${timestamp}.csv`
         )
         fs.closeSync(fs.openSync(csvFilePath, 'w'))
+        // Process records and write them to the CSV file
         await processRecords(
           sheet.id,
           async (records, pageNumber) => {
@@ -47,6 +58,7 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
               return result
             })
 
+            // Handle empty records for the first page
             if (pageNumber === 1 && records?.length === 0) {
               const emptyRecord = fields.reduce(
                 (acc, { key }) => ({ ...acc, [key]: '' }),
@@ -54,6 +66,7 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
               )
               normalizedRecords = [emptyRecord]
             }
+            // Stringify the records and append them to the CSV file
             const rows = stringify(normalizedRecords, {
               header: pageNumber === 1,
               columns: columns,
@@ -65,28 +78,33 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
           opts.getRecordsRequest
         )
 
+        // Add the CSV file to the ZIP archive
         zip.addLocalFile(csvFilePath)
 
         await tick(
           10 + Math.round(((i + 1) / sheets.length) * 70),
           `${sheet.name} Prepared`
         )
+        // Clean up the temporary CSV file
         await fs.promises.unlink(csvFilePath)
         i++
       }
 
       await tick(81, `Uploading file...`)
 
+      // Create the ZIP file
       const zipFilePath = path.join('/tmp', `${workbook.name}-${timestamp}.zip`)
       zip.writeZip(zipFilePath)
       const stream = fs.createReadStream(zipFilePath)
 
+      // Upload the ZIP file
       await api.files.upload(stream, {
         spaceId,
         environmentId,
         mode: 'export',
       })
 
+      // Clean up the temporary ZIP file
       await fs.promises.unlink(zipFilePath)
 
       return {
@@ -109,8 +127,20 @@ export const zipEgressPlugin = (job, opts: PluginOptions = {}) => {
   })
 }
 
+/**
+ * Options for the zipEgressPlugin.
+ */
 export interface PluginOptions {
+  /**
+   * Array of sheet slugs to exclude from the export.
+   */
   readonly excludedSheets?: string[]
+  /**
+   * Additional options for the getRecords request.
+   */
   readonly getRecordsRequest?: Flatfile.GetRecordsRequest
+  /**
+   * Enables debug mode.
+   */
   readonly debug?: boolean
 }

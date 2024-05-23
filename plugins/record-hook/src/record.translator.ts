@@ -7,17 +7,31 @@ import type {
 } from '@flatfile/hooks'
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 
+/**
+ * RecordTranslator is a class that translates between FlatfileRecord or Flatfile.RecordWithLinks types.
+ * It provides methods to convert records to FlatfileRecords or Flatfile.RecordsWithLinks.
+ */
 export class RecordTranslator<
   T extends FlatfileRecord | Flatfile.RecordWithLinks,
 > {
+  /**
+   * Constructor for RecordTranslator.
+   * @param records - An array of FlatfileRecord or Flatfile.RecordWithLinks.
+   */
   constructor(private readonly records: T[]) {
     this.records = records
   }
 
+  /**
+   * Converts the records to FlatfileRecords.
+   * @returns FlatfileRecords<any> - The converted FlatfileRecords.
+   */
   toFlatfileRecords = (): FlatfileRecords<any> => {
     if (this.records instanceof FlatfileRecords) {
+      // If the records are already FlatfileRecords, return them directly
       return this.records
     } else {
+      // Convert Flatfile.RecordWithLinks to FlatfileRecords
       const XRecords = this.records as Flatfile.RecordWithLinks[]
 
       const FFRecords = new FlatfileRecords(
@@ -25,6 +39,7 @@ export class RecordTranslator<
           let rawData: TRecordDataWithLinks = {}
           for (let [k, v] of Object.entries(record.values)) {
             if (!!v.links?.length && v.value) {
+              // Handle linked records
               const links = v.links.map((link) => {
                 let linkedRawData: TRecordData = {}
                 for (let [lk, lv] of Object.entries(link.values)) {
@@ -37,6 +52,7 @@ export class RecordTranslator<
                 links,
               }
             } else {
+              // Handle non-linked records
               rawData[k] = v.value as TPrimitive
             }
           }
@@ -54,8 +70,13 @@ export class RecordTranslator<
     }
   }
 
+  /**
+   * Converts the records to Flatfile.RecordsWithLinks.
+   * @returns Flatfile.RecordsWithLinks - The converted Flatfile.RecordsWithLinks.
+   */
   toXRecords = (): Flatfile.RecordsWithLinks => {
     if (this.records[0] instanceof FlatfileRecord) {
+      // Convert FlatfileRecord to Flatfile.RecordsWithLinks
       const FFRecords = this.records as FlatfileRecord[]
       return FFRecords.map((record: FlatfileRecord) => {
         const recordWithInfo = record.toJSON()
@@ -85,6 +106,7 @@ export class RecordTranslator<
         }
       }) as Flatfile.RecordsWithLinks
     } else {
+      // If the records are already Flatfile.RecordsWithLinks, return them directly
       return this.records as Flatfile.RecordsWithLinks
     }
   }
