@@ -55,15 +55,14 @@ export async function parseBuffer(
       }
     )
     const headerStream = Readable.from(extractValues(rows))
-    const { header, skip } = await headerizer.getHeaders(headerStream)
+    const { header, skip, letters } = await headerizer.getHeaders(headerStream)
 
-    rows.splice(0, skip)
     // return if there are no rows
     if (rows.length === 0) {
       return
     }
 
-    const headers = prependNonUniqueHeaderColumns(header)
+    const headers = prependNonUniqueHeaderColumns(letters)
     const required: Record<string, boolean> = {}
     header.forEach((item) => {
       const key = item.replace('*', '').trim()
@@ -72,7 +71,6 @@ export async function parseBuffer(
     })
 
     const data: Flatfile.RecordData[] = rows
-      .filter((row) => !Object.values(row).every(isNullOrWhitespace))
       .map((row) => {
         const mappedRow = mapKeys(row, (key) => headers[key])
         return mapValues(mappedRow, (value) => ({
@@ -80,12 +78,18 @@ export async function parseBuffer(
         })) as Flatfile.RecordData
       })
 
+    const metadata = {
+      headers: header,
+      rowHeaders: [skip]
+    }
+
     const sheetName = 'Sheet1'
     return {
       [sheetName]: {
         headers,
         required,
         data,
+        metadata,
       },
     } as WorkbookCapture
   } catch (error) {

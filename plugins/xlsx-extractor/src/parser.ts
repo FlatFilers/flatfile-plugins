@@ -105,6 +105,7 @@ async function convertSheet({
     defval: null,
     rawNumbers,
     raw,
+    blankrows: true
   })
 
   // return if there are no rows
@@ -120,16 +121,13 @@ async function convertSheet({
 
   const headerizer = Headerizer.create(headerDetectionOptions)
   const headerStream = Readable.from(extractValues(rows))
-  const { header, skip, letters } = await headerizer.getHeaders(headerStream)
+  const { header, skip } = await headerizer.getHeaders(headerStream)
   if (debug) {
     console.log('Detected header:', header)
   }
   const headerKey = Math.max(0, skip - 1)
-  const columnKeys = Object.keys(rows[headerKey]).filter((key) =>
-    Boolean(rows[headerKey][key])
-  )
+  const columnKeys = Object.keys(rows[headerKey])
 
-  rows.splice(0, skip)
   // return if there are no rows
   if (rows.length === 0) {
     if (debug) {
@@ -138,13 +136,13 @@ async function convertSheet({
     return
   }
 
-  const toExcelHeader = (data: string[], keys: string[]) =>
+  const toExcelHeader = (data: string[]) =>
     data.reduce((result, value, index) => {
-      result[keys[index]] = value
+      result[value] = value
       return result
     }, {})
 
-  const excelHeader = toExcelHeader(header, columnKeys)
+  const excelHeader = toExcelHeader(columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
   const required = Object.fromEntries(
     Object.entries(excelHeader).map(([key, value]) => [
@@ -154,17 +152,21 @@ async function convertSheet({
   )
 
   const data = rows
-    .filter((row) => !Object.values(row).every(isNullOrWhitespace))
     .map((row) =>
       mapValues(
         mapKeys(row, (key) => headers[key]),
         (value) => ({ value })
       )
     )
+  const metadata = {
+    headers: header,
+    rowHeaders: [skip]
+  }
 
   return {
     headers: Object.values(headers).filter(Boolean),
     required,
     data,
+    metadata
   }
 }
