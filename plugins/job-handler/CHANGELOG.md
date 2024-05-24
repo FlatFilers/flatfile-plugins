@@ -1,5 +1,11 @@
 # @flatfile/plugin-job-handler
 
+## 0.5.3
+
+### Patch Changes
+
+- cf24f9b: This release changes the jobHandler's starting progress from 10% to 1%
+
 ## 0.5.2
 
 ### Patch Changes
