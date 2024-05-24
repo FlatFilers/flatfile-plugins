@@ -81,6 +81,8 @@ export const Extractor = (
             workbookId: workbook.id,
           })
 
+          await updateSheetMetadata(workbook, capture)
+
           if (!workbook.sheets || workbook.sheets.length === 0) {
             throw new Error('No Sheets found')
           }
@@ -181,16 +183,47 @@ function getSheetConfig(
   return {
     name,
     slug: slugify(name),
-    fields: headers.map((key) => ({
-      key,
-      label: key,
-      description: descriptions?.[key] || '',
-      type: 'string',
-      constraints: required?.[key] ? [{ type: 'required' }] : [],
-    })),
+    fields: keysToFields({keys: headers, required, descriptions}),
   }
 }
 
+function keysToFields(
+  {
+    keys,
+    required = {},
+    descriptions = {},
+    fieldRefs = []
+  }: {
+    keys: string[]
+    required?: Record<string, boolean>
+    descriptions?: Record<string, string>
+    fieldRefs?: string[]
+}): Flatfile.Property[] {
+  return keys.map((key, index) => ({
+    key,
+    label: key,
+    description: descriptions?.[key] || '',
+    type: 'string',
+    constraints: required?.[key] ? [{ type: 'required' }] : [],
+    ...(fieldRefs[index] && { metadata: { fieldRef: fieldRefs[index] } }),
+  }))
+}
+
+function updateSheetMetadata(
+  workbook: Flatfile.Workbook,
+  workbookCapture: WorkbookCapture
+) {
+  return Promise.all(
+    workbook.sheets.map(async (sheet) => {
+      const {  metadata, headers } = workbookCapture[sheet.name]
+      const metaHeaders = keysToFields({ keys:metadata.headers, fieldRefs: headers })
+      const rowHeaders = metadata.rowHeaders
+      await api.sheets.updateSheet(sheet.id, {
+        metadata: { headers: metaHeaders, rowHeaders },
+      })
+    })
+  )
+}
 /**
  * Generic structure for capturing a workbook
  */
@@ -203,5 +236,6 @@ export type SheetCapture = {
   headers: string[]
   required?: Record<string, boolean>
   descriptions?: Record<string, null | string> | null
-  data: Flatfile.RecordData[]
+  data: Flatfile.RecordData[],
+  metadata?: { headers: string[], rowHeaders: number[] }
 }
