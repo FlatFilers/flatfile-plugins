@@ -120,7 +120,7 @@ async function convertSheet({
 
   const headerizer = Headerizer.create(headerDetectionOptions)
   const headerStream = Readable.from(extractValues(rows))
-  const { header, skip } = await headerizer.getHeaders(headerStream)
+  const { header, skip, letters } = await headerizer.getHeaders(headerStream)
   if (debug) {
     console.log('Detected header:', header)
   }

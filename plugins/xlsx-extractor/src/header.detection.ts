@@ -38,6 +38,23 @@ export type GetHeadersOptions =
 interface GetHeadersResult {
   header: string[]
   skip: number
+  letters: string[]
+}
+
+export const indexToLetters = (index: number): string => {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let result = ''
+
+  while (index >= 0) {
+    result = letters[index % 26] + result
+    index = Math.floor(index / 26) - 1
+  }
+
+  return result
+}
+
+export const headersToLetters = (headers: string[]): string[] => {
+  return headers.map((_, index) => indexToLetters(index))
 }
 
 // Takes a datastream (representing a CSV) and returns the header row and the number of rows to skip
@@ -91,6 +108,7 @@ class OriginalDetector extends Headerizer {
     let currentRow = 0
     let skip = 0
     let header: string[] = []
+    let letters: string[] = []
 
     // This is the original implementation of detectHeader
     const detector = new stream.Writable({
@@ -103,6 +121,7 @@ class OriginalDetector extends Headerizer {
         if (countNonEmptyCells(row) > countNonEmptyCells(header)) {
           header = row
           skip = currentRow
+          letters = headersToLetters(header)
         }
         callback()
       },
@@ -112,10 +131,10 @@ class OriginalDetector extends Headerizer {
 
     return new Promise((resolve, reject) => {
       detector.on('finish', () => {
-        resolve({ header, skip })
+        resolve({ header, skip, letters })
       })
       dataStream.on('close', () => {
-        resolve({ header, skip })
+        resolve({ header, skip, letters })
       })
       dataStream.on('error', (error) => {
         reject(error)
@@ -137,9 +156,11 @@ class ExplicitHeaders extends Headerizer {
   }
 
   async getHeaders(dataStream: stream.Readable): Promise<GetHeadersResult> {
+    const letters = headersToLetters(this.options.headers)
     return {
       header: this.options.headers,
       skip: this.options.skip || 0,
+      letters,
     }
   }
 }
@@ -160,6 +181,7 @@ class SpecificRows extends Headerizer {
     let currentRow = 0
     let maxRow = Math.max(...this.options.rowNumbers)
     let header: string[] = []
+    let letters: string[] = []
 
     const detector = new stream.Writable({
       objectMode: true,
@@ -170,6 +192,7 @@ class SpecificRows extends Headerizer {
           if (header.length === 0) {
             // This is the first header row we've seen, so just remember it
             header = row
+            letters = headersToLetters(header)
           } else {
             for (let i = 0; i < header.length; i++) {
               if (header[i] === '') {
@@ -177,6 +200,7 @@ class SpecificRows extends Headerizer {
               } else {
                 header[i] = `${header[i].trim()} ${row[i].trim()}`
               }
+              letters[i] = indexToLetters(i)
             }
           }
         }
@@ -193,10 +217,10 @@ class SpecificRows extends Headerizer {
     // TODO: this logic is duplicated, factor it out?
     return new Promise((resolve, reject) => {
       detector.on('finish', () => {
-        resolve({ header, skip })
+        resolve({ header, skip, letters })
       })
       dataStream.on('close', () => {
-        resolve({ header, skip })
+        resolve({ header, skip, letters })
       })
       dataStream.on('error', (error) => {
         reject(error)
@@ -225,6 +249,7 @@ class DataRowAndSubHeaderDetection extends Headerizer {
     let skip = 0
     let header: string[] = []
     const rows: string[][] = []
+    let letters: string[] = []
 
     // This is the original implementation of detectHeader
     const detector = new stream.Writable({
@@ -239,6 +264,7 @@ class DataRowAndSubHeaderDetection extends Headerizer {
         if (countNonEmptyCells(row) > countNonEmptyCells(header)) {
           header = row
           skip = currentRow
+          letters = headersToLetters(header)
         }
         // check if row has numeric, boolean, or empty values
         if (likelyContainsData(row)) {
@@ -252,6 +278,7 @@ class DataRowAndSubHeaderDetection extends Headerizer {
             // if it is, make it the header
             header = previousRow
             skip = currentRow - 1
+            letters = headersToLetters(header)
           }
         }
 
@@ -290,10 +317,11 @@ class DataRowAndSubHeaderDetection extends Headerizer {
         if (fuzzyMatches.length / header.length > 0.5) {
           fuzzyHeader = row
           fuzzySkip = i + 1
+          letters = headersToLetters(fuzzyHeader)
         }
       }
     }
 
-    return { header: fuzzyHeader ?? header, skip: fuzzySkip ?? skip }
+    return { header: fuzzyHeader ?? header, skip: fuzzySkip ?? skip, letters }
   }
 }
