@@ -1,8 +1,9 @@
+import type { AutomapOptions } from './automap.plugin'
+
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { asyncMap } from '@flatfile/common-plugin-utils'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import * as R from 'remeda'
-import { AutomapOptions } from './automap.plugin'
 
 const api = new FlatfileClient()
 
@@ -78,6 +79,8 @@ export class AutomapService {
               return
             }
 
+            if (R.isNil(destinationWorkbook.sheets)) return
+
             destinationSheet = R.pipe(
               destinationWorkbook.sheets,
               R.find(
@@ -152,7 +155,7 @@ export class AutomapService {
     const { targetWorkbook } = this.options
     const targets = R.pipe(
       workbooks,
-      R.reject((w) => w.labels?.includes('file'))
+      R.reject((w) => !!w.labels?.includes('file'))
     )
 
     if (R.length(targets) === 0) {
@@ -169,7 +172,7 @@ export class AutomapService {
     } else {
       return R.pipe(
         targets,
-        R.find((w) => w.labels?.includes('primary'))
+        R.find((w) => !!w.labels?.includes('primary'))
       )
     }
   }
@@ -307,7 +310,8 @@ export class AutomapService {
         : defaultTargetSheet
 
     if (R.length(sheets) === 1 && !R.isNil(targetSheet)) {
-      return [{ source: R.first(sheets).id, target: targetSheet }]
+      const first = R.first(sheets) as Flatfile.Sheet
+      return [{ source: first.id, target: targetSheet }]
     } else {
       return []
     }

@@ -1,10 +1,13 @@
-import { Flatfile } from '@flatfile/api'
-import { WorkbookCapture } from '@flatfile/util-extractor'
-import Papa, { ParseResult } from 'papaparse'
+import type { Flatfile } from '@flatfile/api'
+import type { WorkbookCapture } from '@flatfile/util-extractor'
+import type { ParseResult } from 'papaparse'
+import type { Delimiters } from '.'
+import type { GetHeadersOptions } from './header.detection'
+
+import Papa from 'papaparse'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
-import { Delimiters } from '.'
-import { GetHeadersOptions, Headerizer } from './header.detection'
+import { Headerizer } from './header.detection'
 
 export async function parseBuffer(
   buffer: Buffer,
@@ -60,10 +63,11 @@ export async function parseBuffer(
     rows.splice(0, skip)
     // return if there are no rows
     if (rows.length === 0) {
-      return
+      return {} as WorkbookCapture
     }
 
-    const headers = prependNonUniqueHeaderColumns(header)
+    const headers: Record<string, string> =
+      prependNonUniqueHeaderColumns(header)
     const required: Record<string, boolean> = {}
     header.forEach((item) => {
       const key = item.replace('*', '').trim()
@@ -72,31 +76,40 @@ export async function parseBuffer(
     })
 
     const data: Flatfile.RecordData[] = rows
-      .filter((row) => !Object.values(row).every(isNullOrWhitespace))
-      .map((row) => {
-        const mappedRow = mapKeys(row, (key) => headers[key])
-        return mapValues(mappedRow, (value) => ({
+      .filter(
+        (row: Record<string, any>) =>
+          !Object.values(row).every(isNullOrWhitespace)
+      )
+      .map((row: Record<string, any>) => {
+        const mappedRow = mapKeys(
+          row,
+          (key: string, _value: Flatfile.CellValue) => headers[key]
+        )
+        return mapValues(mappedRow, (value: unknown) => ({
           value: transform(value),
         })) as Flatfile.RecordData
       })
 
     const sheetName = 'Sheet1'
-    return {
+    const workbook: WorkbookCapture = {
       [sheetName]: {
-        headers,
+        headers: Object.values(headers),
         required,
         data,
       },
-    } as WorkbookCapture
+    }
+    return workbook
   } catch (error) {
     console.log('An error occurred:', error)
     throw error
   }
 }
 
-function prependNonUniqueHeaderColumns(record: string[]): string[] {
+function prependNonUniqueHeaderColumns(
+  record: string[]
+): Record<string, string> {
   const counts: Record<string, number> = {}
-  const result: string[] = []
+  const result: Record<string, string> = {}
   for (const [key, value] of Object.entries(record)) {
     const cleanValue = value?.toString().replace('*', '')
     if (cleanValue && counts[value]) {

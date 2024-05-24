@@ -13,7 +13,7 @@ export function getMergeClient(apiKey: string, accountToken?: string) {
 
 export function handleError(error: any, message: string) {
   console.error(error)
-  throw new Error(`${message}: ${error.message}`)
+  throw new Error(`${message}: ${(error as Error).message}`)
 }
 
 export async function getSecret(

@@ -1,5 +1,6 @@
+import type { GetHeadersOptions } from './header.detection'
+
 import { Extractor } from '@flatfile/util-extractor'
-import { GetHeadersOptions } from './header.detection'
 import { parseBuffer } from './parser'
 
 /**

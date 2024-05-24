@@ -1,5 +1,6 @@
-import { Flatfile } from '@flatfile/api'
-import { PartialWb, SetupFactory } from '@flatfile/plugin-space-configure'
+import type { Flatfile } from '@flatfile/api'
+import type { PartialWb, SetupFactory } from '@flatfile/plugin-space-configure'
+
 import fetch from 'cross-fetch'
 
 export type OpenAPISetupFactory = {
@@ -59,7 +60,6 @@ export async function generateSetup(
           await Promise.all(
             workbook.sheets.map(async (sheet) => {
               const modelName = sheet.model
-              delete sheet.model
               const schema = schemas[modelName]
               if (!schema) {
                 console.error(`Schema not found for table name ${sheet.slug}`)
@@ -78,9 +78,7 @@ export async function generateSetup(
               } as Flatfile.SheetConfig
             })
           )
-        ).filter(Boolean)
-
-        delete workbook.source
+        ).filter(Boolean) as Flatfile.SheetConfig[]
 
         return {
           name: data.info.title,
@@ -92,7 +90,9 @@ export async function generateSetup(
     return { workbooks, space: setupFactory.space }
   } catch (error) {
     console.error(error)
-    throw new Error(`Error fetching or processing schema: ${error.message}`)
+    throw new Error(
+      `Error fetching or processing schema: ${(error as Error).message}`
+    )
   }
 }
 
@@ -178,7 +178,7 @@ export async function getPropertyType(
         ...(property?.description && { description: property.description }),
         ...(isRequired && { constraints: [{ type: 'required' }] }),
         config: {
-          options: property.enum.map((value) => ({
+          options: property.enum.map((value: any) => ({
             value,
             label: String(value),
           })),

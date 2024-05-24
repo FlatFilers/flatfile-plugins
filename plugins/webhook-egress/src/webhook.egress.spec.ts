@@ -30,7 +30,7 @@ describe('webhookEgress() e2e', () => {
       'notes',
     ])
     workbookId = workbook.id
-    sheetId = workbook.sheets[0].id
+    sheetId = workbook.sheets![0].id
     await createRecords(sheetId, [
       {
         name: 'John Doe',
@@ -76,7 +76,7 @@ describe('webhookEgress() e2e', () => {
     await listener.waitFor('job:ready', 1, 'workbook:egressTestSuccess')
 
     const response = await api.jobs.get(successfulJobId)
-    expect(response.data.outcome.message).toEqual(
+    expect(response.data.outcome?.message).toEqual(
       `Data was successfully submitted to the provided webhook. Go check it out at example.com.`
     )
   })
@@ -157,10 +157,10 @@ describe('webhookEgress() e2e', () => {
       await listener.waitFor('job:ready', 1, 'workbook:egressTestSuccess')
 
       const response = await api.jobs.get(successfulJobId)
-      expect(response.data.outcome.message).toEqual(
+      expect(response.data.outcome?.message).toEqual(
         'The data has been successfully submitted without any rejections. This task is now complete.'
       )
-      expect(response.data.outcome.heading).toEqual('Success!')
+      expect(response.data.outcome?.heading).toEqual('Success!')
     })
 
     it('returns rejections', async () => {
@@ -208,10 +208,10 @@ describe('webhookEgress() e2e', () => {
       await listener.waitFor('job:ready', 1, 'workbook:egressTestSuccess')
 
       const response = await api.jobs.get(successfulJobId)
-      expect(response.data.outcome.message).toEqual(
+      expect(response.data.outcome?.message).toEqual(
         'During the data submission process, 1 records were rejected. Please review and correct these records before resubmitting.'
       )
-      expect(response.data.outcome.heading).toEqual('Rejected Records')
+      expect(response.data.outcome?.heading).toEqual('Rejected Records')
     })
   })
 })
