@@ -81,7 +81,9 @@ export const Extractor = (
             workbookId: workbook.id,
           })
 
-          await updateSheetMetadata(workbook, capture)
+          if(capture.metadata) {
+            await updateSheetMetadata(workbook, capture)
+          }
 
           if (!workbook.sheets || workbook.sheets.length === 0) {
             throw new Error('No Sheets found')
