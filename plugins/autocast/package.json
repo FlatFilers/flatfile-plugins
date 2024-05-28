@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-autocast",
-  "version": "0.8.2",
+  "version": "1.0.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/autocast",
   "description": "A plugin for automatically casting values in Flatfile.",
   "registryMetadata": {
@@ -58,10 +58,10 @@
   "peerDependencies": {
     "@flatfile/api": "^1.8.9",
     "@flatfile/listener": "^1.0.1",
-    "@flatfile/plugin-record-hook": "^1.5.3"
+    "@flatfile/plugin-record-hook": "^1.6.0"
   },
   "devDependencies": {
-    "@flatfile/plugin-record-hook": "^1.5.3",
+    "@flatfile/plugin-record-hook": "^1.6.0",
     "@flatfile/rollup-config": "0.1.1"
   }
 }

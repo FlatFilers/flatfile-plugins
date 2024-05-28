@@ -1,5 +1,16 @@
 # @flatfile/plugin-constraints
 
+## 2.0.0
+
+### Minor Changes
+
+- 2829595: This release adds support for the new string-list and enum-list field types.
+
+### Patch Changes
+
+- Updated dependencies [2829595]
+  - @flatfile/plugin-record-hook@1.6.0
+
 ## 1.2.2
 
 ### Patch Changes

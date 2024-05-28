@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.6.0
+
+### Minor Changes
+
+- 2829595: This release adds support for the new string-list and enum-list field types.
+
 ## 1.5.3
 
 ### Patch Changes
