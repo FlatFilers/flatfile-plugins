@@ -32,6 +32,10 @@ export const dedupe = async (
 ): Promise<void | Flatfile.JobCompleteDetails> => {
   const { sheetId, workbookId } = event.context
 
+  if (!sheetId) {
+    throw new Error('Dedupe must be called from a sheet-level action')
+  }
+
   await tick(0, 'Dedupe started')
   const coreKeepOptionSelected = ['first', 'last'].includes(opts.keep)
   if (coreKeepOptionSelected && opts.on === undefined) {
