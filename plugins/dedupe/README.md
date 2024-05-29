@@ -1,6 +1,6 @@
 <!-- START_INFOCARD -->
 
-This plugin dedupes records in a sheet via a sheet level custom action.
+This plugin dedupes records in a Sheet via a Sheet-level action.
 
 **Event Type:**
 `listener.on('job:ready')`
@@ -55,17 +55,39 @@ npm i @flatfile/plugin-dedupe
 import { dedupePlugin } from "@flatfile/plugin-dedupe";
 ```
 
-```ts
-// ... inside the Sheet configuration
-"actions": [
-  {
-    "operation": "dedupe-email",
-    "mode": "background",
-    "label": "Dedupe emails",
-    "description": "Remove duplicate emails"
-  }
-]
-// ...
+```ts contactsSheet.ts
+import { Flatfile } from '@flatfile/api'
+
+export const contactsSheet: Flatfile.SheetConfig = {
+  name: 'Contacts',
+  slug: 'contacts',
+  fields: [
+    {
+      key: 'firstName',
+      type: 'string',
+      label: 'First Name',
+    },
+    {
+      key: 'lastName',
+      type: 'string',
+      label: 'Last Name',
+    },
+    {
+      key: 'email',
+      type: 'string',
+      label: 'Email',
+    }
+  ],
+  // Add a Sheet-level action here for the dedupe plugin
+  actions: [
+    {
+      operation: "dedupe-email",
+      mode: "background",
+      label: "Dedupe emails",
+      description: "Remove duplicate emails"
+    }
+  ]
+}
 ```
 
 ### JavaScript
@@ -75,7 +97,7 @@ import { dedupePlugin } from "@flatfile/plugin-dedupe";
 ```js listener.js
 // common usage
 // Keep the last record encountered (from top to bottom) based on the`email` field key.
-// Must have a Sheet level action specified with the operation name `dedupe-email`
+// Must have a Sheet-level action specified with the operation name `dedupe-email`
 listener.use(
   dedupePlugin("dedupe-email", {
     on: "email",
@@ -112,7 +134,7 @@ listener.use(
 ```ts listener.ts
 // common usage
 // Keep the last record encountered (from top to bottom) based on the`email` field key.
-// Must have a Sheet level action specified with the operation name `dedupe-email`
+// Must have a Sheet-level action specified with the operation name `dedupe-email`
 listener.use(
   dedupePlugin("dedupe-email", {
     on: "email",
