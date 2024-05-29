@@ -23,7 +23,7 @@ export interface PluginOptions {
  * @param {Function} handler - A function that takes an `event` and a `tick()` callback to
  * allow updating of the job's progress, returning a promise that resolves to either
  * void or a JobOutcome object. This function will be used to process the job when the
- * "job:ready" event is emitted.
+ * "job:ready" event is emitted. This function can fail the job by throwing an Error.
  *
  * @param {PluginOptions} opts - An optional object containing plugin options.
  * @param {boolean} opts.debug - An optional boolean that will enable debug logging.
@@ -57,33 +57,31 @@ export function jobHandler(
         })
       }
 
-      let outcome
       try {
-        outcome = await handler(event, tick)
+        const outcome = await handler(event, tick)
 
         if (opts.debug) {
           log('@flatfile/plugin-job-handler', 'Job complete')
         }
+
         await api.jobs.complete(
           jobId,
-          outcome ?? {
+          outcome || {
             outcome: {
               message: 'Job complete',
             },
           }
         )
       } catch (error) {
-        logError('@flatfile/plugin-job-handler', error.message)
-        await api.jobs.fail(
-          jobId,
-          outcome ?? {
-            info: String(error.message),
-            outcome: {
-              acknowledge: true,
-              message: String(error.message),
-            },
-          }
-        )
+        logError('@flatfile/plugin-job-handler', (error as Error).message)
+
+        await api.jobs.fail(jobId, {
+          info: String((error as Error).message),
+          outcome: {
+            acknowledge: true,
+            message: String((error as Error).message),
+          },
+        })
       }
     })
   }
