@@ -1,5 +1,11 @@
 # @flatfile/plugin-dedupe
 
+## 1.1.4
+
+### Patch Changes
+
+- 2f1d9bb: This release provides a more instructive error message when the dedupe plugin is miscalled from a workbook-level action instead of a sheet-level action.
+
 ## 1.1.3
 
 ### Patch Changes
