@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-job-handler",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/job-handler",
   "description": "A plugin for handling Flatfile Jobs.",
   "registryMetadata": {

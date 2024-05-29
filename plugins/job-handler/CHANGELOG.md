@@ -1,5 +1,11 @@
 # @flatfile/plugin-job-handler
 
+## 0.5.4
+
+### Patch Changes
+
+- ebf726e: This release fixes error handling when the callback function returns an invalid job outcome.
+
 ## 0.5.3
 
 ### Patch Changes
