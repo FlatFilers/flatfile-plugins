@@ -62,6 +62,7 @@ export async function parseBuffer(
             headerDetectionOptions: options?.headerDetectionOptions || {
               algorithm: 'default',
             },
+            headerSelection: options.headerSelection,
             debug: options?.debug,
           })
           if (!processedSheet) {
@@ -84,6 +85,7 @@ type ConvertSheetArgs = {
   rawNumbers: boolean
   raw: boolean
   headerDetectionOptions: GetHeadersOptions
+  headerSelection: boolean
   debug?: boolean
 }
 
@@ -98,6 +100,7 @@ async function convertSheet({
   rawNumbers,
   raw,
   headerDetectionOptions,
+  headerSelection,
   debug,
 }: ConvertSheetArgs): Promise<SheetCapture | undefined> {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
@@ -128,6 +131,8 @@ async function convertSheet({
   const headerKey = Math.max(0, skip - 1)
   const columnKeys = Object.keys(rows[headerKey])
 
+  if(!headerSelection)   rows.splice(0, skip)
+
   // return if there are no rows
   if (rows.length === 0) {
     if (debug) {
@@ -136,13 +141,13 @@ async function convertSheet({
     return
   }
 
-  const toExcelHeader = (data: string[]) =>
+  const toExcelHeader = (data: string[], keys: string[]) =>
     data.reduce((result, value, index) => {
-      result[value] = value
+      result[keys[index]] = value
       return result
     }, {})
-
-  const excelHeader = toExcelHeader(columnKeys)
+  const columnHeaders = headerSelection ? columnKeys : header
+  const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
   const required = Object.fromEntries(
     Object.entries(excelHeader).map(([key, value]) => [
@@ -158,9 +163,11 @@ async function convertSheet({
         (value) => ({ value })
       )
     )
-  const metadata = {
-    headers: header,
-    rowHeaders: [skip]
+  let metadata: { rowHeaders: number[]} | null
+  if(headerSelection){
+    metadata = {
+      rowHeaders: [skip]
+    }
   }
 
   return {

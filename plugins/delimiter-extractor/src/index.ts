@@ -20,6 +20,7 @@ interface DelimiterOptions {
   chunkSize?: number
   parallel?: number
   headerDetectionOptions?: GetHeadersOptions
+  headerSelection?: boolean
   debug?: boolean
 }
 

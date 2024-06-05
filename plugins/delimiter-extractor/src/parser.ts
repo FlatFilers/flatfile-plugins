@@ -10,9 +10,10 @@ export async function parseBuffer(
   buffer: Buffer,
   options: {
     delimiter: Delimiters
+    headerSelection: boolean
     guessDelimiters?: Delimiters[]
     dynamicTyping?: boolean
-    skipEmptyLines?: boolean | 'greedy'
+    skipEmptyLines?: boolean
     transform?: (value: any) => Flatfile.CellValueUnion
     headerDetectionOptions?: GetHeadersOptions
   }
@@ -35,9 +36,11 @@ export async function parseBuffer(
         ],
         dynamicTyping: options?.dynamicTyping || false,
         header: false,
-        skipEmptyLines: options?.skipEmptyLines || 'greedy',
+        skipEmptyLines: options?.skipEmptyLines || options.headerSelection ? false: 'greedy',
       }
     )
+
+    console.log(options?.skipEmptyLines || options.headerSelection ? false: 'greedy')
 
     const rows = results.data
     if (!rows || !rows.length) {
@@ -48,7 +51,6 @@ export async function parseBuffer(
 
     const extractValues = (data: Record<string, any>[]) =>
       data.map((row) => Object.values(row).filter((value) => value !== null))
-
     const headerizer = Headerizer.create(
       options.headerDetectionOptions || {
         algorithm: 'default',
@@ -57,12 +59,16 @@ export async function parseBuffer(
     const headerStream = Readable.from(extractValues(rows))
     const { header, skip, letters } = await headerizer.getHeaders(headerStream)
 
+    if(!options.headerSelection) rows.splice(0, skip)
+
     // return if there are no rows
     if (rows.length === 0) {
       return
     }
 
-    const headers = prependNonUniqueHeaderColumns(letters)
+    const columnHeaders = options.headerSelection ? letters : header
+
+    const headers = prependNonUniqueHeaderColumns(columnHeaders)
     const required: Record<string, boolean> = {}
     header.forEach((item) => {
       const key = item.replace('*', '').trim()
@@ -71,6 +77,7 @@ export async function parseBuffer(
     })
 
     const data: Flatfile.RecordData[] = rows
+      .filter((row) => !Object.values(row).every(isNullOrWhitespace))
       .map((row) => {
         const mappedRow = mapKeys(row, (key) => headers[key])
         return mapValues(mappedRow, (value) => ({
@@ -78,10 +85,19 @@ export async function parseBuffer(
         })) as Flatfile.RecordData
       })
 
-    const metadata = {
-      headers: header,
-      rowHeaders: [skip]
+    let metadata: { rowHeaders: number[]} | null
+
+    if(options.headerSelection){
+      metadata = {
+        rowHeaders: [skip]
+      }
     }
+    console.dir({
+      headers,
+      required,
+      data,
+      metadata,
+    }, { depth: null })
 
     const sheetName = 'Sheet1'
     return {
