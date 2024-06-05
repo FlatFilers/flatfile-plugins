@@ -108,7 +108,7 @@ async function convertSheet({
     defval: null,
     rawNumbers,
     raw,
-    blankrows: true
+    blankrows: true,
   })
 
   // return if there are no rows
@@ -131,7 +131,7 @@ async function convertSheet({
   const headerKey = Math.max(0, skip - 1)
   const columnKeys = Object.keys(rows[headerKey])
 
-  if(!headerSelection)   rows.splice(0, skip)
+  if (!headerSelection) rows.splice(0, skip)
 
   // return if there are no rows
   if (rows.length === 0) {
@@ -156,17 +156,16 @@ async function convertSheet({
     ])
   )
 
-  const data = rows
-    .map((row) =>
-      mapValues(
-        mapKeys(row, (key) => headers[key]),
-        (value) => ({ value })
-      )
+  const data = rows.map((row) =>
+    mapValues(
+      mapKeys(row, (key) => headers[key]),
+      (value) => ({ value })
     )
-  let metadata: { rowHeaders: number[]} | null
-  if(headerSelection){
+  )
+  let metadata: { rowHeaders: number[] } | null
+  if (headerSelection) {
     metadata = {
-      rowHeaders: [skip]
+      rowHeaders: [skip],
     }
   }
 
@@ -174,6 +173,6 @@ async function convertSheet({
     headers: Object.values(headers).filter(Boolean),
     required,
     data,
-    metadata
+    metadata,
   }
 }

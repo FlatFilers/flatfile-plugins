@@ -36,11 +36,14 @@ export async function parseBuffer(
         ],
         dynamicTyping: options?.dynamicTyping || false,
         header: false,
-        skipEmptyLines: options?.skipEmptyLines || options.headerSelection ? false: 'greedy',
+        skipEmptyLines:
+          options?.skipEmptyLines || options.headerSelection ? false : 'greedy',
       }
     )
 
-    console.log(options?.skipEmptyLines || options.headerSelection ? false: 'greedy')
+    console.log(
+      options?.skipEmptyLines || options.headerSelection ? false : 'greedy'
+    )
 
     const rows = results.data
     if (!rows || !rows.length) {
@@ -59,7 +62,7 @@ export async function parseBuffer(
     const headerStream = Readable.from(extractValues(rows))
     const { header, skip, letters } = await headerizer.getHeaders(headerStream)
 
-    if(!options.headerSelection) rows.splice(0, skip)
+    if (!options.headerSelection) rows.splice(0, skip)
 
     // return if there are no rows
     if (rows.length === 0) {
@@ -85,19 +88,22 @@ export async function parseBuffer(
         })) as Flatfile.RecordData
       })
 
-    let metadata: { rowHeaders: number[]} | null
+    let metadata: { rowHeaders: number[] } | null
 
-    if(options.headerSelection){
+    if (options.headerSelection) {
       metadata = {
-        rowHeaders: [skip]
+        rowHeaders: [skip],
       }
     }
-    console.dir({
-      headers,
-      required,
-      data,
-      metadata,
-    }, { depth: null })
+    console.dir(
+      {
+        headers,
+        required,
+        data,
+        metadata,
+      },
+      { depth: null }
+    )
 
     const sheetName = 'Sheet1'
     return {

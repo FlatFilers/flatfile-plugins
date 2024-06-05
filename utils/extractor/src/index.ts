@@ -120,7 +120,7 @@ export const Extractor = (
           }
 
           // After all records are added, update the sheet metadata
-          if(headerSelection) {
+          if (headerSelection) {
             await updateSheetMetadata(workbook, capture)
           }
 
@@ -137,7 +137,7 @@ export const Extractor = (
           if (debug) {
             console.log(`Extractor error: ${e.message}`)
           }
-            console.log(`Extractor error: ${e.message}`)
+          console.log(`Extractor error: ${e.message}`)
           await api.files.update(fileId, {
             status: 'failed',
           })
@@ -194,21 +194,20 @@ function getSheetConfig(
   return {
     name,
     slug: slugify(name),
-    fields: keysToFields({keys: headers, required, descriptions}),
+    fields: keysToFields({ keys: headers, required, descriptions }),
   }
 }
 
-function keysToFields_OLD(
-  {
-    keys,
-    required = {},
-    descriptions = {},
-    fieldRefs = []
-  }: {
-    keys: string[]
-    required?: Record<string, boolean>
-    descriptions?: Record<string, string>
-    fieldRefs?: string[]
+function keysToFields_OLD({
+  keys,
+  required = {},
+  descriptions = {},
+  fieldRefs = [],
+}: {
+  keys: string[]
+  required?: Record<string, boolean>
+  descriptions?: Record<string, string>
+  fieldRefs?: string[]
 }): Flatfile.Property[] {
   return keys.map((key, index) => ({
     key,
@@ -220,17 +219,15 @@ function keysToFields_OLD(
   }))
 }
 
-export function keysToFields(
-  {
-    keys,
-    required = {},
-    descriptions = {},
-  }: {
-    keys: string[]
-    required?: Record<string, boolean>
-    descriptions?: Record<string, string>
-  }
-): Flatfile.Property[] {
+export function keysToFields({
+  keys,
+  required = {},
+  descriptions = {},
+}: {
+  keys: string[]
+  required?: Record<string, boolean>
+  descriptions?: Record<string, string>
+}): Flatfile.Property[] {
   let index = 0
   const countOfKeys: Record<
     string,
@@ -268,9 +265,9 @@ function updateSheetMetadata(
 ) {
   return Promise.all(
     workbook.sheets.map(async (sheet) => {
-      const {  metadata } = workbookCapture[sheet.name]
+      const { metadata } = workbookCapture[sheet.name]
       await api.sheets.updateSheet(sheet.id, {
-        metadata
+        metadata,
       })
     })
   )
@@ -287,6 +284,6 @@ export type SheetCapture = {
   headers: string[]
   required?: Record<string, boolean>
   descriptions?: Record<string, null | string> | null
-  data: Flatfile.RecordData[],
+  data: Flatfile.RecordData[]
   metadata?: { rowHeaders: number[] }
 }
