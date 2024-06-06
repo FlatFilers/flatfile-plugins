@@ -1,7 +1,9 @@
 import type { FlatfileListener } from '@flatfile/listener'
 
-import { exportWorkbookPlugin } from '@flatfile/plugin-export-workbook'
+import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
+import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
 
 export default async function (listener: FlatfileListener) {
-  listener.use(exportWorkbookPlugin({ autoDownload: true, debug: true }))
+  listener.use(ExcelExtractor())
+  listener.use(DelimiterExtractor('.txt', { delimiter: ',' }))
 }

@@ -4,9 +4,12 @@ import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
 import { ExcelExtractorOptions } from '.'
 import { GetHeadersOptions, Headerizer } from './header.detection'
-import { isNullOrWhitespace, prependNonUniqueHeaderColumns } from './utils'
+import { prependNonUniqueHeaderColumns } from './utils'
 
-type ParseBufferOptions = Omit<ExcelExtractorOptions, 'chunkSize' | 'parallel'>
+type ParseBufferOptions = Omit<
+  ExcelExtractorOptions,
+  'chunkSize' | 'parallel'
+> & { readonly headerSelectionEnabled?: boolean }
 type ProcessedSheet = [PropertyKey, SheetCapture]
 
 export async function parseBuffer(
@@ -62,6 +65,7 @@ export async function parseBuffer(
             headerDetectionOptions: options?.headerDetectionOptions || {
               algorithm: 'default',
             },
+            headerSelectionEnabled: options?.headerSelectionEnabled ?? false,
             debug: options?.debug,
           })
           if (!processedSheet) {
@@ -84,6 +88,7 @@ type ConvertSheetArgs = {
   rawNumbers: boolean
   raw: boolean
   headerDetectionOptions: GetHeadersOptions
+  headerSelectionEnabled: boolean
   debug?: boolean
 }
 
@@ -98,6 +103,7 @@ async function convertSheet({
   rawNumbers,
   raw,
   headerDetectionOptions,
+  headerSelectionEnabled,
   debug,
 }: ConvertSheetArgs): Promise<SheetCapture | undefined> {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
@@ -105,6 +111,7 @@ async function convertSheet({
     defval: null,
     rawNumbers,
     raw,
+    blankrows: true,
   })
 
   // return if there are no rows
@@ -125,11 +132,10 @@ async function convertSheet({
     console.log('Detected header:', header)
   }
   const headerKey = Math.max(0, skip - 1)
-  const columnKeys = Object.keys(rows[headerKey]).filter((key) =>
-    Boolean(rows[headerKey][key])
-  )
+  const columnKeys = Object.keys(rows[headerKey])
 
-  rows.splice(0, skip)
+  if (!headerSelectionEnabled) rows.splice(0, skip)
+
   // return if there are no rows
   if (rows.length === 0) {
     if (debug) {
@@ -143,8 +149,8 @@ async function convertSheet({
       result[keys[index]] = value
       return result
     }, {})
-
-  const excelHeader = toExcelHeader(header, columnKeys)
+  const columnHeaders = headerSelectionEnabled ? columnKeys : header
+  const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
   const required = Object.fromEntries(
     Object.entries(excelHeader).map(([key, value]) => [
@@ -153,18 +159,23 @@ async function convertSheet({
     ])
   )
 
-  const data = rows
-    .filter((row) => !Object.values(row).every(isNullOrWhitespace))
-    .map((row) =>
-      mapValues(
-        mapKeys(row, (key) => headers[key]),
-        (value) => ({ value })
-      )
+  const data = rows.map((row) =>
+    mapValues(
+      mapKeys(row, (key) => headers[key]),
+      (value) => ({ value })
     )
+  )
+  let metadata: { rowHeaders: number[] } | null
+  if (headerSelectionEnabled) {
+    metadata = {
+      rowHeaders: [skip],
+    }
+  }
 
   return {
     headers: Object.values(headers).filter(Boolean),
     required,
     data,
+    metadata,
   }
 }

@@ -23,12 +23,19 @@ describe('parser', () => {
           Tenant: { value: 'notdata' },
         },
         {
+          Code: { value: '      ' },
+          Details: { value: null },
+          BranchName: { value: null },
+          Tenant: { value: null },
+        },
+        {
           Code: { value: 'Home Nursing' },
           Details: { value: 'Home Nursing Department' },
           BranchName: { value: null },
           Tenant: { value: 'notdata' },
         },
       ],
+      metadata: undefined,
     })
   })
 
@@ -51,7 +58,7 @@ describe('parser', () => {
     })
 
     test('finds values', () => {
-      expect(capture['Departments'].data.length).toEqual(2)
+      expect(capture['Departments'].data.length).toEqual(3)
     })
 
     test('non-unique header values are prepended', () => {

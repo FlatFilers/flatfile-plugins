@@ -1,7 +1,7 @@
 import {
-  parseBuffer,
   findRoot,
   headersFromObjectList,
+  parseBuffer,
   xmlToJson,
 } from './parser'
 
@@ -148,6 +148,7 @@ describe('parser', function () {
               'email/1': { value: 'wug@dejdipfo.is' },
             },
           ],
+          metadata: undefined,
         },
       })
     })

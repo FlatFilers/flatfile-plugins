@@ -42,7 +42,7 @@ export const Extractor = (
       'job:ready',
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
-        const { fileId, jobId } = event.context
+        const { fileId, jobId, spaceId } = event.context
         const { chunkSize, parallel, debug } = {
           chunkSize: 5_000,
           parallel: 1,
@@ -62,10 +62,18 @@ export const Extractor = (
           const { data: file } = await api.files.get(fileId)
           const buffer = await getFileBuffer(event)
 
+          const { data: entitlements } = await api.entitlements.list({
+            resourceId: spaceId,
+          })
+          const headerSelectionEnabled = !!entitlements.find(
+            (e) => e.key === 'headerSelectionEnabled'
+          )
+
           await tick(3, 'Parsing Sheets')
           const capture = await parseBuffer(buffer, {
             ...options,
             fileId,
+            headerSelectionEnabled,
           })
 
           await tick(5, 'Creating workbook')
@@ -112,6 +120,12 @@ export const Extractor = (
               { chunkSize, parallel, debug }
             )
           }
+
+          // After all records are added, update the sheet metadata
+          if (headerSelectionEnabled) {
+            await updateSheetMetadata(workbook, capture)
+          }
+
           await api.files.update(file.id, {
             status: 'complete',
           })
@@ -181,16 +195,63 @@ function getSheetConfig(
   return {
     name,
     slug: slugify(name),
-    fields: headers.map((key) => ({
+    fields: keysToFields({ keys: headers, required, descriptions }),
+  }
+}
+
+export function keysToFields({
+  keys,
+  required = {},
+  descriptions = {},
+}: {
+  keys: string[]
+  required?: Record<string, boolean>
+  descriptions?: Record<string, string>
+}): Flatfile.Property[] {
+  let index = 0
+  const countOfKeys: Record<
+    string,
+    { count: number; index: number; metadata?: { fieldRef: string } }
+  > = keys.reduce((acc, key) => {
+    if (!key) key = ''
+    key = key.trim()
+    if (key === '') {
+      key = 'empty'
+    }
+    if (acc[key]) {
+      const incrementKey = `${key}_${acc[key].count}`
+      acc[incrementKey] = { count: 1, index }
+      acc[key].count++
+    } else {
+      acc[key] = { count: 1, index }
+    }
+    index++
+    return acc
+  }, {})
+  return Object.entries(countOfKeys)
+    .sort((a, b) => a[1].index - b[1].index)
+    .map(([key, _]) => ({
       key,
       label: key,
       description: descriptions?.[key] || '',
       type: 'string',
       constraints: required?.[key] ? [{ type: 'required' }] : [],
-    })),
-  }
+    }))
 }
 
+async function updateSheetMetadata(
+  workbook: Flatfile.Workbook,
+  workbookCapture: WorkbookCapture
+): Promise<void> {
+  await Promise.all(
+    workbook.sheets.map(async (sheet) => {
+      const { metadata } = workbookCapture[sheet.name]
+      await api.sheets.updateSheet(sheet.id, {
+        metadata,
+      })
+    })
+  )
+}
 /**
  * Generic structure for capturing a workbook
  */
@@ -204,4 +265,5 @@ export type SheetCapture = {
   required?: Record<string, boolean>
   descriptions?: Record<string, null | string> | null
   data: Flatfile.RecordData[]
+  metadata?: { rowHeaders: number[] }
 }

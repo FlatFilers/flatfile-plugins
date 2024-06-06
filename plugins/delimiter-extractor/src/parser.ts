@@ -3,19 +3,16 @@ import { WorkbookCapture } from '@flatfile/util-extractor'
 import Papa, { ParseResult } from 'papaparse'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
-import { Delimiters } from '.'
-import { GetHeadersOptions, Headerizer } from './header.detection'
+import { DelimiterOptions } from '../dist/types'
+import { Headerizer } from './header.detection'
+
+type ParseBufferOptions = Omit<DelimiterOptions, 'chunkSize' | 'parallel'> & {
+  readonly headerSelectionEnabled?: boolean
+}
 
 export async function parseBuffer(
   buffer: Buffer,
-  options: {
-    delimiter: Delimiters
-    guessDelimiters?: Delimiters[]
-    dynamicTyping?: boolean
-    skipEmptyLines?: boolean | 'greedy'
-    transform?: (value: any) => Flatfile.CellValueUnion
-    headerDetectionOptions?: GetHeadersOptions
-  }
+  options: ParseBufferOptions
 ): Promise<WorkbookCapture> {
   try {
     const fileContents = buffer.toString('utf8')
@@ -35,7 +32,9 @@ export async function parseBuffer(
         ],
         dynamicTyping: options?.dynamicTyping || false,
         header: false,
-        skipEmptyLines: options?.skipEmptyLines || 'greedy',
+        skipEmptyLines: options?.headerSelectionEnabled
+          ? false
+          : options?.skipEmptyLines || 'greedy',
       }
     )
 
@@ -48,22 +47,24 @@ export async function parseBuffer(
 
     const extractValues = (data: Record<string, any>[]) =>
       data.map((row) => Object.values(row).filter((value) => value !== null))
-
     const headerizer = Headerizer.create(
       options.headerDetectionOptions || {
         algorithm: 'default',
       }
     )
     const headerStream = Readable.from(extractValues(rows))
-    const { header, skip } = await headerizer.getHeaders(headerStream)
+    const { header, skip, letters } = await headerizer.getHeaders(headerStream)
 
-    rows.splice(0, skip)
+    if (!options?.headerSelectionEnabled) rows.splice(0, skip)
+
     // return if there are no rows
     if (rows.length === 0) {
       return
     }
 
-    const headers = prependNonUniqueHeaderColumns(header)
+    const columnHeaders = options?.headerSelectionEnabled ? letters : header
+
+    const headers = prependNonUniqueHeaderColumns(columnHeaders)
     const required: Record<string, boolean> = {}
     header.forEach((item) => {
       const key = item.replace('*', '').trim()
@@ -80,12 +81,21 @@ export async function parseBuffer(
         })) as Flatfile.RecordData
       })
 
+    let metadata: { rowHeaders: number[] } | null
+
+    if (options?.headerSelectionEnabled) {
+      metadata = {
+        rowHeaders: [skip],
+      }
+    }
+
     const sheetName = 'Sheet1'
     return {
       [sheetName]: {
         headers,
         required,
         data,
+        metadata,
       },
     } as WorkbookCapture
   } catch (error) {

@@ -40,6 +40,7 @@ describe('parser', () => {
             Tenant: { value: 'false' },
           },
         ],
+        metadata: undefined,
       },
     })
   })
