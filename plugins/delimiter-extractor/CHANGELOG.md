@@ -1,5 +1,16 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 1.0.0
+
+### Major Changes
+
+- a78b608: This release supports a new Platform feature for header selection.
+
+### Patch Changes
+
+- Updated dependencies [a78b608]
+  - @flatfile/util-extractor@1.0.0
+
 ## 0.10.2
 
 ### Patch Changes

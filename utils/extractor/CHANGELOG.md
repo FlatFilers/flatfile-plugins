@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 1.0.0
+
+### Major Changes
+
+- a78b608: This release supports a new Platform feature for header selection.
+
 ## 0.6.2
 
 ### Patch Changes
