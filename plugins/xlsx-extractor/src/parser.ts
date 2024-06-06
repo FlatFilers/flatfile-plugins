@@ -4,9 +4,12 @@ import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
 import { ExcelExtractorOptions } from '.'
 import { GetHeadersOptions, Headerizer } from './header.detection'
-import { isNullOrWhitespace, prependNonUniqueHeaderColumns } from './utils'
+import { prependNonUniqueHeaderColumns } from './utils'
 
-type ParseBufferOptions = Omit<ExcelExtractorOptions, 'chunkSize' | 'parallel'>
+type ParseBufferOptions = Omit<
+  ExcelExtractorOptions,
+  'chunkSize' | 'parallel'
+> & { readonly headerSelection?: boolean }
 type ProcessedSheet = [PropertyKey, SheetCapture]
 
 export async function parseBuffer(

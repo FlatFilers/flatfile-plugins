@@ -20,7 +20,6 @@ export interface ExcelExtractorOptions {
   readonly headerDetectionOptions?: GetHeadersOptions
   readonly chunkSize?: number
   readonly parallel?: number
-  readonly headerSelection?: boolean
   readonly debug?: boolean
 }
 

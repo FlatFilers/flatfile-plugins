@@ -11,17 +11,16 @@ export enum NativeFileTypes {
 
 export type Delimiters = ',' | '|' | '\t' | ';' | ':' | '~' | '^' | '#'
 
-interface DelimiterOptions {
-  delimiter?: Delimiters
-  guessDelimiters?: Delimiters[]
-  dynamicTyping?: boolean
-  skipEmptyLines?: boolean | 'greedy'
-  transform?: (value: any) => Flatfile.CellValueUnion
-  chunkSize?: number
-  parallel?: number
-  headerDetectionOptions?: GetHeadersOptions
-  headerSelection?: boolean
-  debug?: boolean
+export interface DelimiterOptions {
+  readonly delimiter?: Delimiters
+  readonly guessDelimiters?: Delimiters[]
+  readonly dynamicTyping?: boolean
+  readonly skipEmptyLines?: boolean | 'greedy'
+  readonly transform?: (value: any) => Flatfile.CellValueUnion
+  readonly chunkSize?: number
+  readonly parallel?: number
+  readonly headerDetectionOptions?: GetHeadersOptions
+  readonly debug?: boolean
 }
 
 export const DelimiterExtractor = (

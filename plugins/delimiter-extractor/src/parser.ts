@@ -3,20 +3,16 @@ import { WorkbookCapture } from '@flatfile/util-extractor'
 import Papa, { ParseResult } from 'papaparse'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
-import { Delimiters } from '.'
-import { GetHeadersOptions, Headerizer } from './header.detection'
+import { DelimiterOptions } from '../dist/types'
+import { Headerizer } from './header.detection'
+
+type ParseBufferOptions = Omit<DelimiterOptions, 'chunkSize' | 'parallel'> & {
+  readonly headerSelection?: boolean
+}
 
 export async function parseBuffer(
   buffer: Buffer,
-  options: {
-    delimiter: Delimiters
-    headerSelection: boolean
-    guessDelimiters?: Delimiters[]
-    dynamicTyping?: boolean
-    skipEmptyLines?: boolean
-    transform?: (value: any) => Flatfile.CellValueUnion
-    headerDetectionOptions?: GetHeadersOptions
-  }
+  options: ParseBufferOptions
 ): Promise<WorkbookCapture> {
   try {
     const fileContents = buffer.toString('utf8')
