@@ -32,10 +32,9 @@ export async function parseBuffer(
         ],
         dynamicTyping: options?.dynamicTyping || false,
         header: false,
-        skipEmptyLines:
-          options?.skipEmptyLines || options?.headerSelectionEnabled
-            ? false
-            : 'greedy',
+        skipEmptyLines: options?.headerSelectionEnabled
+          ? false
+          : options?.skipEmptyLines || 'greedy',
       }
     )
 
