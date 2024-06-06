@@ -42,7 +42,7 @@ export const Extractor = (
       'job:ready',
       { operation: `extract-plugin-${extractorType}` },
       async (event) => {
-        const { fileId, jobId, accountId, spaceId } = event.context
+        const { fileId, jobId, spaceId } = event.context
         const { chunkSize, parallel, debug } = {
           chunkSize: 5_000,
           parallel: 1,
@@ -61,17 +61,19 @@ export const Extractor = (
           await tick(1, 'Retrieving file')
           const { data: file } = await api.files.get(fileId)
           const buffer = await getFileBuffer(event)
-          const entitlements = await api.entitlements.list({
+
+          const { data: entitlements } = await api.entitlements.list({
             resourceId: spaceId,
           })
-          const headerSelection = !!entitlements.data.find(
-            (e) => e.key === 'headerSelection'
+          const headerSelectionEnabled = !!entitlements.find(
+            (e) => e.key === 'headerSelectionEnabled'
           )
+
           await tick(3, 'Parsing Sheets')
           const capture = await parseBuffer(buffer, {
             ...options,
             fileId,
-            headerSelection,
+            headerSelectionEnabled,
           })
 
           await tick(5, 'Creating workbook')
@@ -120,7 +122,7 @@ export const Extractor = (
           }
 
           // After all records are added, update the sheet metadata
-          if (headerSelection) {
+          if (headerSelectionEnabled) {
             await updateSheetMetadata(workbook, capture)
           }
 
@@ -137,7 +139,6 @@ export const Extractor = (
           if (debug) {
             console.log(`Extractor error: ${e.message}`)
           }
-          console.log(`Extractor error: ${e.message}`)
           await api.files.update(fileId, {
             status: 'failed',
           })
@@ -198,27 +199,6 @@ function getSheetConfig(
   }
 }
 
-function keysToFields_OLD({
-  keys,
-  required = {},
-  descriptions = {},
-  fieldRefs = [],
-}: {
-  keys: string[]
-  required?: Record<string, boolean>
-  descriptions?: Record<string, string>
-  fieldRefs?: string[]
-}): Flatfile.Property[] {
-  return keys.map((key, index) => ({
-    key,
-    label: key,
-    description: descriptions?.[key] || '',
-    type: 'string',
-    constraints: required?.[key] ? [{ type: 'required' }] : [],
-    ...(fieldRefs[index] && { metadata: { fieldRef: fieldRefs[index] } }),
-  }))
-}
-
 export function keysToFields({
   keys,
   required = {},
@@ -259,11 +239,11 @@ export function keysToFields({
     }))
 }
 
-function updateSheetMetadata(
+async function updateSheetMetadata(
   workbook: Flatfile.Workbook,
   workbookCapture: WorkbookCapture
-) {
-  return Promise.all(
+): Promise<void> {
+  await Promise.all(
     workbook.sheets.map(async (sheet) => {
       const { metadata } = workbookCapture[sheet.name]
       await api.sheets.updateSheet(sheet.id, {

@@ -115,6 +115,7 @@ describe('parser', function () {
             },
           },
         ],
+        metadata: undefined,
       },
     })
   })
