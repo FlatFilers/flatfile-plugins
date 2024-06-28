@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.3.3
+
+### Patch Changes
+
+- 0a4afa0: Introduces Simplified record helpers for memory efficient processing of large datasets and launches a rollout plugin for helping with schema updating.
+
 ## 1.3.2
 
 ### Patch Changes
