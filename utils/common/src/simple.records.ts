@@ -101,7 +101,7 @@ export class Simplified {
 
   static async createAllRecords(
     sheetId: string,
-    records: SimpleRecord[],
+    records: SimpleValues[],
     tick?: TickHelper
   ): Promise<void> {
     await createAllRecords(
