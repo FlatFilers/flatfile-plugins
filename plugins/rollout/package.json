@@ -1,0 +1,50 @@
+{
+  "name": "@flatfile/plugin-rollout",
+  "version": "1.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/rollout",
+  "description": "A plugin for automatically rolling out new changes to workbooks in flatfile.",
+  "registryMetadata": {
+    "category": "core"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "build:watch": "parcel watch",
+    "build:prod": "NODE_ENV=production parcel build",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-core",
+    "featured"
+  ],
+  "author": "David Boskovic",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/rollout"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/util-common": "^1.3.2",
+    "async": "^3.2.5",
+    "modern-async": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@flatfile/api": "^1.8.9",
+    "@flatfile/listener": "^1.0.1"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "0.1.1"
+  }
+}
