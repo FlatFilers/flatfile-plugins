@@ -36,7 +36,12 @@
   },
   "license": "ISC",
   "dependencies": {
+<<<<<<< Updated upstream
     "@flatfile/util-common": "^1.3.3",
+=======
+    "@flatfile/plugin-job-handler": "^0.5.4",
+    "@flatfile/util-common": "^1.3.2",
+>>>>>>> Stashed changes
     "async": "^3.2.5",
     "modern-async": "^2.0.0"
   },
