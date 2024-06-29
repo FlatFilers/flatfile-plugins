@@ -118,7 +118,8 @@ export class Simplified {
         ([key, value]) => [key, value.value] as [string, any]
       )
     )
-    obj.id = r.id
+    obj._id = r.id
+    obj._metadata = r.metadata
     return obj as SimpleRecord
   }
 
