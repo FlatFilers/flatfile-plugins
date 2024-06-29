@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.3.4
+
+### Patch Changes
+
+- Resolved a type issue with simplified create
+
 ## 1.3.3
 
 ### Patch Changes
