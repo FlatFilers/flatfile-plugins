@@ -1,6 +1,6 @@
 # @flatfile/util-common
 
-## 1.3.5
+## 1.3.6
 
 ### Patch Changes
 
