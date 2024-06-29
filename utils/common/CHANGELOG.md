@@ -1,16 +1,16 @@
 # @flatfile/util-common
 
+## 1.3.7
+
+### Patch Changes
+
+- Resolves an issue with simplified record format
+
 ## 1.3.6
 
 ### Patch Changes
 
 - c23f5aa: Adds a more optimized method for streaming records without fetching the total pages first
-
-## 1.3.5
-
-### Patch Changes
-
-- Resolves an issue with simplified record format
 
 ## 1.3.4
 
