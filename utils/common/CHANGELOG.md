@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.3.7
+
+### Patch Changes
+
+- Resolves an issue with simplified record format
+
 ## 1.3.6
 
 ### Patch Changes
