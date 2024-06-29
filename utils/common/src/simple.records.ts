@@ -24,16 +24,51 @@ export class Simplified {
     tick?: TickHelper
   ): Promise<SimpleRecord[]> {
     const recordCount = await getSheetLength(sheetId)
-    const pageCount = Math.ceil(recordCount / PAGE_SIZE)
+    const pageSize = options.pageSize || PAGE_SIZE
+    const pageCount = Math.ceil(recordCount / pageSize)
 
     const recordPages = await asyncLimitSeries(pageCount, async (i: number) => {
       await tick?.((i + 1) / pageCount, i + 1, pageCount).catch(console.log)
       const res = await getRecordsRaw(sheetId, {
         ...options,
         pageNumber: i + 1,
+        pageSize,
       })
       return res.map(Simplified.toSimpleRecord)
     })
+    return recordPages.flat(1)
+  }
+
+  /**
+   * Return all records for a sheet by iterating until there are empty pages.
+   * This is most useful in scenarios where pages are generally small but you want
+   * to safely handle edge cases. It avoids another count request.
+   *
+   * @param sheetId
+   * @param options
+   */
+  static async getAllRecordsSeries(
+    sheetId: string,
+    options: Flatfile.records.GetRecordsRequest = {}
+  ): Promise<SimpleRecord[]> {
+    const pageSize = options.pageSize || PAGE_SIZE
+
+    const recordPages: SimpleRecord[][] = []
+    let pageNumber = 1
+    while (true) {
+      const res = await getRecordsRaw(sheetId, {
+        ...options,
+        pageSize,
+        pageNumber,
+      })
+
+      recordPages.push(res.map(Simplified.toSimpleRecord))
+      pageNumber += 1
+      if (res.length < pageSize) {
+        break
+      }
+    }
+
     return recordPages.flat(1)
   }
 
