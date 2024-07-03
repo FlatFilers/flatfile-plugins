@@ -51,7 +51,7 @@ jobs:
       - name: Create branch in guides repo with changelog update
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.GH_TOKEN }}
+          API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
         with:
           source_file: temp/${{ env.FILE_NAME}}
           destination_repo: ${{ env.DESTINATION_REPO }}
