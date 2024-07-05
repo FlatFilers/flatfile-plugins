@@ -66,7 +66,7 @@ export const Extractor = (
             resourceId: spaceId,
           })
           const headerSelectionEnabled = !!entitlements.find(
-            (e) => e.key === 'headerSelectionEnabled'
+            (e) => e.key === 'headerSelection'
           )
 
           await tick(3, 'Parsing Sheets')
