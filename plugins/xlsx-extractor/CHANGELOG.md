@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 2.0.1
+
+### Patch Changes
+
+- 1112838: Updating dependencies
+
 ## 2.0.0
 
 ### Major Changes
