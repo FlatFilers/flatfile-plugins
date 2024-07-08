@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 1.0.1
+
+### Patch Changes
+
+- baf8ef0: Update to entitlement call
+
 ## 1.0.0
 
 ### Major Changes
