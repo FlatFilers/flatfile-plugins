@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.5.18
+
+### Patch Changes
+
+- 1112838: Updating dependencies
+
 ## 0.5.17
 
 ### Patch Changes
