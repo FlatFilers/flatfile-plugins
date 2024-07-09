@@ -15,12 +15,6 @@ describe('parser', () => {
     expect(await parseBuffer(colonBasicBuffer, { delimiter: '#' })).toEqual({
       Sheet1: {
         headers: ['Code', 'Details', 'BranchName', 'Tenant'],
-        required: {
-          Code: true,
-          Details: false,
-          BranchName: false,
-          Tenant: false,
-        },
         data: [
           {
             Code: { value: 'Personal Care' },

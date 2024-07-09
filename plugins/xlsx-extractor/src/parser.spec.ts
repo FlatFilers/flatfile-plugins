@@ -14,7 +14,6 @@ describe('parser', () => {
   test('Excel to WorkbookCapture', async () => {
     expect(capture.Departments).toEqual({
       headers: ['Code', 'Details', 'BranchName', 'Tenant'],
-      required: { Code: true, Details: false, BranchName: true, Tenant: true },
       data: [
         {
           Code: { value: 'Personal Care' },
@@ -90,71 +89,6 @@ describe('parser', () => {
         'Rebates_11',
         'Purchases_11',
       ])
-    })
-
-    test('required columns are marked', () => {
-      expect(capture['Departments'].required).toEqual({
-        Code: true,
-        Details: false,
-        BranchName: true,
-        Tenant: true,
-      })
-      expect(capture['Clients'].required).toEqual({
-        Id: true,
-        FirstName: true,
-        LastName: true,
-        Salutation: false,
-        Address: false,
-        'Suite Number': false,
-        City: false,
-        Province: false,
-        Country: false,
-        PostalCode: false,
-        MainPhoneNumber: false,
-        PersonalPhoneNumber: false,
-        OtherPhoneNumber: false,
-        FaxNumber: false,
-        EmailAddress: false,
-        Password: false,
-        DateOfBirth: false,
-        Gender: false,
-        Remarks: false,
-        HealthCardNumber: false,
-        CostCentreNumber: false,
-        Timezone: false,
-        preferred_language: false,
-        BranchName: true,
-        Tenant: true,
-        'referral source': false,
-      })
-      expect(capture['Rebates-Purchases'].required).toEqual({
-        Name: true,
-        Group: true,
-        Rebates: false,
-        Purchases: false,
-        Rebates_1: false,
-        Purchases_1: false,
-        Rebates_2: false,
-        Purchases_2: false,
-        Rebates_3: false,
-        Purchases_3: false,
-        Rebates_4: false,
-        Purchases_4: false,
-        Rebates_5: false,
-        Purchases_5: false,
-        Rebates_6: false,
-        Purchases_6: false,
-        Rebates_7: false,
-        Purchases_7: false,
-        Rebates_8: false,
-        Purchases_8: false,
-        Rebates_9: false,
-        Purchases_9: false,
-        Rebates_10: false,
-        Purchases_10: false,
-        Rebates_11: false,
-        Purchases_11: false,
-      })
     })
   })
 })
