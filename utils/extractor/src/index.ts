@@ -190,22 +190,20 @@ function getWorkbookConfig(
 
 function getSheetConfig(
   name: string,
-  { headers, required, descriptions }: SheetCapture
+  { headers, descriptions }: SheetCapture
 ): Flatfile.SheetConfig {
   return {
     name,
     slug: slugify(name),
-    fields: keysToFields({ keys: headers, required, descriptions }),
+    fields: keysToFields({ keys: headers, descriptions }),
   }
 }
 
 export function keysToFields({
   keys,
-  required = {},
   descriptions = {},
 }: {
   keys: string[]
-  required?: Record<string, boolean>
   descriptions?: Record<string, string>
 }): Flatfile.Property[] {
   let index = 0
@@ -235,7 +233,6 @@ export function keysToFields({
       label: key,
       description: descriptions?.[key] || '',
       type: 'string',
-      constraints: required?.[key] ? [{ type: 'required' }] : [],
     }))
 }
 
@@ -262,7 +259,6 @@ export type WorkbookCapture = Record<string, SheetCapture>
  */
 export type SheetCapture = {
   headers: string[]
-  required?: Record<string, boolean>
   descriptions?: Record<string, null | string> | null
   data: Flatfile.RecordData[]
   metadata?: { rowHeaders: number[] }

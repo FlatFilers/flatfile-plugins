@@ -152,12 +152,6 @@ async function convertSheet({
   const columnHeaders = headerSelectionEnabled ? columnKeys : header
   const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
-  const required = Object.fromEntries(
-    Object.entries(excelHeader).map(([key, value]) => [
-      headers[key],
-      value?.toString().includes('*') ?? false,
-    ])
-  )
 
   const data = rows.map((row) =>
     mapValues(
@@ -174,7 +168,6 @@ async function convertSheet({
 
   return {
     headers: Object.values(headers).filter(Boolean),
-    required,
     data,
     metadata,
   }
