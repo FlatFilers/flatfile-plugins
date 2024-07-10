@@ -65,12 +65,6 @@ export async function parseBuffer(
     const columnHeaders = options?.headerSelectionEnabled ? letters : header
 
     const headers = prependNonUniqueHeaderColumns(columnHeaders)
-    const required: Record<string, boolean> = {}
-    header.forEach((item) => {
-      const key = item.replace('*', '').trim()
-      const hasAsterisk = item.includes('*')
-      required[key] = hasAsterisk
-    })
 
     const data: Flatfile.RecordData[] = rows
       .filter((row) => !Object.values(row).every(isNullOrWhitespace))
@@ -93,7 +87,6 @@ export async function parseBuffer(
     return {
       [sheetName]: {
         headers,
-        required,
         data,
         metadata,
       },
