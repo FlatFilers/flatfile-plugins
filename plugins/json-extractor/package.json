@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-json-extractor",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/json-extractor",
   "description": "A plugin for parsing json files in Flatfile.",
   "registryMetadata": {
@@ -52,7 +52,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^1.0.0"
+    "@flatfile/util-extractor": "^2.0.0"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1"
