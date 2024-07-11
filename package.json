@@ -61,7 +61,7 @@
   "optionalDependencies": {
     "@parcel/watcher-linux-x64-glibc": "^2.3.0",
     "@rollup/rollup-linux-x64-gnu": "^4.8.0",
-    "@flatfile/changelog": "^0.0.3"
+    "@flatfile/changelog": "^1.0.0"
 
   }
 }
