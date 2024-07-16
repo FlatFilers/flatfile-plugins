@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.0.1
+
+### Patch Changes
+
+- cbb06cc: Update util-extrator dependency.
+
 ## 2.0.0
 
 ### Major Changes

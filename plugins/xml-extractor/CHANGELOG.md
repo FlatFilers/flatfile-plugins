@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.5.20
+
+### Patch Changes
+
+- cbb06cc: Update util-extrator dependency.
+
 ## 0.5.19
 
 ### Patch Changes
