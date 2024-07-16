@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.0.1
+
+### Patch Changes
+
+- cbb06cc: Update util-extrator dependency.
+
 ## 3.0.0
 
 ### Major Changes
