@@ -181,10 +181,11 @@ function getWorkbookConfig(
 
   return {
     name: `[file] ${name}`,
-    labels: ['file'],
+    labels: ['file'], // we use this on the backend to add the EXTRACTED_FROM_SOURCE treatment to the workbook on previous versions of the plugin
     spaceId,
     environmentId,
     sheets,
+    treatments: [Flatfile.WorkbookTreatments.ExtractedFromSource],
   }
 }
 
