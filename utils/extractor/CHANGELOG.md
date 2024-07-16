@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.0.1
+
+### Patch Changes
+
+- 57bf814: Added Treatments to extracted files. Used internally for identification.
+
 ## 2.0.0
 
 ### Major Changes
