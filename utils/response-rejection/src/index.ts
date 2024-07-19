@@ -82,6 +82,34 @@ async function updateSheet(
       if (!records.length) {
         return
       }
+
+      /**
+       * If deleteSubmitted is false, the submissionStatus field is populated appropriate. If the listener also has a
+       * recordHook, the recordHook will be triggered causing the message to be discarded. To avoid this, we're updating
+       * the record twice. First time sets the submissionStatus field which triggers the recordHook. Second time updates
+       * the record with the rejection messages which does not trigger the recordHook since no value is changed.
+       */
+      if (!deleteSubmitted) {
+        records.forEach((record) => {
+          const rejectedRecord = sheetRejections.rejectedRecords.find(
+            (item) => item.id === record.id
+          )
+          record.values['submissionStatus'].value = rejectedRecord
+            ? 'rejected'
+            : 'submitted'
+        })
+
+        try {
+          await api.records.update(sheetId, records)
+        } catch (error) {
+          console.error('Error updating records:', error)
+          throw new Error('Error updating records')
+        }
+      }
+
+      // A short timeout avoids race condition with the recordHook
+      await new Promise((resolve) => setTimeout(resolve, 250))
+
       records.forEach((record) => {
         const rejectedRecord = sheetRejections.rejectedRecords.find(
           (item) => item.id === record.id
@@ -94,12 +122,6 @@ async function updateSheet(
             ]
           }
         })
-
-        if (!deleteSubmitted) {
-          record.values['submissionStatus'].value = rejectedRecord
-            ? 'rejected'
-            : 'submitted'
-        }
       })
 
       try {
