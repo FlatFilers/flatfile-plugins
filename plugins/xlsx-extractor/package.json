@@ -32,7 +32,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.0.1",
+    "@flatfile/util-extractor": "^2.1.0",
     "remeda": "^1.14.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
