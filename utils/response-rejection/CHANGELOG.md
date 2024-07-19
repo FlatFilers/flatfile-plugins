@@ -1,5 +1,11 @@
 # @flatfile/util-response-rejection
 
+## 1.3.4
+
+### Patch Changes
+
+- f9f1cca: Ensures proper order when response rejection is used with a Record Hook
+
 ## 1.3.3
 
 ### Patch Changes
