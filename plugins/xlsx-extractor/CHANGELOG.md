@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.1.0
+
+### Minor Changes
+
+- db1ab4a: Update to use the latest @flatfile/util-extractor@2.1.0
+
 ## 3.0.1
 
 ### Patch Changes
