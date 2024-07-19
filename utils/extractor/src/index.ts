@@ -200,6 +200,10 @@ function getSheetConfig(
   }
 }
 
+function normalizeKey(key: string): string {
+  return key.trim().replace('%', '_PERCENT_').replace('$', '_DOLLAR_')
+}
+
 export function keysToFields({
   keys,
   descriptions = {},
@@ -230,7 +234,7 @@ export function keysToFields({
   return Object.entries(countOfKeys)
     .sort((a, b) => a[1].index - b[1].index)
     .map(([key, _]) => ({
-      key,
+      key: normalizeKey(key),
       label: key,
       description: descriptions?.[key] || '',
       type: 'string',
