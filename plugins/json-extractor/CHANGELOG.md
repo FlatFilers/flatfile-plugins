@@ -1,5 +1,11 @@
 # @flatfile/plugin-json-extractor
 
+## 0.8.0
+
+### Minor Changes
+
+- db1ab4a: Update to use the latest @flatfile/util-extractor@2.1.0
+
 ## 0.7.7
 
 ### Patch Changes
