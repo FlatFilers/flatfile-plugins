@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.1.0
+
+### Minor Changes
+
+- d714273: Normalizes extracted column keys
+
 ## 2.0.1
 
 ### Patch Changes
