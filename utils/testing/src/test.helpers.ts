@@ -1,6 +1,6 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { PubSubDriver } from '@flatfile/listener-driver-pubsub'
-import { afterAll, afterEach, beforeAll, beforeEach } from '@jest/globals'
+import { afterAll, afterEach, beforeAll, beforeEach } from 'jest-circus'
 import fetch from 'cross-fetch'
 import { TestListener } from './test.listener'
 
