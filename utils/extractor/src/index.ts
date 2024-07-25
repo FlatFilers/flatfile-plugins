@@ -205,12 +205,10 @@ function normalizeKey(key: string): string {
 }
 
 function normalizeRecordKeys(record: Flatfile.RecordData): Flatfile.RecordData {
-  return Object.fromEntries(
-    Object.entries(record).map(([key, value]) => [
-      normalizeKey(key),
-      value,
-    ])
-  )
+  return Object.entries(record).reduce((acc, [key, value]) => {
+    acc[normalizeKey(key)] = value
+    return acc
+  }, {} as Flatfile.RecordData)
 }
 
 export function keysToFields({
