@@ -105,7 +105,7 @@ export const Extractor = (
               continue
             }
             await asyncBatch(
-              capture[sheet.name].data,
+              capture[sheet.name].data.map(normalizeRecordKeys),
               async (chunk) => {
                 await api.records.insert(sheet.id, chunk, {
                   compressRequestBody: true,
@@ -202,6 +202,15 @@ function getSheetConfig(
 
 function normalizeKey(key: string): string {
   return key.trim().replace('%', '_PERCENT_').replace('$', '_DOLLAR_')
+}
+
+function normalizeRecordKeys(record: Flatfile.RecordData): Flatfile.RecordData {
+  return Object.fromEntries(
+    Object.entries(record).map(([key, value]) => [
+      normalizeKey(key),
+      value,
+    ])
+  )
 }
 
 export function keysToFields({
