@@ -52,7 +52,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.1.0"
+    "@flatfile/util-extractor": "^2.1.1"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1"
