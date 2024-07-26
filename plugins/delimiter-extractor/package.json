@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-delimiter-extractor",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/delimiter-extractor",
   "description": "A plugin for parsing .delimiter files in Flatfile.",
   "registryMetadata": {
