@@ -133,6 +133,7 @@ async function convertSheet({
   }
   const headerKey = Math.max(0, skip - 1)
   const columnKeys = Object.keys(rows[headerKey])
+  const headerRowValues = Object.values(rows[headerKey])
 
   if (!headerSelectionEnabled) rows.splice(0, skip)
 
@@ -149,7 +150,7 @@ async function convertSheet({
       result[keys[index]] = value
       return result
     }, {})
-  const columnHeaders = headerSelectionEnabled ? columnKeys : header
+  const columnHeaders = headerSelectionEnabled ? columnKeys : headerRowValues
   const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
 
