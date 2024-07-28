@@ -27,7 +27,7 @@
     "@flatfile/api": "^1.8.9",
     "@flatfile/listener": "^1.0.1",
     "@flatfile/listener-driver-pubsub": "^2.0.0",
-    "@jest/globals": "^29.6.4",
-    "cross-fetch": "^4.0.0"
+    "cross-fetch": "^4.0.0",
+    "jest-circus": "^29.7.0"
   }
 }
