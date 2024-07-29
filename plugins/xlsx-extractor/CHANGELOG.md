@@ -5,7 +5,7 @@
 ### Patch Changes
 
 - 860ee0e: Update to use the latest @flatfile/util-extractor@2.1.1
-- 611b3e3: This release fixes record extraction in the presence of empty columns
+- 611b3e3: Fixes record extraction in the presence of empty columns
 
 ## 3.1.0
 
