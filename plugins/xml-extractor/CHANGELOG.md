@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.6.1
+
+### Patch Changes
+
+- 860ee0e: Update to use the latest @flatfile/util-extractor@2.1.1
+
 ## 0.6.0
 
 ### Minor Changes
