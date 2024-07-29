@@ -28,7 +28,13 @@ describe('utils', () => {
 
     it('should handle mixed cases of unique, non-unique, and empty values', () => {
       const input = { a: 'value', b: '', c: 'value', d: 'unique', e: '' }
-      const expected = { a: 'value', b: 'empty', c: 'value_1', d: 'unique', e: 'empty_1' }
+      const expected = {
+        a: 'value',
+        b: 'empty',
+        c: 'value_1',
+        d: 'unique',
+        e: 'empty_1',
+      }
       expect(prependNonUniqueHeaderColumns(input)).toEqual(expected)
     })
 

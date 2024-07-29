@@ -20,6 +20,7 @@
     "build:clean": "npm run clean && npm i && turbo build",
     "build:prod:clean": "npm run clean && npm i && turbo build:prod",
     "lint": "prettier --check **/*.ts",
+    "format": "prettier --log-level warn --write **/*.ts",
     "changeset": "changeset",
     "changeset-apply": "changeset version",
     "release": "NODE_ENV=production turbo build && changeset publish"
