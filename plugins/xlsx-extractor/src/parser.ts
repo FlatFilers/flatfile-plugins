@@ -123,17 +123,16 @@ async function convertSheet({
   }
 
   const extractValues = (data: Record<string, any>[]) =>
-    data.map((row) => Object.values(row).filter((value) => value !== null))
+    data.map((row) => Object.values(row))
 
   const headerizer = Headerizer.create(headerDetectionOptions)
   const headerStream = Readable.from(extractValues(rows))
-  const { skip } = await headerizer.getHeaders(headerStream)
+  const { skip, header } = await headerizer.getHeaders(headerStream)
   const headerKey = Math.max(0, skip - 1)
   const columnKeys = Object.keys(rows[headerKey])
-  const headerRowValues = Object.values(rows[headerKey])
 
   if (debug) {
-    console.log('Detected header:', headerRowValues)
+    console.log('Detected header:', header)
   }
 
   if (!headerSelectionEnabled) rows.splice(0, skip)
@@ -151,7 +150,7 @@ async function convertSheet({
       result[keys[index]] = value
       return result
     }, {})
-  const columnHeaders = headerSelectionEnabled ? columnKeys : headerRowValues
+  const columnHeaders = headerSelectionEnabled ? columnKeys : header
   const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
 
