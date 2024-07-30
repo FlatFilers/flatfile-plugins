@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.1.2
+
+### Patch Changes
+
+- 54cb084: Updated extractor to convert null header values into empty, empty_1, etc.
+
 ## 3.1.1
 
 ### Patch Changes
