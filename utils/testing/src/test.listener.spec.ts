@@ -100,6 +100,21 @@ describe('TestListener', () => {
       expect(promisedEvent).resolves.not.toThrow()
     })
 
+    it('accounts for past invocations matching the provided filters', async () => {
+      const initialPromise = listener.waitFor('example:ready', 1)
+      listener.dispatchEvent({ topic: 'example:ready' })
+      await currentEventLoopEnd()
+
+      const secondPromise = listener.waitFor('example:ready', 2)
+      listener.dispatchEvent({ topic: 'example:ready' })
+      await currentEventLoopEnd()
+
+      expect(initialPromise).not.toBePending()
+      expect(initialPromise).resolves.not.toThrow()
+      expect(secondPromise).not.toBePending()
+      expect(secondPromise).resolves.not.toThrow()
+    })
+
     it('does not resolve before an event matching the filter is dispatched', async () => {
       const promisedEvent = listener.waitFor('example:ready', 1, {
         sheet: 'someSpecificSheet',

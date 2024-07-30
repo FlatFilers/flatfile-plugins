@@ -69,14 +69,17 @@ export class TestListener extends FlatfileListener {
     }
 
     return new Promise((resolver) => {
+      const pastInvocations = this.invocations.get(topic) || []
+      const executedCount = pastInvocations.filter((event) =>
+        this.matchEvent(event, filter)
+      ).length
+
       this.invocationWatchers.push({
         filter,
         neededCount,
-        executedCount: 0,
+        executedCount,
         resolver,
       })
-
-      const pastInvocations = this.invocations.get(topic) || []
 
       for (const event of pastInvocations) {
         for (const watcher of this.invocationWatchers) {
