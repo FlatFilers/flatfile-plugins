@@ -1,5 +1,11 @@
 # @flatfile/utils-testing
 
+## 0.2.0
+
+### Minor Changes
+
+- 3cbf59c: Fixed bug where `waitFor` promise was being fulfilled immediately. Changed `invocations` to store a log of FlatfileEvents and `invocationWatchers` to be compatible with the existing `matchEvent` method on Flatfile Listeners. Also exposed `invocationWatchers` to the public API.
+
 ## 0.1.6
 
 ### Patch Changes

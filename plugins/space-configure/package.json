@@ -60,6 +60,6 @@
   "devDependencies": {
     "@flatfile/api": "^1.8.9",
     "@flatfile/rollup-config": "0.1.1",
-    "@flatfile/utils-testing": "^0.1.6"
+    "@flatfile/utils-testing": "^0.2.0"
   }
 }
