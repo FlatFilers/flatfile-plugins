@@ -79,7 +79,7 @@ export abstract class Headerizer {
 }
 
 export const countNonEmptyCells = (row: string[]): number => {
-  return row.filter((cell) => `${cell}`.trim() !== '').length
+  return row.filter((cell) => cell !== null && `${cell}`.trim() !== '').length
 }
 
 export const likelyContainsData = (row: string[]): boolean => {
