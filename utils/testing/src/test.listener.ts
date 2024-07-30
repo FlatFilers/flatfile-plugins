@@ -10,7 +10,7 @@ type invocationWatcher = {
   filter: EventFilter | undefined
   executedCount: number
   neededCount: number
-  resolver: (result: Number | PromiseLike<number>) => void
+  resolver: (result: number | PromiseLike<number>) => void
 }
 
 /**
