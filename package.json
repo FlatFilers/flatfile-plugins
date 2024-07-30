@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "clean": "find ./ '(' -name 'node_modules' -o -name 'dist' -o -name '.turbo' -o -name '.parcel-cache' ')' -type d -exec rm -rf {} +",
-    "test": "turbo test --concurrency=1",
+    "test": "turbo build && turbo test --concurrency=1",
     "build": "turbo build",
     "build:prod": "turbo build:prod",
     "build:clean": "npm run clean && npm i && turbo build",

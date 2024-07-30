@@ -24,12 +24,9 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-  
+
       - name: Install dependencies
         run: npm ci
-
-      - name: Build
-        run: npm run build
 
       - name: Test
         run: npm run test
