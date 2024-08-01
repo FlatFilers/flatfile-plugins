@@ -117,19 +117,6 @@ export const Extractor = (
                 )
               }
             )
-
-            await asyncBatch(
-              capture[sheet.name].data.map(normalizeRecordKeys),
-              async (chunk) => {
-                processedRecords += chunk.length
-                const progress = Math.min(
-                  99,
-                  Math.round(10 + (90 * processedRecords) / totalLength)
-                )
-                await tick(progress, 'Adding records to Sheets')
-              },
-              { chunkSize, parallel, debug }
-            )
           }
 
           // After all records are added, update the sheet metadata
