@@ -1,7 +1,9 @@
 import api, { Flatfile } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
-import { asyncBatch, createAllRecords, slugify } from '@flatfile/util-common'
+import { createAllRecords, slugify } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
+
+const WORKBOOK_CREATION_DELAY = 3_000
 
 export const Extractor = (
   fileExt: string | RegExp,
@@ -100,7 +102,7 @@ export const Extractor = (
           )
 
           await new Promise((resolve) => {
-            setTimeout(resolve, 3_000)
+            setTimeout(resolve, WORKBOOK_CREATION_DELAY)
           })
 
           for (const sheet of workbook.sheets) {
