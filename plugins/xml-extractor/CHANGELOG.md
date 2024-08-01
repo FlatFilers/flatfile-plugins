@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.6.2
+
+### Patch Changes
+
+- Update extractors to use common util
+
 ## 0.6.1
 
 ### Patch Changes
