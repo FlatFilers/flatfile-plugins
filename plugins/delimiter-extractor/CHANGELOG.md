@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.1.2
+
+### Patch Changes
+
+- Update extractors to use common util
+
 ## 2.1.1
 
 ### Patch Changes

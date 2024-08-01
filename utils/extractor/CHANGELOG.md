@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.1.2
+
+### Patch Changes
+
+- 78efe6c: adds a small delay before writing and uses an IO optimized writer
+
 ## 2.1.1
 
 ### Patch Changes

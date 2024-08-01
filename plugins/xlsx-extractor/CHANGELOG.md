@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.1.3
+
+### Patch Changes
+
+- Update extractors to use common util
+
 ## 3.1.2
 
 ### Patch Changes
