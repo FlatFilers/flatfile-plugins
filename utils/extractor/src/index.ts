@@ -1,9 +1,7 @@
-import { Flatfile, FlatfileClient } from '@flatfile/api'
+import api, { Flatfile } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
-import { asyncBatch, slugify } from '@flatfile/util-common'
+import { asyncBatch, createAllRecords, slugify } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
-
-const api = new FlatfileClient()
 
 export const Extractor = (
   fileExt: string | RegExp,
@@ -100,16 +98,29 @@ export const Extractor = (
             (acc: number, sheet: any) => acc + (sheet?.data?.length || 0),
             0
           )
+
+          await new Promise((resolve) => {
+            setTimeout(resolve, 3_000)
+          })
+
           for (const sheet of workbook.sheets) {
             if (!capture[sheet.name]) {
               continue
             }
+            await createAllRecords(
+              sheet.id,
+              capture[sheet.name].data.map(normalizeRecordKeys),
+              async (_progress, part, totalParts) => {
+                await tick(
+                  Math.min(99, Math.round(10 + 90 * (part / totalParts))),
+                  'Adding records to Sheets'
+                )
+              }
+            )
+
             await asyncBatch(
               capture[sheet.name].data.map(normalizeRecordKeys),
               async (chunk) => {
-                await api.records.insert(sheet.id, chunk, {
-                  compressRequestBody: true,
-                })
                 processedRecords += chunk.length
                 const progress = Math.min(
                   99,
