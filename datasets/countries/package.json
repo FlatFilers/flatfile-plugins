@@ -1,0 +1,35 @@
+{
+  "name": "@flatfile/dataset-countries",
+  "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/datasets/countries",
+  "description": "A plugin that populates a Sheet with the countries of the World.",
+  "registryMetadata": {
+    "category": "dataset"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "jest --passWithNoTests"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-datasets",
+    "featured"
+  ],
+  "author": "Flatfile, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "datasets/countries"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.7.11",
+    "@flatfile/util-common": "^1.0.3"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
+  }
+}
