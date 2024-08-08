@@ -1,4 +1,4 @@
-# @flatfile/view-mapped
+# @flatfile/plugin-view-mapped
 
 ## 1.0.0
 
