@@ -1,6 +1,6 @@
-# @flatfile/plugin-job-handler
+# @flatfile/plugin-view-mapped
 
-## 1.0.1
+## 1.0.0
 
 ### Patch Changes
 
