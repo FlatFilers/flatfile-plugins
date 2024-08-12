@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- 65da741: Updated util-common dependancy version to fix extraction error
+- 65da741: Updated @flatfile/util-common dependancy version to fix extraction error
 
 ## 2.1.2
 
