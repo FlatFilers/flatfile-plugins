@@ -29,7 +29,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-common": "^1.3.2",
+    "@flatfile/util-common": "^1.3.7",
     "@flatfile/util-file-buffer": "^0.3.2"
   },
   "peerDependencies": {
