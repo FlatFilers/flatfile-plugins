@@ -37,6 +37,6 @@
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.1"
+    "@flatfile/listener": "^1.0.5"
   }
 }
