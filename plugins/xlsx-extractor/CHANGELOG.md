@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.1.4
+
+### Patch Changes
+
+- 65da741: Updated util-common dependancy version to fix extraction error
+- Updated dependencies [65da741]
+  - @flatfile/util-extractor@2.1.3
+
 ## 3.1.3
 
 ### Patch Changes

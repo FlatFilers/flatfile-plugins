@@ -1,5 +1,11 @@
 # @flatfile/util-response-rejection
 
+## 1.3.5
+
+### Patch Changes
+
+- 65da741: Updated util-common dependancy version to fix extraction error
+
 ## 1.3.4
 
 ### Patch Changes
