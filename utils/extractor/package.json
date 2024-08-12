@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-extractor",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/extractor",
   "description": "A library containing common utilities and helpers for extractors.",
   "keywords": [
