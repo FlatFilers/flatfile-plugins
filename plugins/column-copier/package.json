@@ -6,7 +6,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "rollup -c",
     "test": "jest",
     "lint": "eslint src --ext .ts"
   },
@@ -22,13 +22,17 @@
     "@flatfile/listener": "^1.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.1.0",
     "@types/jest": "^29.5.0",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "eslint": "^8.38.0",
     "jest": "^29.5.0",
+    "rollup": "^3.20.2",
     "ts-jest": "^29.1.0",
-    "tsup": "^6.7.0",
     "typescript": "^5.0.4"
   }
 }
