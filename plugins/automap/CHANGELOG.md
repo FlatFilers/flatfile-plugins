@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.4.0
+
+### Minor Changes
+
+- c166265: Updated listener to job:updated from job:created to account for the mapping plan now being run asynchronously. Updated the verfiyConfidentMatching from every to some to enable more concice autoMapping
+
 ## 0.3.2
 
 ### Patch Changes
