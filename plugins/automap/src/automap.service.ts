@@ -15,10 +15,12 @@ export class AutomapService {
    * @param listener - The listener to be assigned.
    */
   public assignListeners(listener: FlatfileListener): void {
+    // Listen for job updates to determine when the mapping plan is ready
+    // The plan creation is async and we need to wait for it to be ready
     listener.on(
-      Flatfile.EventTopic.JobCreated,
+      Flatfile.EventTopic.JobUpdated,
       { job: 'workbook:map' },
-      (event) => this.handleMappingPlanCreated(event)
+      (event) => this.handleMappingPlanUpdated(event)
     )
 
     listener.on(
@@ -175,19 +177,28 @@ export class AutomapService {
   }
 
   /**
-   * Once the initial mapping plan is created, check if our automation rules apply and
+   * Once the initial mapping plan is created, wait for the job status = planning, check if our automation rules apply and
    * execute the mapping job if they do.
    *
    * @param event - Flatfile event
    * @private
    */
-  private async handleMappingPlanCreated(event: FlatfileEvent): Promise<void> {
+  private async handleMappingPlanUpdated(event: FlatfileEvent): Promise<void> {
     const { jobId } = event.context
 
     const job = await api.jobs.get(jobId)
+
     if (!job.data.input?.isAutomap) {
       if (this.options.debug) {
         this.logInfo(`Not an automap job: ${jobId}`)
+      }
+      return
+    }
+
+    // Plan generation is async, so we need to wait for the job to be in the planning state
+    if(job.data.status !== Flatfile.JobStatus.Planning){
+      if (this.options.debug) {
+        this.logInfo(`Job is not in planning state: ${jobId}. Waiting for future event`)
       }
       return
     }
@@ -317,7 +328,7 @@ export class AutomapService {
     plan: Flatfile.JobExecutionPlan
   ): boolean {
     return R.pipe(plan, (p) =>
-      p.fieldMapping?.every(
+      p.fieldMapping?.some(
         (edge) => edge.metadata?.certainty === Flatfile.Certainty.Absolute
       )
     )
@@ -327,7 +338,7 @@ export class AutomapService {
     plan: Flatfile.JobExecutionPlan
   ): boolean {
     return R.pipe(plan, (p) =>
-      p.fieldMapping?.every(
+      p.fieldMapping?.some(
         (edge) =>
           edge.metadata?.certainty === Flatfile.Certainty.Strong ||
           edge.metadata?.certainty === Flatfile.Certainty.Absolute
