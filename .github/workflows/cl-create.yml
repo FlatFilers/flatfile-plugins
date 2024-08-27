@@ -22,24 +22,36 @@ jobs:
         
       - name: Install dependencies
         run: npm ci
+  
+      - name: Set souce repository owner and name
+        id: set_repo_info
+        run: |
+          REPO_FULL_NAME="${{ github.repository }}"
+          REPO_OWNER="${REPO_FULL_NAME%/*}"
+          REPO_NAME="${REPO_FULL_NAME#*/}"
+      
+          echo "Repository Owner: $REPO_OWNER"
+          echo "Repository Name: $REPO_NAME"
+      
+          echo "::set-output name=repo_owner::${REPO_OWNER}"
+          echo "::set-output name=repo_name::${REPO_NAME}"
 
       - name: Set variables from cl-config.yml
+        id: set_vars
         run: |
           destinationRepo=$(yq e '.destinationRepo' cl-config.yml)
           destinationDirectory=$(yq e '.destinationDirectory' cl-config.yml)
-  
-          echo "DESTINATION_REPO=${destinationRepo}" >> $GITHUB_ENV
-          echo "DESTINATION_DIRECTORY=${destinationDirectory}" >> $GITHUB_ENV
-  
-      - name: Create a changelog update
-        run: npx changelog generate tag ${{ github.event.release.tag_name }}
+      
+          echo "::set-output name=destination_repo::${destinationRepo}"
+          echo "::set-output name=destination_directory::${destinationDirectory}"
+      
+      - name: Get reviewer
+        id: get_reviewers
+        run: echo "::set-output name=reviewers::$(node .github/scripts/getReviewers.js)"
         env:
-          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
-
-      - name: Get changelog update file name
-        run: |
-          FILE_NAME=$(ls temp)
-          echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
+          OWNER: ${{ steps.set_repo_info.outputs.repo_owner }}
+          REPO: ${{ steps.set_repo_info.outputs.repo_name }}
+          TAG: ${{ github.event.release.tag_name }}
 
       - name: Get Changelog token
         id: changelog_token
@@ -48,15 +60,42 @@ jobs:
           application_id: ${{ secrets.CHANGELOG_APP_ID }}
           application_private_key: ${{ secrets.CHANGELOG_APP_KEY }}   
 
+      - name: Create a changelog update
+        run: npx changelog generate tag ${{ github.event.release.tag_name }}
+        env:
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+
+      - name: Get changelog update file name
+        id: get_file_name
+        run: |
+          FILE_NAME=$(ls temp)
+          echo "::set-output name=file_name::${FILE_NAME}"
+
       - name: Create branch in guides repo with changelog update
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
           API_TOKEN_GITHUB: ${{ steps.changelog_token.outputs.token }}
         with:
-          source_file: temp/${{ env.FILE_NAME}}
-          destination_repo: ${{ env.DESTINATION_REPO }}
-          destination_folder: changelog/src/${{ env.DESTINATION_DIRECTORY }}
+          source_file: temp/${{ steps.get_file_name.outputs.file_name }}
+          destination_repo: ${{ steps.set_vars.outputs.destination_repo }}
+          destination_folder: changelog/src/${{ steps.set_vars.outputs.destination_directory }}
           destination_branch_create: changelog/${{ github.event.release.tag_name }}
           user_email: ${{ github.actor }}
           user_name: github-actions[bot]
           commit_message: "Updating the changelog for ${{ github.event.release.tag_name }}"
+
+      - name: Create pull request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ steps.changelog_token.outputs.token }}
+          commit-message: "Open PR for changelog update"
+          branch: changelog/${{ github.event.release.tag_name }}
+          base: main
+          title: "Changelog update changelog/${{ github.event.release.tag_name }}"
+          reviewers:  ${{ steps.get_reviewers.outputs.reviewers }}
+          body:  |
+            This pull request has been automatically created to update the changelog.
+
+            Edit the YYMMDD.mdx file with any updates.
+            Committing your changes will trigger the update changelog workflow, which will pull your updates into the main changelog files.
