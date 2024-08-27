@@ -69,6 +69,10 @@ export const Extractor = (
             (e) => e.key === 'headerSelection'
           )
 
+          const sourceEditorEnabled = !!entitlements.find(
+            (e) => e.key === 'sourceEditor'
+          )
+
           await tick(3, 'Parsing Sheets')
           const capture = await parseBuffer(buffer, {
             ...options,
@@ -80,7 +84,8 @@ export const Extractor = (
           const workbook = await createWorkbook(
             event.context.environmentId,
             file,
-            capture
+            capture,
+            sourceEditorEnabled
           )
 
           // Add workbook to file so if the extraction fails and the file is deleted, the workbook is also deleted
@@ -157,13 +162,15 @@ export const Extractor = (
 async function createWorkbook(
   environmentId: string,
   file: Flatfile.File_,
-  workbookCapture: WorkbookCapture
+  workbookCapture: WorkbookCapture,
+  sourceEditorEnabled: boolean
 ): Promise<Flatfile.Workbook> {
   const workbookConfig = getWorkbookConfig(
     file.name,
     file.spaceId,
     environmentId,
-    workbookCapture
+    workbookCapture,
+    sourceEditorEnabled
   )
   const { data: workbook } = await api.workbooks.create(workbookConfig)
   return workbook
@@ -173,10 +180,11 @@ function getWorkbookConfig(
   name: string,
   spaceId: string,
   environmentId: string,
-  workbookCapture: WorkbookCapture
+  workbookCapture: WorkbookCapture,
+  sourceEditorEnabled: boolean
 ): Flatfile.CreateWorkbookConfig {
   const sheets = Object.entries(workbookCapture).map(([sheetName, sheet]) => {
-    return getSheetConfig(sheetName, sheet)
+    return getSheetConfig(sheetName, sheet, sourceEditorEnabled)
   })
 
   return {
@@ -191,12 +199,14 @@ function getWorkbookConfig(
 
 function getSheetConfig(
   name: string,
-  { headers, descriptions }: SheetCapture
+  { headers, descriptions }: SheetCapture,
+  sourceEditorEnabled: boolean
 ): Flatfile.SheetConfig {
   return {
     name,
     slug: slugify(name),
     fields: keysToFields({ keys: headers, descriptions }),
+    allowAdditionalFields: sourceEditorEnabled,
   }
 }
 
