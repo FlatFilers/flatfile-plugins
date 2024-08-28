@@ -61,7 +61,7 @@
     "typescript": "^5.0.4"
   },
   "optionalDependencies": {
-    "@flatfile/changelog": "^1.0.1",
+    "@flatfile/changelog": "^1.0.3",
     "@parcel/watcher-linux-x64-glibc": "^2.3.0",
     "@rollup/rollup-linux-x64-gnu": "^4.8.0"
   }
