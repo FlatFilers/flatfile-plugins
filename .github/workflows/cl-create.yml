@@ -95,6 +95,7 @@ jobs:
           title: "Changelog update changelog/${{ github.event.release.tag_name }}"
           reviewers:  ${{ steps.get_reviewers.outputs.reviewers }}
           body:  |
+            @coderabbitai: ignore
             This pull request has been automatically created to update the changelog.
 
             Edit the YYMMDD.mdx file with any updates.
