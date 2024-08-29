@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.1.4
+
+### Patch Changes
+
+- 2dd0364: Auto enables the allowAdditionalFields on sheets when sourceEditor entitlement is on
+
 ## 2.1.3
 
 ### Patch Changes
