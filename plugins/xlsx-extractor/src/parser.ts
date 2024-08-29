@@ -167,13 +167,13 @@ async function convertSheet({
   const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
 
-  const data = rows.map((row) =>
+  const data = rows.map((row: Record<string, any>) =>
     mapValues(
-      mapKeys(row, (key) => headers[key]),
-      (value) => ({ value })
+      mapKeys(row, (key: string) => headers[key]),
+      (value: any) => ({ value })
     )
   )
-  let metadata: { rowHeaders: number[] } | null
+  let metadata: { rowHeaders: number[] } | null = null
   if (headerSelectionEnabled) {
     metadata = {
       rowHeaders: [skip],

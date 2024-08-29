@@ -1,3 +1,5 @@
+import type { Flatfile } from '@flatfile/api'
+
 import api from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 
@@ -41,13 +43,13 @@ export function viewMappedPlugin() {
           const customJobInfo = await api.jobs.get(jobId)
 
           // From "customJobInfo" variable, retrieving the jobId specifically of the mapping job that completed, and storing it in its own "mappingJobId" variable
-          const mappingJobId = customJobInfo.data.input.mappingJobId
+          const mappingJobId = customJobInfo.data.input?.mappingJobId
 
           // Obtaining the mapping job's execution plan to later extract "fieldMapping" out of it, which tells us which fields were mapped in the Matching step
           const jobPlan = await api.jobs.getExecutionPlan(mappingJobId)
 
           // Initializing an empty array to store the keys of the mapped fields
-          const mappedFields = []
+          const mappedFields: string[] = []
 
           // Iterating through all destination fields that are mapped and extracting their field keys. Then, pushing keys of mapped fields to the "mappedFields" variable
           for (let i = 0; i < jobPlan.data.plan.fieldMapping.length; i++) {
@@ -61,7 +63,7 @@ export function viewMappedPlugin() {
           const { data: workbook } = await api.workbooks.get(workbookId)
 
           // Looping through all sheets of the Workbook One. For all fields that are mapped, updating those fields' metadata to "{mapped: true}"
-          workbook.sheets.forEach((sheet) => {
+          workbook.sheets?.forEach((sheet: Flatfile.Sheet) => {
             sheet.config.fields.forEach((field) => {
               if (mappedFields.includes(field.key)) {
                 field.metadata = { mapped: true }
@@ -70,7 +72,7 @@ export function viewMappedPlugin() {
           })
 
           // Looping over each sheet in "workbook" and filtering for fields with metadata "mapped: true". Saving mapped fields per each sheet inside of "filteredWorkbookFields" varibable
-          const filteredWorkbookFields = workbook.sheets.map((sheet) => {
+          const filteredWorkbookFields = workbook.sheets?.map((sheet: Flatfile.Sheet) => {
             const fields = sheet.config.fields.filter(
               (field) => field.metadata && field.metadata.mapped === true
             )
@@ -83,8 +85,8 @@ export function viewMappedPlugin() {
             ...workbook,
 
             // Mapping over each sheet to update each to only contain fields that are inside of "filteredWorkbookFields" variable (that have metadata "{mapped: true})"
-            sheets: workbook.sheets.map((sheet, index) => {
-              const mappedWorkbookFields = filteredWorkbookFields[index]
+            sheets: workbook.sheets?.map((sheet: Flatfile.Sheet, index: number) => {
+              const mappedWorkbookFields = filteredWorkbookFields ? filteredWorkbookFields[index] : []
 
               // If there are no mapped fields, returning the original sheet structure
               if (!mappedWorkbookFields) {
