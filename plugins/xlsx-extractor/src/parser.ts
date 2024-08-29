@@ -177,9 +177,9 @@ async function convertSheet({
     rows.pop()
   }
 
-  const data = rows.map((row) =>
+  const data = rows.map((row: Record<string, any>) =>
     mapValues(
-      mapKeys(row, (key) => headers[key as keyof typeof headers]),
+      mapKeys(row, (key) => headers[key as keyof typeof headers]!),
       (value) => ({ value })
     )
   )
