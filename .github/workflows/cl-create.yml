@@ -53,6 +53,9 @@ jobs:
           REPO: ${{ steps.set_repo_info.outputs.repo_name }}
           TAG: ${{ github.event.release.tag_name }}
 
+      - name: Print reviewers
+        run: echo "${{ steps.get_reviewers.outputs.reviewers }}"
+
       - name: Get Changelog token
         id: changelog_token
         uses: peter-murray/workflow-application-token-action@v3
@@ -85,18 +88,17 @@ jobs:
           commit_message: "Updating the changelog for ${{ github.event.release.tag_name }}"
 
       - name: Create pull request
-        id: create_pr
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ steps.changelog_token.outputs.token }}
-          commit-message: "Open PR for changelog update"
-          branch: changelog/${{ github.event.release.tag_name }}
-          base: main
-          title: "Changelog update changelog/${{ github.event.release.tag_name }}"
-          reviewers:  ${{ steps.get_reviewers.outputs.reviewers }}
-          body:  |
-            @coderabbitai: ignore
+        run: |
+          gh pr create \
+            --repo ${{ steps.set_vars.outputs.destination_repo }} \
+            --base main \
+            --head changelog/${{ github.event.release.tag_name }} \
+            --title: "Changelog update changelog/${{ github.event.release.tag_name }}" \
+            --reviewer ${{ steps.get_reviewers.outputs.reviewers }} \
+            --body "@coderabbitai: ignore
             This pull request has been automatically created to update the changelog.
-
+      
             Edit the YYMMDD.mdx file with any updates.
-            Committing your changes will trigger the update changelog workflow, which will pull your updates into the main changelog files.
+            Committing your changes will trigger the update changelog workflow, which will pull your updates into the main changelog files."
+        env:
+          GH_TOKEN: ${{ steps.changelog_token.outputs.token }}
