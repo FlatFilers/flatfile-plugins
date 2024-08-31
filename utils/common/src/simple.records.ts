@@ -1,9 +1,9 @@
 import { Flatfile } from '@flatfile/api'
+import type { TickHelper } from './all.records'
 import {
   createAllRecords,
   getRecordsRaw,
   getSheetLength,
-  TickHelper,
   updateAllRecords,
 } from './all.records'
 import { asyncLimitSeries } from './async.helpers'
@@ -92,7 +92,7 @@ export class Simplified {
    * { foo: bar } => { foo : {value: bar}}
    * @param obj
    */
-  static toRecordValues(obj: SimpleRecord): Flatfile.RecordData {
+  static toRecordValues(obj: SimpleValues): Flatfile.RecordData {
     return Object.fromEntries(
       Object.entries(obj)
         .filter(([key]) => key !== '_id' && key !== '_metadata')
@@ -148,7 +148,7 @@ export class Simplified {
   }
 }
 
-export type Primitive = string | number | null | boolean
+export type Primitive = string | number | boolean
 
 export type SimpleRecord = {
   _id: string

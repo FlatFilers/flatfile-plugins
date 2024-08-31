@@ -1,12 +1,13 @@
 import type { Flatfile } from '@flatfile/api'
-import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
-import {
+import type {
   PartialSheetConfig,
   SetupFactory,
-  generateSetup,
 } from '@flatfile/plugin-convert-openapi-schema'
-import { MergeClient } from '@mergeapi/merge-node-client'
+import type { MergeClient } from '@mergeapi/merge-node-client'
+
+import { FlatfileClient } from '@flatfile/api'
+import { generateSetup } from '@flatfile/plugin-convert-openapi-schema'
 import {
   CATEGORY_MODELS,
   MERGE_ACCESS_KEY,
@@ -76,15 +77,15 @@ export function handleCreateConnectedWorkbooks() {
           mergeClient,
           // Merge doesn't seem to care what category is used here, it will return the same results regardless
           // And since we are searching for the category, we'll just use the first one the integration has listed
-          categories[0]
+          categories![0]
         )
         await new Promise((resolve) =>
           setTimeout(resolve, SYNC_RETRY_INTERVAL_MS)
         )
-      } while (results.syncedModels.length === 0)
+      } while (results?.syncedModels.length === 0)
 
       // The modelId is prefix with the category for the given accountToken
-      const category = results.syncedModels[0].modelId.split('.')[0]
+      const category = results?.syncedModels[0].modelId.split('.')[0]
       if (!category) {
         throw new Error('Error retrieving category')
       }
@@ -93,9 +94,9 @@ export function handleCreateConnectedWorkbooks() {
 
       // Using the category, we can fetch Merge's schema provided through their OpenAPI spec and convert
       // it to a Flatfile sheet config
-      const models = CATEGORY_MODELS[category]
+      const models = CATEGORY_MODELS[category as keyof typeof CATEGORY_MODELS]
       const sheets: PartialSheetConfig[] = Object.keys(models).map((key) => {
-        const model = models[key]
+        const model = models[key as keyof typeof models] // Add index signature to allow indexing with a string
         return {
           name: key,
           slug: model,
@@ -113,7 +114,8 @@ export function handleCreateConnectedWorkbooks() {
       })
       const config = typeof setup === 'function' ? await setup(event) : setup
       config.workbooks.map((workbook) => {
-        workbook.sheets.map((sheet) => {
+        workbook.sheets?.map((sheet) => {
+          // Add nullish coalescing operator here
           sheet.fields.map((field) => {
             // Merge's OpenAPI spec uses snake_case, but Merge's API uses camelCase
             field.key = snakeToCamel(field.key)
