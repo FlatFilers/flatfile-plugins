@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.3.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 0.3.2
 
 ### Patch Changes

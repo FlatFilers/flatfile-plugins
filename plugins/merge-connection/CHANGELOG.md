@@ -1,5 +1,14 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.3.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/plugin-convert-openapi-schema@0.2.4
+  - @flatfile/plugin-job-handler@0.5.5
+
 ## 0.3.2
 
 ### Patch Changes

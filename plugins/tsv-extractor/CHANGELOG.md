@@ -1,5 +1,11 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.7.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 1.7.2
 
 ### Patch Changes

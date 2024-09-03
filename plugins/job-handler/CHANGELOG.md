@@ -1,5 +1,13 @@
 # @flatfile/plugin-job-handler
 
+## 0.5.5
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/util-common@1.3.8
+
 ## 0.5.4
 
 ### Patch Changes

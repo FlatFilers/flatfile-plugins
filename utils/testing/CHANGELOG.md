@@ -1,5 +1,11 @@
 # @flatfile/utils-testing
 
+## 0.2.1
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 0.2.0
 
 ### Minor Changes

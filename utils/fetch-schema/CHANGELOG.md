@@ -1,5 +1,11 @@
 # @flatfile/util-fetch-schema
 
+## 0.2.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 0.2.2
 
 ### Patch Changes

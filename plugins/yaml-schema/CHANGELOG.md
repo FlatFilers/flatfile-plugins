@@ -1,5 +1,14 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.2.4
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/plugin-space-configure@0.5.3
+  - @flatfile/plugin-convert-json-schema@0.3.4
+
 ## 0.2.3
 
 ### Patch Changes

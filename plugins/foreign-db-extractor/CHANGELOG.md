@@ -1,5 +1,11 @@
 # @flatfile/plugin-foreign-db-extractor
 
+## 0.1.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 0.1.2
 
 ### Patch Changes

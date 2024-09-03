@@ -1,5 +1,15 @@
 # @flatfile/plugin-zip-extractor
 
+## 0.5.4
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/plugin-job-handler@0.5.5
+  - @flatfile/util-file-buffer@0.3.3
+  - @flatfile/util-common@1.3.8
+
 ## 0.5.3
 
 ### Patch Changes

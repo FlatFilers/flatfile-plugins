@@ -1,5 +1,14 @@
 # @flatfile/plugin-dedupe
 
+## 1.1.5
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/plugin-job-handler@0.5.5
+  - @flatfile/util-common@1.3.8
+
 ## 1.1.4
 
 ### Patch Changes

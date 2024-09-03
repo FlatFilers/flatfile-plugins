@@ -1,5 +1,14 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.2.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/util-file-buffer@0.3.3
+  - @flatfile/util-common@1.3.8
+
 ## 0.2.2
 
 ### Patch Changes

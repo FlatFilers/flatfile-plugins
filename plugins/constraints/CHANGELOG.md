@@ -1,5 +1,13 @@
 # @flatfile/plugin-constraints
 
+## 2.0.1
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/plugin-record-hook@1.6.1
+
 ## 2.0.0
 
 ### Minor Changes
