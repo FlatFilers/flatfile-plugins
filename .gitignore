@@ -137,3 +137,4 @@ dist
 
 # MacOS
 .DS_Store
+.aider*

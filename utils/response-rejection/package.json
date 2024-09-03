@@ -54,7 +54,7 @@
     "@flatfile/util-common": "^1.3.7"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.8.9"
+    "@flatfile/api": "^1.9.13"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1"
