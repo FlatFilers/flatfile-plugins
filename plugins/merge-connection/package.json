@@ -33,7 +33,7 @@
     "@mergeapi/merge-node-client": "^1.0.4"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.8.9",
+    "@flatfile/api": "^1.9.13",
     "@flatfile/listener": "^1.0.1"
   }
 }
