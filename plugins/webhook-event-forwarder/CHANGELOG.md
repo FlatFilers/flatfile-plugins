@@ -1,5 +1,11 @@
 # @flatfile/plugin-webhook-event-forwarder
 
+## 0.3.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 0.3.2
 
 ### Patch Changes

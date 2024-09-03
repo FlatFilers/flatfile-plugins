@@ -1,5 +1,13 @@
 # @flatfile/util-response-rejection
 
+## 1.3.6
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/util-common@1.3.8
+
 ## 1.3.5
 
 ### Patch Changes

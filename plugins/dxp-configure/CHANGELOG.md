@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 1.1.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 1.1.2
 
 ### Patch Changes

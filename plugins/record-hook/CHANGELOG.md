@@ -1,5 +1,13 @@
 # @flatfile/plugin-record-hook
 
+## 1.6.1
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/util-common@1.3.8
+
 ## 1.6.0
 
 ### Minor Changes

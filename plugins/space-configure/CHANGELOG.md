@@ -1,5 +1,13 @@
 # @flatfile/plugin-space-configure
 
+## 0.5.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+- Updated dependencies [37babea]
+  - @flatfile/plugin-job-handler@0.5.5
+
 ## 0.5.2
 
 ### Patch Changes

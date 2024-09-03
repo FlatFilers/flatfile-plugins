@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.8.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 1.8.2
 
 ### Patch Changes

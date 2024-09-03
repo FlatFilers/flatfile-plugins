@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.1.3
+
+### Patch Changes
+
+- 37babea: Update @flatfile/api dependency
+
 ## 2.1.2
 
 ### Patch Changes
