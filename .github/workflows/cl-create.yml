@@ -85,6 +85,9 @@ jobs:
           destination_branch_create: changelog/${{ github.event.release.tag_name }}
           user_email: ${{ github.actor }}
           user_name: github-actions[bot]
+          commit_message: "Updating the changelog for ${{ github.event.release.tag_name }}"
+
+      - name: Create pull request
         run: |
           gh pr create \
             --repo ${{ steps.set_vars.outputs.destination_repo }} \
