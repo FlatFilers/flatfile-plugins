@@ -7,8 +7,6 @@ import type {
 } from '@flatfile/listener'
 import { log, logError } from '@flatfile/util-common'
 
-const api = new FlatfileClient()
-
 export interface PluginOptions {
   readonly debug?: boolean
 }
@@ -29,6 +27,9 @@ export interface PluginOptions {
  * @param {boolean} opts.debug - An optional boolean that will enable debug logging.
  * Defaults to false.
  *
+ * @param {FlatfileClient} api - An optional API client used to send requests to the Flatfile API.
+ * This will default to a new instance of the FlatfileClient class with the default API URL.
+ *
  * @returns {Function} Returns a function that takes a FlatfileListener, adding an event
  * listener for the "job:ready" event and processing the job with the provided handler.
  */
@@ -38,7 +39,8 @@ export function jobHandler(
     event: FlatfileEvent,
     tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => Promise<void | Flatfile.JobCompleteDetails>,
-  opts: PluginOptions = {}
+  opts: PluginOptions = {},
+  api = new FlatfileClient()
 ) {
   return (listener: FlatfileListener) => {
     const filter = typeof job === 'string' ? { job } : job
