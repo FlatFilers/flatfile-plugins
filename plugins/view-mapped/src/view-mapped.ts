@@ -6,6 +6,7 @@ import type { FlatfileListener } from '@flatfile/listener'
  */
 export function viewMappedPlugin() {
   return (listener: FlatfileListener) => {
+    
     // Defining what needs to be done when Flatfile is done mapping columns based on user input during the Mapping stage of the import process
     listener.on(
       'job:completed',
@@ -13,15 +14,15 @@ export function viewMappedPlugin() {
       async ({ context: { jobId, workbookId } }) => {
         // Creating a custom job that we will use in the next listener to ensure users only see mapped fields in the table
         await api.jobs.create({
-          type: 'workbook',
-          operation: 'viewMappedFieldsOnly',
+          type: "workbook",
+          operation: "viewMappedFieldsOnly",
           source: workbookId,
           // This ensures that our custom job will execute automatically when the "job:ready" event of the listener below triggers
-          trigger: 'immediate',
+          trigger: "immediate",
           // This ensures that users are not able to interact with records in the table until it is updated to only show mapped fields
-          mode: 'foreground',
+          mode: "foreground",
           // This ensures that in the next listener we are able to access the jobId of the mapping job specifically, and not just the jobId of this custom job
-          input: { mappingJobId: jobId },
+          input: { mappingJobId: jobId }
         })
       }
     )
@@ -30,6 +31,7 @@ export function viewMappedPlugin() {
     listener
       .filter({ job: 'workbook:viewMappedFieldsOnly' })
       .on('job:ready', async ({ context: { jobId, workbookId } }) => {
+        
         try {
           // First, we acknowledge the job
           await api.jobs.ack(jobId, {
@@ -56,6 +58,12 @@ export function viewMappedPlugin() {
 
             mappedFields.push(destinationFieldKey)
           }
+
+          await api.jobs.ack(jobId, {
+            info: "Updating the table to only view mapped fields...",
+            progress: 30
+          })
+
           // Making an API call to only get the "data" property out of the response, and saving it as its own "fetchedWorkbook" variable
           // We need to make this API call and cannot just use what's inside of "workbookOne" because we need data in a specific format
           const { data: workbook } = await api.workbooks.get(workbookId)
@@ -75,6 +83,11 @@ export function viewMappedPlugin() {
               (field) => field.metadata && field.metadata.mapped === true
             )
             return fields.length > 0 ? fields : null
+          })
+
+          await api.jobs.ack(jobId, {
+            info: "Halfway there, hang tight...",
+            progress: 50
           })
 
           // Updating each sheet in a workbook to only contain fields that a user mapped. This ensures that when the table with data loads, only mapped fields will be displayed
@@ -102,13 +115,19 @@ export function viewMappedPlugin() {
             }),
           })
 
+          await api.jobs.ack(jobId, {
+            info: "Almost done...",
+            progress: 80
+          })
+
           // Completing the job with an appropriate message to the user
           await api.jobs.complete(jobId, {
             outcome: {
-              message: 'Table update complete. Please audit the data',
-              acknowledge: true,
-            },
+              message: "Table update complete. Please audit the data",
+              acknowledge: false
+            }
           })
+
         } catch (error) {
           // If something goes wrong while executing the custom job, we fail the job with a message on what next steps to take
           await api.jobs.fail(jobId, {
