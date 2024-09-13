@@ -42,7 +42,7 @@ export function jobHandler(
 ) {
   return (listener: FlatfileListener) => {
     const filter = typeof job === 'string' ? { job } : job
-    listener.on('job:ready', filter, async (event) => {
+    listener.on('job:ready', filter, async (event: FlatfileEvent) => {
       const { jobId } = event.context
 
       await api.jobs.ack(jobId, {

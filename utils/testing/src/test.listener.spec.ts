@@ -1,5 +1,7 @@
+import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import { TestListener } from './index'
 
+import { FlatfileEvent } from '@flatfile/listener'
 import '../../../test/toBePendingMatcher'
 
 const currentEventLoopEnd = () =>
@@ -18,13 +20,13 @@ describe('TestListener', () => {
         { topic: 'first' },
         { topic: 'second' },
         { topic: 'second', payload: { job: 'somethingSpecific' } },
-      ]
+      ] as FlatfileEvent[];
 
       await Promise.all(events.map((event) => listener.dispatchEvent(event)))
 
       expect(listener.invocations.get('first')).toEqual([events[0]])
       expect(listener.invocations.get('second')).toEqual([events[1], events[2]])
-      expect(listener.invocations.get('third')).toBe(undefined)
+      expect(listener.invocations.get('third')).toBeUndefined()
     })
 
     it('increments the `executedCount` on any matching watchers', async () => {
@@ -40,8 +42,8 @@ describe('TestListener', () => {
     })
 
     it('fulfills pending promises that match the event', async () => {
-      const exampleReady = jest.fn()
-      const exampleCompleted = jest.fn()
+      const exampleReady = mock()
+      const exampleCompleted = mock()
 
       listener.waitFor('example:ready').then(exampleReady)
       listener
@@ -77,7 +79,7 @@ describe('TestListener', () => {
       await currentEventLoopEnd()
 
       expect(promisedEvent).not.toBePending()
-      expect(promisedEvent).resolves.not.toThrow()
+      expect(promisedEvent).resolves.toBe(1)
     })
 
     it('does not resolve before the specified number of dispatches is met', async () => {
@@ -97,7 +99,7 @@ describe('TestListener', () => {
       await currentEventLoopEnd()
 
       expect(promisedEvent).not.toBePending()
-      expect(promisedEvent).resolves.not.toThrow()
+      expect(promisedEvent).resolves.toBe(2)
     })
 
     it('accounts for past invocations matching the provided filters', async () => {
@@ -110,9 +112,9 @@ describe('TestListener', () => {
       await currentEventLoopEnd()
 
       expect(initialPromise).not.toBePending()
-      expect(initialPromise).resolves.not.toThrow()
+      expect(initialPromise).resolves.toBe(1)
       expect(secondPromise).not.toBePending()
-      expect(secondPromise).resolves.not.toThrow()
+      expect(secondPromise).resolves.toBe(2)
     })
 
     it('does not resolve before an event matching the filter is dispatched', async () => {
@@ -138,7 +140,7 @@ describe('TestListener', () => {
       await currentEventLoopEnd()
 
       expect(promisedEvent).not.toBePending()
-      expect(promisedEvent).resolves.not.toThrow()
+      expect(promisedEvent).resolves.toBe(1)
     })
 
     it('supports passing a string for the job filter', async () => {
