@@ -1,10 +1,8 @@
+import { beforeEach, describe, expect, it } from 'bun:test'
+import fetchMock from 'fetch-mock'
 import fs from 'fs'
-import fetchMock from 'jest-fetch-mock'
 import path from 'path'
 import { generateSetup } from '.'
-
-fetchMock.enableMocks()
-fetchMock.dontMock()
 
 describe('configureSpaceWithYamlSchema() e2e', () => {
   const expectedResult = {
@@ -54,16 +52,13 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
     ],
   }
 
-  beforeEach(() => {
-    fetchMock.resetMocks()
-  })
-
   it('should generate a SetupFactory from YAML Schema', async () => {
     const schema = fs.readFileSync(
       path.resolve(__dirname, 'mock/schema.yml'),
       'utf-8'
     )
-    fetchMock.doMockIf('http://example.com/schema.yaml', schema, {
+    fetchMock.mock('http://example.com/schema.yaml', {
+      body: schema,
       status: 200,
     })
 
@@ -74,5 +69,6 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
     ])
 
     expect(results).toMatchObject(expectedResult)
+    fetchMock.restore()
   })
 })

@@ -7,6 +7,15 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  spyOn,
+} from 'bun:test'
 import { FlatfileRecord } from '.'
 import { bulkRecordHook, recordHook } from './record.hook.plugin'
 
@@ -16,8 +25,8 @@ describe('RecordHook e2e', () => {
   const listener = setupListener()
 
   // Console spies
-  const logSpy = jest.spyOn(global.console, 'log')
-  const logErrorSpy = jest.spyOn(global.console, 'error')
+  const logSpy = spyOn(global.console, 'log')
+  const logErrorSpy = spyOn(global.console, 'error')
 
   let spaceId: string
   let sheetId: string
@@ -68,7 +77,7 @@ describe('RecordHook e2e', () => {
 
   describe('recordHook()', () => {
     it('registers a records:* listener to the client', () => {
-      const listenerOnSpy = jest.spyOn(listener, 'on')
+      const listenerOnSpy = spyOn(listener, 'on')
       const testCallback = (record) => {
         return record
       }
@@ -233,7 +242,7 @@ describe('RecordHook e2e', () => {
 
   describe('bulkRecordHook()', () => {
     it('registers a records:* listener to the client', () => {
-      const listenerOnSpy = jest.spyOn(listener, 'on')
+      const listenerOnSpy = spyOn(listener, 'on')
       const testCallback = (record: FlatfileRecord[]) => {
         return record
       }

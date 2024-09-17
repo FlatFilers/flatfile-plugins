@@ -14,7 +14,7 @@
     "build:watch": "parcel watch",
     "build:prod": "NODE_ENV=production parcel build",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand --detectOpenHandles"
+    "test": "bun --env-file=../../.env.defaults test"
   },
   "author": "Carl Brugger",
   "repository": {

@@ -1,5 +1,6 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { getEnvironmentId, setupSpace } from '@flatfile/utils-testing'
+import { afterAll, beforeAll, describe, expect, it, mock } from 'bun:test'
 import { getRecordsRaw, processRecords } from './all.records'
 
 const api = new FlatfileClient()
@@ -64,7 +65,7 @@ describe('all.records', () => {
     })
 
     it('should call callback function', async () => {
-      const callback = jest.fn()
+      const callback = mock()
 
       await processRecords(emptySheetId, callback)
       expect(callback).toHaveBeenCalled()
@@ -76,7 +77,7 @@ describe('all.records', () => {
     })
 
     it('should return results', async () => {
-      const callback = jest.fn((records) => records.length)
+      const callback = mock((records) => records.length)
 
       const emptyResults = await processRecords(emptySheetId, callback)
       expect(emptyResults).toEqual([0])
@@ -86,7 +87,7 @@ describe('all.records', () => {
     })
 
     it('should filter records by "valid" status', async () => {
-      const callback = jest.fn((records) => records.length)
+      const callback = mock((records) => records.length)
 
       const emptyResults = await processRecords(emptySheetId, callback, {
         filter: 'valid',
@@ -104,7 +105,7 @@ describe('all.records', () => {
     })
 
     it('should filter records by "error" status', async () => {
-      const callback = jest.fn((records) => records.length)
+      const callback = mock((records) => records.length)
 
       const emptyResults = await processRecords(emptySheetId, callback, {
         filter: 'error',
@@ -122,7 +123,7 @@ describe('all.records', () => {
     })
 
     it('should fetch records with custom page size', async () => {
-      const callback = jest.fn((records) => records.length)
+      const callback = mock((records) => records.length)
 
       const emptyResults = await processRecords(emptySheetId, callback, {
         pageSize: 500,

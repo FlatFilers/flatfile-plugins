@@ -20,7 +20,7 @@ export function getEnvironmentId(): string {
  *
  * @returns A Promise that resolves to created space data.
  */
-export async function setupSpace(): Promise<Flatfile.spaces.Space> {
+export async function setupSpace(): Promise<Flatfile.Space> {
   const environmentId = getEnvironmentId()
 
   const { data: space } = await api.spaces.create({

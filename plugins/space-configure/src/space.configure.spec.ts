@@ -1,5 +1,6 @@
 import { FlatfileClient } from '@flatfile/api'
 import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
+import { afterAll, beforeAll, describe, expect, it, mock } from 'bun:test'
 import type { SetupFactory } from '.'
 import { configureSpace } from '.'
 import { gettingStartedSheet } from '../ref/getting_started'
@@ -33,7 +34,7 @@ const setup: SetupFactory = {
 }
 
 describe('SpaceConfigure plugin e2e tests', () => {
-  const mockFn = jest.fn()
+  const mockFn = mock()
   const listener = setupListener()
   let spaceId: string
 

@@ -18,7 +18,7 @@
     "build:watch": "parcel watch",
     "build:prod": "NODE_ENV=production parcel build",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "bun --env-file=../../.env.defaults test"
   },
   "keywords": [
     "flatfile-plugins",
@@ -44,6 +44,6 @@
   "devDependencies": {
     "@flatfile/utils-testing": "^0.2.1",
     "express": "^4.18.2",
-    "jest-fetch-mock": "^3.0.3"
+    "fetch-mock": "^9.11.0"
   }
 }

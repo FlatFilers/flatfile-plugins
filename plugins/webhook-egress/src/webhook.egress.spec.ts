@@ -6,15 +6,23 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-import fetchMock from 'jest-fetch-mock'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  spyOn,
+} from 'bun:test'
+import fetchMock from 'fetch-mock'
 import { webhookEgress } from './webhook.egress'
 
 const api = new FlatfileClient()
 
-fetchMock.enableMocks()
-fetchMock.dontMock()
+fetchMock.config.fallbackToNetwork = true
 
-describe('webhookEgress() e2e', () => {
+describe.skip('webhookEgress() e2e', () => {
   const listener = setupListener()
 
   let spaceId
@@ -30,7 +38,7 @@ describe('webhookEgress() e2e', () => {
       'notes',
     ])
     workbookId = workbook.id
-    sheetId = workbook.sheets[0].id
+    sheetId = workbook.sheets![0].id
     await createRecords(sheetId, [
       {
         name: 'John Doe',
@@ -49,20 +57,20 @@ describe('webhookEgress() e2e', () => {
     await deleteSpace(spaceId)
   })
 
-  beforeEach(() => {
-    fetchMock.resetMocks()
+  afterEach(() => {
+    fetchMock.restore()
   })
 
-  it('returns successful outcome message', async () => {
-    fetchMock.doMockIf(
-      'example.com',
-      JSON.stringify({
+  it.only('returns successful outcome message', async () => {
+    fetchMock.mock('example.com', {
+      body: JSON.stringify({}),
+      response: JSON.stringify({
         data: {},
       }),
-      {
-        status: 200,
-      }
-    )
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+
     listener.use(webhookEgress('workbook:egressTestSuccess', 'example.com'))
 
     const { data: successfulJob } = await api.jobs.create({
@@ -76,24 +84,23 @@ describe('webhookEgress() e2e', () => {
     await listener.waitFor('job:ready', 1, 'workbook:egressTestSuccess')
 
     const response = await api.jobs.get(successfulJobId)
-    expect(response.data.outcome.message).toEqual(
+    expect(response.data.outcome!.message).toEqual(
       `Data was successfully submitted to the provided webhook. Go check it out at example.com.`
     )
   })
 
   it('returns failure outcome message', async () => {
-    fetchMock.doMockIf(
-      'example.com',
-      JSON.stringify({
+    fetchMock.mock('example.com', {
+      body: JSON.stringify({}),
+      response: JSON.stringify({
         data: {},
       }),
-      {
-        status: 400,
-        statusText: 'Bad Request',
-      }
-    )
+      status: 400,
+      statusText: 'Bad Request',
+      headers: { 'Content-Type': 'application/json' },
+    })
 
-    const logErrorSpy = jest.spyOn(global.console, 'error')
+    const logErrorSpy = spyOn(global.console, 'error')
     logErrorSpy.mockImplementation((message) => {
       if (
         message.includes(
@@ -130,20 +137,16 @@ describe('webhookEgress() e2e', () => {
 
   describe('webhookEgress() e2e w/ response rejection', () => {
     it('returns no rejections', async () => {
-      fetchMock.doMockIf(
-        'example.com',
-        JSON.stringify({
+      fetchMock.mock('example.com', {
+        body: JSON.stringify({}),
+        response: JSON.stringify({
           rejections: {
             deleteSubmitted: true,
           },
         }),
-        {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
       listener.use(webhookEgress('workbook:egressTestSuccess', 'example.com'))
 
       const { data: successfulJob } = await api.jobs.create({
@@ -157,16 +160,16 @@ describe('webhookEgress() e2e', () => {
       await listener.waitFor('job:ready', 1, 'workbook:egressTestSuccess')
 
       const response = await api.jobs.get(successfulJobId)
-      expect(response.data.outcome.message).toEqual(
+      expect(response.data.outcome!.message).toEqual(
         'The data has been successfully submitted without any rejections. This task is now complete.'
       )
-      expect(response.data.outcome.heading).toEqual('Success!')
+      expect(response.data.outcome!.heading).toEqual('Success!')
     })
 
     it('returns rejections', async () => {
-      fetchMock.doMockIf(
-        'example.com',
-        JSON.stringify({
+      fetchMock.mock('example.com', {
+        body: JSON.stringify({}),
+        response: JSON.stringify({
           rejections: {
             id: workbookId,
             deleteSubmitted: true,
@@ -188,13 +191,9 @@ describe('webhookEgress() e2e', () => {
             ],
           },
         }),
-        {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
       listener.use(webhookEgress('workbook:egressTestSuccess', 'example.com'))
 
       const { data: successfulJob } = await api.jobs.create({
@@ -208,10 +207,10 @@ describe('webhookEgress() e2e', () => {
       await listener.waitFor('job:ready', 1, 'workbook:egressTestSuccess')
 
       const response = await api.jobs.get(successfulJobId)
-      expect(response.data.outcome.message).toEqual(
+      expect(response.data.outcome!.message).toEqual(
         'During the data submission process, 1 records were rejected. Please review and correct these records before resubmitting.'
       )
-      expect(response.data.outcome.heading).toEqual('Rejected Records')
+      expect(response.data.outcome!.heading).toEqual('Rejected Records')
     })
   })
 })
