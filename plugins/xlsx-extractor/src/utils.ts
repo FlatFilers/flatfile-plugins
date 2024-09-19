@@ -5,8 +5,8 @@ export function prependNonUniqueHeaderColumns(
   const result: Record<string, string> = {}
 
   for (const [key, value] of Object.entries(record)) {
-    const newValue = value ? value : 'empty'
-    const cleanValue = newValue.replace('*', '')
+    const newValue = value || 'empty'
+    const cleanValue = normalizeKey(newValue.replace('*', ''))
 
     if (cleanValue && counts[cleanValue]) {
       result[key] = `${cleanValue}_${counts[cleanValue]}`
@@ -18,4 +18,8 @@ export function prependNonUniqueHeaderColumns(
   }
 
   return result
+}
+
+function normalizeKey(key: string): string {
+  return key.trim().replace(/%/g, '_PERCENT_').replace(/\$/g, '_DOLLAR_').replace(/[^a-zA-Z0-9]/g, "_")
 }

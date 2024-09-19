@@ -211,7 +211,7 @@ function getSheetConfig(
 }
 
 function normalizeKey(key: string): string {
-  return key.trim().replace(/%/g, '_PERCENT_').replace(/\$/g, '_DOLLAR_')
+  return key.trim().replace(/%/g, '_PERCENT_').replace(/\$/g, '_DOLLAR_').replace(/[^a-zA-Z0-9]/g, "_")
 }
 
 function normalizeRecordKeys(record: Flatfile.RecordData): Flatfile.RecordData {
