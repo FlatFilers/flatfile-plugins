@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@flatfile/api": "^1.8.9",
-    "@flatfile/listener": "^1.0.1"
+    "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^0.39.0",

@@ -58,7 +58,7 @@
   "dependencies": {},
   "peerDependencies": {
     "@flatfile/api": "^1.9.13",
-    "@flatfile/listener": "^1.0.1"
+    "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
     "@flatfile/configure": "^1.0.1",
