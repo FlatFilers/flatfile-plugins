@@ -1,0 +1,55 @@
+{
+  "timestamp": "2024-09-23T21-36-05-144Z",
+  "task": "Create a Flatfile Listener plugin for ISBN validation:\n      - Implement a RecordHook that validates ISBN-10 and ISBN-13 formats\n      - Use regex patterns to check for valid ISBN structures\n      - Verify the check digit for both ISBN-10 and ISBN-13\n      - Add error messages for invalid ISBNs\n      - Optionally, convert valid ISBN-10 to ISBN-13 format\n      - Give the user reasonable config options to specify the Sheet Slug, the Field(s) that are the ISBN(s), whether the conversion should be done automatically",
+  "steps": [
+    [
+      "Retrieve information about Flatfile Listeners and RecordHook implementation.\n",
+      "#E1",
+      "PineconeAssistant",
+      "Provide information on Flatfile Listeners and RecordHook implementation, including the structure and common practices",
+      "Plan: Retrieve information about Flatfile Listeners and RecordHook implementation.\n#E1 = PineconeAssistant[Provide information on Flatfile Listeners and RecordHook implementation, including the structure and common practices]"
+    ],
+    [
+      "Get regex patterns for ISBN-10 and ISBN-13 validation.\n",
+      "#E2",
+      "Google",
+      "regex patterns for ISBN-10 and ISBN-13 validation",
+      "Plan: Get regex patterns for ISBN-10 and ISBN-13 validation.\n#E2 = Google[regex patterns for ISBN-10 and ISBN-13 validation]"
+    ],
+    [
+      "Implement the ISBN validation logic using the retrieved information.\n",
+      "#E3",
+      "LLM",
+      "Create a function to validate ISBN-10 and ISBN-13 formats using regex patterns from #E2 and implement check digit verification for both formats. Include error messages for invalid ISBNs.",
+      "Plan: Implement the ISBN validation logic using the retrieved information.\n#E3 = LLM[Create a function to validate ISBN-10 and ISBN-13 formats using regex patterns from #E2 and implement check digit verification for both formats. Include error messages for invalid ISBNs.]"
+    ],
+    [
+      "Implement the ISBN-10 to ISBN-13 conversion function.\n",
+      "#E4",
+      "LLM",
+      "Create a function to convert valid ISBN-10 to ISBN-13 format",
+      "Plan: Implement the ISBN-10 to ISBN-13 conversion function.\n#E4 = LLM[Create a function to convert valid ISBN-10 to ISBN-13 format]"
+    ],
+    [
+      "Create the Flatfile Listener plugin with RecordHook implementation.\n",
+      "#E5",
+      "PineconeAssistant",
+      "Create a Flatfile Listener plugin with RecordHook that uses the ISBN validation and conversion functions from #E3 and #E4. Include config options for Sheet Slug, ISBN field(s), and automatic conversion.",
+      "Plan: Create the Flatfile Listener plugin with RecordHook implementation.\n#E5 = PineconeAssistant[Create a Flatfile Listener plugin with RecordHook that uses the ISBN validation and conversion functions from #E3 and #E4. Include config options for Sheet Slug, ISBN field(s), and automatic conversion.]"
+    ],
+    [
+      "Verify the implementation and remove any unused imports.\n",
+      "#E6",
+      "LLM",
+      "Review the Flatfile Listener plugin code from #E5, verify that all imports are used, params are correct, and the code is valid. Remove any unused imports and ensure that the listener subscribes to valid Event Topics.",
+      "Plan: Verify the implementation and remove any unused imports.\n#E6 = LLM[Review the Flatfile Listener plugin code from #E5, verify that all imports are used, params are correct, and the code is valid. Remove any unused imports and ensure that the listener subscribes to valid Event Topics.]"
+    ]
+  ],
+  "metrics": {
+    "tokens": {
+      "plan": 2080,
+      "state": 3494,
+      "total": 5574
+    }
+  }
+}
