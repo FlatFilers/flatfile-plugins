@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@flatfile/hooks": "^1.5.0",
-    "@flatfile/rollup-config": "^^0.1.1",
+    "@flatfile/rollup-config": "^0.1.1",
     "typescript": "^5.6.2",
     "rollup": "^4.22.4",
     "@types/jest": "^29.5.13",
