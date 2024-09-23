@@ -10,9 +10,8 @@
   Summary: Implement a Flatfile Listener plugin with RecordHook for ISBN validation and conversion
 */
 
-import { RecordHook } from '@flatfile/plugin-record-hook'
+import { recordHook } from '@flatfile/plugin-record-hook'
 import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
-import api from '@flatfile/api'
 
 interface ISBNPluginConfig {
   sheetSlug: string
@@ -23,8 +22,9 @@ interface ISBNPluginConfig {
 export function isbnPlugin(config: ISBNPluginConfig) {
   return (listener: FlatfileListener) => {
     listener.use(
-      RecordHook(
-        async (record: FlatfileRecord, event: FlatfileEvent) => {
+      recordHook(
+        config.sheetSlug || '*',
+        async (record, event: FlatfileEvent) => {
           if (event.context.sheetSlug !== config.sheetSlug) return record
 
           for (const field of config.isbnFields) {
@@ -40,8 +40,7 @@ export function isbnPlugin(config: ISBNPluginConfig) {
             }
           }
           return record
-        },
-        { concurrency: 5 }
+        }
       )
     )
   }
