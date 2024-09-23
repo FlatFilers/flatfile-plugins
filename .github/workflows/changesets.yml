@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 18.x
           cache: npm
-
+     
       - name: Install dependencies
         run: npm ci
 
@@ -29,7 +29,7 @@ jobs:
         uses: peter-murray/workflow-application-token-action@v3
         with:
           application_id: ${{ secrets.RELEASE_APP_ID }}
-          application_private_key: ${{ secrets.RELEASE_APP_KEY }}
+          application_private_key: ${{ secrets.RELEASE_APP_KEY }}  
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
@@ -37,7 +37,7 @@ jobs:
         with:
           commit: 'chore: update versions'
           title: 'chore: update versions'
-          publish: node --run release
+          publish: npm run release
         env:
           GITHUB_TOKEN: ${{ steps.release_token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN  }}
