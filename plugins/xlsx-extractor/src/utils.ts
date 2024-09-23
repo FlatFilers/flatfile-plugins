@@ -6,7 +6,8 @@ export function prependNonUniqueHeaderColumns(
 
   for (const [key, value] of Object.entries(record)) {
     const newValue = value ? value : 'empty'
-    const cleanValue = newValue.replace('*', '')
+    const cleanValue =
+      typeof newValue === 'string' ? newValue.replace('*', '') : newValue
 
     if (cleanValue && counts[cleanValue]) {
       result[key] = `${cleanValue}_${counts[cleanValue]}`
