@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.1.5
+
+### Patch Changes
+
+- 7667dd0: This release fixes an issue when using `raw` or `rawNumbers` with non-string values in the header row.
+- Updated dependencies [7667dd0]
+  - @flatfile/util-extractor@2.1.5
+
 ## 3.1.4
 
 ### Patch Changes
