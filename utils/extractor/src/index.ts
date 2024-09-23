@@ -237,6 +237,9 @@ export function keysToFields({
     { count: number; index: number; metadata?: { fieldRef: string } }
   > = keys.reduce((acc, key) => {
     if (!key) key = ''
+    if (typeof key !== 'string') {
+      key = String(key)
+    }
     key = key.trim()
     if (key === '') {
       key = 'empty'
