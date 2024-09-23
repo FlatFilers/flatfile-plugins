@@ -28,4 +28,4 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint
+        run: node --run lint
