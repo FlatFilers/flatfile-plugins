@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.1.5
+
+### Patch Changes
+
+- 7667dd0: This release fixes an issue when using `raw` or `rawNumbers` with non-string values in the header row.
+
 ## 2.1.4
 
 ### Patch Changes
