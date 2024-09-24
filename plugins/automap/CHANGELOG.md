@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.5.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
 ## 0.4.1
 
 ### Patch Changes

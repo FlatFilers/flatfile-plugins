@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.9.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
 ## 1.8.3
 
 ### Patch Changes

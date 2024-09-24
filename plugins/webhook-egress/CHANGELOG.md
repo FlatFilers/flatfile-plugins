@@ -1,5 +1,18 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.4.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
+### Patch Changes
+
+- Updated dependencies [8f376dd]
+  - @flatfile/util-response-rejection@1.4.0
+  - @flatfile/plugin-job-handler@0.6.0
+  - @flatfile/util-common@1.4.0
+
 ## 1.3.3
 
 ### Patch Changes

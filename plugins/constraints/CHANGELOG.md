@@ -1,5 +1,16 @@
 # @flatfile/plugin-constraints
 
+## 3.0.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
+### Patch Changes
+
+- Updated dependencies [8f376dd]
+  - @flatfile/plugin-record-hook@1.7.0
+
 ## 2.0.1
 
 ### Patch Changes

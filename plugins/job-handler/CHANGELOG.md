@@ -1,5 +1,16 @@
 # @flatfile/plugin-job-handler
 
+## 0.6.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
+### Patch Changes
+
+- Updated dependencies [8f376dd]
+  - @flatfile/util-common@1.4.0
+
 ## 0.5.5
 
 ### Patch Changes

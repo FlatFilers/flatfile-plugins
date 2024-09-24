@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 1.2.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
 ## 1.1.3
 
 ### Patch Changes

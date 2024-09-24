@@ -1,5 +1,16 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.3.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
+### Patch Changes
+
+- Updated dependencies [8f376dd]
+  - @flatfile/plugin-space-configure@0.6.0
+
 ## 0.2.4
 
 ### Patch Changes
