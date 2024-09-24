@@ -1,0 +1,77 @@
+{
+  "timestamp": "2024-09-24T09-38-41-054Z",
+  "task": "Create an AI-generated example record Flatfile Listener plugin:\n      - Implement a custom action to generate example records using AI\n      - Use the '@anthropic-ai/sdk' package with the 'claude-3-5-sonnet-20240620' model\n      - Analyze the sheet configuration to understand field types and constraints\n      - Generate contextually appropriate and diverse example data\n      - Allow configuration of the number of example records to generate",
+  "summary": "This code implements a Flatfile Listener plugin that integrates with the Anthropic AI SDK to generate example records and process incoming data. It includes functionality for analyzing sheet configurations, generating example records using AI, and adding those records to Flatfile sheets.",
+  "steps": [
+    [
+      "Retrieve information about Flatfile Listeners and the Record Hook plugin.\n",
+      "#E1",
+      "PineconeAssistant",
+      "Provide information on Flatfile Listeners and the Record Hook plugin, including their structure and usage.",
+      "Plan: Retrieve information about Flatfile Listeners and the Record Hook plugin.\n#E1 = PineconeAssistant[Provide information on Flatfile Listeners and the Record Hook plugin, including their structure and usage.]"
+    ],
+    [
+      "Get details on how to integrate the Anthropic AI SDK with Flatfile.\n",
+      "#E2",
+      "Google",
+      "Anthropic AI SDK integration with Flatfile",
+      "Plan: Get details on how to integrate the Anthropic AI SDK with Flatfile.\n#E2 = Google[Anthropic AI SDK integration with Flatfile]"
+    ],
+    [
+      "Create the basic structure of the Flatfile Listener plugin.\n",
+      "#E3",
+      "LLM",
+      "Using the information from #E1 and #E2, create the basic structure of a Flatfile Listener plugin that uses the Record Hook and integrates the Anthropic AI SDK. Include necessary imports and the listener function signature.",
+      "Plan: Create the basic structure of the Flatfile Listener plugin.\n#E3 = LLM[Using the information from #E1 and #E2, create the basic structure of a Flatfile Listener plugin that uses the Record Hook and integrates the Anthropic AI SDK. Include necessary imports and the listener function signature.]"
+    ],
+    [
+      "Implement the logic to analyze sheet configuration.\n",
+      "#E4",
+      "LLM",
+      "Based on #E3, add a function to analyze the sheet configuration, extracting field types and constraints. Use Flatfile's API to access sheet metadata.",
+      "Plan: Implement the logic to analyze sheet configuration.\n#E4 = LLM[Based on #E3, add a function to analyze the sheet configuration, extracting field types and constraints. Use Flatfile's API to access sheet metadata.]"
+    ],
+    [
+      "Implement the AI-based example record generation.\n",
+      "#E5",
+      "LLM",
+      "Using #E3 and #E4, implement the logic to generate example records using the Anthropic AI SDK. Include prompts that utilize the sheet configuration analysis to generate contextually appropriate data.",
+      "Plan: Implement the AI-based example record generation.\n#E5 = LLM[Using #E3 and #E4, implement the logic to generate example records using the Anthropic AI SDK. Include prompts that utilize the sheet configuration analysis to generate contextually appropriate data.]"
+    ],
+    [
+      "Add configuration for the number of example records to generate.\n",
+      "#E6",
+      "LLM",
+      "Modify the code from #E5 to allow configuration of the number of example records to generate. This should be a parameter that can be set when initializing the plugin.",
+      "Plan: Add configuration for the number of example records to generate.\n#E6 = LLM[Modify the code from #E5 to allow configuration of the number of example records to generate. This should be a parameter that can be set when initializing the plugin.]"
+    ],
+    [
+      "Implement the custom action to trigger example record generation.\n",
+      "#E7",
+      "LLM",
+      "Using the code from #E6, implement a custom action that triggers the example record generation process. This should be integrated with the Flatfile Listener structure.",
+      "Plan: Implement the custom action to trigger example record generation.\n#E7 = LLM[Using the code from #E6, implement a custom action that triggers the example record generation process. This should be integrated with the Flatfile Listener structure.]"
+    ],
+    [
+      "Finalize the plugin code and ensure all components are properly integrated.\n",
+      "#E8",
+      "LLM",
+      "Combine all the components from #E3 to #E7 into a complete Flatfile Listener plugin. Ensure that all imports are used, the code is valid, and the listener subscribes to valid Event Topics. Use any necessary Flatfile plugins or common utils to optimize the implementation.",
+      "Plan: Finalize the plugin code and ensure all components are properly integrated.\n#E8 = LLM[Combine all the components from #E3 to #E7 into a complete Flatfile Listener plugin. Ensure that all imports are used, the code is valid, and the listener subscribes to valid Event Topics. Use any necessary Flatfile plugins or common utils to optimize the implementation.]"
+    ],
+    [
+      "Validate the final code and remove any unused imports or invalid components.\n",
+      "#E9",
+      "LLM",
+      "Review the code from #E8, validate that all params are correct for the plugins used, ensure the code is valid, and remove any unused imports. Confirm that the listener only subscribes to valid Event Topics as listed in the event.topics.fact file.",
+      "Plan: Validate the final code and remove any unused imports or invalid components.\n#E9 = LLM[Review the code from #E8, validate that all params are correct for the plugins used, ensure the code is valid, and remove any unused imports. Confirm that the listener only subscribes to valid Event Topics as listed in the event.topics.fact file.]"
+    ]
+  ],
+  "metrics": {
+    "tokens": {
+      "plan": 4383,
+      "state": 4753,
+      "total": 9136
+    }
+  }
+}
