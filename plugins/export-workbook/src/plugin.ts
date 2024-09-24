@@ -102,7 +102,7 @@ export const exportRecords = async (
                         const { value, messages } = cellValue
                         const cell: XLSX.CellObject = {
                           t: 's',
-                          v: value,
+                          v: Array.isArray(value) ? value.join(', ') : value,
                           c: [],
                         }
                         if (R.length(messages) > 0) {

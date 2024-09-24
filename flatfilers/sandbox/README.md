@@ -5,6 +5,8 @@ This is a development sandbox for plugins. To get started, go to the repo root a
 ```bash
 npm install
 npm run build
+# ...or...
+npm run build:clean
 ```
 
 Navigate to the plugin you're working on and run:

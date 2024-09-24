@@ -148,16 +148,18 @@ async function addSubmissionStatusField(sheetId: string): Promise<void> {
       !sheet.config.fields.some((field) => field.key === 'submissionStatus')
     ) {
       await api.sheets.addField(sheet.id, {
-        key: 'submissionStatus',
-        label: 'Submission Status',
-        type: 'enum',
-        readonly: true,
-        config: {
-          allowCustom: false,
-          options: [
-            { label: 'Rejected', value: 'rejected' },
-            { label: 'Submitted', value: 'submitted' },
-          ],
+        body: {
+          key: 'submissionStatus',
+          label: 'Submission Status',
+          type: 'enum',
+          readonly: true,
+          config: {
+            allowCustom: false,
+            options: [
+              { label: 'Rejected', value: 'rejected' },
+              { label: 'Submitted', value: 'submitted' },
+            ],
+          },
         },
       })
     }

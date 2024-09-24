@@ -36,6 +36,6 @@
     "xml-json-format": "^1.0.8"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.1"
+    "@flatfile/listener": "^1.0.5"
   }
 }

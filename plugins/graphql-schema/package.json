@@ -45,7 +45,7 @@
     "graphql": "^16.8.1"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.1"
+    "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1"
