@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-automap",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/automap",
   "description": "A plugin to provide automapping imported files for headless workflows.",
   "registryMetadata": {
@@ -40,6 +40,6 @@
     "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.2.1"
+    "@flatfile/utils-testing": "^0.3.0"
   }
 }

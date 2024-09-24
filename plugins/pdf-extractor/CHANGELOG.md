@@ -1,5 +1,17 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.3.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
+### Patch Changes
+
+- Updated dependencies [8f376dd]
+  - @flatfile/util-file-buffer@0.4.0
+  - @flatfile/util-common@1.4.0
+
 ## 0.2.3
 
 ### Patch Changes

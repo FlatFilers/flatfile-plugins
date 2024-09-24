@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.4.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
 ## 1.3.8
 
 ### Patch Changes

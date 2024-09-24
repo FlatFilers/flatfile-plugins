@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.4.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
 ## 0.3.3
 
 ### Patch Changes

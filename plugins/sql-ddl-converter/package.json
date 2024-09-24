@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-convert-sql-ddl",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/sql-ddl-converter",
   "description": "A plugin for converting SQL DDL into Flatfile Blueprint.",
   "registryMetadata": {
@@ -32,8 +32,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-convert-json-schema": "^0.3.4",
-    "@flatfile/plugin-space-configure": "^0.5.3",
+    "@flatfile/plugin-convert-json-schema": "^0.4.0",
+    "@flatfile/plugin-space-configure": "^0.6.0",
     "sql-ddl-to-json-schema": "^4.1.0"
   },
   "peerDependencies": {

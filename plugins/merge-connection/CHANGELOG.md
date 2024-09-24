@@ -1,5 +1,17 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.4.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
+### Patch Changes
+
+- Updated dependencies [8f376dd]
+  - @flatfile/plugin-convert-openapi-schema@0.3.0
+  - @flatfile/plugin-job-handler@0.6.0
+
 ## 0.3.3
 
 ### Patch Changes

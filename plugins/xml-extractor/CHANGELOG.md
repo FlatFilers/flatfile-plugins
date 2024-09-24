@@ -1,5 +1,15 @@
 # @flatfile/plugin-dxp-config
 
+## 0.7.0
+
+### Minor Changes
+
+- 8f376dd: This release updates several Flatfile dependencies to the latest versions.
+
+### Patch Changes
+
+- @flatfile/util-extractor@2.1.6
+
 ## 0.6.2
 
 ### Patch Changes
