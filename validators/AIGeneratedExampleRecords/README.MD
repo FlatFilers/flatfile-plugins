@@ -1,58 +1,65 @@
-# Anthropic Flatfile Plugin
+# Flatfile AI Generator Plugin
 
-This plugin integrates Anthropic's AI capabilities with Flatfile, enabling AI-powered data processing and example record generation for your data import workflows.
+This Flatfile Listener plugin automatically generates example records using AI, providing realistic and contextually appropriate data for your sheets. It leverages the Anthropic API with the Claude 3 Sonnet model to analyze sheet configuration and create diverse sample data.
 
 ## Features
 
-- AI-powered record processing using Anthropic's language models
-- Automatic analysis of sheet configurations
-- AI-generated example records based on sheet structure
-- Custom action to generate and add example records to sheets
-- Configurable number of example records to generate
+- Automatically generates example records based on sheet structure
+- Configurable number of records to generate
+- Uses advanced AI to create contextually appropriate data
+- Seamless integration with Flatfile workflows
+- Error handling and logging for reliable operation
 
 ## Installation
 
-To install the Anthropic Flatfile Plugin, use npm:
+To install the AI Generator Plugin, run the following command in your project directory:
 
 ```bash
-npm install anthropic-flatfile-plugin
+npm install @flatfile/plugin-ai-generator
 ```
 
 ## Example Usage
 
 ```typescript
 import { FlatfileListener } from '@flatfile/listener';
-import AnthropicFlatfilePlugin from 'anthropic-flatfile-plugin';
+import { aiGeneratorPlugin } from '@flatfile/plugin-ai-generator';
 
 const listener = new FlatfileListener();
-const anthropicPlugin = new AnthropicFlatfilePlugin('your-anthropic-api-key');
 
-anthropicPlugin.configureListener(listener);
-
-listener.use(/* other plugins */);
-
-export default listener;
+listener.use(
+  aiGeneratorPlugin({
+    numberOfRecords: 10
+  })
+);
 ```
 
 ## Configuration
 
-The AnthropicFlatfilePlugin constructor accepts two parameters:
+The AI Generator Plugin accepts a configuration object with the following property:
 
-1. `anthropicApiKey` (required): Your Anthropic API key
-2. `defaultExampleRecordCount` (optional): The default number of example records to generate (default: 5)
-
-```typescript
-const anthropicPlugin = new AnthropicFlatfilePlugin('your-anthropic-api-key', 10);
-```
+- `numberOfRecords`: The number of example records to generate (default: 10)
 
 ## Behavior
 
-1. **Record Processing**: The plugin processes each record in the sheet, using Anthropic AI to analyze the 'fieldName' and storing the result in 'processedField'.
+1. When a record hook is triggered, the plugin checks if the record is already an generated example.
+2. If not, it retrieves the sheet configuration from the event.
+3. The plugin then uses the Anthropic API to generate the specified number of example records based on the sheet's field types and constraints.
+4. Generated records are added to the sheet using the Flatfile API.
+5. The plugin marks processed records to avoid duplicate generation.
+6. On the 'job:ready' event, the plugin updates the workbook sheet.
 
-2. **Sheet Configuration Analysis**: When a job is ready, the plugin analyzes the sheet configuration and stores it for later use.
+## Requirements
 
-3. **Example Record Generation**: The plugin adds a custom action 'generate-examples' that generates AI-powered example records based on the sheet's structure.
+- An Anthropic API key must be set in the `ANTHROPIC_API_KEY` environment variable.
 
-4. **Error Handling**: If any errors occur during AI processing, they are added to the record for review.
+## Error Handling
 
-To generate example records, trigger the 'generate-examples' action in your Flatfile workflow. You can specify the number of records to generate in the action context, or it will use the default count specified during plugin initialization.
+The plugin includes error handling and logging to ensure reliable operation. Any errors during the generation or insertion process are logged for easy troubleshooting.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
