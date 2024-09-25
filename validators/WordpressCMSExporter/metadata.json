@@ -1,0 +1,105 @@
+{
+  "timestamp": "2024-09-25T06-27-21-653Z",
+  "task": "Create a Wordpress CMS Export Flatfile Listener plugin:\n      - Implement a custom action to export data to Wordpress\n      - Allow users to select the target CMS platform and provide necessary API credentials\n      - Map Flatfile fields to corresponding CMS fields (e.g., title, content, author, categories, tags)\n      - Support exporting rich text content, including formatting and embedded media\n      - Implement options for post status (draft, published) and scheduling\n      - Handle batch processing for efficient export of multiple posts\n      - Provide error handling and reporting for failed exports\n      - Allow configuration of default post settings (e.g., featured image, excerpt)\n      - Implement a preview function to review post formatting before export\n      - Support updating existing posts by matching on a unique identifier\n      - Include options for handling custom fields specific to each CMS platform",
+  "summary": "This code implements a Flatfile Listener that uses the Record Hook plugin to process records and export them to WordPress. It includes functionality for field mapping, handling custom fields, and updating existing posts.",
+  "steps": [
+    [
+      "Retrieve general knowledge about Flatfile Listeners and the Record Hook plugin to understand the structure and capabilities we can utilize.\n",
+      "#E1",
+      "PineconeAssistant",
+      "Provide information on Flatfile Listeners and the Record Hook plugin, including their structure and capabilities",
+      "Plan: Retrieve general knowledge about Flatfile Listeners and the Record Hook plugin to understand the structure and capabilities we can utilize.\n#E1 = PineconeAssistant[Provide information on Flatfile Listeners and the Record Hook plugin, including their structure and capabilities]"
+    ],
+    [
+      "Implement the custom action for exporting data to Wordpress, including user selection for the target CMS platform and API credential input.\n",
+      "#E3",
+      "LLM",
+      "Extend the code from #E2 to include a custom action for exporting data to Wordpress, allowing users to select the target CMS platform and provide API credentials",
+      "Plan: Implement the custom action for exporting data to Wordpress, including user selection for the target CMS platform and API credential input.\n#E3 = LLM[Extend the code from #E2 to include a custom action for exporting data to Wordpress, allowing users to select the target CMS platform and provide API credentials]"
+    ],
+    [
+      "Implement field mapping functionality to map Flatfile fields to corresponding CMS fields.\n",
+      "#E4",
+      "LLM",
+      "Add field mapping functionality to the code from #E3, mapping Flatfile fields to CMS fields such as title, content, author, categories, and tags",
+      "Plan: Implement field mapping functionality to map Flatfile fields to corresponding CMS fields.\n#E4 = LLM[Add field mapping functionality to the code from #E3, mapping Flatfile fields to CMS fields such as title, content, author, categories, and tags]"
+    ],
+    [
+      "Add support for exporting rich text content, including formatting and embedded media.\n",
+      "#E5",
+      "LLM",
+      "Extend the code from #E4 to support exporting rich text content, including formatting and embedded media",
+      "Plan: Add support for exporting rich text content, including formatting and embedded media.\n#E5 = LLM[Extend the code from #E4 to support exporting rich text content, including formatting and embedded media]"
+    ],
+    [
+      "Implement options for post status (draft, published) and scheduling.\n",
+      "#E6",
+      "LLM",
+      "Add functionality to the code from #E5 for setting post status (draft, published) and scheduling",
+      "Plan: Implement options for post status (draft, published) and scheduling.\n#E6 = LLM[Add functionality to the code from #E5 for setting post status (draft, published) and scheduling]"
+    ],
+    [
+      "Implement batch processing for efficient export of multiple posts.\n",
+      "#E7",
+      "LLM",
+      "Extend the code from #E6 to include batch processing functionality for efficient export of multiple posts",
+      "Plan: Implement batch processing for efficient export of multiple posts.\n#E7 = LLM[Extend the code from #E6 to include batch processing functionality for efficient export of multiple posts]"
+    ],
+    [
+      "Add error handling and reporting for failed exports.\n",
+      "#E8",
+      "LLM",
+      "Implement error handling and reporting for failed exports in the code from #E7",
+      "Plan: Add error handling and reporting for failed exports.\n#E8 = LLM[Implement error handling and reporting for failed exports in the code from #E7]"
+    ],
+    [
+      "Implement configuration options for default post settings.\n",
+      "#E9",
+      "LLM",
+      "Add configuration options for default post settings (e.g., featured image, excerpt) to the code from #E8",
+      "Plan: Implement configuration options for default post settings.\n#E9 = LLM[Add configuration options for default post settings (e.g., featured image, excerpt) to the code from #E8]"
+    ],
+    [
+      "Implement a preview function to review post formatting before export.\n",
+      "#E10",
+      "LLM",
+      "Add a preview function to the code from #E9 to allow users to review post formatting before export",
+      "Plan: Implement a preview function to review post formatting before export.\n#E10 = LLM[Add a preview function to the code from #E9 to allow users to review post formatting before export]"
+    ],
+    [
+      "Implement functionality to update existing posts by matching on a unique identifier.\n",
+      "#E11",
+      "LLM",
+      "Extend the code from #E10 to support updating existing posts by matching on a unique identifier",
+      "Plan: Implement functionality to update existing posts by matching on a unique identifier.\n#E11 = LLM[Extend the code from #E10 to support updating existing posts by matching on a unique identifier]"
+    ],
+    [
+      "Add support for handling custom fields specific to each CMS platform.\n",
+      "#E12",
+      "LLM",
+      "Implement support for handling custom fields specific to each CMS platform in the code from #E11",
+      "Plan: Add support for handling custom fields specific to each CMS platform.\n#E12 = LLM[Implement support for handling custom fields specific to each CMS platform in the code from #E11]"
+    ],
+    [
+      "Verify that the implemented Listener subscribes to valid Event Topics.\n",
+      "#E13",
+      "PineconeAssistant",
+      "Verify that the Event Topics used in the Listener implementation are valid according to the event.topics.fact file",
+      "Plan: Verify that the implemented Listener subscribes to valid Event Topics.\n#E13 = PineconeAssistant[Verify that the Event Topics used in the Listener implementation are valid according to the event.topics.fact file]"
+    ],
+    [
+      "Review the final code, remove any unused imports, and validate the parameters for any plugins used.\n",
+      "#E14",
+      "LLM",
+      "Review the complete code from #E12, remove any unused imports, and validate the parameters for any plugins used. Ensure that the code is valid and follows best practices for Flatfile Listeners",
+      "Plan: Review the final code, remove any unused imports, and validate the parameters for any plugins used.\n#E14 = LLM[Review the complete code from #E12, remove any unused imports, and validate the parameters for any plugins used. Ensure that the code is valid and follows best practices for Flatfile Listeners]"
+    ]
+  ],
+  "metrics": {
+    "tokens": {
+      "plan": 5552,
+      "state": 7901,
+      "total": 13453
+    }
+  }
+}
