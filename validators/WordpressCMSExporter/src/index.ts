@@ -1,93 +1,163 @@
-import { FlatfileListener } from '@flatfile/listener'
-import { recordHook } from '@flatfile/plugin-record-hook'
+import {
+  FlatfileListener,
+  FlatfileEvent,
+  RecordObject,
+  SchemaField,
+} from '@flatfile/listener'
 import api from '@flatfile/api'
+import { recordHook } from '@flatfile/plugin-record-hook'
 import axios from 'axios'
+import { parse } from 'node-html-parser'
 
-const listener = FlatfileListener.create((listener) => {
+const WordpressCMSExport = (listener: FlatfileListener) => {
+  let wpConfig = {
+    apiUrl: '',
+    username: '',
+    password: '',
+  }
+
   listener.use(
-    recordHook('contacts', async (record, event) => {
-      const { jobId, environmentId, spaceId, sheetId } = event.context
-
-      // Field mapping
-      const fieldMapping = {
-        title: 'name',
-        content: 'description',
-        author: 'email',
-        categories: 'category',
-        tags: 'tags',
-        status: 'status',
-        custom_fields: 'custom_fields',
-      }
-
-      // Prepare post data
-      const postData = {}
-      for (const [wpField, ffField] of Object.entries(fieldMapping)) {
-        if (record.get(ffField)) {
-          if (wpField === 'categories' || wpField === 'tags') {
-            postData[wpField] = record
-              .get(ffField)
-              .split(',')
-              .map((item) => item.trim())
-          } else if (wpField === 'custom_fields') {
-            postData[wpField] = JSON.parse(record.get(ffField) || '{}')
-          } else {
-            postData[wpField] = record.get(ffField)
-          }
-        }
-      }
-
-      try {
-        // Get WordPress API credentials from Flatfile space metadata
-        const { data: space } = await api.spaces.get(spaceId)
-        const wpApiUrl = space.metadata.wpApiUrl
-        const wpApiKey = space.metadata.wpApiKey
-
-        if (!wpApiUrl || !wpApiKey) {
-          throw new Error(
-            'WordPress API credentials not found in space metadata'
-          )
-        }
-
-        const headers = {
-          Authorization: `Bearer ${wpApiKey}`,
-          'Content-Type': 'application/json',
-        }
-
-        // Check if post already exists (assuming 'name' is unique identifier)
-        const existingPosts = await axios.get(
-          `${wpApiUrl}/wp-json/wp/v2/posts?search=${postData.title}`,
-          { headers }
-        )
-
-        let response
-        if (existingPosts.data.length > 0) {
-          // Update existing post
-          const postId = existingPosts.data[0].id
-          response = await axios.put(
-            `${wpApiUrl}/wp-json/wp/v2/posts/${postId}`,
-            postData,
-            { headers }
-          )
-        } else {
-          // Create new post
-          response = await axios.post(
-            `${wpApiUrl}/wp-json/wp/v2/posts`,
-            postData,
-            { headers }
-          )
-        }
-
-        // Update record with WordPress post ID
-        record.set('wp_post_id', response.data.id)
-
-        return record
-      } catch (error) {
-        console.error('Error exporting to WordPress:', error.message)
-        record.addError('wordpress_export', 'Failed to export to WordPress')
-        return record
-      }
+    recordHook('wordpress_posts', async (record: RecordObject) => {
+      const mappedFields = mapFields(record)
+      const defaultSettings = await getDefaultSettings()
+      const postWithDefaults = applyDefaultSettings(
+        mappedFields,
+        defaultSettings
+      )
+      const preview = await previewPost(postWithDefaults)
+      record.set('preview', preview)
+      return record
     })
   )
-})
+  listener.on(
+    'job:ready',
+    { job: 'workbook:exportToWordpress' },
+    async (event: FlatfileEvent) => {
+      const { jobId, workspaceId } = event.context
+      try {
+        await api.jobs.ack(jobId, {
+          info: 'Starting WordPress export',
+          progress: 10,
+        })
 
-export default listener
+        const records = await api.records.get(workspaceId, 'wordpress_posts')
+        const exportedRecords = await batchExport(records.data)
+
+        await api.jobs.complete(jobId, {
+          outcome: {
+            message: `Successfully exported ${exportedRecords.length} posts to WordPress`,
+          },
+        })
+      } catch (error) {
+        await api.jobs.fail(jobId, {
+          outcome: {
+            message: `Export failed: ${error.message}`,
+          },
+        })
+      }
+    }
+  )
+
+  listener.on('commit:created', async (event: FlatfileEvent) => {
+    const { workspaceId } = event.context
+    try {
+      await api.spaces.update(workspaceId, {
+        metadata: {
+          wpConfig: {
+            configured: false,
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Failed to update workspace metadata:', error)
+    }
+  })
+
+  const mapFields = (record: RecordObject) => {
+    return {
+      title: record.get('post_title'),
+      content: record.get('post_content'),
+      status: record.get('post_status') || 'draft',
+      date: record.get('post_date'),
+      author: record.get('post_author'),
+      categories: record.get('post_categories'),
+      tags: record.get('post_tags'),
+      customFields: handleCustomFields(record),
+    }
+  }
+
+  const handleCustomFields = (record: RecordObject) => {
+    const customFields = {}
+    const fieldKeys = Object.keys(record.value).filter((key) =>
+      key.startsWith('custom_')
+    )
+    fieldKeys.forEach((key) => {
+      customFields[key.replace('custom_', '')] = record.get(key)
+    })
+    return customFields
+  }
+
+  const getDefaultSettings = async () => {
+    // Fetch default settings from WordPress or a configuration file
+    return {
+      status: 'draft',
+      author: 'admin',
+      categories: ['Uncategorized'],
+      tags: [],
+    }
+  }
+
+  const applyDefaultSettings = (postData, defaultSettings) => {
+    return {
+      ...defaultSettings,
+      ...postData,
+    }
+  }
+
+  const previewPost = async (postData) => {
+    // Generate HTML preview of the post
+    const html = `
+      <h1>${postData.title}</h1>
+      <p>Author: ${postData.author}</p>
+      <div>${postData.content}</div>
+    `
+    return parse(html).toString()
+  }
+
+  const exportToWordpress = async (postData) => {
+    const { apiUrl, username, password } = wpConfig
+    try {
+      const response = await axios.post(
+        `${apiUrl}/wp-json/wp/v2/posts`,
+        postData,
+        {
+          auth: {
+            username,
+            password,
+          },
+        }
+      )
+      return response.data.id
+    } catch (error) {
+      throw new Error(`Failed to export post: ${error.message}`)
+    }
+  }
+
+  const batchExport = async (records) => {
+    const exportedRecords = []
+    for (const record of records) {
+      try {
+        const postData = mapFields(record)
+        const postId = await exportToWordpress(postData)
+        exportedRecords.push({ id: postId, title: postData.title })
+      } catch (error) {
+        console.error(`Failed to export record ${record.id}:`, error)
+      }
+    }
+    return exportedRecords
+  }
+
+  return listener
+}
+
+export default WordpressCMSExport

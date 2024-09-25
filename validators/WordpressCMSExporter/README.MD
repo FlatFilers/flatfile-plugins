@@ -1,59 +1,71 @@
-# Flatfile to WordPress Exporter
+# Flatfile WordPress CMS Export Plugin
 
-This plugin integrates Flatfile with WordPress, allowing for seamless export of records from Flatfile to WordPress posts. It uses the Flatfile Listener and Record Hook plugin to process records and map them to WordPress post fields.
+This Flatfile Listener plugin enables seamless export of data to WordPress CMS. It provides a robust solution for mapping fields, handling custom fields, applying default settings, previewing posts, and batch exporting to WordPress.
 
 ## Features
 
-- Automatic field mapping from Flatfile to WordPress post fields
-- Support for custom fields
-- Handling of categories and tags as arrays
-- Ability to update existing posts or create new ones
+- Field mapping from Flatfile to WordPress post structure
+- Custom field handling
+- Default settings application
+- Post preview generation
+- Batch export to WordPress
+- WordPress API authentication
 - Error handling and reporting
 
 ## Installation
 
-To install this plugin, run the following command:
+To install the plugin, use npm:
 
 ```bash
-npm install @flatfile/listener @flatfile/plugin-record-hook @flatfile/api axios
+npm install @flatfile/plugin-wordpress-export
 ```
 
 ## Example Usage
 
 ```javascript
-import { FlatfileListener } from '@flatfile/listener';
-import { recordHook } from '@flatfile/plugin-record-hook';
-import api from '@flatfile/api';
-import axios from 'axios';
+import { FlatfileListener } from "@flatfile/listener";
+import WordpressCMSExport from "@flatfile/plugin-wordpress-export";
 
-const listener = FlatfileListener.create((listener) => {
-  listener.use(
-    recordHook('contacts', async (record, event) => {
-      // ... (code implementation as provided in the original snippet)
-    })
-  );
-});
+const listener = new FlatfileListener();
+const wordpressExport = WordpressCMSExport(listener);
+
+// Your additional listener configurations...
 
 export default listener;
 ```
 
 ## Configuration
 
-To use this plugin, you need to set up the following in your Flatfile space metadata:
+The plugin requires WordPress API credentials to be configured. You can set these in your Flatfile space metadata:
 
-- `wpApiUrl`: The URL of your WordPress API
-- `wpApiKey`: Your WordPress API authentication key
-
-These credentials are used to authenticate requests to the WordPress API.
+```javascript
+await api.spaces.update(workspaceId, {
+  metadata: {
+    wpConfig: {
+      apiUrl: "https://your-wordpress-site.com",
+      username: "your-username",
+      password: "your-password",
+    },
+  },
+});
+```
 
 ## Behavior
 
-1. The plugin processes each record in the 'contacts' sheet.
-2. It maps Flatfile fields to WordPress post fields according to a predefined mapping.
-3. Special handling is applied for categories, tags, and custom fields.
-4. The plugin checks if a post with the same title already exists in WordPress.
-5. If an existing post is found, it updates the post; otherwise, it creates a new post.
-6. The WordPress post ID is stored back in the Flatfile record.
-7. Any errors during the export process are logged and added to the record.
+1. **Field Mapping**: The plugin maps Flatfile fields to WordPress post fields, including title, content, status, date, author, categories, and tags.
 
-Note: This plugin assumes that the 'title' field is used as a unique identifier for posts. Adjust this logic if a different field should be used for identifying existing posts.
+2. **Custom Fields**: Any field prefixed with "custom_" in Flatfile will be treated as a custom field in WordPress.
+
+3. **Default Settings**: Default settings for post status, author, categories, and tags are applied if not provided in the Flatfile record.
+
+4. **Post Preview**: A HTML preview of each post is generated before export.
+
+5. **Batch Export**: Posts are exported in batches to the configured WordPress site using the WordPress REST API.
+
+6. **Error Handling**: Any errors during the export process are logged and reported back to Flatfile.
+
+7. **Job Progress**: The plugin updates the job progress in Flatfile, providing real-time feedback on the export process.
+
+8. **Workspace Metadata**: After a successful commit, the plugin updates the workspace metadata to indicate that WordPress configuration is required.
+
+This plugin streamlines the process of exporting data from Flatfile to WordPress, handling the complexities of field mapping, custom fields, and API interactions.
