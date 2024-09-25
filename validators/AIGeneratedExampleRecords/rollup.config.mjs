@@ -1,28 +1,42 @@
 import { buildConfig } from '@flatfile/rollup-config';
 import typescript from '@rollup/plugin-typescript';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 
 const umdExternals = [
   '@flatfile/api',
   '@flatfile/listener',
   '@flatfile/plugin-record-hook',
-  'anthropic'
+  '@flatfile/util-common',
+  '@anthropic-ai/sdk'
 ];
 
 const config = buildConfig({
-  includeUmd: true,
-  umdConfig: { name: 'AnthropicFlatfilePlugin', external: umdExternals },
+  input: 'src/index.ts', // Assuming your main file is src/index.ts
   external: [
     ...umdExternals,
-    '@flatfile/hooks',
-    '@flatfile/util-common'
+    'dotenv',
+    'node-fetch'
   ],
+  includeBrowser: true,
+  includeUmd: true,
+  umdConfig: { 
+    name: 'FlatfileAIGeneratorPlugin', 
+    external: umdExternals 
+  },
   plugins: [
     typescript({
       tsconfig: './tsconfig.json',
       declaration: true,
-      declarationDir: 'dist',
-      include: ['src/**/*.ts']
-    })
+      declarationDir: 'dist/types'
+    }),
+    resolve({
+      browser: true,
+      preferBuiltins: true
+    }),
+    commonjs(),
+    json()
   ]
 });
 
