@@ -1,0 +1,84 @@
+{
+  "timestamp": "2024-09-25T16-58-03-798Z",
+  "task": "Develop a pivot table view action Flatfile Listener plugin:\n      - Create a custom action to generate a pivot table view of the data in a Sheet\n      - Implement logic to allow users to select dimensions and measures\n      - Choose column to pivot on (rows), column to aggregate (value), aggregation method, and optional column to group by\n      - Generate the Pivot Table as a Mardown file and save it as a Flatfile Document in the same Space",
+  "summary": "This code implements a Flatfile Listener plugin for generating a pivot table from sheet data and saving it as a Markdown document. It includes functionality for selecting pivot columns, aggregation methods, and optional grouping. The plugin handles the entire process from data retrieval to document creation within the Flatfile ecosystem.",
+  "steps": [
+    [
+      "Retrieve information about Flatfile Listeners and custom actions.\n",
+      "#E1",
+      "PineconeAssistant",
+      "How to create a custom action in Flatfile Listeners?",
+      "Plan: Retrieve information about Flatfile Listeners and custom actions.\n#E1 = PineconeAssistant[How to create a custom action in Flatfile Listeners?]"
+    ],
+    [
+      "Get information about working with Sheet data in Flatfile.\n",
+      "#E2",
+      "PineconeAssistant",
+      "How to access and manipulate Sheet data in Flatfile Listeners?",
+      "Plan: Get information about working with Sheet data in Flatfile.\n#E2 = PineconeAssistant[How to access and manipulate Sheet data in Flatfile Listeners?]"
+    ],
+    [
+      "Retrieve information about creating and saving Documents in Flatfile.\n",
+      "#E3",
+      "PineconeAssistant",
+      "How to create and save a Document in Flatfile?",
+      "Plan: Retrieve information about creating and saving Documents in Flatfile.\n#E3 = PineconeAssistant[How to create and save a Document in Flatfile?]"
+    ],
+    [
+      "Create the basic structure of the Flatfile Listener plugin with a custom action for generating a pivot table view.\n",
+      "#E4",
+      "LLM",
+      "Create a basic Flatfile Listener plugin structure with a custom action for generating a pivot table view, using the information from #E1, #E2, and #E3",
+      "Plan: Create the basic structure of the Flatfile Listener plugin with a custom action for generating a pivot table view.\n#E4 = LLM[Create a basic Flatfile Listener plugin structure with a custom action for generating a pivot table view, using the information from #E1, #E2, and #E3]"
+    ],
+    [
+      "Implement logic for selecting dimensions and measures.\n",
+      "#E5",
+      "LLM",
+      "Implement logic to allow users to select dimensions and measures for the pivot table, using the plugin structure from #E4",
+      "Plan: Implement logic for selecting dimensions and measures.\n#E5 = LLM[Implement logic to allow users to select dimensions and measures for the pivot table, using the plugin structure from #E4]"
+    ],
+    [
+      "Add functionality to choose pivot columns and aggregation method.\n",
+      "#E6",
+      "LLM",
+      "Add functionality to choose column to pivot on (rows), column to aggregate (value), aggregation method, and optional column to group by, using the plugin structure from #E5",
+      "Plan: Add functionality to choose pivot columns and aggregation method.\n#E6 = LLM[Add functionality to choose column to pivot on (rows), column to aggregate (value), aggregation method, and optional column to group by, using the plugin structure from #E5]"
+    ],
+    [
+      "Implement pivot table generation logic.\n",
+      "#E7",
+      "LLM",
+      "Implement logic to generate a pivot table based on the selected dimensions, measures, and aggregation method, using the plugin structure from #E6",
+      "Plan: Implement pivot table generation logic.\n#E7 = LLM[Implement logic to generate a pivot table based on the selected dimensions, measures, and aggregation method, using the plugin structure from #E6]"
+    ],
+    [
+      "Convert the pivot table to Markdown format.\n",
+      "#E8",
+      "LLM",
+      "Add functionality to convert the generated pivot table to Markdown format, using the plugin structure from #E7",
+      "Plan: Convert the pivot table to Markdown format.\n#E8 = LLM[Add functionality to convert the generated pivot table to Markdown format, using the plugin structure from #E7]"
+    ],
+    [
+      "Save the Markdown pivot table as a Flatfile Document.\n",
+      "#E9",
+      "LLM",
+      "Implement functionality to save the Markdown pivot table as a Flatfile Document in the same Space, using the plugin structure from #E8 and information from #E3",
+      "Plan: Save the Markdown pivot table as a Flatfile Document.\n#E9 = LLM[Implement functionality to save the Markdown pivot table as a Flatfile Document in the same Space, using the plugin structure from #E8 and information from #E3]"
+    ],
+    [
+      "Review and optimize the final Flatfile Listener plugin code.\n",
+      "#E10",
+      "LLM",
+      "Review the complete Flatfile Listener plugin code from #E9, optimize it, and ensure all necessary imports are included and unused ones are removed. Validate that the params are correct for any plugins used and the code is valid. Make sure that the listener only subscribes to valid Event Topics.",
+      "Plan: Review and optimize the final Flatfile Listener plugin code.\n#E10 = LLM[Review the complete Flatfile Listener plugin code from #E9, optimize it, and ensure all necessary imports are included and unused ones are removed. Validate that the params are correct for any plugins used and the code is valid. Make sure that the listener only subscribes to valid Event Topics.]"
+    ]
+  ],
+  "metrics": {
+    "tokens": {
+      "plan": 4922,
+      "state": 5635,
+      "total": 10557
+    }
+  }
+}
