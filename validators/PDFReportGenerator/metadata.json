@@ -1,0 +1,63 @@
+{
+  "timestamp": "2024-09-25T06-22-41-424Z",
+  "task": "Develop a PDF report generator Flatfile Listener plugin:\n      - Create a custom action to generate PDF reports from imported data\n      - Use a PDF generation library (e.g., 'pdfkit' from npm)\n      - Implement customizable report templates with placeholders for data\n      - Allow inclusion of charts and graphs in the PDF report\n      - Provide options for report styling and formatting\n      - Generate the file in memory and upload the file to Flatfile via the @flatfile/api files API",
+  "summary": "This solution implements a custom action in Flatfile to generate PDF reports using the pdfkit library. The action allows users to create customizable reports with dynamic data, charts, and styling options. The generated PDF is then uploaded to Flatfile using the @flatfile/api.",
+  "steps": [
+    [
+      "First, let's check if there's any existing Flatfile knowledge or examples related to PDF generation or custom actions.\n",
+      "#E1",
+      "PineconeAssistant",
+      "Are there any existing Flatfile examples or plugins for PDF generation or custom actions?",
+      "Plan: First, let's check if there's any existing Flatfile knowledge or examples related to PDF generation or custom actions.\n#E1 = PineconeAssistant[Are there any existing Flatfile examples or plugins for PDF generation or custom actions?]"
+    ],
+    [
+      "Now, let's search for information about the 'pdfkit' library and how to use it with Node.js.\n",
+      "#E3",
+      "Google",
+      "pdfkit npm usage with Node.js",
+      "Plan: Now, let's search for information about the 'pdfkit' library and how to use it with Node.js.\n#E3 = Google[pdfkit npm usage with Node.js]"
+    ],
+    [
+      "Next, we need to implement customizable report templates with placeholders for data.\n",
+      "#E5",
+      "LLM",
+      "Extend the code from #E4 to include customizable report templates with placeholders for data",
+      "Plan: Next, we need to implement customizable report templates with placeholders for data.\n#E5 = LLM[Extend the code from #E4 to include customizable report templates with placeholders for data]"
+    ],
+    [
+      "Now, let's search for information on how to include charts and graphs in PDFs using pdfkit.\n",
+      "#E6",
+      "Google",
+      "pdfkit charts and graphs in PDF",
+      "Plan: Now, let's search for information on how to include charts and graphs in PDFs using pdfkit.\n#E6 = Google[pdfkit charts and graphs in PDF]"
+    ],
+    [
+      "Next, we'll implement options for report styling and formatting.\n",
+      "#E8",
+      "LLM",
+      "Add options for report styling and formatting to the code from #E7",
+      "Plan: Next, we'll implement options for report styling and formatting.\n#E8 = LLM[Add options for report styling and formatting to the code from #E7]"
+    ],
+    [
+      "Now, we need to search for information on how to use the @flatfile/api files API to upload files.\n",
+      "#E9",
+      "Google",
+      "@flatfile/api files API upload file",
+      "Plan: Now, we need to search for information on how to use the @flatfile/api files API to upload files.\n#E9 = Google[@flatfile/api files API upload file]"
+    ],
+    [
+      "Finally, we'll review and optimize the code, ensuring all necessary imports are included and remove any unused ones.\n",
+      "#E11",
+      "LLM",
+      "Review and optimize the code from #E10, ensuring all necessary imports are included and removing any unused ones. Also, validate that the params are correct for any plugins used and the code is valid. Make sure that any listeners only subscribe to valid Event Topics.",
+      "Plan: Finally, we'll review and optimize the code, ensuring all necessary imports are included and remove any unused ones.\n#E11 = LLM[Review and optimize the code from #E10, ensuring all necessary imports are included and removing any unused ones. Also, validate that the params are correct for any plugins used and the code is valid. Make sure that any listeners only subscribe to valid Event Topics.]"
+    ]
+  ],
+  "metrics": {
+    "tokens": {
+      "plan": 468,
+      "state": 3326,
+      "total": 3794
+    }
+  }
+}
