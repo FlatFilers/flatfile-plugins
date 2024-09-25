@@ -25,6 +25,9 @@ The `chunkSize` parameter allows you to specify the quantity of records to proce
 #### `options.parallel` - `number` - `default: 1` - (optional)
 The `parallel` parameter allows you to specify the number of chunks to process in parallel.
 
+#### `options.debug` - `boolean` - `default: false` - (optional)
+The `debug` parameter allows you to turn on debug logging.
+
 
 
 ## Usage
@@ -199,7 +202,6 @@ Choose whether the records should be processed in parallel. This enables you to 
 ## Example Usage
 
 This example sets up a record hook using `listener.use` to modify records in the "my-sheet" sheet.
-in the "my-sheet" sheet.
 
 When a record is processed by the hook, it checks if an email address is missing, empty, or invalid, and if so, it logs corresponding error messages and adds them to a form validation context (if the r object is related to form validation). This helps ensure that only valid email addresses are accepted in the application.
 

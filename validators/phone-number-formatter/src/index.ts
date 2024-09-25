@@ -10,21 +10,16 @@
   Summary: This code implements a Flatfile Listener plugin for phone number formatting with configurable options. It uses the RecordHook to process individual records, format phone numbers based on country, and handle errors. The plugin is customizable with options for sheet slug, field names, and automatic conversion.
 */
 
-import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
-import { RecordHook } from '@flatfile/plugin-record-hook'
+import type { FlatfileEvent } from '@flatfile/listener'
+import { type FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
 
-interface PhoneFormatPluginConfig {
-  sheetSlug: string
+export interface PhoneFormatPluginConfig {
+  sheetSlug?: string
   phoneField: string
   countryField: string
-  autoConvert: boolean
-}
-
-const defaultConfig: PhoneFormatPluginConfig = {
-  sheetSlug: 'contacts',
-  phoneField: 'phone',
-  countryField: 'country',
-  autoConvert: true,
+  autoConvert?: boolean
+  concurrency?: number
+  debug?: boolean
 }
 
 const phonePatterns = {
@@ -42,7 +37,10 @@ function formatPhoneNumber(
 ): { formattedPhone: string; error: string | null } {
   const pattern = phonePatterns[country]
   if (!pattern) {
-    return { formattedPhone: phone, error: 'Unsupported country code' }
+    return {
+      formattedPhone: phone,
+      error: `Unsupported country code: ${country}`,
+    }
   }
 
   const digitsOnly = phone.replace(/\D/g, '')
@@ -91,47 +89,39 @@ function formatPhoneNumber(
   }
 }
 
-export default function phoneFormatPlugin(
-  config: Partial<PhoneFormatPluginConfig> = {}
-) {
-  const pluginConfig = { ...defaultConfig, ...config }
+export function phoneFormatValidator(config: PhoneFormatPluginConfig) {
+  return recordHook(
+    config.sheetSlug || '**',
+    (record: FlatfileRecord) => {
+      const phone = record.get(config.phoneField) as string
+      const country = record.get(config.countryField) as string
 
-  return (listener: FlatfileListener) => {
-    listener.use(
-      RecordHook(
-        async (record, event) => {
-          const phone = record.get(pluginConfig.phoneField) as string
-          const country = record.get(pluginConfig.countryField) as string
+      if (!phone) {
+        record.addError(config.phoneField, 'Phone number is required')
+        return record
+      }
 
-          if (!phone) {
-            record.addError(pluginConfig.phoneField, 'Phone number is required')
-            return record
-          }
+      if (!country) {
+        record.addError(
+          config.countryField,
+          'Country is required for phone number formatting'
+        )
+        return record
+      }
 
-          if (!country) {
-            record.addError(
-              pluginConfig.countryField,
-              'Country is required for phone number formatting'
-            )
-            return record
-          }
+      const { formattedPhone, error } = formatPhoneNumber(phone, country)
 
-          const { formattedPhone, error } = formatPhoneNumber(phone, country)
+      if (error) {
+        record.addError(config.phoneField, error)
+      } else if (formattedPhone !== phone && config.autoConvert) {
+        record.set(config.phoneField, formattedPhone)
+      }
 
-          if (error) {
-            record.addError(pluginConfig.phoneField, error)
-          } else if (formattedPhone !== phone && pluginConfig.autoConvert) {
-            record.set(pluginConfig.phoneField, formattedPhone)
-          }
-
-          return record
-        },
-        {
-          concurrency: 5,
-          debug: true,
-          sheetSlug: pluginConfig.sheetSlug,
-        }
-      )
-    )
-  }
+      return record
+    },
+    {
+      concurrency: config.concurrency,
+      debug: config.debug,
+    }
+  )
 }
