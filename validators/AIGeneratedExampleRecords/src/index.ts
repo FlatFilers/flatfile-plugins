@@ -1,148 +1,95 @@
-import {
-  FlatfileListener,
-  FlatfileEvent,
-  FlatfileRecord,
-} from '@flatfile/listener'
-import { recordHook } from '@flatfile/plugin-record-hook'
+import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
+import { logInfo, logError } from '@flatfile/util-common'
+import { Anthropic } from '@anthropic-ai/sdk'
 import api from '@flatfile/api'
-import { AnthropicClient, CompletionRequest } from 'anthropic'
 
-class AnthropicFlatfilePlugin {
-  private anthropicClient: AnthropicClient
-  private sheetConfigurations: Map<string, SheetConfig> = new Map()
-  private defaultExampleRecordCount: number
+interface AIGeneratorConfig {
+  numberOfRecords: number
+}
 
-  constructor(anthropicApiKey: string, defaultExampleRecordCount: number = 5) {
-    this.anthropicClient = new AnthropicClient({ apiKey: anthropicApiKey })
-    this.defaultExampleRecordCount = defaultExampleRecordCount
-  }
+export function aiGeneratorPlugin(config: AIGeneratorConfig) {
+  return (listener: FlatfileListener) => {
+    listener.on('job:ready', async (event: FlatfileEvent) => {
+      logInfo('ai-generator-plugin', 'Received job:ready event')
+      try {
+        const sheet = await getSheetFromEvent(event)
+        const exampleRecords = await generateExampleRecords(
+          sheet,
+          config.numberOfRecords
+        )
 
-  configureListener(listener: FlatfileListener): void {
-    listener.use(
-      recordHook('*', (record: FlatfileRecord, event: FlatfileEvent) =>
-        this.processRecord(record, event)
-      )
-    )
+        await addRecordsToSheet(event, sheet.id, exampleRecords)
 
-    listener.on('job:ready', (event: FlatfileEvent) =>
-      this.analyzeSheetConfiguration(event)
-    )
-    listener.on('action:generate-examples', (event: FlatfileEvent) =>
-      this.generateExamplesAction(event)
-    )
-  }
-
-  private async processRecord(
-    record: FlatfileRecord,
-    event: FlatfileEvent
-  ): Promise<void> {
-    try {
-      const fieldToProcess = record.get('fieldName') as string
-      if (fieldToProcess) {
-        const processedContent = await this.useAnthropicAI(fieldToProcess)
-        record.set('processedField', processedContent)
+        logInfo(
+          'ai-generator-plugin',
+          `Generated ${exampleRecords.length} example records`
+        )
+      } catch (error) {
+        logError(
+          'ai-generator-plugin',
+          `Error generating example records: ${error.message}`
+        )
       }
-    } catch (error) {
-      record.addError('processedField', `AI processing error: ${error.message}`)
-    }
-  }
-
-  private async analyzeSheetConfiguration(event: FlatfileEvent): Promise<void> {
-    const sheetId = event.context.sheetId
-    const sheet = await api.sheets.get(sheetId)
-    this.sheetConfigurations.set(sheetId, {
-      fields: sheet.fields.map((f) => ({
-        key: f.key,
-        label: f.label,
-        type: f.type,
-      })),
     })
   }
+}
 
-  private async generateExamplesAction(event: FlatfileEvent): Promise<void> {
-    try {
-      const sheetId = event.context.sheetId
-      const count = event.context.count || this.defaultExampleRecordCount
+async function getSheetFromEvent(
+  event: FlatfileEvent
+): Promise<api.sheets.Sheet> {
+  const { workbookId, sheetId } = event.context
+  return await api.sheets.get(workbookId, sheetId)
+}
 
-      const exampleRecords = await this.generateExampleRecords(sheetId, count)
-      await this.addExampleRecordsToSheet(sheetId, exampleRecords)
+async function generateExampleRecords(
+  sheet: api.sheets.Sheet,
+  count: number
+): Promise<api.RecordData[]> {
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  })
 
-      await event.reply(
-        `Successfully generated ${exampleRecords.length} example records.`
-      )
-    } catch (error) {
-      await event.reply(`Failed to generate example records: ${error.message}`)
-    }
-  }
+  const fieldDescriptions = sheet.fields
+    .map(
+      (field) =>
+        `${field.key}: ${field.type} ${
+          field.constraints ? JSON.stringify(field.constraints) : ''
+        }`
+    )
+    .join('\n')
 
-  private async addExampleRecordsToSheet(
-    sheetId: string,
-    records: Record<string, string>[]
-  ): Promise<void> {
+  const prompt = `Generate ${count} example records for a dataset with the following fields:
+${fieldDescriptions}
+
+Please provide the data in JSON format, with each record as an object in an array. 
+Ensure the data is diverse and contextually appropriate for each field type and constraint.`
+
+  const response = await anthropic.messages.create({
+    model: 'claude-3-sonnet-20240229',
+    max_tokens: 1000,
+    messages: [{ role: 'user', content: prompt }],
+  })
+
+  const generatedData = JSON.parse(response.content[0].text)
+  return generatedData.map((record: any) => ({ values: record }))
+}
+
+async function addRecordsToSheet(
+  event: FlatfileEvent,
+  sheetId: string,
+  records: api.RecordData[]
+) {
+  try {
     await api.records.insert(sheetId, records)
-  }
-
-  private async generateExampleRecords(
-    sheetId: string,
-    count: number
-  ): Promise<Record<string, string>[]> {
-    const sheetConfig = this.sheetConfigurations.get(sheetId)
-    if (!sheetConfig) {
-      throw new Error(`Sheet configuration not found for sheet ID: ${sheetId}`)
-    }
-
-    const exampleRecords: Record<string, string>[] = []
-    for (let i = 0; i < count; i++) {
-      exampleRecords.push(await this.generateExampleRecord(sheetConfig))
-    }
-
-    return exampleRecords
-  }
-
-  private async generateExampleRecord(
-    sheetConfig: SheetConfig
-  ): Promise<Record<string, string>> {
-    const prompt = `Generate example data for the following fields:\n\n${sheetConfig.fields
-      .map((f) => `- ${f.label} (${f.type})`)
-      .join('\n')}\n\nProvide the data in a JSON format.`
-
-    const response = await this.anthropicClient.completions.create({
-      prompt,
-      model: 'claude-2',
-      max_tokens_to_sample: 300,
-    })
-
-    const generatedData = JSON.parse(response.completion)
-    const record: Record<string, string> = {}
-
-    for (const field of sheetConfig.fields) {
-      if (generatedData[field.key]) {
-        record[field.key] = generatedData[field.key]
-      }
-    }
-
-    return record
-  }
-
-  private async useAnthropicAI(input: string): Promise<string> {
-    const response = await this.anthropicClient.completions.create({
-      prompt: `Process this text: ${input}`,
-      model: 'claude-2',
-      max_tokens_to_sample: 100,
-    })
-
-    return response.completion
+    logInfo(
+      'ai-generator-plugin',
+      `Added ${records.length} records to sheet ${sheetId}`
+    )
+  } catch (error) {
+    logError(
+      'ai-generator-plugin',
+      `Error adding records to sheet: ${error.message}`
+    )
+    throw error
   }
 }
-
-interface SheetConfig {
-  fields: FieldConfig[]
-}
-
-interface FieldConfig {
-  key: string
-  label: string
-  type: string
-}
-
-export default AnthropicFlatfilePlugin
