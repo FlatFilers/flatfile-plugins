@@ -15,6 +15,9 @@ export async function parseBuffer(
   options: ParseBufferOptions
 ): Promise<WorkbookCapture> {
   try {
+    const skipEmptyLines = options?.headerSelectionEnabled
+      ? false
+      : !options?.skipEmptyLines || 'greedy'
     const fileContents = buffer.toString('utf8')
     const results: ParseResult<Record<string, string>> = Papa.parse(
       fileContents,
@@ -32,13 +35,11 @@ export async function parseBuffer(
         ],
         dynamicTyping: options?.dynamicTyping || false,
         header: false,
-        skipEmptyLines: options?.headerSelectionEnabled
-          ? false
-          : options?.skipEmptyLines || 'greedy',
+        skipEmptyLines,
       }
     )
 
-    const rows = results.data
+    let rows = results.data
     if (!rows || !rows.length) {
       console.log('No data found in the file')
       return {} as WorkbookCapture
@@ -62,18 +63,32 @@ export async function parseBuffer(
       return
     }
 
+    let lastNonEmptyRowIndex = rows.length - 1
+    while (
+      lastNonEmptyRowIndex >= 0 &&
+      Object.values(rows[lastNonEmptyRowIndex]).every(isNullOrWhitespace)
+    ) {
+      lastNonEmptyRowIndex--
+      if (
+        Object.values(rows[lastNonEmptyRowIndex]).some(
+          (value) => !isNullOrWhitespace(value)
+        )
+      ) {
+        break
+      }
+    }
+    rows = rows.slice(0, lastNonEmptyRowIndex + 1)
+
     const columnHeaders = options?.headerSelectionEnabled ? letters : header
 
     const headers = prependNonUniqueHeaderColumns(columnHeaders)
 
-    const data: Flatfile.RecordData[] = rows
-      .filter((row) => !Object.values(row).every(isNullOrWhitespace))
-      .map((row) => {
-        const mappedRow = mapKeys(row, (key) => headers[key])
-        return mapValues(mappedRow, (value) => ({
-          value: transform(value),
-        })) as Flatfile.RecordData
-      })
+    const data: Flatfile.RecordData[] = rows.map((row) => {
+      const mappedRow = mapKeys(row, (key) => headers[key])
+      return mapValues(mappedRow, (value) => ({
+        value: transform(value),
+      })) as Flatfile.RecordData
+    })
 
     let metadata: { rowHeaders: number[] } | null
 

@@ -18,6 +18,7 @@ export interface ExcelExtractorOptions {
   readonly rawNumbers?: boolean
   readonly dateNF?: string
   readonly headerDetectionOptions?: GetHeadersOptions
+  readonly skipEmptyLines?: boolean
   readonly chunkSize?: number
   readonly parallel?: number
   readonly debug?: boolean
