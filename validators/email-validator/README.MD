@@ -1,67 +1,61 @@
-# Flatfile Email Validation Plugin
+<!-- START_INFOCARD -->
 
-A Flatfile Listener plugin for comprehensive email validation. This plugin enhances data quality by validating email fields in your Flatfile sheets, ensuring that email addresses are properly formatted, not from disposable domains, and optionally verifying domain existence.
+The `@flatfile/plugin-email-validation` plugin offers a convenient way to 
+validate email addresses in your Flatfile sheets. This plugin seamlessly 
+integrates with the data processing flow by setting up a record hook. It 
+supports email format validation, checks against disposable email domains, 
+and provides customizable error messages.
 
-## Features
+**Plugin Type:**
+Record Hook
 
-- Email format validation using regex
-- Disposable email domain check
-- Optional DNS lookup for domain validation (in non-production environments)
-- Configurable error messages
-- Automatic validation with options to customize behavior
+<!-- END_INFOCARD -->
 
-## Installation
+## Parameters
+
+#### `config.sheetSlug` - `string` - `default: **` - (optional)
+The `sheetSlug` parameter is the slug of the sheet you want to apply the validation to. By default, it applies to all sheets.
+
+#### `config.emailFields` - `string[]`
+An array of field names to validate as email addresses.
+
+#### `config.errorMessages` - `object` - (optional)
+Custom error messages for different validation scenarios. Available keys:
+- `required`: Message for missing email
+- `invalid`: Message for invalid email format
+- `disposable`: Message for disposable email domains
+- `domain`: Message for invalid domains (not used in current implementation)
+
+## Usage
 
 ```bash
 npm install @flatfile/plugin-email-validation
 ```
 
-## Example Usage
+### Import
 
-```javascript
-import { FlatfileListener } from "@flatfile/listener";
-import emailValidationPlugin from "@flatfile/plugin-email-validation";
-
-const listener = new FlatfileListener();
-
-listener.use(
-  emailValidationPlugin({
-    sheetSlug: "contacts",
-    emailFields: ["email", "alternativeEmail"],
-    automaticValidation: true,
-    errorMessages: {
-      required: "Please provide an email address",
-      invalid: "The email address is not valid",
-      disposable: "Disposable email addresses are not allowed",
-      domain: "The email domain is invalid"
-    }
-  })
-);
-
-listener.subscribe((event) => {
-  // Your event handling logic here
-});
+```js
+import { emailValidationPlugin } from '@flatfile/plugin-email-validation';
 ```
 
-## Configuration
+## Example Usage
 
-The plugin accepts a configuration object with the following properties:
+This example sets up a record hook using `listener.use` to validate email fields in all sheets.
 
-- `sheetSlug` (string): The slug of the sheet to apply the validation to
-- `emailFields` (string[]): An array of field names to validate as email addresses
-- `automaticValidation` (boolean): Whether to automatically validate emails on record creation/update
-- `errorMessages` (object, optional): Custom error messages for different validation scenarios
-  - `required` (string): Message for missing email
-  - `invalid` (string): Message for invalid email format
-  - `disposable` (string): Message for disposable email domains
-  - `domain` (string): Message for invalid or non-existent domains
+```javascript
+import { FlatfileListener } from '@flatfile/listener';
+import { emailValidationPlugin } from '@flatfile/plugin-email-validation';
 
-## Behavior
+export default function (listener: FlatfileListener) {
+  listener.use(emailValidationPlugin({
+    emailFields: ['email', 'alternativeEmail'],
+    errorMessages: {
+      required: 'Please provide an email address',
+      invalid: 'The email address is not valid',
+      disposable: 'Disposable email addresses are not allowed'
+    }
+  }));
 
-1. The plugin checks if the email field is empty and adds an error if it's required.
-2. It validates the email format using a regex pattern.
-3. It checks if the email domain is in a list of known disposable email domains.
-4. In non-production environments, it performs a DNS lookup to verify the domain's existence.
-5. For each validation step, if an error is found, it adds the appropriate error message to the record.
-
-Note: DNS lookup for domain validation is only performed in non-production environments to avoid potential performance issues in production.
+  // ... rest of your Flatfile listener
+}
+```
