@@ -157,21 +157,12 @@ async function convertSheet({
   const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
 
-  let lastNonEmptyRowIndex = rows.length - 1
   while (
-    lastNonEmptyRowIndex >= 0 &&
-    Object.values(rows[lastNonEmptyRowIndex]).every(isNullOrWhitespace)
+    rows.length > 0 &&
+    Object.values(rows[rows.length - 1]).every(isNullOrWhitespace)
   ) {
-    lastNonEmptyRowIndex--
-    if (
-      Object.values(rows[lastNonEmptyRowIndex]).some(
-        (value) => !isNullOrWhitespace(value)
-      )
-    ) {
-      break
-    }
+    rows.pop()
   }
-  rows = rows.slice(0, lastNonEmptyRowIndex + 1)
 
   const data = rows.map((row) =>
     mapValues(
