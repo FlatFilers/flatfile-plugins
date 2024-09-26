@@ -166,11 +166,11 @@ async function convertSheet({
 
   const data = rows.map((row) =>
     mapValues(
-      mapKeys(row, (key) => headers[key]),
+      mapKeys(row, (key) => headers[key as keyof typeof headers]),
       (value) => ({ value })
     )
   )
-  let metadata: { rowHeaders: number[] } | null
+  let metadata: { rowHeaders: number[] } | undefined = undefined
   if (headerSelectionEnabled) {
     metadata = {
       rowHeaders: [skip],
