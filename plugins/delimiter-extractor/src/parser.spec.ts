@@ -11,6 +11,10 @@ describe('parser', () => {
     path.join(__dirname, '../ref/test-complex.pound')
   )
 
+  const csvBuffer: Buffer = fs.readFileSync(
+    path.join(__dirname, '../ref/csv.txt')
+  )
+
   test('colon to WorkbookCapture', async () => {
     expect(await parseBuffer(colonBasicBuffer, { delimiter: '#' })).toEqual({
       Sheet1: {
@@ -134,5 +138,63 @@ describe('parser', () => {
     expect(parseBuffer(colonComplexBuffer, { delimiter: '#' })).toEqual(
       parseBuffer(colonBasicBuffer, { delimiter: '#' })
     )
+  })
+  test('skip empty lines', async () => {
+    const parsedBuffer = await parseBuffer(csvBuffer, {
+      delimiter: ',',
+      skipEmptyLines: true,
+    })
+    const data = parsedBuffer.Sheet1.data
+    expect(data).toEqual([
+      {
+        header1: { value: 'column1' },
+        header2: { value: 'column2' },
+        header3: { value: 'column3' },
+      },
+      {
+        header1: { value: 'column4' },
+        header2: { value: 'column5' },
+        header3: { value: 'column6' },
+      },
+      {
+        header1: { value: 'column7' },
+        header2: { value: 'column8' },
+        header3: { value: 'column9' },
+      },
+    ])
+  })
+  test("don'tskip empty lines", async () => {
+    const parsedBuffer = await parseBuffer(csvBuffer, {
+      delimiter: ',',
+      skipEmptyLines: false,
+    })
+    const data = parsedBuffer.Sheet1.data
+    expect(data).toEqual([
+      {
+        header1: { value: 'column1' },
+        header2: { value: 'column2' },
+        header3: { value: 'column3' },
+      },
+      {
+        header1: { value: '' },
+        header2: { value: '' },
+        header3: { value: '' },
+      },
+      {
+        header1: { value: '' },
+        header2: { value: '' },
+        header3: { value: '' },
+      },
+      {
+        header1: { value: 'column4' },
+        header2: { value: 'column5' },
+        header3: { value: 'column6' },
+      },
+      {
+        header1: { value: 'column7' },
+        header2: { value: 'column8' },
+        header3: { value: 'column9' },
+      },
+    ])
   })
 })
