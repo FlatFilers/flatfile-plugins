@@ -66,6 +66,7 @@ export async function parseBuffer(
               algorithm: 'default',
             },
             headerSelectionEnabled: options?.headerSelectionEnabled ?? false,
+            skipEmptyLines: options?.skipEmptyLines ?? false,
             debug: options?.debug,
           })
           if (!processedSheet) {
@@ -89,6 +90,7 @@ type ConvertSheetArgs = {
   raw: boolean
   headerDetectionOptions: GetHeadersOptions
   headerSelectionEnabled: boolean
+  skipEmptyLines: boolean
   debug?: boolean
 }
 
@@ -104,6 +106,7 @@ async function convertSheet({
   raw,
   headerDetectionOptions,
   headerSelectionEnabled,
+  skipEmptyLines,
   debug,
 }: ConvertSheetArgs): Promise<SheetCapture | undefined> {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
@@ -111,7 +114,7 @@ async function convertSheet({
     defval: null,
     rawNumbers,
     raw,
-    blankrows: true,
+    blankrows: headerSelectionEnabled || !skipEmptyLines,
   })
 
   // return if there are no rows
@@ -154,13 +157,20 @@ async function convertSheet({
   const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
 
+  while (
+    rows.length > 0 &&
+    Object.values(rows[rows.length - 1]).every(isNullOrWhitespace)
+  ) {
+    rows.pop()
+  }
+
   const data = rows.map((row) =>
     mapValues(
-      mapKeys(row, (key) => headers[key]),
+      mapKeys(row, (key) => headers[key as keyof typeof headers]),
       (value) => ({ value })
     )
   )
-  let metadata: { rowHeaders: number[] } | null
+  let metadata: { rowHeaders: number[] } | undefined = undefined
   if (headerSelectionEnabled) {
     metadata = {
       rowHeaders: [skip],
@@ -173,3 +183,6 @@ async function convertSheet({
     metadata,
   }
 }
+
+const isNullOrWhitespace = (value: any) =>
+  value === null || (typeof value === 'string' && value.trim() === '')
