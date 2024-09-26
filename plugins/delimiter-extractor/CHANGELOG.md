@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.2.0
+
+### Minor Changes
+
+- 7c92e15: This release provides a new option `skipEmptyLines` to skip empty lines.
+
 ## 2.1.3
 
 ### Patch Changes

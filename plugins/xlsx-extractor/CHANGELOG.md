@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.2.0
+
+### Minor Changes
+
+- 7c92e15: This release provides a new option `skipEmptyLines` to skip empty lines.
+
 ## 3.1.5
 
 ### Patch Changes
