@@ -17,9 +17,7 @@ export async function parseBuffer(
   try {
     const skipEmptyLines = options?.headerSelectionEnabled
       ? false
-      : options?.skipEmptyLines === false
-        ? false
-        : 'greedy'
+      : options?.skipEmptyLines ?? false
     const fileContents = buffer.toString('utf8')
     const results: ParseResult<Record<string, string>> = Papa.parse(
       fileContents,
@@ -76,12 +74,22 @@ export async function parseBuffer(
 
     const headers = prependNonUniqueHeaderColumns(columnHeaders)
 
-    const data: Flatfile.RecordData[] = rows.map((row) => {
-      const mappedRow = mapKeys(row, (key) => headers[key])
-      return mapValues(mappedRow, (value) => ({
-        value: transform(value),
-      })) as Flatfile.RecordData
-    })
+    const data: Flatfile.RecordData[] = rows
+      .filter((row) => {
+        if (!skipEmptyLines) return true
+        const isEmpty = Object.values(row).every(
+          skipEmptyLines === 'greedy'
+            ? isNullOrWhitespace
+            : (value) => value === ''
+        )
+        return !isEmpty
+      })
+      .map((row) => {
+        const mappedRow = mapKeys(row, (key) => headers[key])
+        return mapValues(mappedRow, (value) => ({
+          value: transform(value),
+        })) as Flatfile.RecordData
+      })
 
     let metadata: { rowHeaders: number[] } | null
 

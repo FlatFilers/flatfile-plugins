@@ -11,8 +11,8 @@ describe('parser', () => {
     path.join(__dirname, '../ref/test-complex.pound')
   )
 
-  const csvBuffer: Buffer = fs.readFileSync(
-    path.join(__dirname, '../ref/csv.txt')
+  const emptyLinesBuffer: Buffer = fs.readFileSync(
+    path.join(__dirname, '../ref/test-empty-lines.txt')
   )
 
   test('colon to WorkbookCapture', async () => {
@@ -139,10 +139,39 @@ describe('parser', () => {
       parseBuffer(colonBasicBuffer, { delimiter: '#' })
     )
   })
-  test('skip empty lines', async () => {
-    const parsedBuffer = await parseBuffer(csvBuffer, {
+  test('skip empty lines: true', async () => {
+    const parsedBuffer = await parseBuffer(emptyLinesBuffer, {
       delimiter: ',',
       skipEmptyLines: true,
+    })
+    const data = parsedBuffer.Sheet1.data
+    expect(data).toEqual([
+      {
+        header1: { value: 'column1' },
+        header2: { value: 'column2' },
+        header3: { value: 'column3' },
+      },
+      {
+        header1: { value: ' ' },
+        header2: { value: ' ' },
+        header3: { value: ' ' },
+      },
+      {
+        header1: { value: 'column4' },
+        header2: { value: 'column5' },
+        header3: { value: 'column6' },
+      },
+      {
+        header1: { value: 'column7' },
+        header2: { value: 'column8' },
+        header3: { value: 'column9' },
+      },
+    ])
+  })
+  test('skip empty lines: greedy', async () => {
+    const parsedBuffer = await parseBuffer(emptyLinesBuffer, {
+      delimiter: ',',
+      skipEmptyLines: 'greedy',
     })
     const data = parsedBuffer.Sheet1.data
     expect(data).toEqual([
@@ -163,8 +192,8 @@ describe('parser', () => {
       },
     ])
   })
-  test("don'tskip empty lines", async () => {
-    const parsedBuffer = await parseBuffer(csvBuffer, {
+  test('skip empty lines: false', async () => {
+    const parsedBuffer = await parseBuffer(emptyLinesBuffer, {
       delimiter: ',',
       skipEmptyLines: false,
     })
@@ -176,9 +205,9 @@ describe('parser', () => {
         header3: { value: 'column3' },
       },
       {
-        header1: { value: '' },
-        header2: { value: '' },
-        header3: { value: '' },
+        header1: { value: ' ' },
+        header2: { value: ' ' },
+        header3: { value: ' ' },
       },
       {
         header1: { value: '' },
