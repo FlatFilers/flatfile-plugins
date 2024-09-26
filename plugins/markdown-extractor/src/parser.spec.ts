@@ -15,7 +15,6 @@ describe('Markdown Extractor Parser', () => {
       const buffer = fs.readFileSync(filePath)
       const options: MarkdownExtractorOptions = {
         maxTables: Infinity,
-        errorHandling: 'strict',
       }
 
       const result = parseBuffer(buffer, options)
@@ -37,7 +36,6 @@ describe('Markdown Extractor Parser', () => {
     const buffer = fs.readFileSync(filePath)
     const options: MarkdownExtractorOptions = {
       maxTables: 2,
-      errorHandling: 'strict',
     }
 
     const result = parseBuffer(buffer, options)
@@ -46,9 +44,8 @@ describe('Markdown Extractor Parser', () => {
   })
 
   test('should handle errorHandling option', () => {
-    const invalidMarkdown =
-      '| Header 1 | Header 2 |\n|----------|----------|\n| Value 1 | Value 2 | Extra |\n'
-    const buffer = Buffer.from(invalidMarkdown, 'utf-8')
+    const filePath = path.join(__dirname, '..', 'samples', 'lenient_tables.md')
+    const buffer = fs.readFileSync(filePath)
 
     const strictOptions: MarkdownExtractorOptions = { errorHandling: 'strict' }
     expect(() => parseBuffer(buffer, strictOptions)).toThrow()
