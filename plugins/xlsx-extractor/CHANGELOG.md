@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.2.1
+
+### Patch Changes
+
+- 64bd26a: Update to documentation
+
 ## 3.2.0
 
 ### Minor Changes
