@@ -1,6 +1,6 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { phoneFormatValidator } from '@flatfile/plugin-phone-number-formatter'
 import { configureSpace } from '@flatfile/plugin-space-configure'
+import { phoneFormatValidator } from '@flatfile/plugin-validate-phone'
 
 export default async function (listener: FlatfileListener) {
   listener.use(

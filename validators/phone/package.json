@@ -1,7 +1,7 @@
 {
-  "name": "@flatfile/plugin-phone-number-formatter",
+  "name": "@flatfile/plugin-validate-phone",
   "version": "0.0.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validators/phone-number-formatter",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validators/phone",
   "description": "A validator plugin for phone number formatting on individual data records in Flatfile.",
   "registryMetadata": {
     "category": "records"
@@ -52,7 +52,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "validators/phone-number-formatter"
+    "directory": "validators/phone"
   },
   "license": "ISC",
   "dependencies": {
