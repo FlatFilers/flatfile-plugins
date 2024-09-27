@@ -1,0 +1,105 @@
+{
+  "timestamp": "2024-09-24T07-11-09-392Z",
+  "task": "Develop a company/business validation Flatfile Listener plugin:\n      - Create a RecordHook to validate company information\n      - Implement company name and address validation using external APIs (e.g., Google Places API)\n      - Verify business registration numbers or tax IDs\n      - Check for company existence in business databases\n      - Add error messages or warnings for unverified business information\n      - Give the user reasonable config options to specify the Sheet Slug, the Field(s) that are the company information(s), whether the validation should be done automatically",
+  "summary": "This solution implements a company validation RecordHook plugin for Flatfile. It validates company information including name, website, address, EIN, and business registration. The plugin uses external APIs for address validation and business verification. It includes configuration options and provides detailed error messages and warnings for unverified information.",
+  "steps": [
+    [
+      "Retrieve information about Flatfile Listeners and RecordHook plugin.\n",
+      "#E1",
+      "PineconeAssistant",
+      "Provide information on Flatfile Listeners and RecordHook plugin, including their structure and usage",
+      "Plan: Retrieve information about Flatfile Listeners and RecordHook plugin.\n#E1 = PineconeAssistant[Provide information on Flatfile Listeners and RecordHook plugin, including their structure and usage]"
+    ],
+    [
+      "Create a basic structure for the company validation RecordHook.\n",
+      "#E2",
+      "LLM",
+      "Create a basic structure for a Flatfile RecordHook plugin for company validation, using the information from #E1",
+      "Plan: Create a basic structure for the company validation RecordHook.\n#E2 = LLM[Create a basic structure for a Flatfile RecordHook plugin for company validation, using the information from #E1]"
+    ],
+    [
+      "Implement company name and address validation using Google Places API.\n",
+      "#E3",
+      "Google",
+      "How to use Google Places API for company name and address validation",
+      "Plan: Implement company name and address validation using Google Places API.\n#E3 = Google[How to use Google Places API for company name and address validation]"
+    ],
+    [
+      "Integrate Google Places API validation into the RecordHook.\n",
+      "#E4",
+      "LLM",
+      "Integrate Google Places API validation into the RecordHook structure from #E2, using the information from #E3",
+      "Plan: Integrate Google Places API validation into the RecordHook.\n#E4 = LLM[Integrate Google Places API validation into the RecordHook structure from #E2, using the information from #E3]"
+    ],
+    [
+      "Implement business registration number and tax ID verification.\n",
+      "#E5",
+      "Google",
+      "API for verifying business registration numbers and tax IDs",
+      "Plan: Implement business registration number and tax ID verification.\n#E5 = Google[API for verifying business registration numbers and tax IDs]"
+    ],
+    [
+      "Add business registration and tax ID verification to the RecordHook.\n",
+      "#E6",
+      "LLM",
+      "Add business registration and tax ID verification to the RecordHook using the information from #E5 and #E4",
+      "Plan: Add business registration and tax ID verification to the RecordHook.\n#E6 = LLM[Add business registration and tax ID verification to the RecordHook using the information from #E5 and #E4]"
+    ],
+    [
+      "Implement company existence check in business databases.\n",
+      "#E7",
+      "Google",
+      "API for checking company existence in business databases",
+      "Plan: Implement company existence check in business databases.\n#E7 = Google[API for checking company existence in business databases]"
+    ],
+    [
+      "Integrate company existence check into the RecordHook.\n",
+      "#E8",
+      "LLM",
+      "Integrate company existence check into the RecordHook using the information from #E7 and #E6",
+      "Plan: Integrate company existence check into the RecordHook.\n#E8 = LLM[Integrate company existence check into the RecordHook using the information from #E7 and #E6]"
+    ],
+    [
+      "Add error messages and warnings for unverified business information.\n",
+      "#E9",
+      "LLM",
+      "Add error messages and warnings for unverified business information to the RecordHook from #E8",
+      "Plan: Add error messages and warnings for unverified business information.\n#E9 = LLM[Add error messages and warnings for unverified business information to the RecordHook from #E8]"
+    ],
+    [
+      "Implement configuration options for the RecordHook.\n",
+      "#E10",
+      "LLM",
+      "Add configuration options to the RecordHook for specifying Sheet Slug, company information fields, and automatic validation toggle, using the structure from #E9",
+      "Plan: Implement configuration options for the RecordHook.\n#E10 = LLM[Add configuration options to the RecordHook for specifying Sheet Slug, company information fields, and automatic validation toggle, using the structure from #E9]"
+    ],
+    [
+      "Verify the final RecordHook implementation and ensure it uses valid Event Topics.\n",
+      "#E11",
+      "PineconeAssistant",
+      "Verify the RecordHook implementation from #E10 and ensure it uses valid Event Topics",
+      "Plan: Verify the final RecordHook implementation and ensure it uses valid Event Topics.\n#E11 = PineconeAssistant[Verify the RecordHook implementation from #E10 and ensure it uses valid Event Topics]"
+    ],
+    [
+      "Optimize the code and remove any unused imports or elements.\n",
+      "#E12",
+      "LLM",
+      "Optimize the RecordHook code from #E11, remove unused imports, and ensure all plugins and utils are correctly used",
+      "Plan: Optimize the code and remove any unused imports or elements.\n#E12 = LLM[Optimize the RecordHook code from #E11, remove unused imports, and ensure all plugins and utils are correctly used]"
+    ],
+    [
+      "Create documentation for the company validation RecordHook plugin.\n",
+      "#E13",
+      "LLM",
+      "Create documentation for the company validation RecordHook plugin, including setup instructions, configuration options, and usage examples",
+      "Plan: Create documentation for the company validation RecordHook plugin.\n#E13 = LLM[Create documentation for the company validation RecordHook plugin, including setup instructions, configuration options, and usage examples]"
+    ]
+  ],
+  "metrics": {
+    "tokens": {
+      "plan": 4474,
+      "state": 5636,
+      "total": 10110
+    }
+  }
+}
