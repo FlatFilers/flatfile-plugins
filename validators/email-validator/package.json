@@ -15,7 +15,7 @@
     "not dead"
   ],
   "browser": {
-    "./dist/index.js": "./dist/index.browser.cjs",
+    "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
   },
   "exports": {
