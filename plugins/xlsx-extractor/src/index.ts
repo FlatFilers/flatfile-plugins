@@ -11,6 +11,7 @@ import { parseBuffer } from './parser'
  * @property {number} chunkSize - the size of chunk to process when inserting records.
  * @property {number} parallel - the quantity of parallel process when inserting records.
  * @property {GetHeadersOptions} headerDetectionOptions - the options for header detection.
+ * @property {boolean} skipEmptyLines - if true, skip empty lines; if false, include empty lines.
  * @property {boolean} debug - if true, display helpful console logs.
  */
 export interface ExcelExtractorOptions {

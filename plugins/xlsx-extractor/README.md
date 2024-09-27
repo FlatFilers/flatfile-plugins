@@ -51,6 +51,10 @@ detecting headers in the file. By default, the first 10 rows are scanned for
 the row with the most non-empty cells.
 
 
+#### `skipEmptyLines` - `default: "false"` - `boolean` - (optional)
+The `skipEmptyLines` parameter allows you to specify if empty lines should be
+skipped. By default, empty lines are included.
+
 #### `debug` - `default: "false"` - `boolean` - (optional)
 The `debug` parameter lets you toggle on/off helpful debugging messages for
 development purposes.
