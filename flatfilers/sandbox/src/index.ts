@@ -1,6 +1,6 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { companyValidationPlugin } from '@flatfile/plugin-company-validator'
 import { configureSpace } from '@flatfile/plugin-space-configure'
+import { companyValidationPlugin } from '@flatfile/plugin-validate-company'
 
 export default async function (listener: FlatfileListener) {
   listener.use(

@@ -1,9 +1,9 @@
 <!-- START_INFOCARD -->
 
-# @flatfile/plugin-company-validator
+# @flatfile/plugin-validate-company
 **Validate company information including name, website, address, and EIN.**
 
-The `@flatfile/plugin-company-validator` plugin is a validator that will validate company information including name, website, address, and EIN.
+The `@flatfile/plugin-validate-company` plugin is a validator that will validate company information including name, website, address, and EIN.
 
 **Event Type:**
 `listener.on('commit:created')`
