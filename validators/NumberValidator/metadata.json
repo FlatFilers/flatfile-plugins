@@ -1,0 +1,63 @@
+{
+  "timestamp": "2024-09-27T17-59-35-891Z",
+  "task": "Create a Number Validator Flatfile Listener plugin:\n      - Implement range validation for numbers (min, max, inclusive/exclusive)\n      - Add support for integer-only validation\n      - Implement precision and scale validation for decimal numbers\n      - Add options for handling currency values (e.g., two decimal places)\n      - Implement custom step validation (e.g., multiples of 0.5)\n      - Add support for scientific notation and exponential numbers\n      - Implement options for thousands separators and decimal points\n      - Add validation for special number types (e.g., prime, even/odd)\n      - Implement custom error messages for different validation failures\n      - Add options for rounding and truncation of numbers",
+  "summary": "This is a Flatfile Listener plugin for number validation. It includes various validation options such as min/max values, precision, scale, currency formatting, special number types, and options for rounding and truncation. The plugin listens to the 'record:created' event and performs validation on a specified number field.",
+  "steps": [
+    [
+      "Retrieve the basic structure of a Flatfile Listener plugin and identify the appropriate event topic for number validation.\n",
+      "#E1",
+      "PineconeAssistant",
+      "Provide the basic structure of a Flatfile Listener plugin for number validation, including the correct event topic to use.",
+      "Plan: Retrieve the basic structure of a Flatfile Listener plugin and identify the appropriate event topic for number validation.\n#E1 = PineconeAssistant[Provide the basic structure of a Flatfile Listener plugin for number validation, including the correct event topic to use.]"
+    ],
+    [
+      "Implement range validation for numbers (min, max, inclusive/exclusive) and integer-only validation.\n",
+      "#E2",
+      "PineconeAssistant",
+      "Add code to the Flatfile Listener from #E1 to implement range validation (min, max, inclusive/exclusive) and integer-only validation for numbers.",
+      "Plan: Implement range validation for numbers (min, max, inclusive/exclusive) and integer-only validation.\n#E2 = PineconeAssistant[Add code to the Flatfile Listener from #E1 to implement range validation (min, max, inclusive/exclusive) and integer-only validation for numbers.]"
+    ],
+    [
+      "Implement precision and scale validation for decimal numbers and add options for handling currency values.\n",
+      "#E3",
+      "PineconeAssistant",
+      "Extend the Flatfile Listener from #E2 to include precision and scale validation for decimal numbers, and add options for handling currency values (e.g., two decimal places).",
+      "Plan: Implement precision and scale validation for decimal numbers and add options for handling currency values.\n#E3 = PineconeAssistant[Extend the Flatfile Listener from #E2 to include precision and scale validation for decimal numbers, and add options for handling currency values (e.g., two decimal places).]"
+    ],
+    [
+      "Implement custom step validation and support for scientific notation and exponential numbers.\n",
+      "#E4",
+      "PineconeAssistant",
+      "Add code to the Flatfile Listener from #E3 to implement custom step validation (e.g., multiples of 0.5) and support for scientific notation and exponential numbers.",
+      "Plan: Implement custom step validation and support for scientific notation and exponential numbers.\n#E4 = PineconeAssistant[Add code to the Flatfile Listener from #E3 to implement custom step validation (e.g., multiples of 0.5) and support for scientific notation and exponential numbers.]"
+    ],
+    [
+      "Implement options for thousands separators and decimal points, and add validation for special number types.\n",
+      "#E5",
+      "PineconeAssistant",
+      "Extend the Flatfile Listener from #E4 to include options for thousands separators and decimal points, and add validation for special number types (e.g., prime, even/odd).",
+      "Plan: Implement options for thousands separators and decimal points, and add validation for special number types.\n#E5 = PineconeAssistant[Extend the Flatfile Listener from #E4 to include options for thousands separators and decimal points, and add validation for special number types (e.g., prime, even/odd).]"
+    ],
+    [
+      "Implement custom error messages for different validation failures and add options for rounding and truncation of numbers.\n",
+      "#E6",
+      "PineconeAssistant",
+      "Complete the Flatfile Listener from #E5 by implementing custom error messages for different validation failures and adding options for rounding and truncation of numbers.",
+      "Plan: Implement custom error messages for different validation failures and add options for rounding and truncation of numbers.\n#E6 = PineconeAssistant[Complete the Flatfile Listener from #E5 by implementing custom error messages for different validation failures and adding options for rounding and truncation of numbers.]"
+    ],
+    [
+      "Review and finalize the Number Validator Flatfile Listener plugin.\n",
+      "#E7",
+      "LLM",
+      "Review the complete Number Validator Flatfile Listener plugin from #E6. Ensure all requirements are met, the code is valid, and only valid Event Topics are used. Remove any unused imports or plugins. Provide the final, optimized version of the plugin.",
+      "Plan: Review and finalize the Number Validator Flatfile Listener plugin.\n#E7 = LLM[Review the complete Number Validator Flatfile Listener plugin from #E6. Ensure all requirements are met, the code is valid, and only valid Event Topics are used. Remove any unused imports or plugins. Provide the final, optimized version of the plugin.]"
+    ]
+  ],
+  "metrics": {
+    "tokens": {
+      "plan": 4508,
+      "state": 5744,
+      "total": 10252
+    }
+  }
+}
