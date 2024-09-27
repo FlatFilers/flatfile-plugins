@@ -1,11 +1,14 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { dateNormalizationPlugin } from '@flatfile/plugin-date-normalization'
+import { dateFormatNormalizer } from '@flatfile/plugin-date-format-normalizer'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    dateNormalizationPlugin({
-      skipEmptyLines: true,
+    dateFormatNormalizer({
+      sheetSlug: 'contacts',
+      dateFields: ['dob', 'hire_date'],
+      outputFormat: 'MM/dd/yyyy',
+      includeTime: true,
     })
   )
   listener.use(
@@ -43,6 +46,16 @@ export default async function (listener: FlatfileListener) {
                   key: 'country',
                   type: 'string',
                   label: 'Country',
+                },
+                {
+                  key: 'dob',
+                  type: 'string',
+                  label: 'Date of Birth',
+                },
+                {
+                  key: 'hire_date',
+                  type: 'string',
+                  label: 'Hire Date',
                 },
               ],
             },
