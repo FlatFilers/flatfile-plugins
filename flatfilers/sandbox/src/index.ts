@@ -1,11 +1,13 @@
 import type { FlatfileListener } from '@flatfile/listener'
+import { dateNormalizationPlugin } from '@flatfile/plugin-date-normalization'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { viewMappedPlugin } from '@flatfile/plugin-view-mapped'
 
 export default async function (listener: FlatfileListener) {
-
-  listener.use(viewMappedPlugin())
-  
+  listener.use(
+    dateNormalizationPlugin({
+      skipEmptyLines: true,
+    })
+  )
   listener.use(
     configureSpace({
       workbooks: [

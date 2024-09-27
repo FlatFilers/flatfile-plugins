@@ -1,4 +1,3 @@
-import { FlatfileListener } from '@flatfile/listener'
 import { recordHook } from '@flatfile/plugin-record-hook'
 import * as moment from 'moment'
 
@@ -39,61 +38,35 @@ function convertToISO8601(dateString: string): string | null {
 }
 
 export default function dateNormalizationPlugin(
-  listener: FlatfileListener,
   config: DateFormatPluginConfig
 ) {
-  if (
-    !config.sheetSlug ||
-    !config.dateFields ||
-    config.dateFields.length === 0
-  ) {
-    throw new Error(
-      'Invalid configuration: sheetSlug and dateFields are required'
-    )
-  }
-
-  listener.use(
-    recordHook(
-      config.sheetSlug,
-      async (record, event) => {
-        for (const field of config.dateFields) {
-          const dateValue = record.get(field) as string
-          if (dateValue) {
-            try {
-              const isoDate = convertToISO8601(dateValue)
-              if (isoDate) {
-                if (config.autoConvert) {
-                  record.set(field, isoDate)
-                } else {
-                  record.computeField(field, isoDate)
-                }
-              } else {
-                throw new Error('Unsupported date format')
-              }
-            } catch (error) {
-              if (error instanceof Error) {
-                record.addError(field, `Error parsing date: ${error.message}`)
-              } else {
-                record.addError(
-                  field,
-                  'Unexpected error occurred while parsing date'
-                )
-              }
+  return recordHook(config.sheetSlug, (record) => {
+    for (const field of config.dateFields) {
+      const dateValue = record.get(field) as string
+      if (dateValue) {
+        try {
+          const isoDate = convertToISO8601(dateValue)
+          if (isoDate) {
+            if (config.autoConvert) {
+              record.set(field, isoDate)
+            } else {
+              record.addError(field, isoDate) // TODO: What is the desired behavior here?
             }
+          } else {
+            throw new Error('Unsupported date format')
+          }
+        } catch (error) {
+          if (error instanceof Error) {
+            record.addError(field, `Error parsing date: ${error.message}`)
+          } else {
+            record.addError(
+              field,
+              'Unexpected error occurred while parsing date'
+            )
           }
         }
-        return record
-      },
-      {
-        concurrency: 10,
-        debug: false,
       }
-    )
-  )
-
-  listener.on('**', (event) => {
-    if (event.topic.includes(':error')) {
-      console.error('An error occurred:', event.topic, event.payload)
     }
+    return record
   })
 }
