@@ -1,30 +1,50 @@
-import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { automap } from '@flatfile/plugin-automap'
-import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
-import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
+import type { FlatfileListener } from '@flatfile/listener'
+import { companyValidationPlugin } from '@flatfile/plugin-company-validator'
+import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    ExcelExtractor({
-      skipEmptyLines: true,
+    companyValidationPlugin({
+      sheetSlug: 'companies',
+      validateAddress: true,
+      validateEIN: true,
     })
   )
   listener.use(
-    DelimiterExtractor('txt', { delimiter: ',', skipEmptyLines: true })
-  )
-
-  listener.use(
-    automap({
-      accuracy: 'confident',
-      defaultTargetSheet: 'contacts',
-      matchFilename: /test/,
-      debug: true,
-      onFailure: (event: FlatfileEvent) => {
-        // send an SMS, an email, post to an endpoint, etc.
-        console.error(
-          `Please visit https://spaces.flatfile.com/space/${event.context.spaceId}/files?mode=import to manually import file.`
-        )
-      },
+    configureSpace({
+      workbooks: [
+        {
+          name: 'Sandbox',
+          sheets: [
+            {
+              name: 'Companies',
+              slug: 'companies',
+              fields: [
+                {
+                  key: 'company_name',
+                  type: 'string',
+                  label: 'Name',
+                },
+                {
+                  key: 'company_website',
+                  type: 'string',
+                  label: 'Website',
+                },
+                {
+                  key: 'company_address',
+                  type: 'string',
+                  label: 'Address',
+                },
+                {
+                  key: 'company_ein',
+                  type: 'string',
+                  label: 'EIN',
+                },
+              ],
+            },
+          ],
+        },
+      ],
     })
   )
 }
