@@ -1,6 +1,6 @@
 <!-- START_INFOCARD -->
 
-The `@flatfile/plugin-date-format-normalizer` plugin provides date format normalization functionality for Flatfile. It detects various date formats and converts them to a specified output format, supporting multiple fields and locales.
+The `@flatfile/plugin-validate-date` plugin provides date format normalization functionality for Flatfile. It detects various date formats and converts them to a specified output format, supporting multiple fields and locales.
 
 **Event Type:**
 `listener.on('commit:created')`
@@ -27,13 +27,13 @@ The `locale` parameter specifies the locale to use for date parsing and formatti
 ## Usage
 
 ```bash install
-npm install @flatfile/plugin-date-format-normalizer
+npm install @flatfile/plugin-validate-date
 ```
 
 ### Import
 
 ```js
-import dateFormatNormalizer from '@flatfile/plugin-date-format-normalizer'
+import dateFormatNormalizer from '@flatfile/plugin-validate-date'
 ```
 
 ## Example Usage
@@ -42,7 +42,7 @@ This example sets up the date format normalizer for the "contacts" sheet, normal
 
 ```javascript
 import { FlatfileListener } from '@flatfile/listener'
-import dateFormatNormalizer from '@flatfile/plugin-date-format-normalizer'
+import dateFormatNormalizer from '@flatfile/plugin-validate-date'
 
 export default function (listener: FlatfileListener) {
   listener.use(

@@ -1,6 +1,6 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { dateFormatNormalizer } from '@flatfile/plugin-date-format-normalizer'
 import { configureSpace } from '@flatfile/plugin-space-configure'
+import { dateFormatNormalizer } from '@flatfile/plugin-validate-date'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
