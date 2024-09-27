@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.2.1
+
+### Patch Changes
+
+- 64bd26a: Update to documentation
+
 ## 2.2.0
 
 ### Minor Changes
