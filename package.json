@@ -11,7 +11,7 @@
     "plugins/*",
     "support/*",
     "utils/*",
-    "validators/*"
+    "validate/*"
   ],
   "scripts": {
     "clean": "find ./ '(' -name 'node_modules' -o -name 'dist' -o -name '.turbo' -o -name '.parcel-cache' ')' -type d -exec rm -rf {} +",

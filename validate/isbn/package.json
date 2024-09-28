@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-isbn-validator",
+  "name": "@flatfile/plugin-validate-isbn",
   "version": "1.0.0",
   "description": "Implement a Flatfile Listener plugin with RecordHook for ISBN validation and conversion",
   "main": "./dist/index.js",
