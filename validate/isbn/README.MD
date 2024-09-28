@@ -1,18 +1,18 @@
-# ISBN Validation and Conversion Plugin for Flatfile
+# Flatfile ISBN Validator Plugin
 
-This plugin provides ISBN (International Standard Book Number) validation and conversion functionality for Flatfile. It can validate both ISBN-10 and ISBN-13 formats and optionally convert ISBN-10 to ISBN-13.
+A Flatfile Listener plugin for validating ISBN (International Standard Book Number) fields in your data import process. This plugin provides robust ISBN validation, including format checks, check digit verification, and optional ISBN-10 to ISBN-13 conversion.
 
 ## Features
 
-- Validates ISBN-10 and ISBN-13 formats
-- Adds error messages for invalid ISBNs
-- Optional automatic conversion of ISBN-10 to ISBN-13
-- Configurable to work on specific sheets and fields
-- Concurrent processing for improved performance
+- Validates both ISBN-10 and ISBN-13 formats
+- Checks for correct ISBN structure and valid check digits
+- Provides specific error messages for different types of validation failures
+- Optionally converts ISBN-10 to ISBN-13 automatically
+- Configurable for multiple ISBN fields within a sheet
 
 ## Installation
 
-To install the plugin, use npm:
+Install the plugin using npm:
 
 ```bash
 npm install @flatfile/plugin-isbn-validator
@@ -21,35 +21,42 @@ npm install @flatfile/plugin-isbn-validator
 ## Example Usage
 
 ```javascript
-import { FlatfileListener } from '@flatfile/listener';
-import { isbnPlugin } from '@flatfile/plugin-isbn-validator';
+import { FlatfileListener } from "@flatfile/listener";
+import isbnValidator from "@flatfile/plugin-isbn-validator";
 
 const listener = new FlatfileListener();
 
 listener.use(
-  isbnPlugin({
-    sheetSlug: 'books',
-    isbnFields: ['isbn', 'alternate_isbn'],
+  isbnValidator({
+    sheetSlug: "books",
+    isbnFields: ["isbn", "alternate_isbn"],
     autoConvert: true
   })
 );
+
+// ... rest of your Flatfile configuration
 ```
 
 ## Configuration
 
-The plugin accepts a configuration object with the following properties:
+The `isbnValidator` function accepts a configuration object with the following properties:
 
-- `sheetSlug` (string): The slug of the sheet to apply the plugin to
-- `isbnFields` (string[]): An array of field names to validate as ISBNs
-- `autoConvert` (boolean): Whether to automatically convert valid ISBN-10 to ISBN-13
+- `sheetSlug` (string): The slug of the sheet where ISBN validation should be applied.
+- `isbnFields` (string[]): An array of field names that contain ISBN values to be validated.
+- `autoConvert` (boolean): If true, ISBN-10 numbers will be automatically converted to ISBN-13.
 
 ## Behavior
 
-1. The plugin processes each record in the specified sheet.
-2. For each configured ISBN field, it performs the following actions:
-   - Validates the ISBN format (both ISBN-10 and ISBN-13 are supported)
-   - If the ISBN is invalid, it adds an error message to the record
-   - If `autoConvert` is true and a valid ISBN-10 is detected, it converts it to ISBN-13
-3. The plugin uses a concurrency of 5 for improved performance when processing multiple records.
+1. The plugin validates each specified ISBN field in every record of the configured sheet.
+2. It removes hyphens and spaces from the ISBN before validation.
+3. For ISBN-10:
+   - Checks if the format is valid (9 digits followed by a digit or 'X').
+   - Verifies the check digit.
+   - If `autoConvert` is true, converts valid ISBN-10 to ISBN-13.
+4. For ISBN-13:
+   - Checks if the format is valid (13 digits).
+   - Verifies the check digit.
+5. Adds appropriate error messages to the record for any validation failures.
+6. If a field is empty, it adds an error indicating that ISBN is required.
 
-Note: The plugin removes hyphens and spaces from ISBNs before processing them.
+This plugin enhances data quality by ensuring that ISBN fields contain valid and properly formatted book identifiers.

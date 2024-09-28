@@ -1,7 +1,7 @@
 {
   "name": "@flatfile/plugin-validate-isbn",
   "version": "1.0.0",
-  "description": "Implement a Flatfile Listener plugin with RecordHook for ISBN validation and conversion",
+  "description": "A Flatfile Listener plugin for ISBN validation with configurable options. Validates ISBN-10 and ISBN-13 formats, provides specific error messages, and optionally converts ISBN-10 to ISBN-13.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -43,13 +43,20 @@
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.7.0"
+    "@flatfile/plugin-record-hook": "^1.7.0",
+    "isbn3": "^1.2.0"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.5"
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "^0.1.1"
+    "@flatfile/hooks": "^1.5.0",
+    "@flatfile/rollup-config": "^^0.1.1",
+    "@types/jest": "^29.5.13",
+    "jest": "^29.7.0",
+    "rollup": "^4.22.5",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.2"
   },
   "repository": {
     "type": "git",
