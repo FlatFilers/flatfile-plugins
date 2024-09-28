@@ -1,15 +1,3 @@
-/* 
-  Task: Create a Flatfile Listener plugin for ISBN validation:
-      - Implement a RecordHook that validates ISBN-10 and ISBN-13 formats
-      - Use regex patterns to check for valid ISBN structures
-      - Verify the check digit for both ISBN-10 and ISBN-13
-      - Add error messages for invalid ISBNs
-      - Optionally, convert valid ISBN-10 to ISBN-13 format
-      - Give the user reasonable config options to specify the Sheet Slug, the Field(s) that are the ISBN(s), whether the conversion should be done automatically
-  _____________________________
-  Summary: Implement a Flatfile Listener plugin with RecordHook for ISBN validation and conversion
-*/
-
 import { recordHook } from '@flatfile/plugin-record-hook'
 import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
 

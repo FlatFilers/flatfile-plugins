@@ -43,14 +43,13 @@
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.6.1",
-    "@flatfile/api": "^1.9.15"
+    "@flatfile/plugin-record-hook": "^1.7.0"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "0.1.1"
+    "@flatfile/rollup-config": "^0.1.1"
   },
   "repository": {
     "type": "git",
