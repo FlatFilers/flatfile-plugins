@@ -1,0 +1,91 @@
+{
+  "timestamp": "2024-09-25T16-44-49-645Z",
+  "task": "Create a Wordpress CMS Export Flatfile Listener plugin:\n      - Implement a custom action to export data to Wordpress\n      - Allow users to select the target CMS platform and provide necessary API credentials\n      - Map Flatfile fields to corresponding CMS fields (e.g., title, content, author, categories, tags)\n      - Support exporting rich text content, including formatting and embedded media\n      - Implement options for post status (draft, published) and scheduling\n      - Handle batch processing for efficient export of multiple posts\n      - Provide error handling and reporting for failed exports\n      - Allow configuration of default post settings (e.g., featured image, excerpt)\n      - Implement a preview function to review post formatting before export\n      - Support updating existing posts by matching on a unique identifier\n      - Include options for handling custom fields specific to each CMS platform",
+  "summary": "This code implements a Flatfile Listener plugin for exporting data to WordPress CMS. It includes functionality for mapping fields, handling custom fields, applying default settings, previewing posts, and batch exporting to WordPress. The plugin allows users to configure WordPress API credentials and select export options.",
+  "steps": [
+    [
+      "First, let's retrieve information about Flatfile Listeners and the Record Hook plugin to understand the basic structure we'll be working with.\n",
+      "#E1",
+      "PineconeAssistant",
+      "Provide information on Flatfile Listeners and the Record Hook plugin, including their basic structure and usage",
+      "Plan: First, let's retrieve information about Flatfile Listeners and the Record Hook plugin to understand the basic structure we'll be working with.\n#E1 = PineconeAssistant[Provide information on Flatfile Listeners and the Record Hook plugin, including their basic structure and usage]"
+    ],
+    [
+      "Implement the custom action to export data to Wordpress. We'll need to use the Wordpress REST API for this.\n",
+      "#E3",
+      "Google",
+      "Wordpress REST API documentation for creating posts",
+      "Plan: Implement the custom action to export data to Wordpress. We'll need to use the Wordpress REST API for this.\n#E3 = Google[Wordpress REST API documentation for creating posts]"
+    ],
+    [
+      "Implement field mapping functionality to map Flatfile fields to corresponding CMS fields.\n",
+      "#E5",
+      "LLM",
+      "Create a function called mapFields that takes in Flatfile record data and returns an object with mapped Wordpress fields (title, content, author, categories, tags). Include support for rich text content",
+      "Plan: Implement field mapping functionality to map Flatfile fields to corresponding CMS fields.\n#E5 = LLM[Create a function called mapFields that takes in Flatfile record data and returns an object with mapped Wordpress fields (title, content, author, categories, tags). Include support for rich text content]"
+    ],
+    [
+      "Add support for post status and scheduling options.\n",
+      "#E6",
+      "LLM",
+      "Extend the exportToWordpress function from #E4 to include options for post status (draft, published) and scheduling. Add these options to the function parameters",
+      "Plan: Add support for post status and scheduling options.\n#E6 = LLM[Extend the exportToWordpress function from #E4 to include options for post status (draft, published) and scheduling. Add these options to the function parameters]"
+    ],
+    [
+      "Implement batch processing for efficient export of multiple posts.\n",
+      "#E7",
+      "LLM",
+      "Create a function called batchExport that takes an array of records and processes them in batches using the exportToWordpress function from #E6. Include error handling and reporting for failed exports",
+      "Plan: Implement batch processing for efficient export of multiple posts.\n#E7 = LLM[Create a function called batchExport that takes an array of records and processes them in batches using the exportToWordpress function from #E6. Include error handling and reporting for failed exports]"
+    ],
+    [
+      "Add configuration options for default post settings.\n",
+      "#E8",
+      "LLM",
+      "Create a function called applyDefaultSettings that takes in post data and default settings (e.g., featured image, excerpt) and applies them to the post data before export",
+      "Plan: Add configuration options for default post settings.\n#E8 = LLM[Create a function called applyDefaultSettings that takes in post data and default settings (e.g., featured image, excerpt) and applies them to the post data before export]"
+    ],
+    [
+      "Implement a preview function to review post formatting before export.\n",
+      "#E9",
+      "LLM",
+      "Create a function called previewPost that takes in mapped post data and returns a formatted preview of the post, including HTML rendering of rich text content",
+      "Plan: Implement a preview function to review post formatting before export.\n#E9 = LLM[Create a function called previewPost that takes in mapped post data and returns a formatted preview of the post, including HTML rendering of rich text content]"
+    ],
+    [
+      "Add support for updating existing posts by matching on a unique identifier.\n",
+      "#E10",
+      "LLM",
+      "Extend the exportToWordpress function from #E6 to check for existing posts using a unique identifier (e.g., slug or custom field) and update the post if it exists, otherwise create a new post",
+      "Plan: Add support for updating existing posts by matching on a unique identifier.\n#E10 = LLM[Extend the exportToWordpress function from #E6 to check for existing posts using a unique identifier (e.g., slug or custom field) and update the post if it exists, otherwise create a new post]"
+    ],
+    [
+      "Implement options for handling custom fields specific to Wordpress.\n",
+      "#E11",
+      "LLM",
+      "Create a function called handleCustomFields that takes in custom field data and adds it to the post data before export. Include support for common Wordpress custom field plugins",
+      "Plan: Implement options for handling custom fields specific to Wordpress.\n#E11 = LLM[Create a function called handleCustomFields that takes in custom field data and adds it to the post data before export. Include support for common Wordpress custom field plugins]"
+    ],
+    [
+      "Combine all the created functions into the main listener logic.\n",
+      "#E12",
+      "LLM",
+      "Combine the functions created in #E2, #E4, #E5, #E6, #E7, #E8, #E9, #E10, and #E11 into a complete Flatfile Listener plugin. Include logic to allow users to select export options and provide API credentials. Ensure that the listener subscribes only to valid Event Topics",
+      "Plan: Combine all the created functions into the main listener logic.\n#E12 = LLM[Combine the functions created in #E2, #E4, #E5, #E6, #E7, #E8, #E9, #E10, and #E11 into a complete Flatfile Listener plugin. Include logic to allow users to select export options and provide API credentials. Ensure that the listener subscribes only to valid Event Topics]"
+    ],
+    [
+      "Perform a final check on the complete plugin code, removing any unused imports and validating that all parameters are correct for the plugins used.\n",
+      "#E13",
+      "LLM",
+      "Review the complete plugin code from #E12, remove any unused imports, and validate that all parameters are correct for the plugins used. Ensure that the listener only subscribes to valid Event Topics. Provide the final, cleaned-up version of the WordpressCMSExport plugin code",
+      "Plan: Perform a final check on the complete plugin code, removing any unused imports and validating that all parameters are correct for the plugins used.\n#E13 = LLM[Review the complete plugin code from #E12, remove any unused imports, and validate that all parameters are correct for the plugins used. Ensure that the listener only subscribes to valid Event Topics. Provide the final, cleaned-up version of the WordpressCMSExport plugin code]"
+    ]
+  ],
+  "metrics": {
+    "tokens": {
+      "plan": 4324,
+      "state": 6167,
+      "total": 10491
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "name": "@flatfile/plugin-wordpress-cms-export",
+  "version": "1.0.0",
+  "description": "A Flatfile plugin for exporting data to WordPress CMS",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "browser": {
+    "./dist/index.js": "./dist/index.browser.js",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "browser": {
+      "require": "./dist/index.browser.js",
+      "import": "./dist/index.browser.mjs"
+    },
+    "default": "./dist/index.mjs"
+  },
+  "source": "./src/index.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [
+    "flatfile",
+    "plugin",
+    "wordpress",
+    "cms",
+    "export",
+    "flatfile-plugins",
+    "category-transform"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@flatfile/listener": "^1.0.5",
+    "@flatfile/api": "^1.9.15",
+    "@flatfile/plugin-record-hook": "^1.7.0",
+    "axios": "^1.7.7",
+    "node-html-parser": "^6.1.13"
+  },
+  "devDependencies": {
+    "@flatfile/hooks": "^1.5.0",
+    "@flatfile/rollup-config": "^0.1.1",
+    "typescript": "^5.6.2",
+    "@types/node": "^22.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YourGitHubUsername/flatfile-plugin-wordpress-cms-export.git"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
