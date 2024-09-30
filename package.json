@@ -8,6 +8,7 @@
   "workspaces": [
     "bundlers/*",
     "convert/*",
+    "enrich/*",
     "flatfilers/*",
     "plugins/*",
     "support/*",
