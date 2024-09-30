@@ -1,6 +1,15 @@
 import { validateISBN } from './index'
 import { FlatfileListener } from '@flatfile/listener'
 import { RecordHook } from '@flatfile/plugin-record-hook'
+import { FlatfileClient } from '@flatfile/api'
+import {
+  createRecords,
+  deleteSpace,
+  getRecords,
+  setupListener,
+  setupSimpleWorkbook,
+  setupSpace,
+} from '@flatfile/utils-testing'
 
 describe('validateISBN', () => {
   const mockListener = {} as FlatfileListener
@@ -105,6 +114,79 @@ describe('validateISBN', () => {
     await recordHook(record)
     expect(record.addError).not.toHaveBeenCalled()
     expect(record.set).not.toHaveBeenCalled()
+  })
+})
+
+describe('validateISBN e2e', () => {
+  const api = new FlatfileClient()
+  const listener = setupListener()
+  let spaceId: string
+  let sheetId: string
+
+  beforeAll(async () => {
+    const space = await setupSpace()
+    spaceId = space.id
+    const workbook = await setupSimpleWorkbook(space.id, [
+      { key: 'isbn', type: 'string' },
+    ])
+    sheetId = workbook.sheets![0].id
+  })
+
+  afterAll(async () => {
+    await deleteSpace(spaceId)
+  })
+
+  it('should validate and format ISBNs in a real sheet', async () => {
+    listener.use(validateISBN())
+
+    await createRecords(sheetId, [
+      { isbn: '0306406152' },
+      { isbn: '9780306406157' },
+      { isbn: 'invalid-isbn' },
+    ])
+
+    await listener.waitFor('commit:created')
+
+    const records = await getRecords(sheetId)
+
+    expect(records[0].values['isbn'].value).toBe('0-306-40615-2')
+    expect(records[0].values['isbn'].messages[0].message).toBe('Formatted ISBN-10')
+
+    expect(records[1].values['isbn'].value).toBe('978-0-306-40615-7')
+    expect(records[1].values['isbn'].messages[0].message).toBe('Formatted ISBN-13')
+
+    expect(records[2].values['isbn'].value).toBe('invalid-isbn')
+    expect(records[2].values['isbn'].messages[0].message).toBe('Invalid ISBN format')
+  })
+
+  it('should convert ISBN-10 to ISBN-13 when format is specified', async () => {
+    listener.use(validateISBN({ format: 'isbn13' }))
+
+    await createRecords(sheetId, [
+      { isbn: '0306406152' },
+    ])
+
+    await listener.waitFor('commit:created')
+
+    const records = await getRecords(sheetId)
+
+    expect(records[0].values['isbn'].value).toBe('9780306406157')
+    expect(records[0].values['isbn'].messages[0].message).toBe('Converted ISBN-13')
+  })
+
+  it('should not auto-format when autoFormat is false', async () => {
+    listener.use(validateISBN({ autoFormat: false }))
+
+    await createRecords(sheetId, [
+      { isbn: '0306406152' },
+    ])
+
+    await listener.waitFor('commit:created')
+
+    const records = await getRecords(sheetId)
+
+    expect(records[0].values['isbn'].value).toBe('0306406152')
+    expect(records[0].values['isbn'].messages.length).toBe(0)
   })
 })
 import { FlatfileListener } from '@flatfile/listener'
