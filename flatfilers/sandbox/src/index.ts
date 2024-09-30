@@ -2,13 +2,14 @@ import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { automap } from '@flatfile/plugin-automap'
 import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
+import { validateIsbn } from '@flatfile/plugin-validate-isbn'
 
 export default async function (listener: FlatfileListener) {
-  listener.use(
-    ExcelExtractor({
-      skipEmptyLines: true,
-    })
-  )
+  // listener.use(
+  //   ExcelExtractor({
+  //     skipEmptyLines: true,
+  //   })
+  // )
   listener.use(
     DelimiterExtractor('txt', { delimiter: ',', skipEmptyLines: true })
   )
