@@ -107,3 +107,75 @@ describe('validateISBN', () => {
     expect(record.set).not.toHaveBeenCalled()
   })
 })
+import { FlatfileListener } from '@flatfile/listener'
+import { validateISBN } from './index'
+
+describe('validateISBN', () => {
+  let listener: FlatfileListener
+  let mockRecord: any
+
+  beforeEach(() => {
+    listener = new FlatfileListener()
+    mockRecord = {
+      get: jest.fn(),
+      set: jest.fn(),
+      addError: jest.fn(),
+      addInfo: jest.fn(),
+    }
+  })
+
+  it('should validate and format valid ISBN-10', async () => {
+    mockRecord.get.mockReturnValue('0-306-40615-2')
+    
+    validateISBN()(listener)
+    await listener.triggerEvent('record:*', { record: mockRecord })
+
+    expect(mockRecord.set).toHaveBeenCalledWith('isbn', '0-306-40615-2')
+    expect(mockRecord.addInfo).toHaveBeenCalledWith('isbn', 'Formatted ISBN-10')
+  })
+
+  it('should validate and format valid ISBN-13', async () => {
+    mockRecord.get.mockReturnValue('978-0-306-40615-7')
+    
+    validateISBN()(listener)
+    await listener.triggerEvent('record:*', { record: mockRecord })
+
+    expect(mockRecord.set).toHaveBeenCalledWith('isbn', '978-0-306-40615-7')
+    expect(mockRecord.addInfo).toHaveBeenCalledWith('isbn', 'Formatted ISBN-13')
+  })
+
+  it('should add error for invalid ISBN', async () => {
+    mockRecord.get.mockReturnValue('invalid-isbn')
+    
+    validateISBN()(listener)
+    await listener.triggerEvent('record:*', { record: mockRecord })
+
+    expect(mockRecord.addError).toHaveBeenCalledWith('isbn', 'Invalid ISBN format')
+  })
+
+  it('should convert ISBN-10 to ISBN-13 when format is specified', async () => {
+    mockRecord.get.mockReturnValue('0-306-40615-2')
+    
+    validateISBN({ format: 'isbn13' })(listener)
+    await listener.triggerEvent('record:*', { record: mockRecord })
+
+    expect(mockRecord.set).toHaveBeenCalledWith('isbn', '9780306406157')
+    expect(mockRecord.addInfo).toHaveBeenCalledWith('isbn', 'Converted ISBN-13')
+  })
+
+  it('should handle multiple ISBN fields', async () => {
+    mockRecord.get.mockImplementation((field) => {
+      if (field === 'isbn1') return '0-306-40615-2'
+      if (field === 'isbn2') return '978-0-306-40615-7'
+      return null
+    })
+    
+    validateISBN({ isbnFields: ['isbn1', 'isbn2'] })(listener)
+    await listener.triggerEvent('record:*', { record: mockRecord })
+
+    expect(mockRecord.set).toHaveBeenCalledWith('isbn1', '0-306-40615-2')
+    expect(mockRecord.set).toHaveBeenCalledWith('isbn2', '978-0-306-40615-7')
+    expect(mockRecord.addInfo).toHaveBeenCalledWith('isbn1', 'Formatted ISBN-10')
+    expect(mockRecord.addInfo).toHaveBeenCalledWith('isbn2', 'Formatted ISBN-13')
+  })
+})
