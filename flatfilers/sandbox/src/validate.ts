@@ -4,7 +4,7 @@ import { validateIsbn } from '@flatfile/plugin-validate-isbn'
 
 export default async function (listener: FlatfileListener) {
   listener.use(validateIsbn({
-    autoConvert: true,
+    autoFormat: true,
   }))
 
   listener.use(

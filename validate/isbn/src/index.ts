@@ -5,14 +5,16 @@ import ISBN from 'isbn3'
 interface ValidateISBNConfig {
   sheetSlug?: string
   isbnFields?: string[]
-  autoConvert?: boolean
+  autoFormat?: boolean
+  format?: 'isbn13' | 'isbn13h' | 'isbn10' | 'isbn10h'
 }
 
 export function validateIsbn(config: ValidateISBNConfig = {}) {
   const {
     sheetSlug = '**',
     isbnFields = ['isbn'],
-    autoConvert = false,
+    autoFormat = true,
+    format,
   } = config
 
   return (listener: FlatfileListener) => {
@@ -20,29 +22,15 @@ export function validateIsbn(config: ValidateISBNConfig = {}) {
       recordHook(sheetSlug, async (record) => {
         for (const field of isbnFields) {
           const isbn = record.get(field) as string
+          if (!isbn) break
 
-          if (!isbn) {
-            record.addError(field, 'ISBN is required')
-            continue
-          }
-
-          const cleanISBN = isbn.replace(/[-\s]/g, '')
-          const isbnObj = ISBN.parse(cleanISBN)
-
-          if (!isbnObj) {
+          const isbnObj = ISBN.parse(isbn.replace(/[-\s]/g, ''))
+          if (!isbnObj?.isValid) {
             record.addError(field, 'Invalid ISBN format')
             continue
           }
 
-          if (!isbnObj.isValid) {
-            record.addError(
-              field,
-              `Invalid ISBN-${isbnObj.isIsbn10 ? '10' : '13'} format`
-            )
-            continue
-          }
-
-          if (autoConvert) {
+          if (autoFormat) {
             const formattedISBN = isbnObj.isIsbn10
               ? isbnObj.isbn10h
               : isbnObj.isbn13h
@@ -50,6 +38,14 @@ export function validateIsbn(config: ValidateISBNConfig = {}) {
             record.addInfo(
               field,
               `Formatted ISBN-${isbnObj.isIsbn10 ? '10' : '13'}`
+            )
+          }
+
+          if (format) {
+            record.set(field, isbnObj[format])
+            record.addInfo(
+              field,
+              `Converted ISBN-${isbnObj.isIsbn10 ? '13' : '10'}`
             )
           }
         }

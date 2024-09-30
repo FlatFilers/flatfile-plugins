@@ -8,6 +8,7 @@ A Flatfile Listener plugin for validating ISBN (International Standard Book Numb
 - Checks for correct ISBN structure and valid check digits
 - Provides specific error messages for different types of validation failures
 - Optionally converts ISBN-10 to ISBN-13 automatically
+- Optionally formats ISBN hyphenated 
 - Configurable for multiple ISBN fields within a sheet
 
 ## Installation
@@ -30,7 +31,8 @@ listener.use(
   isbnValidator({
     sheetSlug: "books",
     isbnFields: ["isbn", "alternate_isbn"],
-    autoConvert: true
+    autoConvert: true,
+    autoFormat: true
   })
 );
 
@@ -43,7 +45,12 @@ The `isbnValidator` function accepts a configuration object with the following p
 
 - `sheetSlug` (string): The slug of the sheet where ISBN validation should be applied.
 - `isbnFields` (string[]): An array of field names that contain ISBN values to be validated.
-- `autoConvert` (boolean): If true, ISBN-10 numbers will be automatically converted to ISBN-13.
+- `autoFormat` (boolean): If true, ISBN numbers will be hyphenated.
+- `format` (string, optional): Manually set the output format of the ISBN. Can be one of:
+  - 'isbn13': 13-digit ISBN without hyphens
+  - 'isbn13h': 13-digit ISBN with hyphens
+  - 'isbn10': 10-digit ISBN without hyphens
+  - 'isbn10h': 10-digit ISBN with hyphens
 
 ## Behavior
 
