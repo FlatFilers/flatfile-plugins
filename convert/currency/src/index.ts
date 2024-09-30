@@ -38,18 +38,20 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
       recordHook(
         config.sheetSlug,
         async (record: FlatfileRecord, event: FlatfileEvent) => {
-          const apiKey = event.secrets('OPENEXCHANGERATES_API_KEY')
+          const apiKey = await event.secrets('OPENEXCHANGERATES_API_KEY')
           const amount = record.get(config.amountField) as number
           const date = config.dateField
             ? (record.get(config.dateField) as string)
             : undefined
 
           if (!amount) {
+            console.log('Amount is required')
             record.addError(config.amountField, 'Amount is required')
             return record
           }
 
           if (isNaN(amount)) {
+            console.log('Amount must be a valid number')
             record.addError(config.amountField, 'Amount must be a valid number')
             return record
           }
@@ -64,6 +66,7 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
 
             if (date) {
               if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                console.log('Invalid date format. Use YYYY-MM-DD')
                 record.addError(
                   config.dateField!,
                   'Invalid date format. Use YYYY-MM-DD'
@@ -75,6 +78,7 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
 
             const queryString = new URLSearchParams(params).toString()
             const fullUrl = `${apiUrl}?${queryString}`
+            console.log(`Fetching exchange rates from ${fullUrl}`)
 
             const response = await fetch(fullUrl)
             const data = (await response.json()) as ExchangeRateResponse
@@ -89,12 +93,14 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
             const usdToTargetRate = data.rates[config.targetCurrency]
 
             if (!usdToSourceRate) {
+              console.log(`Invalid source currency: ${config.sourceCurrency}`)
               record.addError(
                 'currency',
                 `Invalid source currency: ${config.sourceCurrency}`
               )
             }
             if (!usdToTargetRate) {
+              console.log(`Invalid target currency: ${config.targetCurrency}`)
               record.addError(
                 'currency',
                 `Invalid target currency: ${config.targetCurrency}`
@@ -126,16 +132,20 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
           } catch (error) {
             if (error instanceof Error) {
               if (error.message.includes('API Error')) {
+                console.log(error.message)
                 record.addError('general', error.message)
               } else if (error.message.includes('Failed to fetch')) {
+                console.log('Network error: Unable to reach the API')
                 record.addError(
                   'general',
                   'Network error: Unable to reach the API'
                 )
               } else {
+                console.log(`Error: ${error.message}`)
                 record.addError('general', `Error: ${error.message}`)
               }
             } else {
+              console.log('An unexpected error occurred')
               record.addError('general', 'An unexpected error occurred')
             }
           }
