@@ -22,13 +22,11 @@
     "delete": "flatfile delete",
     "delete:local": "dotenvx run --env-file=.env.local -- npm run delete",
     "delete:staging": "dotenvx run --env-file=.env.staging -- npm run delete",
-    "delete:prod": "dotenvx run --env-file=.env.prod -- npm run delete",
-    "local:test:validate": "dotenvx run --env-file=.env.local -- npm run dev src/validate.ts"
+    "delete:prod": "dotenvx run --env-file=.env.prod -- npm run delete"
   },
   "dependencies": {
     "@flatfile/api": "^1.8.9",
-    "@flatfile/listener": "^1.0.5",
-    "@flatfile/plugin-validate-isbn": "*"
+    "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^0.39.0",

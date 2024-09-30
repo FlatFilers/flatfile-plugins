@@ -9,7 +9,7 @@ interface ValidateISBNConfig {
   format?: 'isbn13' | 'isbn13h' | 'isbn10' | 'isbn10h'
 }
 
-export function validateIsbn(config: ValidateISBNConfig = {}) {
+export function validateISBN(config: ValidateISBNConfig = {}) {
   const {
     sheetSlug = '**',
     isbnFields = ['isbn'],
@@ -56,4 +56,4 @@ export function validateIsbn(config: ValidateISBNConfig = {}) {
   }
 }
 
-export default validateIsbn
+export default validateISBN
