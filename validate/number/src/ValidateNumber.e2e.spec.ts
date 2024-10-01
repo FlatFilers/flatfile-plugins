@@ -60,9 +60,13 @@ describe('ValidateNumber e2e', () => {
 
       const records = await getRecords(sheetId)
 
-      expect(records[0].valid).toBeFalsy()
-      expect(records[1].valid).toBeTruthy()
-      expect(records[2].valid).toBeFalsy()
+      expect(records[0].values.amount?.messages?.[0].message).toContain(
+        'must be greater than'
+      )
+      expect(records[1].values.amount.messages).toEqual([])
+      expect(records[2].values.amount.messages?.[0].message).toContain(
+        'must be less than'
+      )
     })
 
     it('validates integer-only values', async () => {
@@ -73,13 +77,20 @@ describe('ValidateNumber e2e', () => {
         })
       )
 
-      await createRecords(sheetId, [{ quantity: 5 }, { quantity: 3.14 }])
+      await createRecords(sheetId, [
+        { quantity: 5 },
+        { quantity: 3.14 },
+        { quantity: '3' },
+      ])
       await listener.waitFor('commit:created')
 
       const records = await getRecords(sheetId)
 
-      expect(records[0].valid).toBeTruthy()
-      expect(records[1].valid).toBeFalsy()
+      expect(records[0].values.quantity.messages).toEqual([])
+      expect(records[1].values.quantity.messages?.[0].message).toContain(
+        'must be an integer'
+      )
+      expect(records[2].values.quantity.value).toEqual(3)
     })
 
     it('validates precision and scale', async () => {
@@ -100,9 +111,13 @@ describe('ValidateNumber e2e', () => {
 
       const records = await getRecords(sheetId)
 
-      expect(records[0].valid).toBeTruthy()
-      expect(records[1].valid).toBeFalsy()
-      expect(records[2].valid).toBeFalsy()
+      expect(records[0].values.price.messages).toEqual([])
+      expect(records[1].values.price.messages?.[0].message).toContain(
+        'must have at most 3 digits before the decimal point'
+      )
+      expect(records[2].values.price.messages?.[0].message).toContain(
+        'must have at most 2 digits after the decimal point'
+      )
     })
 
     it('validates step values', async () => {
@@ -122,9 +137,11 @@ describe('ValidateNumber e2e', () => {
 
       const records = await getRecords(sheetId)
 
-      expect(records[0].valid).toBeTruthy()
-      expect(records[1].valid).toBeFalsy()
-      expect(records[2].valid).toBeTruthy()
+      expect(records[0].values.amount.messages).toEqual([])
+      expect(records[1].values.amount.messages?.[0].message).toContain(
+        'must be a multiple of 0.5'
+      )
+      expect(records[2].values.amount.messages).toEqual([])
     })
 
     it('handles currency values', async () => {
@@ -144,9 +161,11 @@ describe('ValidateNumber e2e', () => {
 
       const records = await getRecords(sheetId)
 
-      expect(records[0].valid).toBeTruthy()
-      expect(records[1].valid).toBeTruthy()
-      expect(records[2].valid).toBeFalsy()
+      expect(records[0].values.price.messages).toEqual([])
+      expect(records[1].values.price.messages).toEqual([])
+      expect(records[2].values.price.messages?.[0].message).toContain(
+        'must be a valid currency value'
+      )
     })
 
     it('validates special number types', async () => {
@@ -166,9 +185,11 @@ describe('ValidateNumber e2e', () => {
 
       const records = await getRecords(sheetId)
 
-      expect(records[0].valid).toBeTruthy()
-      expect(records[1].valid).toBeFalsy()
-      expect(records[2].valid).toBeTruthy()
+      expect(records[0].values.amount.messages).toEqual([])
+      expect(records[1].values.amount.messages?.[0].message).toContain(
+        'must be an even number'
+      )
+      expect(records[2].values.amount.messages).toEqual([])
     })
 
     it('handles rounding', async () => {
@@ -186,6 +207,44 @@ describe('ValidateNumber e2e', () => {
 
       expect(records[0].values.amount.value).toBe(1)
       expect(records[1].values.amount.value).toBe(2)
+    })
+
+    it('handles truncation', async () => {
+      listener.use(
+        validateNumber({
+          fields: ['amount'],
+          truncate: true,
+        })
+      )
+
+      await createRecords(sheetId, [{ amount: 1.4 }, { amount: 1.6 }])
+      await listener.waitFor('commit:created')
+
+      const records = await getRecords(sheetId)
+
+      expect(records[0].values.amount.value).toBe(1)
+      expect(records[1].values.amount.value).toBe(1)
+    })
+
+    it('handles custom separators', async () => {
+      listener.use(
+        validateNumber({
+          fields: ['amount'],
+          thousandsSeparator: '.',
+          decimalPoint: ',',
+        })
+      )
+
+      await createRecords(sheetId, [
+        { amount: '1.000,50' },
+        { amount: '2,500.75' },
+      ])
+      await listener.waitFor('commit:created')
+
+      const records = await getRecords(sheetId)
+
+      expect(records[0].values.amount.value).toBe(1000.5)
+      expect(records[1].values.amount.value).toBe(2.50075)
     })
   })
 })
