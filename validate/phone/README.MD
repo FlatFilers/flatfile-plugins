@@ -1,6 +1,6 @@
 <!-- START_INFOCARD -->
 
-The `@flatfile/plugin-phone-number-validator` plugin offers a convenient way to 
+The `@flatfile/plugin-validate-phone` plugin offers a convenient way to 
 validate phone numbers. By setting up an event listener for the `commit:created` 
 event, this plugin seamlessly integrates with the data processing flow. This
 plugins supports phone number formatting for multiple countries (US, UK, India, 

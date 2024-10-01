@@ -1,16 +1,3 @@
-/* 
-  Task: Develop a Flatfile Listener plugin for phone number formatting:
-      - Use a RecordHook to process phone number fields
-      - Implement regex patterns to identify various phone number formats
-      - Normalize phone numbers to a consistent format (e.g., +1 (123) 456-7890)
-      - Handle international phone numbers with country codes
-      - Add error messages for invalid phone number structures
-      - Give the user reasonable config options to specify the Sheet Slug, the Field(s) that are the phone number(s), whether the conversion should be done automatically
-  _____________________________
-  Summary: This code implements a Flatfile Listener plugin for phone number formatting with configurable options. It uses the RecordHook to process individual records, format phone numbers based on country, and handle errors. The plugin is customizable with options for sheet slug, field names, and automatic conversion.
-*/
-
-import type { FlatfileEvent } from '@flatfile/listener'
 import { type FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
 
 export interface PhoneFormatPluginConfig {
@@ -89,7 +76,7 @@ function formatPhoneNumber(
   }
 }
 
-export function phoneFormatValidator(config: PhoneFormatPluginConfig) {
+export function validatePhone(config: PhoneFormatPluginConfig) {
   return recordHook(
     config.sheetSlug || '**',
     (record: FlatfileRecord) => {
@@ -125,3 +112,5 @@ export function phoneFormatValidator(config: PhoneFormatPluginConfig) {
     }
   )
 }
+
+export default validatePhone
