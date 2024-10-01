@@ -1,4 +1,3 @@
-import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import {
   bulkRecordHook,
@@ -11,8 +10,6 @@ import what3words, {
   fetchTransport,
 } from '@what3words/api'
 
-const api = new FlatfileClient()
-
 interface What3WordsConfig {
   what3wordsField: string
   countryField: string
@@ -20,24 +17,6 @@ interface What3WordsConfig {
   latField: string
   longField: string
   sheetSlug?: string
-}
-
-async function getSecret(
-  name: string,
-  environmentId?: string,
-  spaceId?: string
-): Promise<string | undefined> {
-  try {
-    const secrets = await api.secrets.list({ spaceId, environmentId })
-    const secret = secrets.data.find((secret) => secret.name === name)
-    if (!secret) {
-      return undefined
-    }
-    return secret.value
-  } catch (e) {
-    console.error(e, `Error fetching secret ${name}`)
-    return undefined
-  }
 }
 
 export function convertWhat3words(config: What3WordsConfig) {
