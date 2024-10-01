@@ -38,7 +38,7 @@ listener.use(
   isbnValidator({
     sheetSlug: "books",
     isbnFields: ["isbn", "alternate_isbn"],
-    autoConvert: true,
+    format: "isbn13",
     autoFormat: true
   })
 );
