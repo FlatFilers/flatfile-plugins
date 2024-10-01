@@ -26,12 +26,12 @@ npm install @flatfile/plugin-number-validation
 
 ```javascript
 import { FlatfileListener } from '@flatfile/listener';
-import { numberValidationPlugin } from '@flatfile/plugin-number-validation';
+import { validateNumber } from '@flatfile/plugin-validate-number';
 
 const listener = new FlatfileListener();
 
 listener.use(
-  numberValidationPlugin({
+  validateNumber({
     min: 0,
     max: 1000,
     inclusive: true,
@@ -50,7 +50,7 @@ listener.use(
 
 ## Configuration
 
-The `numberValidationPlugin` accepts a configuration object with the following options:
+The `validateNumber` accepts a configuration object with the following options:
 
 - `min`: Minimum allowed value
 - `max`: Maximum allowed value
@@ -68,7 +68,7 @@ The `numberValidationPlugin` accepts a configuration object with the following o
 
 ## Behavior
 
-The plugin listens for the 'record:created' event and performs validation on a specified number field (default field name is 'numberField'). It applies the configured validations and throws an error if any validation fails.
+The plugin listens for the 'commit:created' event and performs validation on a specified number field (default field name is 'numberField'). It applies the configured validations and throws an error if any validation fails.
 
 The plugin also handles number parsing, considering the specified thousands separator and decimal point. It can optionally round or truncate the number before applying validations.
 
