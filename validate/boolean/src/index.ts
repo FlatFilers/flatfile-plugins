@@ -51,21 +51,15 @@ function handleNullValue(
   }
 }
 
+
 function validateStrictBoolean(
   record: FlatfileRecord,
   field: string,
   value: any,
   config: BooleanValidatorConfig
 ) {
-  const trueValues = config.caseSensitive ? ['true'] : ['true', 'True', 'TRUE']
-  const falseValues = config.caseSensitive
-    ? ['false']
-    : ['false', 'False', 'FALSE']
-
-  if (value === true || trueValues.includes(value)) {
-    record.set(field, true)
-  } else if (value === false || falseValues.includes(value)) {
-    record.set(field, false)
+  if ( value === true || value === false) {
+    record.set(field, value)
   } else if (config.convertNonBoolean) {
     record.set(field, Boolean(value))
   } else {
@@ -93,13 +87,14 @@ function validateTruthyBoolean(
     record.set(field, normalizedValue)
   } else if (mapping.hasOwnProperty(normalizedValue)) {
     record.set(field, mapping[normalizedValue])
+  } else if (typeof normalizedValue === 'number') {
+    record.set(field, Boolean(normalizedValue))
   } else if (config.convertNonBoolean) {
     record.set(field, Boolean(value))
   } else {
     handleInvalidValue(record, field, config)
   }
 }
-
 function handleInvalidValue(
   record: FlatfileRecord,
   field: string,
@@ -109,7 +104,7 @@ function handleInvalidValue(
     record.addError(
       field,
       config.customErrorMessages?.invalidBoolean ||
-        'Must be a valid boolean value'
+        'Invalid boolean value'
     )
   } else {
     record.set(field, config.defaultValue)
