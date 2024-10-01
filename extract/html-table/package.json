@@ -1,0 +1,53 @@
+{
+  "name": "@flatfile/plugin-extract-html-table",
+  "version": "1.0.0",
+  "description": "A Flatfile plugin for extracting table data from HTML files",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
+    "default": "./dist/index.mjs"
+  },
+  "source": "./src/index.ts",
+  "files": ["dist/**"],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": ["flatfile", "flatfile-plugins", "category-extractors", "html", "table-extractor"],
+  "author": "Flatfile",
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/util-extractor": "^2.1.5",
+    "node-html-parser": "^6.1.13"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "^0.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "extract/html-table"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
