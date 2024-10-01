@@ -30,7 +30,7 @@ npm install @flatfile/plugin-validate-date
 ### Import
 
 ```js
-import dateFormatNormalizer from '@flatfile/plugin-validate-date'
+import { validateDate } from '@flatfile/plugin-validate-date'
 ```
 
 ## Example Usage
@@ -39,11 +39,11 @@ This example sets up the date format normalizer for the "contacts" sheet, normal
 
 ```javascript
 import { FlatfileListener } from '@flatfile/listener'
-import dateFormatNormalizer from '@flatfile/plugin-validate-date'
+import { validateDate } from '@flatfile/plugin-validate-date'
 
 export default function (listener: FlatfileListener) {
   listener.use(
-    dateFormatNormalizer({
+    validateDate({
       sheetSlug: 'contacts',
       dateFields: ['birthdate', 'registration_date'],
       outputFormat: 'MM/DD/YYYY',
