@@ -20,9 +20,7 @@ function normalizeDate(
     const parsedDate = chrono.parseDate(dateString)
     if (parsedDate) {
       const formattedDate = format(parsedDate, config.outputFormat, {
-        locale: config.locale
-          ? require(`date-fns/locale/${config.locale}`)
-          : enUS,
+        locale:  enUS,
       })
 
       if (!config.includeTime) {
@@ -39,7 +37,7 @@ function normalizeDate(
   }
 }
 
-export function dateFormatNormalizer(config: DateFormatNormalizerConfig) {
+export function validateDate(config: DateFormatNormalizerConfig) {
   return recordHook(
     config.sheetSlug || '**',
     (record: FlatfileRecord, event: FlatfileEvent) => {
@@ -59,4 +57,4 @@ export function dateFormatNormalizer(config: DateFormatNormalizerConfig) {
   )
 }
 
-export default dateFormatNormalizer
+export default validateDate

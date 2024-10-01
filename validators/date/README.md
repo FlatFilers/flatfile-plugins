@@ -21,9 +21,6 @@ The `outputFormat` parameter specifies the desired output format for the normali
 #### `config.includeTime` - `boolean`
 The `includeTime` parameter determines whether to include time in the normalized output.
 
-#### `config.locale` - `string` - (optional)
-The `locale` parameter specifies the locale to use for date parsing and formatting. Defaults to 'en-US'.
-
 ## Usage
 
 ```bash install
@@ -50,8 +47,7 @@ export default function (listener: FlatfileListener) {
       sheetSlug: 'contacts',
       dateFields: ['birthdate', 'registration_date'],
       outputFormat: 'MM/DD/YYYY',
-      includeTime: false,
-      locale: 'en-US'
+      includeTime: false
     })
   )
 
