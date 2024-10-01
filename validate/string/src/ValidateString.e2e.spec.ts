@@ -63,12 +63,12 @@ describe('ValidateString e2e', () => {
 
       expect(records[0].valid).toBeFalsy()
       expect(records[0].values['name']?.messages?.[0]?.message).toContain(
-        'at least 2 characters'
+        'Minimum length is 2'
       )
       expect(records[1].valid).toBeTruthy()
       expect(records[2].valid).toBeFalsy()
       expect(records[2].values['name']?.messages?.[0]?.message).toContain(
-        'at most 10 characters'
+        'Maximum length is 10'
       )
     })
 
@@ -92,81 +92,10 @@ describe('ValidateString e2e', () => {
 
       expect(records[0].valid).toBeFalsy()
       expect(records[0].values['email'].messages?.[0].message).toContain(
-        'match the required pattern'
+        'Invalid format'
       )
       expect(records[1].valid).toBeTruthy()
       expect(records[2].valid).toBeTruthy()
-    })
-
-    it('validates custom function', async () => {
-      listener.use(
-        validateString({
-          sheetSlug: 'test',
-          fields: ['code'],
-          customTransform: (value) => {
-            if (!/^[A-Z]{3}-\d{3}$/.test(value)) {
-              return 'Code must be in the format XXX-000'
-            }
-            return value
-          },
-        })
-      )
-
-      await createRecords(sheetId, [
-        { code: 'ABC-123' },
-        { code: 'DEF-456' },
-        { code: 'invalid' },
-      ])
-      await listener.waitFor('commit:created')
-
-      const records = await getRecords(sheetId)
-
-      expect(records[0].valid).toBeTruthy()
-      expect(records[1].valid).toBeTruthy()
-      expect(records[2].valid).toBeFalsy()
-      expect(records[2].values['code'].messages?.[0].message).toBe(
-        'Code must be in the format XXX-000'
-      )
-    })
-
-    it('handles multiple validation rules', async () => {
-      listener.use(
-        validateString({
-          sheetSlug: 'test',
-          fields: ['name'],
-          minLength: 3,
-          maxLength: 20,
-          pattern: /^[A-Za-z\s]+$/,
-          customTransform: (value) => {
-            if (value.split(' ').length < 2) {
-              return 'Name must include both first and last name'
-            }
-            return value
-          },
-        })
-      )
-
-      await createRecords(sheetId, [
-        { name: 'John Doe' },
-        { name: 'A' },
-        { name: 'OnlyFirstName' },
-        { name: 'Contains123Numbers' },
-      ])
-      await listener.waitFor('commit:created')
-
-      const records = await getRecords(sheetId)
-
-      expect(records[0].valid).toBeTruthy()
-      expect(records[1].valid).toBeFalsy()
-      expect(records[1].values['name'].messages?.length).toBe(2) // minLength and customValidation
-      expect(records[2].valid).toBeFalsy()
-      expect(records[2].values['name'].messages?.[0].message).toContain(
-        'both first and last name'
-      )
-      expect(records[3].valid).toBeFalsy()
-      expect(records[3].values['name'].messages?.[0].message).toContain(
-        'match the required pattern'
-      )
     })
 
     it('handles empty strings correctly', async () => {

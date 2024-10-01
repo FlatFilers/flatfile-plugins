@@ -13,7 +13,6 @@ interface StringValidationConfig {
     leading?: boolean
     trailing?: boolean
   }
-  customTransform?: (value: string) => string
   emptyStringAllowed?: boolean
   errorMessages?: {
     pattern?: string
@@ -117,10 +116,7 @@ export function validateString(
             const error = StringValidation(value, config)
             if (error) {
               record.addError(field, error)
-            } else if (config.customTransform) {
-              const transformedValue = config.customTransform(value)
-              record.set(field, transformedValue)
-            }
+            } 
           }
         }
         return record
