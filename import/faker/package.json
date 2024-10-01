@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-generate-example-records",
+  "name": "@flatfile/plugin-import-faker",
   "version": "1.0.0",
   "description": "A Flatfile plugin that generates example records using Faker",
   "main": "./dist/index.js",
@@ -62,7 +62,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/generate-example-records"
+    "directory": "import/faker"
   },
   "browserslist": [
     "> 0.5%",
