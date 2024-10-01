@@ -1,10 +1,5 @@
-import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
-
-export interface MarkdownExtractorOptions {
-  maxTables?: number
-  errorHandling?: 'strict' | 'lenient'
-  debug?: boolean
-}
+import type { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
+import type { MarkdownExtractorOptions } from '.'
 
 export function parseBuffer(
   buffer: Buffer,

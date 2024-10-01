@@ -15,14 +15,7 @@ export const MarkdownExtractor = (options: MarkdownExtractorOptions = {}) => {
     ...options,
   }
 
-  return Extractor(
-    '.md',
-    'markdown',
-    (buffer: Buffer) => parseBuffer(buffer, defaultOptions),
-    {
-      ...options,
-    }
-  )
+  return Extractor('.md', 'markdown', parseBuffer, options)
 }
 
 export const markdownParser = parseBuffer
