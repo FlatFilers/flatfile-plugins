@@ -53,7 +53,7 @@ export function convertWhat3words(config: What3WordsConfig) {
     async (records: FlatfileRecord[], event: FlatfileEvent) => {
       const { environmentId, spaceId } = event.context
 
-      const apiKey = await getSecret('W3W_API_KEY', environmentId, spaceId)
+      const apiKey = await event.secrets('W3W_API_KEY')
       const transport: Transport = fetchTransport()
       const w3wService: What3wordsService = what3words(apiKey, w3wConfig, {
         transport,
