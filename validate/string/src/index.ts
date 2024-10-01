@@ -2,7 +2,9 @@ import { FlatfileListener } from '@flatfile/listener'
 import { recordHook } from '@flatfile/plugin-record-hook'
 
 interface StringValidationConfig {
-  pattern?: RegExp
+  fields: string[]
+  sheetSlug?: string // Added sheetSlug parameter
+  pattern?: keyof typeof commonRegexPatterns | RegExp // Allow for common regex patterns or custom
   minLength?: number
   maxLength?: number
   exactLength?: number
@@ -27,7 +29,7 @@ const commonRegexPatterns = {
   url: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
 }
 
-function validateString(
+function StringValidation(
   value: string,
   config: StringValidationConfig
 ): string | null {
@@ -35,7 +37,8 @@ function validateString(
     return 'Field cannot be empty'
   }
 
-  if (config.pattern && !config.pattern.test(value)) {
+  const pattern = typeof config.pattern === 'string' ? commonRegexPatterns[config.pattern] : config.pattern;
+  if (pattern && !pattern.test(value)) {
     return config.errorMessages?.pattern || 'Invalid format'
   }
 
@@ -101,16 +104,17 @@ function validateString(
   return null
 }
 
-export function stringConfigPlugin(
-  fieldConfigs: Record<string, StringValidationConfig>
+
+export function validateString(
+  config: StringValidationConfig
 ) {
   return (listener: FlatfileListener) => {
     listener.use(
-      recordHook('**', (record) => {
-        Object.entries(fieldConfigs).forEach(([field, config]) => {
+      recordHook(config.sheetSlug || '**', (record) => { // Use sheetSlug in recordHook
+        for (const field of config.fields) {
           const value = record.get(field) as string
           if (value !== null && value !== undefined) {
-            const error = validateString(value, config)
+            const error = StringValidation(value, config)
             if (error) {
               record.addError(field, error)
             } else if (config.customTransform) {
@@ -118,9 +122,11 @@ export function stringConfigPlugin(
               record.set(field, transformedValue)
             }
           }
-        })
+        }
         return record
       })
     )
   }
 }
+
+export default validateString

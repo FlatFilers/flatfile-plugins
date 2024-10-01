@@ -25,37 +25,49 @@ npm install @flatfile/plugin-string-config
 
 ```typescript
 import { FlatfileListener } from '@flatfile/listener';
-import { stringConfigPlugin } from '@flatfile/plugin-string-config';
+import { validateString } from '@flatfile/plugin-string-config';
 
 const listener = new FlatfileListener();
 
-const stringConfigs = {
-  email: {
-    pattern: commonRegexPatterns.email,
-    trim: { leading: true, trailing: true },
-    errorMessages: {
-      pattern: 'Invalid email format',
-    },
+const stringConfig = {
+  fields: ['name'],
+  minLength: 2,
+  maxLength: 50,
+  caseType: 'titlecase',
+  errorMessages: {
+    length: 'Name must be between 2 and 50 characters',
+    case: 'Name must be in Title Case',
   },
-  name: {
-    minLength: 2,
-    maxLength: 50,
-    caseType: 'titlecase',
-    errorMessages: {
-      length: 'Name must be between 2 and 50 characters',
-      case: 'Name must be in Title Case',
-    },
-  },
+  
 };
 
-listener.use(stringConfigPlugin(stringConfigs));
+listener.use(validateString(stringConfig));
+```
+
+**Pattern usage:**
+```typescript
+const config = {
+  fields: ['email'],
+  pattern: 'email' // Uses predefined email pattern
+};
+
+// Or with a custom pattern:
+const customConfig = {
+  fields: ['customField'],
+  pattern: /^[A-Z]{3}-\d{2}$/ // Custom pattern for format like 'ABC-12'
+};
 ```
 
 ## Configuration
 
-The `stringConfigPlugin` accepts a configuration object where each key represents a field name and its value is a `StringValidationConfig` object with the following properties:
-
+The `validateString` accepts a `StringValidationConfig` object with the following properties:
+- `fields`: string[] - Fields to validate
+- `sheetSlug`: string - Sheet slug to validate (defaults to '**' all sheets)
 - `pattern`: RegExp - A regular expression pattern to match against
+- `pattern`: keyof typeof commonRegexPatterns | RegExp - A regular expression pattern to match against. You can use one of the predefined patterns ('email', 'phone', 'url') or provide a custom RegExp. The predefined patterns are:
+  - `email`: Validates email addresses
+  - `phone`: Validates phone numbers (10-14 digits, optional '+' prefix)
+  - `url`: Validates URLs (with or without protocol)
 - `minLength`: number - Minimum length of the string
 - `maxLength`: number - Maximum length of the string
 - `exactLength`: number - Exact required length of the string
