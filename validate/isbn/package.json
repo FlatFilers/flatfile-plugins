@@ -1,22 +1,22 @@
 {
   "name": "@flatfile/plugin-validate-isbn",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A Flatfile Listener plugin for ISBN validation with configurable options. Validates ISBN-10 and ISBN-13 formats, provides specific error messages, and optionally converts ISBN-10 to ISBN-13.",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "browser": {
-    "./dist/index.js": "./dist/index.browser.js",
+    "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
   },
   "exports": {
     "types": "./dist/index.d.ts",
     "node": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.cjs"
     },
     "browser": {
-      "require": "./dist/index.browser.js",
+      "require": "./dist/index.browser.cjs",
       "import": "./dist/index.browser.mjs"
     },
     "default": "./dist/index.mjs"
@@ -33,15 +33,11 @@
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [
-    "flatfile",
-    "plugin",
-    "isbn",
-    "validator",
     "flatfile-plugins",
-    "category-transform"
+    "category-validate"
   ],
-  "author": "Your Name",
-  "license": "MIT",
+  "author": "Flatfile, Inc..",
+  "license": "ISC",
   "dependencies": {
     "@flatfile/plugin-record-hook": "^1.7.0",
     "isbn3": "^1.2.0"
@@ -56,7 +52,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/isbn-validator"
+    "directory": "validate/isbn-validator"
   },
   "browserslist": [
     "> 0.5%",
