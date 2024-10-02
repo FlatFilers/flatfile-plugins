@@ -25,8 +25,8 @@
     "delete:prod": "dotenvx run --env-file=.env.prod -- npm run delete"
   },
   "dependencies": {
-    "@flatfile/api": "^1.8.9",
-    "@flatfile/listener": "^1.0.5"
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^0.39.0",

@@ -60,9 +60,9 @@
     "@flatfile/util-common": "^1.4.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.9.13",
+    "@flatfile/api": "^1.9.19",
     "@flatfile/hooks": "^1.4.1",
-    "@flatfile/listener": "^1.0.5"
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1"
