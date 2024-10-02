@@ -1,30 +1,67 @@
-import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { automap } from '@flatfile/plugin-automap'
-import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
-import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
+import type { FlatfileListener } from '@flatfile/listener'
+import { pivotTablePlugin } from '@flatfile/plugin-export-pivot-table'
+import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    ExcelExtractor({
-      skipEmptyLines: true,
+    pivotTablePlugin({
+      pivotColumn: 'product',
+      aggregateColumn: 'salesAmount',
+      aggregationMethod: 'sum',
+      groupByColumn: 'region',
     })
   )
   listener.use(
-    DelimiterExtractor('txt', { delimiter: ',', skipEmptyLines: true })
-  )
-
-  listener.use(
-    automap({
-      accuracy: 'confident',
-      defaultTargetSheet: 'contacts',
-      matchFilename: /test/,
-      debug: true,
-      onFailure: (event: FlatfileEvent) => {
-        // send an SMS, an email, post to an endpoint, etc.
-        console.error(
-          `Please visit https://spaces.flatfile.com/space/${event.context.spaceId}/files?mode=import to manually import file.`
-        )
-      },
+    configureSpace({
+      workbooks: [
+        {
+          name: 'Sandbox',
+          sheets: [
+            {
+              name: 'Sales',
+              slug: 'sales',
+              fields: [
+                {
+                  key: 'date',
+                  type: 'string',
+                  label: 'Date',
+                },
+                {
+                  key: 'product',
+                  type: 'string',
+                  label: 'Product',
+                },
+                {
+                  key: 'category',
+                  type: 'string',
+                  label: 'Category',
+                },
+                {
+                  key: 'region',
+                  type: 'string',
+                  label: 'Region',
+                },
+                {
+                  key: 'salesAmount',
+                  type: 'number',
+                  label: 'Sales Amount',
+                },
+              ],
+            },
+          ],
+          actions: [
+            {
+              operation: 'generatePivotTable',
+              label: 'Generate Pivot Table',
+              description:
+                'This custom action code generates a pivot table from the records in the People sheet.',
+              primary: false,
+              mode: 'foreground',
+              type: 'string',
+            },
+          ],
+        },
+      ],
     })
   )
 }
