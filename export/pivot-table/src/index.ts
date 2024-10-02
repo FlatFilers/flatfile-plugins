@@ -1,26 +1,28 @@
-import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
-import { recordHook } from '@flatfile/plugin-record-hook'
 import api from '@flatfile/api'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 
-export function pivotTablePlugin(config: { apiKey: string }) {
+/**
+ * Configuration interface for the Pivot Table plugin
+ */
+export interface PivotTable {
+  pivotColumn: string
+  aggregateColumn: string
+  aggregationMethod: 'sum' | 'average' | 'count' | 'min' | 'max'
+  groupByColumn?: string
+}
+
+/**
+ * Pivot Table plugin for Flatfile
+ * @param config PivotTable configuration
+ * @returns A function that sets up the Flatfile Listener for pivot table generation
+ */
+export function pivotTablePlugin(config: PivotTable) {
   return (listener: FlatfileListener) => {
-    listener.use(
-      recordHook('sheetSlug', async (record) => {
-        // Process records here if needed
-      })
-    )
-
     listener.on(
       'job:ready',
       { job: 'workbook:generatePivotTable' },
       async (event: FlatfileEvent) => {
         const { jobId, workbookId, spaceId } = event.context
-        const {
-          pivotColumn,
-          aggregateColumn,
-          aggregationMethod,
-          groupByColumn,
-        } = event.payload
 
         try {
           await api.jobs.ack(jobId, {
@@ -30,14 +32,16 @@ export function pivotTablePlugin(config: { apiKey: string }) {
 
           const sheets = await api.sheets.list({ workbookId })
           const sheetId = sheets.data[0].id
-          const records = await api.records.get(sheetId)
+          const {
+            data: { records },
+          } = await api.records.get(sheetId)
 
           const pivotTable = generatePivotTable(
-            records.data,
-            pivotColumn,
-            aggregateColumn,
-            aggregationMethod,
-            groupByColumn
+            records,
+            config.pivotColumn,
+            config.aggregateColumn,
+            config.aggregationMethod,
+            config.groupByColumn
           )
           const markdownTable = convertPivotTableToMarkdown(pivotTable)
 
@@ -53,6 +57,7 @@ export function pivotTablePlugin(config: { apiKey: string }) {
             },
           })
         } catch (error) {
+          console.error('Error:', error)
           await api.jobs.fail(jobId, {
             outcome: {
               message: `Pivot table generation or document creation failed: ${error.message}`,
@@ -64,6 +69,15 @@ export function pivotTablePlugin(config: { apiKey: string }) {
   }
 }
 
+/**
+ * Generates a pivot table from the given records
+ * @param records Array of record objects
+ * @param pivotColumn Column to pivot on
+ * @param aggregateColumn Column to aggregate
+ * @param aggregationMethod Method of aggregation
+ * @param groupByColumn Optional column to group by
+ * @returns Pivot table object
+ */
 function generatePivotTable(
   records: any[],
   pivotColumn: string,
@@ -71,11 +85,15 @@ function generatePivotTable(
   aggregationMethod: 'sum' | 'average' | 'count' | 'min' | 'max',
   groupByColumn?: string
 ): any {
-  const pivotData: { [key: string]: { [key: string]: number } } = {}
+  const pivotData: { [key: string]: { [key: string]: any } } = {}
+  const groupKeys = new Set<string>()
 
   records.forEach((record) => {
-    const pivotKey = record[pivotColumn]
-    const groupKey = groupByColumn ? record[groupByColumn] : 'Total'
+    const pivotKey = record.values[pivotColumn].value
+    const groupKey = groupByColumn
+      ? record.values[groupByColumn].value
+      : '__TOTAL__'
+    groupKeys.add(groupKey)
 
     if (!pivotData[pivotKey]) {
       pivotData[pivotKey] = {}
@@ -90,7 +108,7 @@ function generatePivotTable(
       }
     }
 
-    const value = Number(record[aggregateColumn]) || 0
+    const value = Number(record.values[aggregateColumn].value) || 0
     pivotData[pivotKey][groupKey].sum += value
     pivotData[pivotKey][groupKey].count++
     pivotData[pivotKey][groupKey].min = Math.min(
@@ -104,26 +122,23 @@ function generatePivotTable(
   })
 
   // Apply the selected aggregation method
+  const aggregationFunctions = {
+    sum: (data: any) => data.sum,
+    average: (data: any) => (data.count > 0 ? data.sum / data.count : 0),
+    count: (data: any) => data.count,
+    min: (data: any) => data.min,
+    max: (data: any) => data.max,
+  }
+
   Object.keys(pivotData).forEach((pivotKey) => {
     Object.keys(pivotData[pivotKey]).forEach((groupKey) => {
       const aggregatedData = pivotData[pivotKey][groupKey]
-      switch (aggregationMethod) {
-        case 'sum':
-          pivotData[pivotKey][groupKey] = aggregatedData.sum
-          break
-        case 'average':
-          pivotData[pivotKey][groupKey] =
-            aggregatedData.sum / aggregatedData.count
-          break
-        case 'count':
-          pivotData[pivotKey][groupKey] = aggregatedData.count
-          break
-        case 'min':
-          pivotData[pivotKey][groupKey] = aggregatedData.min
-          break
-        case 'max':
-          pivotData[pivotKey][groupKey] = aggregatedData.max
-          break
+      const aggregationFunction = aggregationFunctions[aggregationMethod]
+      if (aggregationFunction) {
+        pivotData[pivotKey][groupKey] = aggregationFunction(aggregatedData)
+      } else {
+        console.error(`Unknown aggregation method: ${aggregationMethod}`)
+        pivotData[pivotKey][groupKey] = 0 // or some other default value
       }
     })
   })
@@ -134,6 +149,7 @@ function generatePivotTable(
     aggregationMethod,
     groupByColumn,
     data: pivotData,
+    groupKeys: Array.from(groupKeys).sort(),
   }
 }
 
@@ -144,37 +160,43 @@ function convertPivotTableToMarkdown(pivotTable: any): string {
     aggregationMethod,
     groupByColumn,
     data,
+    groupKeys,
   } = pivotTable
 
-  let markdown = `# Pivot Table\n\n`
-  markdown += `- Pivot Column: ${pivotColumn}\n`
-  markdown += `- Aggregate Column: ${aggregateColumn}\n`
-  markdown += `- Aggregation Method: ${aggregationMethod}\n`
+  let markdown = `# Pivot Table
+
+`
+  markdown += `- Pivot Column: ${pivotColumn}
+`
+  markdown += `- Aggregate Column: ${aggregateColumn}
+`
+  markdown += `- Aggregation Method: ${aggregationMethod}
+`
   if (groupByColumn) {
-    markdown += `- Group By Column: ${groupByColumn}\n`
+    markdown += `- Group By Column: ${groupByColumn}
+`
   }
   markdown += '\n'
 
-  // Get unique group keys
-  const groupKeys = new Set<string>()
-  Object.values(data).forEach((group: any) => {
-    Object.keys(group).forEach((key) => groupKeys.add(key))
-  })
-  const sortedGroupKeys = Array.from(groupKeys).sort()
-
   // Create table header
-  markdown += `| ${pivotColumn} | ${sortedGroupKeys.join(' | ')} |\n`
-  markdown += `| ${'-'.repeat(pivotColumn.length)} | ${sortedGroupKeys
-    .map(() => '---')
-    .join(' | ')} |\n`
+  const headerRow = [
+    pivotColumn,
+    ...groupKeys.map((key) => (key === '__TOTAL__' ? 'Total' : key)),
+  ]
+  markdown += `| ${headerRow.join(' | ')} |
+`
+  markdown += `| ${headerRow.map(() => '---').join(' | ')} |
+`
 
   // Create table rows
   Object.entries(data).forEach(([pivotKey, groupData]: [string, any]) => {
-    const row = sortedGroupKeys.map((groupKey) => {
+    const row = [pivotKey]
+    groupKeys.forEach((groupKey) => {
       const value = groupData[groupKey]
-      return value !== undefined ? value.toFixed(2) : '-'
+      row.push(typeof value === 'number' ? value.toFixed(2) : value || '-')
     })
-    markdown += `| ${pivotKey} | ${row.join(' | ')} |\n`
+    markdown += `| ${row.join(' | ')} |
+`
   })
 
   return markdown
