@@ -1,59 +1,126 @@
-# Flatfile Pivot Table Plugin
+<!-- START_INFOCARD -->
 
-This plugin for Flatfile enables the generation of pivot tables from sheet data and saves them as Markdown documents within the Flatfile ecosystem. It provides a powerful way to analyze and summarize data directly within your Flatfile workbooks.
+The `@flatfile/plugin-export-pivot-table` plugin generates pivot tables from sheet data and saves them as Markdown documents within the Flatfile ecosystem. It provides a powerful way to analyze and summarize data directly within your Flatfile workbooks.
 
-## Features
+**Event Type:** 
+`listener.on('job:ready', { job: 'workbook:generatePivotTable' })`
 
-- Generate pivot tables from Flatfile sheet data
-- Support for various aggregation methods: sum, average, count, min, max
-- Optional grouping functionality
-- Automatic creation of Markdown documents with formatted pivot tables
-- Seamless integration with Flatfile's job system and API
+<!-- END_INFOCARD -->
 
-## Installation
 
-To install the Flatfile Pivot Table Plugin, use npm:
+> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](/docs/orchestration/listeners#listener-types)
 
-```bash
-npm install @flatfile/plugin-pivot-table
+
+
+## Parameters
+
+#### `pivotColumn` - `string` 
+The column to use as the pivot in the generated pivot table.
+
+#### `aggregateColumn` - `string`
+The column to aggregate in the pivot table.
+
+#### `aggregationMethod` - `'sum' | 'average' | 'count' | 'min' | 'max'`
+The method to use for aggregating the data in the pivot table.
+
+#### `groupByColumn` - `string` - (optional)
+An optional column to group by in the pivot table.
+
+
+
+## API Calls
+
+- `api.jobs.ack`
+- `api.jobs.complete`
+- `api.jobs.fail`
+- `api.sheets.list`
+- `api.records.get`
+- `api.documents.create`
+
+
+
+## Usage
+
+**install**
+```bash install
+npm i @flatfile/plugin-export-pivot-table
 ```
 
-## Example Usage
-
-Here's a basic example of how to use the Pivot Table Plugin:
-
-```javascript
-import { FlatfileListener } from '@flatfile/listener';
-import { pivotTablePlugin } from '@flatfile/plugin-pivot-table';
-
-const listener = new FlatfileListener();
-
-listener.use(
-  pivotTablePlugin({
-    apiKey: 'your_flatfile_api_key_here'
-  })
-);
-
-// ... rest of your Flatfile configuration
+**import**
+```js import
+import { pivotTablePlugin } from "@flatfile/plugin-export-pivot-table";
 ```
 
-## Configuration
+**listener.js**
+```js listener.js
+listener.use(pivotTablePlugin({
+  pivotColumn: 'Region',
+  aggregateColumn: 'Sales',
+  aggregationMethod: 'sum',
+  groupByColumn: 'Category'
+}));
+```
 
-The plugin requires a configuration object with the following property:
 
-- `apiKey`: Your Flatfile API key (string)
+### Full Example
 
-## Behavior
+**listener.js**
 
-1. The plugin listens for the 'job:ready' event with the 'workbook:submitAction' job type.
-2. When triggered, it retrieves the sheet data from the specified workbook.
-3. It then generates a pivot table based on the provided parameters:
-   - `pivotColumn`: The column to use as the pivot
-   - `aggregateColumn`: The column to aggregate
-   - `aggregationMethod`: The method of aggregation (sum, average, count, min, or max)
-   - `groupByColumn`: (Optional) A column to group by
-4. The resulting pivot table is converted to a formatted Markdown table.
-5. A new document is created in the Flatfile space containing the Markdown pivot table.
-6. The job is marked as complete with a success message, or failed if an error occurs.
+```js listener.js
+import { pivotTablePlugin } from "@flatfile/plugin-export-pivot-table";
+
+export default function (listener) {
+  // Initialize the pivot table plugin with configuration
+  const pivotTableConfig = {
+    pivotColumn: 'Region',
+    aggregateColumn: 'Sales',
+    aggregationMethod: 'sum',
+    groupByColumn: 'Category'
+  };
+
+  // Register the plugin with the Flatfile listener
+  listener.use(pivotTablePlugin(pivotTableConfig));
+
+  // The plugin will now generate a pivot table when the 'workbook:generatePivotTable' job is triggered
+}
+```
+
+## Functionality
+
+The pivot table plugin performs the following steps:
+
+1. Listens for the 'job:ready' event with the 'workbook:generatePivotTable' job type.
+2. Retrieves the sheet data from the specified workbook.
+3. Generates a pivot table based on the provided configuration:
+   - Uses the specified pivot column
+   - Aggregates data from the aggregate column
+   - Applies the chosen aggregation method (sum, average, count, min, or max)
+   - Groups by the optional group-by column if provided
+   - Calculates totals for each pivot value
+4. Converts the resulting pivot table to a formatted Markdown table.
+5. Creates a new document in the Flatfile space containing the Markdown pivot table.
+6. Marks the job as complete with a success message, or failed if an error occurs.
 
 This plugin enhances your Flatfile experience by providing powerful data analysis capabilities directly within your data import workflow.
+
+## Output Format
+
+The plugin generates a Markdown-formatted pivot table. Here's an example of what the output might look like:
+
+```markdown
+# Pivot Table
+
+- Pivot Column: Region
+- Aggregate Column: Sales Amount
+- Aggregation Method: sum
+- Group By Column: Category
+
+| Region | Electronics | Furniture | Total |
+|--------|-------------|-----------|-------|
+| North  | 1750.00     | 480.00    | 2230.00 |
+| South  | 1820.00     | 280.00    | 2100.00 |
+| East   | 2050.00     | 460.00    | 2510.00 |
+| West   | 1320.00     | 200.00    | 1520.00 |
+```
+
+The table includes both grouped data (if a group-by column is provided) and totals for each pivot value. Values are formatted to two decimal places for readability.
