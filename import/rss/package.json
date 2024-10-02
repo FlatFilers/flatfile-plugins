@@ -1,0 +1,72 @@
+{
+  "name": "@flatfile/plugin-import-rss",
+  "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/import/rss",
+  "description": "A Flatfile plugin for importing RSS feed data",
+  "registryMetadata": {
+    "category": "import"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
+    "default": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-import"
+  ],
+  "author": "Flatfile, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "import/rss"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/api": "^1.9.15",
+    "@flatfile/util-common": "^1.4.0",
+    "axios": "^1.7.7",
+    "rss-parser": "^3.13.0",
+    "node-cron": "^3.0.3"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.1"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "^0.1.1",
+    "@types/node-cron": "^3.0.11"
+  }
+}
