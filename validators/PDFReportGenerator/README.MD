@@ -1,84 +1,74 @@
-# Flatfile PDF Report Generator Plugin
+# Flatfile PDF Generator Plugin
 
-This plugin implements a custom action in Flatfile to generate PDF reports using the pdfkit library. It allows users to create customizable reports with dynamic data, charts, and styling options. The generated PDF is then uploaded to Flatfile using the @flatfile/api.
+A Flatfile Listener plugin for generating customizable PDF reports from workbook data, with additional features like email validation and file upload functionality.
 
 ## Features
 
-- Generate PDF reports from Flatfile sheet data
-- Customizable report templates
-- Dynamic content insertion
-- Table generation from sheet data
-- Chart generation using Chart.js
-- Customizable styling options
-- Automatic upload of generated PDFs to Flatfile
+- Automatic PDF generation when a job is ready
+- Manual PDF generation through custom action
+- Customizable PDF styling (font, colors, chart type, etc.)
+- Data summary and table generation in PDF
+- Chart generation and inclusion in PDF
+- Email validation for records
+- File upload functionality to Flatfile
+- Integration with Flatfile API for data retrieval
 
 ## Installation
 
+To install the plugin, run the following command:
+
 ```bash
-npm install @flatfile/listener @flatfile/plugin-space-configure pdfkit chartjs-node-canvas @flatfile/api
+npm install flatfile-pdf-generator-plugin
 ```
 
 ## Example Usage
 
 ```javascript
-import { FlatfileListener } from '@flatfile/listener'
-import { configureSpace } from '@flatfile/plugin-space-configure'
-import pdfReportGenerator from './pdfReportGenerator'
+import { FlatfileListener } from "@flatfile/listener";
+import pdfGeneratorPlugin from "flatfile-pdf-generator-plugin";
 
-const listener = FlatfileListener.create((client) => {
-  configureSpace(client)
-  pdfReportGenerator(client)
-})
-
-export default listener
+const listener = new FlatfileListener();
+listener.use(pdfGeneratorPlugin);
 ```
 
 ## Configuration
 
-The PDF report generator can be configured using a payload when triggering the action:
+The PDF generation can be customized with the following options:
 
 ```javascript
-{
-  workbookId: 'your-workbook-id',
-  sheetId: 'your-sheet-id',
-  reportTemplate: {
-    title: 'Your Report Title',
-    sections: [
-      {
-        title: 'Section 1',
-        type: 'table',
-        columns: ['column1', 'column2'],
-        options: { /* table options */ }
-      },
-      {
-        title: 'Section 2',
-        type: 'text',
-        content: 'Dynamic content: {fieldName}'
-      },
-      {
-        title: 'Section 3',
-        type: 'chart',
-        chartId: 'yourChartId',
-        options: { /* chart options */ }
-      }
-    ]
-  },
-  chartData: {
-    yourChartId: { /* Chart.js configuration */ }
-  },
-  styling: {
-    documentOptions: { /* PDFDocument options */ },
-    font: 'path/to/font.ttf',
-    fontSize: 12
-  }
-}
+const options = {
+  fontSize: 12,
+  fontName: 'helvetica',
+  textColor: '#000000',
+  headerColor: '#4a86e8',
+  tableHeaderColor: '#c9daf8',
+  chartType: 'bar',
+  pageSize: 'a4',
+  orientation: 'portrait'
+};
+
+// Pass these options when calling generatePDF function
+await generatePDF(workbookId, data, options);
 ```
 
 ## Behavior
 
-1. The plugin listens for the `action:generatePDFReport` event.
-2. When triggered, it fetches data from the specified sheet.
-3. It generates a PDF based on the provided template, data, and styling options.
-4. Charts are generated using Chart.js if chart data is provided.
-5. The generated PDF is uploaded to Flatfile and associated with the workbook.
-6. The action returns the outcome with a success message and file details.
+1. **Automatic PDF Generation**: When a job is ready (`job:ready` event), the plugin automatically generates a PDF report for the associated workbook.
+
+2. **Manual PDF Generation**: A custom action `generatePDF` can be triggered to manually generate a PDF for a specific workbook.
+
+3. **Email Validation**: The plugin includes a record hook that validates email addresses in the "email" field of records.
+
+4. **File Upload**: When a file is created (`file:created` event), the plugin attempts to upload it to Flatfile using the provided API.
+
+5. **Data Retrieval**: The plugin fetches workbook data from Flatfile using the API to generate the PDF report.
+
+6. **PDF Content**: The generated PDF includes:
+   - Workbook ID and generation date
+   - Data summary
+   - Table of data
+   - Chart visualization of data
+
+7. **Error Handling**: The plugin includes error handling and logging for various operations.
+
+Note: Ensure you have the necessary permissions and API access to use all features of this plugin.
