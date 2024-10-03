@@ -1,5 +1,14 @@
 # @flatfile/plugin-autocast
 
+## 2.0.1
+
+### Patch Changes
+
+- 1fd8a88: This release updates the @flatfile/api dependency to improve regional support
+- Updated dependencies [1fd8a88]
+  - @flatfile/plugin-record-hook@1.7.1
+  - @flatfile/util-common@1.4.1
+
 ## 2.0.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.2.2
+
+### Patch Changes
+
+- 1fd8a88: This release updates the @flatfile/api dependency to improve regional support
+- Updated dependencies [1fd8a88]
+  - @flatfile/util-extractor@2.1.7
+
 ## 2.2.1
 
 ### Patch Changes

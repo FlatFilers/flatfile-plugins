@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-view-mapped",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/view-mapped",
   "description": "A plugin for making the view post mapping show only mapped columns.",
   "registryMetadata": {
@@ -56,6 +56,6 @@
   },
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1",
-    "@flatfile/utils-testing": "^0.3.0"
+    "@flatfile/utils-testing": "^0.3.1"
   }
 }

@@ -1,5 +1,11 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.8.1
+
+### Patch Changes
+
+- 1fd8a88: This release updates the @flatfile/api dependency to improve regional support
+
 ## 1.8.0
 
 ### Minor Changes
