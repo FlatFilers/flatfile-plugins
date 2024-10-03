@@ -1,5 +1,13 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.3.1
+
+### Patch Changes
+
+- 1fd8a88: This release updates the @flatfile/api dependency to improve regional support
+- Updated dependencies [1fd8a88]
+  - @flatfile/plugin-space-configure@0.6.1
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-tsv-extractor",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "A plugin for parsing a tsv file and extracting it into Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -29,7 +29,7 @@
   "license": "ISC",
   "dependencies": {},
   "peerDependencies": {
-    "@flatfile/api": "^1.9.13",
-    "@flatfile/listener": "^1.0.5"
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0"
   }
 }

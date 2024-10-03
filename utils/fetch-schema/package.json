@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-fetch-schema",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A utility for fetching schemas for processing",
   "registryMetadata": {
     "category": "utilities"
@@ -31,6 +31,6 @@
     "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.9.13"
+    "@flatfile/api": "^1.9.19"
   }
 }

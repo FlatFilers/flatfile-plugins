@@ -1,5 +1,14 @@
 # @flatfile/plugin-rollout
 
+## 1.1.1
+
+### Patch Changes
+
+- 1fd8a88: This release updates the @flatfile/api dependency to improve regional support
+- Updated dependencies [1fd8a88]
+  - @flatfile/plugin-job-handler@0.6.1
+  - @flatfile/util-common@1.4.1
+
 ## 1.1.0
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # @flatfile/plugin-convert-sql-ddl
 
+## 0.2.1
+
+### Patch Changes
+
+- 1fd8a88: This release updates the @flatfile/api dependency to improve regional support
+- Updated dependencies [1fd8a88]
+  - @flatfile/plugin-space-configure@0.6.1
+  - @flatfile/plugin-convert-json-schema@0.4.1
+
 ## 0.2.0
 
 ### Minor Changes

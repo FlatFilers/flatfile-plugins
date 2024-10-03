@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-zip-extractor",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/zip-extractor",
   "description": "A plugin for unzipping zip files and uploading content back in Flatfile.",
   "registryMetadata": {
@@ -32,18 +32,18 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-job-handler": "^0.6.0",
-    "@flatfile/util-common": "^1.4.0",
-    "@flatfile/util-file-buffer": "^0.4.0",
+    "@flatfile/plugin-job-handler": "^0.6.1",
+    "@flatfile/util-common": "^1.4.1",
+    "@flatfile/util-file-buffer": "^0.4.1",
     "adm-zip": "^0.5.10",
     "modern-async": "^2.0.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.9.13",
-    "@flatfile/listener": "^1.0.5"
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/utils-testing": "^0.3.0",
+    "@flatfile/utils-testing": "^0.3.1",
     "@types/adm-zip": "^0.4.3"
   }
 }
