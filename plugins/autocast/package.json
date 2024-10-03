@@ -56,8 +56,8 @@
     "@flatfile/util-common": "^1.4.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.9.13",
-    "@flatfile/listener": "^1.0.5",
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0",
     "@flatfile/plugin-record-hook": "^1.7.0"
   },
   "devDependencies": {

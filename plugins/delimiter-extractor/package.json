@@ -37,7 +37,7 @@
     "remeda": "^1.14.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.9.13"
+    "@flatfile/api": "^1.9.19"
   },
   "devDependencies": {
     "@types/flat": "^5.0.2",
