@@ -1,9 +1,9 @@
-import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
+import api from '@flatfile/api'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { recordHook } from '@flatfile/plugin-record-hook'
+import Chart from 'chart.js/auto'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
-import Chart from 'chart.js/auto'
-import api from '@flatfile/api'
 
 export default function pdfGeneratorPlugin(listener: FlatfileListener) {
   listener.on('job:ready', async (event: FlatfileEvent) => {
