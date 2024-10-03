@@ -1,5 +1,11 @@
 # @flatfile/plugin-foreign-db-extractor
 
+## 0.2.1
+
+### Patch Changes
+
+- 1fd8a88: This release updates the @flatfile/api dependency to improve regional support
+
 ## 0.2.0
 
 ### Minor Changes

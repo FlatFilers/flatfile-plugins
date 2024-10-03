@@ -1,5 +1,11 @@
 # @flatfile/util-fetch-schema
 
+## 0.2.4
+
+### Patch Changes
+
+- 1fd8a88: This release updates the @flatfile/api dependency to improve regional support
+
 ## 0.2.3
 
 ### Patch Changes

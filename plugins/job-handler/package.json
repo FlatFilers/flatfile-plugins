@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-job-handler",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/job-handler",
   "description": "A plugin for handling Flatfile Jobs.",
   "registryMetadata": {
@@ -51,7 +51,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-common": "^1.4.0"
+    "@flatfile/util-common": "^1.4.1"
   },
   "peerDependencies": {
     "@flatfile/api": "^1.9.19",
@@ -59,6 +59,6 @@
   },
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1",
-    "@flatfile/utils-testing": "^0.3.0"
+    "@flatfile/utils-testing": "^0.3.1"
   }
 }
