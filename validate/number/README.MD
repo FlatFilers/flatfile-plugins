@@ -1,6 +1,12 @@
-# Flatfile Number Validation Plugin
+<!-- START_INFOCARD -->
+# @flatfile/plugin-validate-number
 
-This Flatfile Listener plugin provides comprehensive number validation capabilities for your data import processes. It offers a wide range of validation options to ensure that numeric data meets specific criteria before being accepted.
+The `@flatfile/plugin-validate-number` plugin provides comprehensive number validation capabilities for your data import processes. It offers a wide range of validation options to ensure that numeric data meets specific criteria before being accepted.
+
+**Event Type:**
+`listener.on('commit:created')`
+
+<!-- END_INFOCARD -->
 
 ## Features
 
@@ -19,7 +25,7 @@ This Flatfile Listener plugin provides comprehensive number validation capabilit
 To install the plugin, use npm:
 
 ```bash
-npm install @flatfile/plugin-number-validation
+npm install @flatfile/plugin-validate-number
 ```
 
 ## Example Usage
