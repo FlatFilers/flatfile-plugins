@@ -23,14 +23,14 @@ A Flatfile Listener plugin for validating ISBN (International Standard Book Numb
 Install the plugin using npm:
 
 ```bash
-npm install @flatfile/plugin-isbn-validator
+npm install @flatfile/plugin-validate-isbn
 ```
 
 ## Example Usage
 
 ```javascript
 import { FlatfileListener } from "@flatfile/listener";
-import isbnValidator from "@flatfile/plugin-isbn-validator";
+import isbnValidator from "@flatfile/plugin-validate-isbn";
 
 const listener = new FlatfileListener();
 
