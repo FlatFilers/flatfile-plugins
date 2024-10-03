@@ -1,23 +1,11 @@
-import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
-import api from '@flatfile/api'
-import { logInfo, logError } from '@flatfile/util-common'
-import axios from 'axios'
+import { FlatfileClient } from '@flatfile/api'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import { logError, logInfo } from '@flatfile/util-common'
 import RSSParser from 'rss-parser'
-import cron from 'node-cron'
+
+const api = new FlatfileClient()
 
 const parser = new RSSParser()
-
-const rssFeedImportAction = {
-  operation: 'importRSSFeed',
-  label: 'Import RSS Feed',
-  description: 'Import data from an RSS feed into the workbook',
-  primary: true,
-  confirm: true,
-  icon: 'rss_feed',
-  tooltip: 'Click to import data from an RSS feed',
-  mode: 'foreground',
-  constraints: [{ type: 'hasData' }],
-}
 
 async function parseRSSFeed(url: string) {
   try {
@@ -27,6 +15,7 @@ async function parseRSSFeed(url: string) {
       link: item.link,
       pubDate: item.pubDate,
       content: item.content,
+      guid: item.guid,
     }))
   } catch (error) {
     logError(
@@ -44,6 +33,7 @@ async function mapToSheetColumns(sheetId: string, records: any[]) {
       link: { value: record.link, valid: true, messages: [] },
       pubDate: { value: record.pubDate, valid: true, messages: [] },
       content: { value: record.content, valid: true, messages: [] },
+      guid: { value: record.guid, valid: true, messages: [] },
     }))
 
     await api.records.insert(sheetId, formattedRecords)
@@ -60,72 +50,35 @@ async function mapToSheetColumns(sheetId: string, records: any[]) {
   }
 }
 
-function createErrorHandler(errorCallback: (event: FlatfileEvent) => void) {
-  return (handler: any) => {
-    handler.on('error', (event: FlatfileEvent) => {
-      logError(
-        '@flatfile/plugin-rss-import',
-        `An error occurred: ${JSON.stringify(event.payload)}`
-      )
-      errorCallback(event)
-    })
-  }
+export interface RSSImportConfig {
+  operation: string
+  feeds: {
+    sheetSlug: string
+    rssFeedUrl: string
+  }[]
 }
 
-function generateReport(sheets: any[]) {
-  return sheets.map((sheet) => ({
-    sheetName: sheet.name,
-    importedEntries: sheet.records.filter(
-      (record: any) => record.status === 'imported'
-    ),
-    importFailures: sheet.records.filter(
-      (record: any) => record.status === 'failed'
-    ),
-  }))
-}
-
-async function sendReport(report: any) {
-  // Implement your report sending or saving logic here
-  logInfo(
-    '@flatfile/plugin-rss-import',
-    `Import Report: ${JSON.stringify(report, null, 2)}`
-  )
-}
-
-export default function rssFeedImportPlugin(config: any) {
+export function rssImport(config: RSSImportConfig) {
   return (listener: FlatfileListener) => {
-    listener.use(
-      createErrorHandler((event: FlatfileEvent) => {
-        logError(
-          '@flatfile/plugin-rss-import',
-          `Error in RSS Feed Import: ${JSON.stringify(event.payload)}`
-        )
-      })
-    )
-
     listener.on(
       'job:ready',
-      { job: 'workbook:importRSSFeed' },
+      { job: `sheet:${config.operation}` },
       async (event: FlatfileEvent) => {
-        const { jobId, workbookId } = event.context
+        const { jobId, sheetId } = event.context
         try {
+          const { data: sheet } = await api.sheets.get(sheetId)
+
+          const sheetConfig = config.feeds.find(
+            (c) => c.sheetSlug === sheet.slug
+          )
+
           await api.jobs.ack(jobId, {
             info: 'Starting job to import RSS feed data',
             progress: 10,
           })
 
-          const rssFeedUrl = config.rssFeedUrl || 'https://example.com/rss-feed'
-          const records = await parseRSSFeed(rssFeedUrl)
-
-          const { data: workbook } = await api.workbooks.get(workbookId)
-          const { data: sheets } = await api.sheets.list({ workbookId })
-
-          for (const sheet of sheets) {
-            await mapToSheetColumns(sheet.id, records)
-          }
-
-          const report = generateReport(sheets)
-          await sendReport(report)
+          const records = await parseRSSFeed(sheetConfig.rssFeedUrl)
+          await mapToSheetColumns(sheetId, records)
 
           await api.jobs.complete(jobId, {
             outcome: { message: 'RSS feed data imported successfully' },
@@ -139,21 +92,5 @@ export default function rssFeedImportPlugin(config: any) {
         }
       }
     )
-
-    // Schedule regular imports
-    cron.schedule(config.importSchedule || '0 0 * * *', async () => {
-      logInfo('@flatfile/plugin-rss-import', 'Scheduled import job started')
-      // Trigger the import job
-      await api.jobs.create({
-        type: 'workbook:importRSSFeed',
-        operation: rssFeedImportAction.operation,
-      })
-    })
   }
 }
-
-// Register the action
-api.actions.create({
-  ...rssFeedImportAction,
-  // Add other necessary properties
-})

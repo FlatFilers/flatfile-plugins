@@ -56,17 +56,15 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.9.15",
+    "@flatfile/api": "^1.9.19",
     "@flatfile/util-common": "^1.4.0",
     "axios": "^1.7.7",
-    "rss-parser": "^3.13.0",
-    "node-cron": "^3.0.3"
+    "rss-parser": "^3.13.0"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "^0.1.1",
-    "@types/node-cron": "^3.0.11"
+    "@flatfile/rollup-config": "^0.1.1"
   }
 }

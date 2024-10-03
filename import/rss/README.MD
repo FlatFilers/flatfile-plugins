@@ -1,65 +1,122 @@
-# Flatfile RSS Feed Import Plugin
+<!-- START_INFOCARD -->
 
-A Flatfile plugin for importing data from RSS feeds into Flatfile workbooks. This plugin automates the process of fetching RSS feed content and populating Flatfile sheets with the retrieved data.
+The `@flatfile/plugin-import-rss` plugin automates the process of importing RSS feed data into Flatfile Sheets. It listens for and responds to job:ready events with the specified operation type, fetching RSS feed content and populating Flatfile sheets with the retrieved data. This plugin supports multiple RSS feeds and provides flexible configuration options.
 
-## Features
+**Event Type:** 
+`job:ready`
 
-- Import RSS feed data into Flatfile workbooks
-- Scheduled automatic imports
-- Custom action for manual imports
-- Error handling and logging
-- Import reporting
-- Configurable RSS feed URL and import schedule
+**Supported RSS feed items:** 
+title, link, pubDate, content, guid
 
-## Installation
+<!-- END_INFOCARD -->
+
+> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](https://flatfile.com/docs/orchestration/listeners#listener-types)
+
+The `@flatfile/plugin-import-rss` plugin allows you to easily import RSS feed data into your Flatfile Sheets. It automates the process of fetching RSS content and populating Flatfile Sheets with the retrieved data.
+
+## Parameters
+
+The `rssImport` function accepts a configuration object with the following properties:
+
+- `operation` (string): The operation name to listen for in the job:ready event.
+- `feeds` (array): An array of feed configurations, each containing:
+  - `sheetSlug` (string): The slug of the sheet to import RSS data into.
+  - `rssFeedUrl` (string): The URL of the RSS feed to import data from.
+
+## Usage
+
+### Installation
 
 To install the plugin, run the following command:
 
 ```bash
-npm install @flatfile/plugin-rss-import
+npm install @flatfile/plugin-import-rss
 ```
 
-## Example Usage
+### JavaScript
 
 ```javascript
-import rssFeedImportPlugin from '@flatfile/plugin-rss-import';
 import { FlatfileListener } from '@flatfile/listener';
+import { rssImport } from "@flatfile/plugin-import-rss";
 
 const listener = new FlatfileListener();
 
-listener.use(rssFeedImportPlugin({
-  rssFeedUrl: 'https://example.com/rss-feed',
-  importSchedule: '0 0 * * *'
-}));
+listener.use(
+  rssImport({
+    operation: "importRSSFeed",
+    feeds: [
+      {
+        sheetSlug: "rss_feed_data",
+        rssFeedUrl: "https://example.com/rss-feed"
+      }
+    ]
+  })
+);
 
 listener.mount();
 ```
 
-## Configuration
+### TypeScript
 
-The plugin accepts the following configuration options:
+```typescript
+import { rssImport, RSSImportConfig } from "@flatfile/plugin-import-rss";
 
-- `rssFeedUrl` (string): The URL of the RSS feed to import (default: 'https://example.com/rss-feed')
-- `importSchedule` (string): A cron expression for scheduling automatic imports (default: '0 0 * * *', which runs daily at midnight)
+listener.use(rssImport({
+  operation: "importRSSFeed",
+  feeds: [
+    {
+      sheetSlug: "rss_feed_data",
+      rssFeedUrl: "https://example.com/rss-feed"
+    }
+  ]
+}));
+```
 
-## Behavior
+## Example Usage
 
-1. **Manual Import**: The plugin registers a custom action "Import RSS Feed" that can be triggered manually from the Flatfile interface.
+Here's an example of how to use the plugin with multiple RSS feeds:
 
-2. **Scheduled Import**: The plugin uses node-cron to schedule automatic imports based on the provided `importSchedule` configuration.
+```typescript listener.ts
+import type { FlatfileListener } from '@flatfile/listener';
+import { rssImport } from "@flatfile/plugin-import-rss";
 
-3. **RSS Parsing**: When an import is triggered, the plugin fetches and parses the RSS feed from the configured URL.
+export default function (listener: FlatfileListener) {
+  listener.use(
+    rssImport({
+      operation: "importRSSFeed",
+      feeds: [
+        {
+          sheetSlug: "tech_news",
+          rssFeedUrl: "https://techcrunch.com/feed/"
+        },
+        {
+          sheetSlug: "world_news",
+          rssFeedUrl: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"
+        }
+      ]
+    })
+  );
+}
+```
 
-4. **Data Mapping**: The parsed RSS feed items are mapped to the following sheet columns:
-   - title
-   - link
-   - pubDate
-   - content
+## API Calls
 
-5. **Error Handling**: The plugin includes comprehensive error handling and logging for various scenarios.
+The plugin uses the following Flatfile API calls:
 
-6. **Reporting**: After each import, the plugin generates a report detailing the number of successfully imported entries and any import failures.
+- `api.sheets.get`
+- `api.jobs.ack`
+- `api.jobs.complete`
+- `api.jobs.fail`
+- `api.records.insert`
 
-7. **Job Management**: The plugin uses Flatfile's job API to manage the import process, including acknowledging the job, updating progress, and completing or failing the job based on the outcome.
+## Contributing
 
-Note: Make sure to configure the necessary permissions and access to the Flatfile API for the plugin to function correctly.
+Contributions to this plugin are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a new branch for your feature or bug fix
+3. Make your changes and commit them with clear, descriptive messages
+4. Push your changes to your fork
+5. Submit a pull request with a clear description of your changes
+
+Please ensure your code adheres to the existing style and includes appropriate tests.
