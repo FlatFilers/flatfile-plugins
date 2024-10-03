@@ -1,5 +1,5 @@
-import { FlatfileListener } from '@flatfile/listener'
-import { FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
+import { type FlatfileListener } from '@flatfile/listener'
+import { type FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
 
 interface BooleanValidatorConfig {
   fields: string[]

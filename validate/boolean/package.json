@@ -6,17 +6,17 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "browser": {
-    "./dist/index.js": "./dist/index.browser.js",
+    "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
   },
   "exports": {
     "types": "./dist/index.d.ts",
     "node": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.cjs"
     },
     "browser": {
-      "require": "./dist/index.browser.js",
+      "require": "./dist/index.browser.cjs",
       "import": "./dist/index.browser.mjs"
     },
     "default": "./dist/index.mjs"
@@ -33,15 +33,11 @@
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [
-    "flatfile",
-    "plugin",
-    "boolean",
-    "validator",
     "flatfile-plugins",
-    "category-transform"
+    "category-validate"
   ],
-  "author": "Your Name",
-  "license": "MIT",
+  "author": "Flatfile, Inc.",
+  "license": "ISC",
   "dependencies": {
     "@flatfile/plugin-record-hook": "^1.7.0"
   },
@@ -54,7 +50,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/boolean-validator"
+    "directory": "validate/boolean"
   },
   "browserslist": [
     "> 0.5%",
