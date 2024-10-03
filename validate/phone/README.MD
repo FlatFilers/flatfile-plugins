@@ -1,4 +1,5 @@
 <!-- START_INFOCARD -->
+# @flatfile/plugin-validate-phone
 
 The `@flatfile/plugin-validate-phone` plugin offers a convenient way to 
 validate phone numbers. By setting up an event listener for the `commit:created` 
@@ -10,7 +11,6 @@ Germany, France, and Brazil).
 `listener.on('commit:created')`
 
 <!-- END_INFOCARD -->
-
 
 ## Parameters
 
