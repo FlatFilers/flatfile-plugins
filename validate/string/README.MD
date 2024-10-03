@@ -1,7 +1,11 @@
-# Flatfile String Configuration Plugin
+<!-- START_INFOCARD -->
 
-A powerful and flexible Flatfile Listener plugin for string configuration and validation. This plugin combines multiple string validations in a single configuration, including regex pattern matching, length validation, case sensitivity, trimming options, and custom transformations.
+The `@flatfile/plugin-validate-string` plugin for string configuration and validation. This plugin combines multiple string validations in a single configuration, including regex pattern matching, length validation, case sensitivity, trimming options, and custom transformations.
 
+**Event Type:**
+`listener.on('commit:created')`
+
+<!-- END_INFOCARD -->
 ## Features
 
 - Regular expression pattern matching
@@ -18,14 +22,14 @@ A powerful and flexible Flatfile Listener plugin for string configuration and va
 To install the plugin, use npm:
 
 ```bash
-npm install @flatfile/plugin-string-config
+npm install @flatfile/plugin-validate-string
 ```
 
 ## Example Usage
 
 ```typescript
 import { FlatfileListener } from '@flatfile/listener';
-import { validateString } from '@flatfile/plugin-string-config';
+import { validateString } from '@flatfile/plugin-validate-string';
 
 const listener = new FlatfileListener();
 
@@ -73,7 +77,6 @@ The `validateString` accepts a `StringValidationConfig` object with the followin
 - `exactLength`: number - Exact required length of the string
 - `caseType`: 'lowercase' | 'uppercase' | 'titlecase' - Enforces specific case type
 - `trim`: { leading?: boolean, trailing?: boolean } - Trims whitespace
-- `customTransform`: (value: string) => string - Custom transformation function
 - `emptyStringAllowed`: boolean - Whether empty strings are allowed
 - `errorMessages`: Object with custom error messages for different validations
 
