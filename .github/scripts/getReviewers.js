@@ -51,7 +51,6 @@
     }
   
     const reviewers = await getReviewers({ tag })
-    console.log(reviewers)
     if (reviewers.length > 0) {
       console.log(reviewers.join(','))
     }
