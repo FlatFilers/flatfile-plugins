@@ -1,30 +1,63 @@
-import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { automap } from '@flatfile/plugin-automap'
-import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor'
-import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
+import type { FlatfileListener } from '@flatfile/listener'
+import { convertWhat3words } from '@flatfile/plugin-convert-what3words'
+import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    ExcelExtractor({
-      skipEmptyLines: true,
+    convertWhat3words({
+      sheetSlug: 'people',
+      what3wordsField: 'what3words',
+      countryField: 'country',
+      nearestPlaceField: 'nearestPlace',
+      latField: 'lat',
+      longField: 'long',
     })
   )
   listener.use(
-    DelimiterExtractor('txt', { delimiter: ',', skipEmptyLines: true })
-  )
-
-  listener.use(
-    automap({
-      accuracy: 'confident',
-      defaultTargetSheet: 'contacts',
-      matchFilename: /test/,
-      debug: true,
-      onFailure: (event: FlatfileEvent) => {
-        // send an SMS, an email, post to an endpoint, etc.
-        console.error(
-          `Please visit https://spaces.flatfile.com/space/${event.context.spaceId}/files?mode=import to manually import file.`
-        )
-      },
+    configureSpace({
+      workbooks: [
+        {
+          name: 'Sandbox',
+          sheets: [
+            {
+              name: 'People',
+              slug: 'people',
+              fields: [
+                {
+                  key: 'name',
+                  type: 'string',
+                  label: 'Name',
+                },
+                {
+                  key: 'nearestPlace',
+                  type: 'string',
+                  label: 'Nearest Place',
+                },
+                {
+                  key: 'country',
+                  type: 'string',
+                  label: 'Country',
+                },
+                {
+                  key: 'lat',
+                  type: 'number',
+                  label: 'Latitude',
+                },
+                {
+                  key: 'long',
+                  type: 'number',
+                  label: 'Longitude',
+                },
+                {
+                  key: 'what3words',
+                  type: 'string',
+                  label: 'What3Words',
+                },
+              ],
+            },
+          ],
+        },
+      ],
     })
   )
 }
