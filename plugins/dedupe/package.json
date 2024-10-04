@@ -36,7 +36,7 @@
     "build:watch": "rollup -c --watch",
     "build:prod": "NODE_ENV=production rollup -c",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js"
   },
   "keywords": [
     "flatfile-plugins",
