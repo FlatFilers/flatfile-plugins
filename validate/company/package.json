@@ -1,10 +1,10 @@
 {
   "name": "@flatfile/plugin-validate-company",
   "version": "0.0.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validators/company",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/company",
   "description": "A Flatfile plugin for company information validation",
   "registryMetadata": {
-    "category": "records"
+    "category": "validate"
   },
   "engines": {
     "node": ">= 16"
@@ -52,7 +52,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "validators/company"
+    "directory": "validate/company"
   },
   "license": "ISC",
   "dependencies": {
