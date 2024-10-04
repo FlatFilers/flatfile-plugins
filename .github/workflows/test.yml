@@ -1,32 +1,78 @@
 name: Test
-
 on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
-    timeout-minutes: 20
+  determine-packages:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.set-packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get package names
+        id: set-packages
+        run: |
+          SEARCH_DIRS="plugins utils validate convert enrich import export"
+
+          PACKAGES=$(
+            for dir in $SEARCH_DIRS; do
+              if [ -d "$dir" ]; then
+                find "$dir" -maxdepth 2 -name "package.json" -exec sh -c '
+                  PACKAGE_NAME=$(jq -r .name {})
+                  if [ "$PACKAGE_NAME" != "null" ]; then
+                    echo "$PACKAGE_NAME"
+                  fi
+                ' \;
+              fi
+            done | jq -R -s -c 'split("\n")[:-1]'
+          )
+
+          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+          echo "Found packages: $PACKAGES"
+
+  test-packages:
+    needs: determine-packages
+    name: Test (${{ matrix.package }})
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
+    strategy:
+      matrix:
+        package: ${{fromJson(needs.determine-packages.outputs.packages)}}
+      fail-fast: false
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 18
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Build
+        run: npx turbo run build
+
       - name: Test
-        run: npm run test
+        run: npx turbo run test --filter=${{ matrix.package }}
+
+  test:
+    needs: test-packages
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test results
+        run: |
+          echo "All package tests completed successfully"
+          exit 0

@@ -309,6 +309,8 @@ describe('RecordHook e2e', () => {
 
       await createRecords(sheetId, [{ email: 'john@doe.com' }])
       await listener.waitFor('commit:created')
+      // Sleep for 500ms to allow time for the bulk record hook to be applied
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       const records = await getRecords(sheetId)
 

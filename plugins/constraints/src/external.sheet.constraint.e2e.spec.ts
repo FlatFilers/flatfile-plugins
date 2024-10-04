@@ -50,7 +50,7 @@ describe('externalConstraint()', () => {
   it('correctly handles thrown errors', async () => {
     await createRecords(sheetId, defaultSimpleValueData)
 
-    await listener.waitFor('commit:created')
+    await listener.waitFor('commit:created', 2)
     const records = await getRecords(sheetId)
     expect(records[0].values['name'].messages[0]).toMatchObject({
       type: 'error',

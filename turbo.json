@@ -10,7 +10,7 @@
             "dependsOn": ["^build:prod"]
         },
         "test": {
-            "inputs": ["**/*.spec.ts"]
+            "cache": false
         }
     }
 }
