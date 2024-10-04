@@ -15,14 +15,14 @@ jobs:
   determine-packages:
     runs-on: ubuntu-latest
     outputs:
-      packages: ${{ steps.set-packages.outputs.packages }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
-      - name: Get package names from package.json
-        id: set-packages
+      - name: Get package names and create shards
+        id: set-matrix
         run: |
           SEARCH_DIRS="plugins utils validate convert enrich import export"
-          
+
           PACKAGES=$(
             for dir in $SEARCH_DIRS; do
               if [ -d "$dir" ]; then
@@ -33,21 +33,39 @@ jobs:
                   fi
                 ' \;
               fi
-            done | jq -R -s -c 'split("\n")[:-1]'
+            done | sort
           )
-          
-          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
-          echo "Found packages: $PACKAGES"
+
+          # Create 4 shards
+          SHARD1=$(echo "$PACKAGES" | sed -n '1~4p' | jq -R -s -c 'split("\n")[:-1]')
+          SHARD2=$(echo "$PACKAGES" | sed -n '2~4p' | jq -R -s -c 'split("\n")[:-1]')
+          SHARD3=$(echo "$PACKAGES" | sed -n '3~4p' | jq -R -s -c 'split("\n")[:-1]')
+          SHARD4=$(echo "$PACKAGES" | sed -n '4~4p' | jq -R -s -c 'split("\n")[:-1]')
+
+          MATRIX=$(jq -n \
+                    --argjson shard1 "$SHARD1" \
+                    --argjson shard2 "$SHARD2" \
+                    --argjson shard3 "$SHARD3" \
+                    --argjson shard4 "$SHARD4" \
+                    '{
+                      "include": [
+                        {"shard": 1, "packages": $shard1},
+                        {"shard": 2, "packages": $shard2},
+                        {"shard": 3, "packages": $shard3},
+                        {"shard": 4, "packages": $shard4}
+                      ]
+                    }')
+
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "Created matrix: $MATRIX"
 
   test:
     needs: determine-packages
-    name: Test
-    timeout-minutes: 30
+    name: Test Shard ${{ matrix.shard }}
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
-      matrix:
-        package: ${{fromJson(needs.determine-packages.outputs.packages)}}
+      matrix: ${{fromJson(needs.determine-packages.outputs.matrix)}}
       fail-fast: false
     steps:
       - name: Check out code
@@ -66,4 +84,4 @@ jobs:
         run: npx turbo run build
 
       - name: Test
-        run: npx turbo run test --filter=${{ matrix.package }}
+        run: npx turbo run test --filter=${{ join(matrix.packages, ' --filter=') }}
