@@ -1,10 +1,10 @@
 import type { FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { dateFormatNormalizer } from '@flatfile/plugin-validate-date'
+import { validateDate } from '@flatfile/plugin-validate-date'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    dateFormatNormalizer({
+    validateDate({
       sheetSlug: 'contacts',
       dateFields: ['dob', 'hire_date'],
       outputFormat: 'MM/dd/yyyy',

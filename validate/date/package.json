@@ -1,10 +1,10 @@
 {
   "name": "@flatfile/plugin-validate-date",
   "version": "0.0.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validators/date",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/date",
   "description": "A Flatfile plugin for normalizing date formats",
   "registryMetadata": {
-    "category": "records"
+    "category": "validate"
   },
   "engines": {
     "node": ">= 16"
@@ -15,7 +15,7 @@
     "not dead"
   ],
   "browser": {
-    "./dist/index.js": "./dist/index.browser.cjs",
+    "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
   },
   "exports": {
@@ -52,11 +52,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "validators/date"
+    "directory": "validate/date"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.7.0",
+    "@flatfile/plugin-record-hook": "^1.7.1",
     "chrono-node": "^2.7.7",
     "date-fns": "^4.1.0"
   },

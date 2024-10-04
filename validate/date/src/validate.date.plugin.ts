@@ -1,8 +1,6 @@
 import { FlatfileEvent } from '@flatfile/listener'
 import { FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
-import * as chrono from 'chrono-node'
-import { format } from 'date-fns'
-import { enUS } from 'date-fns/locale'
+import { normalizeDate } from './validate.date.utils'
 
 export interface DateFormatNormalizerConfig {
   sheetSlug?: string
@@ -10,31 +8,6 @@ export interface DateFormatNormalizerConfig {
   outputFormat: string
   includeTime: boolean
   locale?: string
-}
-
-function normalizeDate(
-  dateString: string,
-  config: DateFormatNormalizerConfig
-): string | null {
-  try {
-    const parsedDate = chrono.parseDate(dateString)
-    if (parsedDate) {
-      const formattedDate = format(parsedDate, config.outputFormat, {
-        locale:  enUS,
-      })
-
-      if (!config.includeTime) {
-        // If time should not be included, truncate the formatted date to just the date part
-        return formattedDate.split(' ')[0]
-      }
-
-      return formattedDate
-    }
-    return null
-  } catch (error) {
-    console.error(error)
-    return null
-  }
 }
 
 export function validateDate(config: DateFormatNormalizerConfig) {
@@ -56,5 +29,3 @@ export function validateDate(config: DateFormatNormalizerConfig) {
     }
   )
 }
-
-export default validateDate

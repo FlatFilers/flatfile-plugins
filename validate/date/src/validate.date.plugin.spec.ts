@@ -7,7 +7,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-import { validateDate } from '../src/index'
+import { validateDate } from './validate.date.plugin'
 
 const api = new FlatfileClient()
 
@@ -55,14 +55,14 @@ describe('NormalizeDate e2e', () => {
           sheetSlug: 'test',
           dateFields: ['date'],
           outputFormat: 'MM/dd/yyyy',
-          includeTime: false
+          includeTime: false,
         })
       )
 
       await createRecords(sheetId, [
         { date: '2023-01-15', name: 'John' },
         { date: '15/01/2023', name: 'Jane' },
-        { date: 'Jan 15, 2023', name: 'Bob' }
+        { date: 'Jan 15, 2023', name: 'Bob' },
       ])
       await listener.waitFor('commit:created')
 
@@ -78,19 +78,19 @@ describe('NormalizeDate e2e', () => {
           sheetSlug: 'test',
           dateFields: ['date'],
           outputFormat: 'MM/dd/yyyy',
-          includeTime: false
+          includeTime: false,
         })
       )
 
-      await createRecords(sheetId, [
-        { date: 'invalid-date', name: 'Alice' }
-      ])
+      await createRecords(sheetId, [{ date: 'invalid-date', name: 'Alice' }])
       await listener.waitFor('commit:created')
 
       const records = await getRecords(sheetId)
 
       expect(records[0].values['date'].messages.length).toBeGreaterThan(0)
-      expect(records[0].values['date'].messages[0].message).toContain('Unable to parse date string')
+      expect(records[0].values['date'].messages[0].message).toContain(
+        'Unable to parse date string'
+      )
     })
 
     it('respects includeTime option', async () => {
@@ -99,12 +99,12 @@ describe('NormalizeDate e2e', () => {
           sheetSlug: 'test',
           dateFields: ['date'],
           outputFormat: 'MM/dd/yyyy HH:mm:ss',
-          includeTime: true
+          includeTime: true,
         })
       )
 
       await createRecords(sheetId, [
-        { date: '2023-01-15 14:30:00', name: 'Charlie' }
+        { date: '2023-01-15 14:30:00', name: 'Charlie' },
       ])
       await listener.waitFor('commit:created')
 
@@ -119,13 +119,11 @@ describe('NormalizeDate e2e', () => {
           sheetSlug: 'test',
           dateFields: ['date'],
           outputFormat: 'dd.MM.yyyy',
-          includeTime: false
+          includeTime: false,
         })
       )
 
-      await createRecords(sheetId, [
-        { date: '15.01.2023', name: 'Hans' }
-      ])
+      await createRecords(sheetId, [{ date: '15.01.2023', name: 'Hans' }])
       await listener.waitFor('commit:created')
 
       const records = await getRecords(sheetId)
@@ -134,18 +132,17 @@ describe('NormalizeDate e2e', () => {
     })
 
     it('normalizes multiple date fields', async () => {
-
       listener.use(
         validateDate({
           sheetSlug: 'test',
           dateFields: ['date1', 'date2'],
           outputFormat: 'yyyy-MM-dd',
-          includeTime: false
+          includeTime: false,
         })
       )
 
       await createRecords(sheetId, [
-        { date1: '01/15/2023', date2: 'Jan 20, 2023', name: 'Eve' }
+        { date1: '01/15/2023', date2: 'Jan 20, 2023', name: 'Eve' },
       ])
       await listener.waitFor('commit:created')
 
