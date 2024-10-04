@@ -1,27 +1,30 @@
 {
   "name": "@flatfile/plugin-validate-number",
   "version": "1.0.0",
-  "description": "A Flatfile Listener plugin for number validation with various options",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "description": "A Flatfile Listener plugin for number validation",
+  "engines": {
+    "node": ">= 16"
+  },
   "browser": {
-    "./dist/index.js": "./dist/index.browser.js",
+    "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
   },
   "exports": {
     "types": "./dist/index.d.ts",
     "node": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.cjs"
     },
     "browser": {
-      "require": "./dist/index.browser.js",
+      "require": "./dist/index.browser.cjs",
       "import": "./dist/index.browser.mjs"
     },
     "default": "./dist/index.mjs"
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
   "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
