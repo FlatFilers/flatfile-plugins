@@ -1,6 +1,12 @@
-# Flatfile Boolean Validator Plugin
+<!-- START_INFOCARD -->
+# @flatfile/plugin-validate-boolean
 
-This plugin provides a robust Boolean validation solution for Flatfile, offering flexible configuration options to handle various boolean representations across different languages and use cases.
+The `@flatfile/plugin-validate-boolean` plugin provides comprehensive boolean validation capabilities, offering flexible configuration options to handle various boolean representations across different languages and use cases.
+
+**Event Type:**
+`listener.on('commit:created')`
+
+<!-- END_INFOCARD -->
 
 ## Features
 
@@ -18,13 +24,13 @@ This plugin provides a robust Boolean validation solution for Flatfile, offering
 To install the plugin, run the following command:
 
 ```bash
-npm install @flatfile/plugin-boolean-validator
+npm install @flatfile/plugin-validate-boolean
 ```
 
 ## Example Usage
 
 ```javascript
-import { validateBoolean } from '@flatfile/plugin-boolean-validator';
+import { validateBoolean } from '@flatfile/plugin-validate-boolean';
 
 const booleanValidator = validateBoolean({
   fields: ['isActive', 'hasSubscription'],
