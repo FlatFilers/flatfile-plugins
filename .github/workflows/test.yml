@@ -41,7 +41,7 @@ jobs:
 
   test-packages:
     needs: determine-packages
-    name: Test ${{ matrix.package }}
+    name: "**Test (${{ matrix.package }})**"
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
@@ -62,7 +62,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npx turbo run build --filter=${{ matrix.package }}
+        run: npx turbo run build
 
       - name: Test
         run: npx turbo run test --filter=${{ matrix.package }}
