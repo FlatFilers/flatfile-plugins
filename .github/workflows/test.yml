@@ -56,8 +56,10 @@ jobs:
                       ]
                     }')
 
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
-          echo "Created matrix: $MATRIX"
+          # Base64 encode the matrix to avoid issues with special characters
+          MATRIX_BASE64=$(echo "$MATRIX" | base64 -w 0)
+          echo "matrix=$MATRIX_BASE64" >> $GITHUB_OUTPUT
+          echo "Created matrix (base64 encoded): $MATRIX_BASE64"
 
   test:
     needs: determine-packages
@@ -65,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
-      matrix: ${{fromJson(needs.determine-packages.outputs.matrix)}}
+      matrix: ${{ fromJson(fromBase64(needs.determine-packages.outputs.matrix)) }}
       fail-fast: false
     steps:
       - name: Check out code
