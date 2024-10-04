@@ -1,21 +1,36 @@
 name: Test
-
 on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
+
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
+
 jobs:
+  determine-packages:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.set-packages.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: set-packages
+        run: echo "packages=$(ls -d packages/* | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+
   test:
+    needs: determine-packages
     name: Test
     timeout-minutes: 30
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
       matrix:
-        shard: [1, 2, 3, 4]
+        package: ${{fromJson(needs.determine-packages.outputs.packages)}}
+      fail-fast: false
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -35,4 +50,4 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: npm test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: npm test --scope=${{ matrix.package }}
