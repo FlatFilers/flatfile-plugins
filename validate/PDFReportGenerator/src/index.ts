@@ -41,22 +41,11 @@ const defaultStyle: ReportStyle = {
 }
 
 export default function (listener: FlatfileListener) {
-  listener.use(
-    recordHook('contacts', async (record) => {
-      const email = record.get('email') as string
-
-      const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!email || !validEmailAddress.test(email)) {
-        record.addError('email', 'Invalid email address')
-      }
-
-      return record
-    })
-  )
-
-  listener.on('action:custom', async (event: FlatfileEvent) => {
-    const { action, context } = event
-    if (action.operation === 'generate_pdf') {
+  listener.on(
+    'job:ready',
+    { job: `sheet:generate_pdf` },
+    async (event: FlatfileEvent) => {
+      const { action, context } = event
       try {
         const userStyle: Partial<ReportStyle> = action.payload?.style || {}
         const style: ReportStyle = { ...defaultStyle, ...userStyle }
@@ -194,5 +183,5 @@ export default function (listener: FlatfileListener) {
         await event.reply('Error generating or uploading PDF')
       }
     }
-  })
+  )
 }
