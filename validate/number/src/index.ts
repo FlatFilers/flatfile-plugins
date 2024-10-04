@@ -1,1 +1,1 @@
-export * from './validateNumber'
+export * from './validate.number.plugin'
