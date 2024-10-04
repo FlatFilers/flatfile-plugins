@@ -39,26 +39,18 @@ jobs:
           echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
           echo "Found packages: $PACKAGES"
 
-  # Build job that runs once and produces build output and dependencies
-  build:
+  test-packages:
+    needs: determine-packages
+    name: Test (${{ matrix.package }})
     runs-on: ubuntu-latest
-    outputs:
-      cache-key: ${{ steps.cache-deps.outputs.cache-key }}
+    if: ${{ github.head_ref != 'changeset-release/main' }}
+    strategy:
+      matrix:
+        package: ${{fromJson(needs.determine-packages.outputs.packages)}}
+      fail-fast: false
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
-      # Cache Node.js dependencies
-      - name: Cache Node.js dependencies
-        id: cache-deps
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            **/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
@@ -69,62 +61,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Cache build output (build outputs located in ./**/**/dist for each package)
-      - name: Cache build output
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./**/**/dist
-          key: ${{ runner.os }}-build-${{ hashFiles('**/package.json', '**/tsconfig.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-
-
-      - name: Build all packages
+      - name: Build
         run: npx turbo run build
 
-      # Upload all build outputs (from ./**/**/dist for each package) as an artifact to be shared with test jobs
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-output
-          path: |
-            ./**/**/dist
-
-      # Upload node_modules as an artifact
-      - name: Upload node_modules
-        uses: actions/upload-artifact@v3
-        with:
-          name: node-modules
-          path: node_modules
-
-  test-packages:
-    needs: [determine-packages, build]
-    name: Test (${{ matrix.package }})
-    runs-on: ubuntu-latest
-    if: ${{ github.head_ref != 'changeset-release/main' }}
-    strategy:
-      matrix:
-        package: ${{ fromJson(needs.determine-packages.outputs.packages) }}
-      fail-fast: false
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      # Download node_modules from the build job artifact
-      - name: Download Node.js dependencies
-        uses: actions/download-artifact@v3
-        with:
-          name: node-modules
-          path: node_modules
-
-      # Download the relevant package's build output
-      - name: Download build output
-        uses: actions/download-artifact@v3
-        with:
-          name: build-output
-          path: ./
-
-      # Run tests for the specific package in the matrix
       - name: Test
         run: npx turbo run test --filter=${{ matrix.package }}
 
