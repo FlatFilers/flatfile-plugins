@@ -36,7 +36,7 @@
     "build:watch": "rollup -c --watch",
     "build:prod": "NODE_ENV=production rollup -c",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest src/*.spec.ts"
+    "test": "jest src/*.spec.ts --detectOpenHandles"
   },
   "keywords": [],
   "author": "David Boskovic",
