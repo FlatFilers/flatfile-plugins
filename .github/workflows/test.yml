@@ -39,7 +39,7 @@ jobs:
           echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
           echo "Found packages: $PACKAGES"
 
-  # New build job that runs once and produces build output and dependencies
+  # Build job that runs once and produces build output and dependencies
   build:
     runs-on: ubuntu-latest
     outputs:
@@ -69,29 +69,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Cache build output
+      # Cache build output (build outputs located in ./**/**/dist for each package)
       - name: Cache build output
         uses: actions/cache@v3
         with:
           path: |
-            build
-            dist
+            ./**/**/dist
           key: ${{ runner.os }}-build-${{ hashFiles('**/package.json', '**/tsconfig.json') }}
           restore-keys: |
             ${{ runner.os }}-build-
 
-      - name: Build
+      - name: Build all packages
         run: npx turbo run build
 
-      # Upload build and node_modules as artifacts to be shared with test jobs
+      # Upload all build outputs (from ./**/**/dist for each package) as an artifact to be shared with test jobs
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: build-output
           path: |
-            build
-            dist
+            ./**/**/dist
 
+      # Upload node_modules as an artifact
       - name: Upload node_modules
         uses: actions/upload-artifact@v3
         with:
@@ -118,14 +117,14 @@ jobs:
           name: node-modules
           path: node_modules
 
-      # Download build output from the build job artifact
+      # Download the relevant package's build output
       - name: Download build output
         uses: actions/download-artifact@v3
         with:
           name: build-output
-          path: build
+          path: ./
 
-      # Test the specific package in the matrix
+      # Run tests for the specific package in the matrix
       - name: Test
         run: npx turbo run test --filter=${{ matrix.package }}
 
