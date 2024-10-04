@@ -14,5 +14,4 @@ module.exports = {
   globalSetup: '<rootDir>/test/setup-global.js',
   forceExit: true,
   passWithNoTests: true,
-  detectOpenHandles: true,
 }
