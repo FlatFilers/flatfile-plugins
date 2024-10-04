@@ -8,6 +8,7 @@
         "build:prod": {
             "outputs": ["dist/**"],
             "dependsOn": ["^build:prod"]
-        }
+        },
+        "test": {}
     }
 }

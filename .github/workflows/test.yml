@@ -65,4 +65,4 @@ jobs:
       - name: Test
         run: |
           PACKAGE_NAME=$(basename ${{ matrix.package }})
-          npm test -- --selectProjects $PACKAGE_NAME
+          npm run turbo:test --filter=$PACKAGE_NAME
