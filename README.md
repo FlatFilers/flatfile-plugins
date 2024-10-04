@@ -14,4 +14,4 @@ There are more commands that you can run on every plugin at the root level. For 
 
 Each plugin has its own package.json that you can run.
 
-1. The `npm run build` command uses what's in index.ts and builds a minified compiled version of the code using Rollup. That is what gets published to npm.
+1. The `npm run build` command uses what's in index.ts and builds a minified compiled version of the code using Rollup. That is what gets published to npm. 
