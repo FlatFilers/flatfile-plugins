@@ -17,9 +17,13 @@ jobs:
     outputs:
       packages: ${{ steps.set-packages.outputs.packages }}
     steps:
-      - uses: actions/checkout@v3
-      - id: set-packages
-        run: echo "packages=$(ls -d packages/* | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+      - name: Get package directories
+        id: set-packages
+        run: |
+          PACKAGES=$(find packages -maxdepth 1 -type d | tail -n +2 | jq -R -s -c 'split("\n")[:-1]')
+          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+          echo "Found packages: $PACKAGES"
 
   test:
     needs: determine-packages
@@ -33,12 +37,10 @@ jobs:
       fail-fast: false
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
@@ -50,4 +52,4 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: npm test --scope=${{ matrix.package }}
+        run: npm test -- --selectProjects $(basename ${{ matrix.package }})
