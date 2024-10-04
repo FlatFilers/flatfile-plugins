@@ -21,18 +21,16 @@ jobs:
       - name: Get package directories
         id: set-packages
         run: |
-          # List of directories to search for packages
           SEARCH_DIRS="plugins utils validate convert enrich import export"
-          
-          # Find packages in all specified directories
+
           PACKAGES=$(
             for dir in $SEARCH_DIRS; do
               if [ -d "$dir" ]; then
-                find "$dir" -maxdepth 1 -mindepth 1 -type d
+                find "$dir" -maxdepth 1 -mindepth 1 -type d -printf "%P\n"
               fi
             done | jq -R -s -c 'split("\n")[:-1]'
           )
-          
+
           echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
           echo "Found packages: $PACKAGES"
 
@@ -63,6 +61,4 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: |
-          PACKAGE_NAME=$(basename ${{ matrix.package }})
-          npm run turbo:test --filter=$PACKAGE_NAME
+        run: npx turbo run test --filter=${{ matrix.package }}
