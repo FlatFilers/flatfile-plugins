@@ -9,6 +9,8 @@
             "outputs": ["dist/**"],
             "dependsOn": ["^build:prod"]
         },
-        "test": {}
+        "test": {
+            "cache": false
+        }
     }
 }
