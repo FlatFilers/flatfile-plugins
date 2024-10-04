@@ -1,18 +1,9 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { convertWhat3words } from '@flatfile/plugin-convert-what3words'
+import { pdfGeneratorPlugin } from '@flatfile/plugin-export-pdf'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
-  listener.use(
-    convertWhat3words({
-      sheetSlug: 'people',
-      what3wordsField: 'what3words',
-      countryField: 'country',
-      nearestPlaceField: 'nearestPlace',
-      latField: 'lat',
-      longField: 'long',
-    })
-  )
+  listener.use(pdfGeneratorPlugin())
   listener.use(
     configureSpace({
       workbooks: [
@@ -20,38 +11,33 @@ export default async function (listener: FlatfileListener) {
           name: 'Sandbox',
           sheets: [
             {
-              name: 'People',
-              slug: 'people',
+              name: 'Sales',
+              slug: 'sales',
               fields: [
                 {
-                  key: 'name',
-                  type: 'string',
-                  label: 'Name',
+                  key: 'date',
+                  type: 'date',
+                  label: 'Date',
                 },
                 {
-                  key: 'nearestPlace',
+                  key: 'product',
                   type: 'string',
-                  label: 'Nearest Place',
+                  label: 'Product',
                 },
                 {
-                  key: 'country',
+                  key: 'category',
                   type: 'string',
-                  label: 'Country',
+                  label: 'Category',
                 },
                 {
-                  key: 'lat',
+                  key: 'region',
+                  type: 'string',
+                  label: 'Region',
+                },
+                {
+                  key: 'sales_amount',
                   type: 'number',
-                  label: 'Latitude',
-                },
-                {
-                  key: 'long',
-                  type: 'number',
-                  label: 'Longitude',
-                },
-                {
-                  key: 'what3words',
-                  type: 'string',
-                  label: 'What3Words',
+                  label: 'Sales Amount',
                 },
               ],
             },

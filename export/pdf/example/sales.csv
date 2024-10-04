@@ -1,0 +1,16 @@
+date,product,category,region,salesAmount
+2023-01-01,Laptop,Electronics,North,1200
+2023-01-02,Smartphone,Electronics,South,800
+2023-01-03,Desk Chair,Furniture,East,150
+2023-01-04,Tablet,Electronics,West,500
+2023-01-05,Bookshelf,Furniture,North,300
+2023-02-01,Laptop,Electronics,South,1100
+2023-02-02,Smartphone,Electronics,East,750
+2023-02-03,Desk Chair,Furniture,West,200
+2023-02-04,Tablet,Electronics,North,550
+2023-02-05,Bookshelf,Furniture,South,280
+2023-03-01,Laptop,Electronics,East,1300
+2023-03-02,Smartphone,Electronics,West,820
+2023-03-03,Desk Chair,Furniture,North,180
+2023-03-04,Tablet,Electronics,South,520
+2023-03-05,Bookshelf,Furniture,East,310

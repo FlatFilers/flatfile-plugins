@@ -38,6 +38,8 @@ export function buildConfig({
   includeBrowser = true,
   includeUmd = false,
   umdConfig = { name: undefined, external: [] },
+  cjs = { output: { inlineDynamicImports: false } },
+  esm = { output: { inlineDynamicImports: false } },
 }) {
   return [
     // Node.js build
@@ -48,12 +50,14 @@ export function buildConfig({
           exports: 'auto',
           file: 'dist/index.cjs',
           format: 'cjs',
+          ...cjs.output,
         },
         {
           exports: 'auto',
           file: 'dist/index.mjs',
           sourcemap: false,
           format: 'es',
+          ...esm.output,
         },
       ],
       plugins: commonPlugins(false),
@@ -69,12 +73,14 @@ export function buildConfig({
                 exports: 'auto',
                 file: 'dist/index.browser.cjs',
                 format: 'cjs',
+                ...cjs.output,
               },
               {
                 exports: 'auto',
                 file: 'dist/index.browser.mjs',
                 sourcemap: false,
                 format: 'es',
+                ...esm.output,
               },
             ],
             plugins: commonPlugins(true),
