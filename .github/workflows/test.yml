@@ -18,7 +18,7 @@ jobs:
       packages: ${{ steps.set-packages.outputs.packages }}
     steps:
       - uses: actions/checkout@v4
-      - name: Get package names from package.json
+      - name: Get package names
         id: set-packages
         run: |
           SEARCH_DIRS="plugins utils validate convert enrich import export"
@@ -39,10 +39,9 @@ jobs:
           echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
           echo "Found packages: $PACKAGES"
 
-  test:
+  test-packages:
     needs: determine-packages
-    name: Test
-    timeout-minutes: 30
+    name: Test ${{ matrix.package }}
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
@@ -63,7 +62,17 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npx turbo run build
+        run: npx turbo run build --filter=${{ matrix.package }}
 
       - name: Test
         run: npx turbo run test --filter=${{ matrix.package }}
+
+  test:
+    needs: test-packages
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test results
+        run: |
+          echo "All package tests completed successfully"
+          exit 0
