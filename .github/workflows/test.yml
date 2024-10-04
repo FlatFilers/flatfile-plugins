@@ -41,7 +41,7 @@ jobs:
 
   test-packages:
     needs: determine-packages
-    name: Test (${{ matrix.package }})
+    name: ${{ matrix.package }}
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
