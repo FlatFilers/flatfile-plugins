@@ -7,7 +7,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-import { validateBoolean } from './index'
+import { validateBoolean } from './validate.boolean.plugin'
 
 const api = new FlatfileClient()
 
