@@ -7,7 +7,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-import { validateNumber } from './index'
+import { validateNumber } from './validateNumber'
 
 const api = new FlatfileClient()
 
