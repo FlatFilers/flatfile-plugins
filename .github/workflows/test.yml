@@ -4,13 +4,13 @@ on:
   pull_request:
     branches:
       - main
-
-concurrency: ${{ github.workflow }}-${{ github.ref }}
-
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 jobs:
   test:
     name: Test
-    timeout-minutes: 20
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
