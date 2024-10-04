@@ -1,7 +1,8 @@
 module.exports = {
   testEnvironment: 'node',
-  testRegex: '.*\\.(e2e-)?spec\\.ts$',
-  // testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.e2e.spec.ts'],
+  // testRegex: '(?<!\\.\\./)src/.*\\.(e2e-)?spec\\.ts$',
+  testMatch: ['<rootDir>/**/**/src/*.spec.ts'],
+  
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
