@@ -56,7 +56,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.7.0"
+    "@flatfile/plugin-record-hook": "^1.7.0",
+    "libphonenumber-js": "^1.11.10"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.5"

@@ -23,7 +23,7 @@ The `phoneField` parameter is the phone field's name.
 #### `config.countryField` - `string`
 The `countryField` parameter is the country field's name.
 
-#### `config.autoConvert` - `boolean` - `default: false` - (optional)
+#### `config.autoConvert` - `boolean` - `default: true` - (optional)
 The `autoConvert` parameter allows you to specify whether the field's format will automatically be converted.
 
 #### `config.concurrency` - `number` - `default: 10` - (optional)
@@ -32,35 +32,40 @@ The `concurrency` parameter allows you to specify the number of records to proce
 #### `config.debug` - `boolean` - `default: false` - (optional)
 The `debug` parameter allows you to turn on debug logging.
 
+#### `config.format` - `NumberFormat` - `default: 'NATIONAL'` - (optional)
+The `format` parameter specifies the desired output format for the phone number. Options include 'NATIONAL', 'INTERNATIONAL', 'E164', 'RFC3966', and 'SIGNIFICANT'.
 
-
+#### `config.formatOptions` - `FormatNumberOptions` - (optional)
+The `formatOptions` parameter allows you to pass additional formatting options as defined by the `libphonenumber-js` library.
 
 ## Usage
 
-```bash install
-npm install @flatfile/plugin-phone-format
+```bash
+npm install @flatfile/plugin-validate-phone
 ```
 
 ### Import
 
 ```js
-import phoneFormatPlugin from '@flatfile/plugin-phone-format';
+import validatePhone from '@flatfile/plugin-validate-phone';
 ```
 
 ## Example Usage
 
-This example sets up a record hook using `listener.use` to modify records in the "my-sheet" sheet which contains a phone number fields called `phone_number` and a country field called `country_code`.
+This example sets up a record hook using `listener.use` to validate and format phone numbers in the "my-sheet" sheet which contains a phone number field called `phone_number` and a country field called `country_code`.
 
 ```javascript
 import { FlatfileListener } from '@flatfile/listener';
-import phoneFormatPlugin from '@flatfile/plugin-phone-format';
+import validatePhone from '@flatfile/plugin-validate-phone';
 
 export default function (listener: FlatfileListener) {
-  listener.use(phoneFormatPlugin({
+  listener.use(validatePhone({
     sheetSlug: 'my-sheet',
     phoneField: 'phone_number',
     countryField: 'country_code',
-    autoConvert: true
+    autoConvert: true,
+    format: 'INTERNATIONAL',
+    formatOptions: { formatExtension: 'national' }
   }));
 
   // ... rest of your Flatfile listener
