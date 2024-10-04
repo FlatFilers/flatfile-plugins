@@ -62,7 +62,7 @@ describe('automap() e2e', () => {
       )
 
       expect(mockFn).toHaveBeenCalled()
-    }, 900_000)
+    }, 90_000)
   })
 
   describe('record created - dynamic sheet slug', () => {
@@ -106,6 +106,6 @@ describe('automap() e2e', () => {
       )
 
       expect(mockFn).toHaveBeenCalled()
-    }, 900_000)
+    }, 90_000)
   })
 })
