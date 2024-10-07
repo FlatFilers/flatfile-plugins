@@ -39,9 +39,9 @@ jobs:
           echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
           echo "Found packages: $PACKAGES"
 
-  test-packages:
+  unit-tests:
     needs: determine-packages
-    name: Test (${{ matrix.package }})
+    name: Unit Tests (${{ matrix.package }})
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
@@ -64,15 +64,43 @@ jobs:
       - name: Build
         run: npx turbo run build
 
-      - name: Test
-        run: npx turbo run test --filter=${{ matrix.package }}
+      - name: Run unit tests
+        run: npx turbo run test:unit --filter=${{ matrix.package }}
+
+  e2e-tests:
+    needs: [determine-packages, unit-tests]
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    if: ${{ github.head_ref != 'changeset-release/main' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npx turbo run build
+
+      - name: Run E2E tests
+        run: |
+          for package in ${{join(fromJson(needs.determine-packages.outputs.packages), ' ')}}; do
+            echo "Running E2E tests for $package"
+            npx turbo run test:e2e --filter=$package
+          done
 
   test:
-    needs: test-packages
+    needs: [unit-tests, e2e-tests]
     name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Check test results
         run: |
-          echo "All package tests completed successfully"
+          echo "All unit and E2E tests completed successfully"
           exit 0

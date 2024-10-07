@@ -21,6 +21,8 @@
     "turbo:test": "turbo test",
     "build:prod": "turbo build:prod",
     "build:clean": "npm run clean && npm i && turbo build",
+    "test:unit": "jest --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$",
+    "test:e2e": "jest --testPathPattern=.*\\.e2e\\.spec\\.ts$",
     "build:prod:clean": "npm run clean && npm i && turbo build:prod",
     "lint": "prettier --check **/*.ts",
     "format": "prettier --log-level warn --write **/*.ts",
