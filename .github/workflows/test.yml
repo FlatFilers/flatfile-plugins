@@ -13,6 +13,7 @@ concurrency:
 
 jobs:
   determine-packages:
+    name: Determine Packages
     runs-on: ubuntu-latest
     outputs:
       packages: ${{ steps.set-packages.outputs.packages }}
@@ -58,6 +59,7 @@ jobs:
           echo "Packages with E2E tests: ${E2E_TEST_PACKAGES[*]}"
 
   setup:
+    name: Setup
     needs: determine-packages
     runs-on: ubuntu-latest
     steps:

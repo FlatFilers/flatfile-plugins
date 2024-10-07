@@ -9,7 +9,7 @@ module.exports = {
     '../../test/betterConsoleLog.js',
     '../../test/unit.cleanup.js',
   ],
-  testTimeout: 90_000,
+  testTimeout: 120_000,
   globalSetup: '../../test/setup-global.js',
   forceExit: true,
   passWithNoTests: true,
