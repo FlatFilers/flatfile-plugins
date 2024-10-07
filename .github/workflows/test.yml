@@ -61,8 +61,10 @@ jobs:
     needs: determine-packages
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
@@ -76,6 +78,10 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+          compression-level: 3
+          enableCrossOsArchive: true
 
       - name: Install dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
@@ -91,6 +97,10 @@ jobs:
             ./**/dist
             ./**/build
           key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+          compression-level: 3
+          enableCrossOsArchive: true
 
   unit-tests:
     needs: [determine-packages, setup]
@@ -102,8 +112,10 @@ jobs:
         package: ${{ fromJson(needs.determine-packages.outputs.unit_test_packages) }}
       fail-fast: false
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
@@ -115,6 +127,10 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+          compression-level: 3
+          enableCrossOsArchive: true
 
       - name: Restore build artifacts
         uses: actions/cache@v3
@@ -123,6 +139,10 @@ jobs:
             ./**/dist
             ./**/build
           key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+          compression-level: 3
+          enableCrossOsArchive: true
 
       - name: Run unit tests
         run: npm run test:unit -- --filter=${{ matrix.package }}
