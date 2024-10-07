@@ -70,7 +70,15 @@ jobs:
           node-version: 18
           cache: 'npm'
 
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Build
@@ -101,10 +109,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Restore build artifacts
         uses: actions/cache@v3
@@ -116,6 +126,8 @@ jobs:
 
       - name: Run unit tests
         run: npm run test:unit -- --filter=${{ matrix.package }}
+        env:
+          TURBO_CACHE_ENABLED: "true"
 
   e2e-tests:
     needs: [determine-packages, setup]
@@ -130,10 +142,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Restore build artifacts
         uses: actions/cache@v3
@@ -156,6 +170,7 @@ jobs:
           fi
         env:
           NODE_ENV: test
+          TURBO_CACHE_ENABLED: "true"
 
   test:
     needs: [unit-tests, e2e-tests]

@@ -21,10 +21,12 @@
             ]
         },
         "test:unit": {
-            "outputs": []
+            "outputs": [],
+            "env": ["TURBO_CACHE_ENABLED"]
         },
         "test:e2e": {
-            "outputs": []
+            "outputs": [],
+            "env": ["TURBO_CACHE_ENABLED"]
         }
     }
 }
