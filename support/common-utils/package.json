@@ -21,7 +21,9 @@
     "build:watch": "parcel watch",
     "build:prod": "NODE_ENV=production parcel build",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest src/*.spec.ts"
+        "test": "jest src/*.spec.ts --detectOpenHandles",
+    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
+    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
   },
   "repository": {
     "type": "git",

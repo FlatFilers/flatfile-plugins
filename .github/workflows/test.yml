@@ -76,6 +76,14 @@ jobs:
       - name: Build
         run: npx turbo run build
 
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./**/dist
+            ./**/build
+          key: ${{ runner.os }}-build-${{ github.sha }}
+
   unit-tests:
     needs: [determine-packages, setup]
     name: Unit Tests
@@ -98,8 +106,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./**/dist
+            ./**/build
+          key: ${{ runner.os }}-build-${{ github.sha }}
+
       - name: Run unit tests
-        run: npx turbo run test:unit --filter=${{ matrix.package }}
+        run: npm run test:unit -- --filter=${{ matrix.package }}
 
   e2e-tests:
     needs: [determine-packages, setup]
@@ -119,17 +135,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./**/dist
+            ./**/build
+          key: ${{ runner.os }}-build-${{ github.sha }}
+
       - name: Run E2E tests
         run: |
           E2E_PACKAGES='${{ needs.determine-packages.outputs.e2e_test_packages }}'
           if [ "$E2E_PACKAGES" != "[]" ] && [ "$E2E_PACKAGES" != "" ]; then
             for package in $(echo "$E2E_PACKAGES" | jq -r '.[]'); do
               echo "Running E2E tests for $package"
-              npx turbo run test:e2e --filter=$package
+              npm run test:e2e -- --filter=$package
             done
           else
             echo "No E2E test packages found"
           fi
+        env:
+          NODE_ENV: test
 
   test:
     needs: [unit-tests, e2e-tests]

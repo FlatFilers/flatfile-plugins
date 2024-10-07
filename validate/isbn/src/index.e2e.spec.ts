@@ -53,17 +53,17 @@ describe('validateISBN e2e', () => {
     const records = await getRecords(sheetId)
 
     expect(records[0].values['isbn'].value).toBe('0-306-40615-2')
-    expect(records[0].values['isbn'].messages[0].message).toBe(
+    expect(records[0].values['isbn'].messages?.[0].message).toBe(
       'Formatted ISBN-10'
     )
 
     expect(records[1].values['isbn'].value).toBe('978-0-306-40615-7')
-    expect(records[1].values['isbn'].messages[0].message).toBe(
+    expect(records[1].values['isbn'].messages?.[0].message).toBe(
       'Formatted ISBN-13'
     )
 
     expect(records[2].values['isbn'].value).toBe('invalid-isbn')
-    expect(records[2].values['isbn'].messages[0].message).toBe(
+    expect(records[2].values['isbn'].messages?.[0].message).toBe(
       'Invalid ISBN format'
     )
   })
@@ -78,7 +78,7 @@ describe('validateISBN e2e', () => {
     const records = await getRecords(sheetId)
 
     expect(records[0].values['isbn'].value).toBe('978-0-306-40615-7')
-    expect(records[0].values['isbn'].messages[1].message).toBe(
+    expect(records[0].values['isbn'].messages?.[1].message).toBe(
       'Converted ISBN-13'
     )
   })
@@ -93,6 +93,6 @@ describe('validateISBN e2e', () => {
     const records = await getRecords(sheetId)
 
     expect(records[0].values['isbn'].value).toBe('0306406152')
-    expect(records[0].values['isbn'].messages.length).toBe(0)
+    expect(records[0].values['isbn'].messages?.length).toBe(0)
   })
 })
