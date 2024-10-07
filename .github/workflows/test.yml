@@ -57,8 +57,27 @@ jobs:
           echo "Packages with unit tests: ${UNIT_TEST_PACKAGES[*]}"
           echo "Packages with E2E tests: ${E2E_TEST_PACKAGES[*]}"
 
-  unit-tests:
+  setup:
     needs: determine-packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npx turbo run build
+
+  unit-tests:
+    needs: setup
     name: Unit Tests (${{ matrix.package }})
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
@@ -79,14 +98,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npx turbo run build
-
       - name: Run unit tests
         run: npx turbo run test:unit --filter=${{ matrix.package }}
 
   e2e-tests:
-    needs: [determine-packages, unit-tests]
+    needs: setup
     name: E2E Tests
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
@@ -102,9 +118,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Build
-        run: npx turbo run build
 
       - name: Run E2E tests
         run: |
