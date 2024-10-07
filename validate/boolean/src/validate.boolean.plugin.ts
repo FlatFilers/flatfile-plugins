@@ -26,52 +26,44 @@ export const languageMappings: Record<string, Record<string, boolean>> = {
 }
 
 export function handleNullValue(
-  record: FlatfileRecord,
-  field: string,
+  value: any,
   config: BooleanValidatorConfig
-) {
+): { value: boolean | null; error: string | null } {
   switch (config.handleNull) {
     case 'error':
-      record.addError(
-        field,
-        config.customErrorMessages?.nullValue ||
-          'Value cannot be null or undefined'
-      )
-      break
+      return {
+        value: null,
+        error:
+          config.customErrorMessages?.nullValue ||
+          'Value cannot be null or undefined',
+      }
     case 'false':
-      record.set(field, false)
-      break
+      return { value: false, error: null }
     case 'true':
-      record.set(field, true)
-      break
+      return { value: true, error: null }
     case 'skip':
     default:
-      // Do nothing, leave the field as is
-      break
+      return { value: null, error: null }
   }
 }
 
 export function validateStrictBoolean(
-  record: FlatfileRecord,
-  field: string,
   value: any,
   config: BooleanValidatorConfig
-) {
+): { value: boolean | null; error: string | null } {
   if (value === true || value === false) {
-    record.set(field, value)
+    return { value, error: null }
   } else if (config.convertNonBoolean) {
-    record.set(field, Boolean(value))
+    return { value: Boolean(value), error: null }
   } else {
-    handleInvalidValue(record, field, config)
+    return handleInvalidValue(value, config)
   }
 }
 
 export function validateTruthyBoolean(
-  record: FlatfileRecord,
-  field: string,
   value: any,
   config: BooleanValidatorConfig
-) {
+): { value: boolean | null; error: string | null } {
   const defaultMapping = config.language
     ? languageMappings[config.language]
     : languageMappings.en
@@ -83,34 +75,48 @@ export function validateTruthyBoolean(
   }
 
   if (normalizedValue === true || normalizedValue === false) {
-    record.set(field, normalizedValue)
+    return { value: normalizedValue, error: null }
   } else if (mapping.hasOwnProperty(normalizedValue)) {
-    record.set(field, mapping[normalizedValue])
+    return { value: mapping[normalizedValue], error: null }
   } else if (typeof normalizedValue === 'number') {
-    record.set(field, Boolean(normalizedValue))
+    return { value: Boolean(normalizedValue), error: null }
   } else if (config.convertNonBoolean) {
-    record.set(field, Boolean(value))
+    return { value: Boolean(value), error: null }
   } else {
-    handleInvalidValue(record, field, config)
+    return handleInvalidValue(value, config)
   }
 }
+
 export function handleInvalidValue(
-  record: FlatfileRecord,
-  field: string,
+  value: any,
   config: BooleanValidatorConfig
-) {
+): { value: boolean | null; error: string | null } {
   if (config.defaultValue === undefined || config.defaultValue === 'skip') {
-    record.addError(
-      field,
-      config.customErrorMessages?.invalidBoolean || 'Invalid boolean value'
-    )
+    return {
+      value: null,
+      error:
+        config.customErrorMessages?.invalidBoolean || 'Invalid boolean value',
+    }
   } else {
-    record.set(field, config.defaultValue)
-    record.addInfo(
-      field,
-      `Invalid value converted to default: ${config.defaultValue}`
-    )
+    return {
+      value: config.defaultValue as boolean,
+      error: `Invalid value converted to default: ${config.defaultValue}`,
+    }
   }
+}
+
+export function validateBooleanField(
+  value: any,
+  config: BooleanValidatorConfig
+): { value: boolean | null; error: string | null } {
+  if (value === null || value === undefined) {
+    return handleNullValue(value, config)
+  } else if (config.validationType === 'strict') {
+    return validateStrictBoolean(value, config)
+  } else if (config.validationType === 'truthy') {
+    return validateTruthyBoolean(value, config)
+  }
+  return { value, error: 'Invalid validation type' }
 }
 
 // Updated RecordHook version
@@ -120,13 +126,13 @@ export const validateBoolean = (config: BooleanValidatorConfig) => {
       recordHook(config.sheetSlug || '**', async (record: FlatfileRecord) => {
         config.fields.forEach((field) => {
           const value = record.get(field)
+          const result = validateBooleanField(value, config)
 
-          if (value === null || value === undefined) {
-            handleNullValue(record, field, config)
-          } else if (config.validationType === 'strict') {
-            validateStrictBoolean(record, field, value, config)
-          } else {
-            validateTruthyBoolean(record, field, value, config)
+          if (result.error) {
+            record.addError(field, result.error)
+          }
+          if (result.value !== null) {
+            record.set(field, result.value)
           }
         })
 
