@@ -16,28 +16,46 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       packages: ${{ steps.set-packages.outputs.packages }}
+      unit_test_packages: ${{ steps.set-packages.outputs.unit_test_packages }}
+      e2e_test_packages: ${{ steps.set-packages.outputs.e2e_test_packages }}
     steps:
       - uses: actions/checkout@v4
-      - name: Get package names
+      - name: Get package names and test info
         id: set-packages
         run: |
           SEARCH_DIRS="plugins utils validate convert enrich import export"
 
-          PACKAGES=$(
-            for dir in $SEARCH_DIRS; do
-              if [ -d "$dir" ]; then
-                find "$dir" -maxdepth 2 -name "package.json" -exec sh -c '
-                  PACKAGE_NAME=$(jq -r .name {})
-                  if [ "$PACKAGE_NAME" != "null" ]; then
-                    echo "$PACKAGE_NAME"
-                  fi
-                ' \;
-              fi
-            done | jq -R -s -c 'split("\n")[:-1]'
-          )
+          PACKAGES=()
+          UNIT_TEST_PACKAGES=()
+          E2E_TEST_PACKAGES=()
 
-          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
-          echo "Found packages: $PACKAGES"
+          for dir in $SEARCH_DIRS; do
+            if [ -d "$dir" ]; then
+              while IFS= read -r package_json; do
+                PACKAGE_DIR=$(dirname "$package_json")
+                PACKAGE_NAME=$(jq -r .name "$package_json")
+                if [ "$PACKAGE_NAME" != "null" ]; then
+                  PACKAGES+=("$PACKAGE_NAME")
+                  
+                  if [ -n "$(find "$PACKAGE_DIR" -name "*.spec.ts" -not -name "*.e2e.spec.ts")" ]; then
+                    UNIT_TEST_PACKAGES+=("$PACKAGE_NAME")
+                  fi
+                  
+                  if [ -n "$(find "$PACKAGE_DIR" -name "*.e2e.spec.ts")" ]; then
+                    E2E_TEST_PACKAGES+=("$PACKAGE_NAME")
+                  fi
+                fi
+              done < <(find "$dir" -maxdepth 2 -name "package.json")
+            fi
+          done
+
+          echo "packages=$(jq -nc '$ARGS.positional' --args "${PACKAGES[@]}")" >> $GITHUB_OUTPUT
+          echo "unit_test_packages=$(jq -nc '$ARGS.positional' --args "${UNIT_TEST_PACKAGES[@]}")" >> $GITHUB_OUTPUT
+          echo "e2e_test_packages=$(jq -nc '$ARGS.positional' --args "${E2E_TEST_PACKAGES[@]}")" >> $GITHUB_OUTPUT
+          
+          echo "Found packages: ${PACKAGES[*]}"
+          echo "Packages with unit tests: ${UNIT_TEST_PACKAGES[*]}"
+          echo "Packages with E2E tests: ${E2E_TEST_PACKAGES[*]}"
 
   unit-tests:
     needs: determine-packages
@@ -46,39 +64,25 @@ jobs:
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
       matrix:
-        package: ${{fromJson(needs.determine-packages.outputs.packages)}}
+        package: ${{fromJson(needs.determine-packages.outputs.unit_test_packages)}}
       fail-fast: false
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Check for unit tests
-        id: check-unit-tests
-        run: |
-          PACKAGE_DIR=$(find . -type d -name "${{ matrix.package }}" | head -n 1)
-          if [ -n "$(find "$PACKAGE_DIR" -name "*.spec.ts" -not -name "*.e2e.spec.ts")" ]; then
-            echo "has_unit_tests=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_unit_tests=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Setup Node.js environment
-        if: steps.check-unit-tests.outputs.has_unit_tests == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
       - name: Install dependencies
-        if: steps.check-unit-tests.outputs.has_unit_tests == 'true'
         run: npm ci
 
       - name: Build
-        if: steps.check-unit-tests.outputs.has_unit_tests == 'true'
         run: npx turbo run build
 
       - name: Run unit tests
-        if: steps.check-unit-tests.outputs.has_unit_tests == 'true'
         run: npx turbo run test:unit --filter=${{ matrix.package }}
 
   e2e-tests:
@@ -90,45 +94,23 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Check for E2E tests
-        id: check-e2e-tests
-        run: |
-          HAS_E2E_TESTS=false
-          for package in ${{join(fromJson(needs.determine-packages.outputs.packages), ' ')}}; do
-            PACKAGE_DIR=$(find . -type d -name "$package" | head -n 1)
-            if [ -n "$(find "$PACKAGE_DIR" -name "*.e2e.spec.ts")" ]; then
-              HAS_E2E_TESTS=true
-              break
-            fi
-          done
-          echo "has_e2e_tests=$HAS_E2E_TESTS" >> $GITHUB_OUTPUT
-
       - name: Setup Node.js environment
-        if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
       - name: Install dependencies
-        if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         run: npm ci
 
       - name: Build
-        if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         run: npx turbo run build
 
       - name: Run E2E tests
-        if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         run: |
-          for package in ${{join(fromJson(needs.determine-packages.outputs.packages), ' ')}}; do
-            PACKAGE_DIR=$(find . -type d -name "$package" | head -n 1)
-            if [ -n "$(find "$PACKAGE_DIR" -name "*.e2e.spec.ts")" ]; then
-              echo "Running E2E tests for $package"
-              npx turbo run test:e2e --filter=$package
-            else
-              echo "No E2E tests found for $package"
-            fi
+          for package in ${{join(fromJson(needs.determine-packages.outputs.e2e_test_packages), ' ')}}; do
+            echo "Running E2E tests for $package"
+            npx turbo run test:e2e --filter=$package
           done
 
   test:
