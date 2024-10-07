@@ -42,9 +42,7 @@ describe('externalConstraint()', () => {
 
   it('correctly assigns an error', async () => {
     await createRecords(sheetId, defaultSimpleValueData)
-    await listener.waitFor('commit:created', 2)
-    // Sleep for 1000ms to allow time for the constraint to be applied
-    // await new Promise(resolve => setTimeout(resolve, 1000));
+    await listener.waitFor('commit:created')
     const records = await getRecords(sheetId)
     expect(records[0].values['name'].messages?.[0]).toMatchObject({
       type: 'error',

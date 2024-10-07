@@ -142,7 +142,7 @@ jobs:
           TURBO_CACHE_ENABLED: "true"
 
   e2e-tests:
-    needs: [determine-packages, setup, unit-tests]
+    needs: [determine-packages, setup]
     name: E2E Tests
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
