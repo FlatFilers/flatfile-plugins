@@ -55,7 +55,8 @@ jobs:
       - name: Check for unit tests
         id: check-unit-tests
         run: |
-          if grep -q "\"test:unit\"" $(find . -name "package.json" | grep "${{ matrix.package }}" | head -n 1); then
+          PACKAGE_DIR=$(find . -type d -name "${{ matrix.package }}" | head -n 1)
+          if [ -n "$(find "$PACKAGE_DIR" -name "*.spec.ts" -not -name "*.e2e.spec.ts")" ]; then
             echo "has_unit_tests=true" >> $GITHUB_OUTPUT
           else
             echo "has_unit_tests=false" >> $GITHUB_OUTPUT
@@ -94,7 +95,8 @@ jobs:
         run: |
           HAS_E2E_TESTS=false
           for package in ${{join(fromJson(needs.determine-packages.outputs.packages), ' ')}}; do
-            if grep -q "\"test:e2e\"" $(find . -name "package.json" | grep "$package" | head -n 1); then
+            PACKAGE_DIR=$(find . -type d -name "$package" | head -n 1)
+            if [ -n "$(find "$PACKAGE_DIR" -name "*.e2e.spec.ts")" ]; then
               HAS_E2E_TESTS=true
               break
             fi
@@ -120,8 +122,8 @@ jobs:
         if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         run: |
           for package in ${{join(fromJson(needs.determine-packages.outputs.packages), ' ')}}; do
-            echo "Checking E2E tests for $package"
-            if grep -q "\"test:e2e\"" $(find . -name "package.json" | grep "$package" | head -n 1); then
+            PACKAGE_DIR=$(find . -type d -name "$package" | head -n 1)
+            if [ -n "$(find "$PACKAGE_DIR" -name "*.e2e.spec.ts")" ]; then
               echo "Running E2E tests for $package"
               npx turbo run test:e2e --filter=$package
             else
