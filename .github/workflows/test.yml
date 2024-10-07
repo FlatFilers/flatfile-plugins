@@ -77,13 +77,13 @@ jobs:
         run: npx turbo run build
 
   unit-tests:
-    needs: setup
-    name: Unit Tests (${{ matrix.package }})
+    needs: [determine-packages, setup]
+    name: Unit Tests
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
       matrix:
-        package: ${{fromJson(needs.determine-packages.outputs.unit_test_packages)}}
+        package: ${{ fromJson(needs.determine-packages.outputs.unit_test_packages) }}
       fail-fast: false
     steps:
       - name: Check out code
@@ -102,7 +102,7 @@ jobs:
         run: npx turbo run test:unit --filter=${{ matrix.package }}
 
   e2e-tests:
-    needs: setup
+    needs: [determine-packages, setup]
     name: E2E Tests
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
@@ -121,10 +121,15 @@ jobs:
 
       - name: Run E2E tests
         run: |
-          for package in ${{join(fromJson(needs.determine-packages.outputs.e2e_test_packages), ' ')}}; do
-            echo "Running E2E tests for $package"
-            npx turbo run test:e2e --filter=$package
-          done
+          E2E_PACKAGES='${{ needs.determine-packages.outputs.e2e_test_packages }}'
+          if [ "$E2E_PACKAGES" != "[]" ] && [ "$E2E_PACKAGES" != "" ]; then
+            for package in $(echo "$E2E_PACKAGES" | jq -r '.[]'); do
+              echo "Running E2E tests for $package"
+              npx turbo run test:e2e --filter=$package
+            done
+          else
+            echo "No E2E test packages found"
+          fi
 
   test:
     needs: [unit-tests, e2e-tests]
