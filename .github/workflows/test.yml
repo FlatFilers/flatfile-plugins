@@ -52,19 +52,32 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Check for unit tests
+        id: check-unit-tests
+        run: |
+          if grep -q "\"test:unit\"" $(find . -name "package.json" | grep "${{ matrix.package }}" | head -n 1); then
+            echo "has_unit_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_unit_tests=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Node.js environment
+        if: steps.check-unit-tests.outputs.has_unit_tests == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
       - name: Install dependencies
+        if: steps.check-unit-tests.outputs.has_unit_tests == 'true'
         run: npm ci
 
       - name: Build
+        if: steps.check-unit-tests.outputs.has_unit_tests == 'true'
         run: npx turbo run build
 
       - name: Run unit tests
+        if: steps.check-unit-tests.outputs.has_unit_tests == 'true'
         run: npx turbo run test:unit --filter=${{ matrix.package }}
 
   e2e-tests:
@@ -76,23 +89,44 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Check for E2E tests
+        id: check-e2e-tests
+        run: |
+          HAS_E2E_TESTS=false
+          for package in ${{join(fromJson(needs.determine-packages.outputs.packages), ' ')}}; do
+            if grep -q "\"test:e2e\"" $(find . -name "package.json" | grep "$package" | head -n 1); then
+              HAS_E2E_TESTS=true
+              break
+            fi
+          done
+          echo "has_e2e_tests=$HAS_E2E_TESTS" >> $GITHUB_OUTPUT
+
       - name: Setup Node.js environment
+        if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
       - name: Install dependencies
+        if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         run: npm ci
 
       - name: Build
+        if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         run: npx turbo run build
 
       - name: Run E2E tests
+        if: steps.check-e2e-tests.outputs.has_e2e_tests == 'true'
         run: |
           for package in ${{join(fromJson(needs.determine-packages.outputs.packages), ' ')}}; do
-            echo "Running E2E tests for $package"
-            npx turbo run test:e2e --filter=$package
+            echo "Checking E2E tests for $package"
+            if grep -q "\"test:e2e\"" $(find . -name "package.json" | grep "$package" | head -n 1); then
+              echo "Running E2E tests for $package"
+              npx turbo run test:e2e --filter=$package
+            else
+              echo "No E2E tests found for $package"
+            fi
           done
 
   test:
