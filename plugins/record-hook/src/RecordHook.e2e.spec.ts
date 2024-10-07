@@ -163,7 +163,7 @@ describe('RecordHook e2e', () => {
       let records = await getRecords(sheetId)
       expect(records[0].values['firstName'].value).toBeUndefined()
       expect(records[0].values['lastName'].value).toBeUndefined()
-      expect(records[0].values['lastName'].messages.length).toBe(0)
+      expect(records[0].values['lastName'].messages?.length).toBe(0)
 
       // Update the record with a first name, recordHook will add an error to lastName
       await api.records.update(sheetId, [
@@ -174,7 +174,7 @@ describe('RecordHook e2e', () => {
       records = await getRecords(sheetId)
       expect(records[0].values['firstName'].value).toBeDefined()
       expect(records[0].values['lastName'].value).toBeUndefined()
-      expect(records[0].values['lastName'].messages.length).toBe(1)
+      expect(records[0].values['lastName'].messages?.length).toBe(1)
 
       // Update the record with a last name, recordHook will remove the error from lastName
       await api.records.update(sheetId, [
@@ -185,7 +185,7 @@ describe('RecordHook e2e', () => {
       records = await getRecords(sheetId)
       expect(records[0].values['firstName'].value).toBeUndefined()
       expect(records[0].values['lastName'].value).toBeUndefined()
-      expect(records[0].values['lastName'].messages.length).toBe(0)
+      expect(records[0].values['lastName'].messages?.length).toBe(0)
     })
 
     it('noop', async () => {
@@ -310,7 +310,7 @@ describe('RecordHook e2e', () => {
       await createRecords(sheetId, [{ email: 'john@doe.com' }])
       await listener.waitFor('commit:created')
       // Sleep for 500ms to allow time for the bulk record hook to be applied
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500))
 
       const records = await getRecords(sheetId)
 
@@ -340,7 +340,7 @@ describe('RecordHook e2e', () => {
       let records = await getRecords(sheetId)
       expect(records[0].values['firstName'].value).toBeUndefined()
       expect(records[0].values['lastName'].value).toBeUndefined()
-      expect(records[0].values['lastName'].messages.length).toBe(0)
+      expect(records[0].values['lastName'].messages?.length).toBe(0)
 
       // Update the record with a first name, recordHook will add an error to lastName
       await api.records.update(sheetId, [
@@ -351,7 +351,7 @@ describe('RecordHook e2e', () => {
       records = await getRecords(sheetId)
       expect(records[0].values['firstName'].value).toBeDefined()
       expect(records[0].values['lastName'].value).toBeUndefined()
-      expect(records[0].values['lastName'].messages.length).toBe(1)
+      expect(records[0].values['lastName'].messages?.length).toBe(1)
 
       // Update the record with a last name, recordHook will remove the error from lastName
       await api.records.update(sheetId, [
@@ -362,7 +362,7 @@ describe('RecordHook e2e', () => {
       records = await getRecords(sheetId)
       expect(records[0].values['firstName'].value).toBeUndefined()
       expect(records[0].values['lastName'].value).toBeUndefined()
-      expect(records[0].values['lastName'].messages.length).toBe(0)
+      expect(records[0].values['lastName'].messages?.length).toBe(0)
     })
 
     it('noop', async () => {
@@ -441,8 +441,8 @@ describe('RecordHook e2e', () => {
       await listener.waitFor('commit:created')
       const records = await getRecords(sheetId)
 
-      expect(records[0].config.fields.name.readonly).toEqual(true)
-      expect(records[0].config.fields.age.readonly).toEqual(true)
+      expect(records[0].config?.fields?.['name'].readonly).toEqual(true)
+      expect(records[0].config?.fields?.['age'].readonly).toEqual(true)
     }, 15_000)
   })
 })
