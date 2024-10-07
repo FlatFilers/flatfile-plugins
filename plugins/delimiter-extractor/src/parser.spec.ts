@@ -134,10 +134,14 @@ describe('parser', () => {
     expect(logSpy).toHaveBeenCalledWith('No data found in the file')
     expect(parsedBuffer).toEqual({})
   })
-  test('parsing of basic equals parsing of complex', () => {
-    expect(parseBuffer(colonComplexBuffer, { delimiter: '#' })).toEqual(
-      parseBuffer(colonBasicBuffer, { delimiter: '#' })
-    )
+  test('parsing of basic equals parsing of complex', async () => {
+    const basicResult = await parseBuffer(colonBasicBuffer, { delimiter: '#' })
+    const complexResult = await parseBuffer(colonComplexBuffer, {
+      delimiter: '#',
+      skipEmptyLines: true
+    })
+
+    expect(complexResult).toEqual(expect.objectContaining(basicResult))
   })
   test('skip empty lines: true', async () => {
     const parsedBuffer = await parseBuffer(emptyLinesBuffer, {

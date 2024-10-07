@@ -46,11 +46,11 @@ describe('externalConstraint()', () => {
     // Sleep for 1000ms to allow time for the constraint to be applied
     // await new Promise(resolve => setTimeout(resolve, 1000));
     const records = await getRecords(sheetId)
-    expect(records[0].values['name'].messages[0]).toMatchObject({
+    expect(records[0].values['name'].messages?.[0]).toMatchObject({
       type: 'error',
       message: 'No Johns please',
     })
-    expect(records[1].values['name'].messages.length).toEqual(0)
+    expect(records[1].values['name'].messages?.length).toEqual(0)
   })
 
   it('correctly handles thrown errors', async () => {
@@ -58,11 +58,11 @@ describe('externalConstraint()', () => {
 
     await listener.waitFor('commit:created')
     const records = await getRecords(sheetId)
-    expect(records[0].values['name'].messages[0]).toMatchObject({
+    expect(records[0].values['name'].messages?.[0]).toMatchObject({
       type: 'error',
       message: 'No Johns please',
     })
-    expect(records[1].values['name'].messages.length).toEqual(0)
+    expect(records[1].values['name'].messages?.length).toEqual(0)
   })
 
   it('allows setting of values', async () => {

@@ -168,6 +168,10 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+          compression-level: 3
+          enableCrossOsArchive: true
 
       - name: Restore build artifacts
         uses: actions/cache@v3
@@ -176,14 +180,22 @@ jobs:
             ./**/dist
             ./**/build
           key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+          compression-level: 3
+          enableCrossOsArchive: true
 
       - name: Run E2E tests
         run: |
           E2E_PACKAGES='${{ needs.determine-packages.outputs.e2e_test_packages }}'
           if [ "$E2E_PACKAGES" != "[]" ] && [ "$E2E_PACKAGES" != "" ]; then
-            for package in $(echo "$E2E_PACKAGES" | jq -r '.[]'); do
+            echo "$E2E_PACKAGES" | jq -r '.[]' | while read -r package; do
               echo "Running E2E tests for $package"
               npm run test:e2e -- --filter=$package
+              if [ $? -ne 0 ]; then
+                echo "E2E tests failed for $package"
+                exit 1
+              fi
             done
           else
             echo "No E2E test packages found"
