@@ -1,11 +1,9 @@
 import type { FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 import { viewMappedPlugin } from '@flatfile/plugin-view-mapped'
-import { configureSpace } from '@flatfile/plugin-space-configure'
-import { emailValidationPlugin } from '@flatfile/plugin-validate-email'
-
 
 export default async function (listener: FlatfileListener) {
+
   listener.use(viewMappedPlugin())
   
   listener.use(

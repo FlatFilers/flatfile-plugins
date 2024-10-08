@@ -1,7 +1,7 @@
 {
   "name": "@flatfile/plugin-validate-email",
   "version": "0.0.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validators/email",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/email",
   "description": "A Flatfile Listener plugin for email validation",
   "registryMetadata": {
     "category": "records"
@@ -46,13 +46,13 @@
   },
   "keywords": [
     "flatfile-plugins",
-    "category-transform"
+    "category-validate"
   ],
   "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "validators/email"
+    "directory": "validate/email"
   },
   "license": "ISC",
   "dependencies": {
