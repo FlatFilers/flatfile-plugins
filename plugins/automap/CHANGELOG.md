@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.5.2
+
+### Patch Changes
+
+- 4d4ef33: This release reverts from .some() back to .every().
+
 ## 0.5.1
 
 ### Patch Changes
