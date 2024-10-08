@@ -1,16 +1,13 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { convertWhat3words } from '@flatfile/plugin-convert-what3words'
 import { configureSpace } from '@flatfile/plugin-space-configure'
+import { phoneFormatValidator } from '@flatfile/plugin-validate-phone'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    convertWhat3words({
-      sheetSlug: 'people',
-      what3wordsField: 'what3words',
+    phoneFormatValidator({
+      phoneField: 'phone',
       countryField: 'country',
-      nearestPlaceField: 'nearestPlace',
-      latField: 'lat',
-      longField: 'long',
+      autoConvert: true,
     })
   )
   listener.use(
@@ -20,38 +17,34 @@ export default async function (listener: FlatfileListener) {
           name: 'Sandbox',
           sheets: [
             {
-              name: 'People',
-              slug: 'people',
+              name: 'Contacts',
+              slug: 'contacts',
+              allowAdditionalFields: true,
               fields: [
                 {
-                  key: 'name',
+                  key: 'firstName',
                   type: 'string',
-                  label: 'Name',
+                  label: 'First Name',
                 },
                 {
-                  key: 'nearestPlace',
+                  key: 'lastName',
                   type: 'string',
-                  label: 'Nearest Place',
+                  label: 'Last Name',
+                },
+                {
+                  key: 'email',
+                  type: 'string',
+                  label: 'Email',
+                },
+                {
+                  key: 'phone',
+                  type: 'string',
+                  label: 'Phone',
                 },
                 {
                   key: 'country',
                   type: 'string',
                   label: 'Country',
-                },
-                {
-                  key: 'lat',
-                  type: 'number',
-                  label: 'Latitude',
-                },
-                {
-                  key: 'long',
-                  type: 'number',
-                  label: 'Longitude',
-                },
-                {
-                  key: 'what3words',
-                  type: 'string',
-                  label: 'What3Words',
                 },
               ],
             },

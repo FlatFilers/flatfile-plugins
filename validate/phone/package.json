@@ -1,0 +1,68 @@
+{
+  "name": "@flatfile/plugin-validate-phone",
+  "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validators/phone",
+  "description": "A validator plugin for phone number formatting on individual data records in Flatfile.",
+  "registryMetadata": {
+    "category": "records"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
+    "default": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-transform"
+  ],
+  "author": "Flatfile, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "validators/phone"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/plugin-record-hook": "^1.7.0",
+    "libphonenumber-js": "^1.11.10"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.5"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "^0.1.1"
+  }
+}
