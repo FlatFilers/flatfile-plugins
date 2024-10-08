@@ -145,9 +145,9 @@ jobs:
           path: |
             ./**/dist
             ./**/build
-          key: ${{ runner.os }}-build-${{ jobs.setup.outputs.hash }}-${{ github.sha }}
+          key: ${{ runner.os }}-build-${{ needs.jobs.setup.outputs.hash }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ jobs.setup.outputs.hash }}-
+            ${{ runner.os }}-build-${{ needs.jobs.setup.outputs.hash }}-
             ${{ runner.os }}-build-
 
       - name: Run unit tests
@@ -181,9 +181,9 @@ jobs:
           path: |
             ./**/dist
             ./**/build
-          key: ${{ runner.os }}-build-${{ jobs.setup.outputs.hash }}-${{ github.sha }}
+          key: ${{ runner.os }}-build-${{ needs.jobs.setup.outputs.hash }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ jobs.setup.outputs.hash }}-
+            ${{ runner.os }}-build-${{ needs.jobs.setup.outputs.hash }}-
             ${{ runner.os }}-build-
 
       - name: Run E2E tests sequentially
