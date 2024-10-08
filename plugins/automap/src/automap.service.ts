@@ -328,7 +328,7 @@ export class AutomapService {
     plan: Flatfile.JobExecutionPlan
   ): boolean {
     return R.pipe(plan, (p) =>
-      p.fieldMapping?.some(
+      p.fieldMapping?.every(
         (edge) => edge.metadata?.certainty === Flatfile.Certainty.Absolute
       )
     )
@@ -338,7 +338,7 @@ export class AutomapService {
     plan: Flatfile.JobExecutionPlan
   ): boolean {
     return R.pipe(plan, (p) =>
-      p.fieldMapping?.some(
+      p.fieldMapping?.every(
         (edge) =>
           edge.metadata?.certainty === Flatfile.Certainty.Strong ||
           edge.metadata?.certainty === Flatfile.Certainty.Absolute
