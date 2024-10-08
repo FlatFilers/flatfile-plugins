@@ -54,7 +54,9 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/api": "^1.9.19",
-    "@flatfile/listener": "^1.1.0"
+    "@flatfile/listener": "^1.1.0",
+    "@flatfile/plugin-job-handler": "^0.6.1",
+    "@flatfile/util-common": "^1.4.1"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "0.1.1",
