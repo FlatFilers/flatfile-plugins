@@ -111,7 +111,7 @@ jobs:
 
   unit-tests:
     needs: [determine-packages, setup]
-    name: Unit Tests
+    name: Unit
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
@@ -155,7 +155,7 @@ jobs:
 
   e2e-tests:
     needs: [determine-packages, setup]
-    name: E2E Tests
+    name: E2E
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     steps:
