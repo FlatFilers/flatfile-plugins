@@ -1,15 +1,10 @@
 import type { FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { phoneFormatValidator } from '@flatfile/plugin-validate-phone'
+import { viewMappedPlugin } from '@flatfile/plugin-view-mapped'
 
 export default async function (listener: FlatfileListener) {
-  listener.use(
-    phoneFormatValidator({
-      phoneField: 'phone',
-      countryField: 'country',
-      autoConvert: true,
-    })
-  )
+  listener.use(viewMappedPlugin())
+  
   listener.use(
     configureSpace({
       workbooks: [
