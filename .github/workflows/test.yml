@@ -132,7 +132,7 @@ jobs:
           node-version: 18
 
       - name: Restore dependencies
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -140,14 +140,14 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Restore build artifacts
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           path: |
             ./**/dist
             ./**/build
-          key: ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-${{ github.sha }}
+          key: ${{ runner.os }}-build-${{ jobs.setup.outputs.hash }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-
+            ${{ runner.os }}-build-${{ jobs.setup.outputs.hash }}-
             ${{ runner.os }}-build-
 
       - name: Run unit tests
@@ -170,20 +170,20 @@ jobs:
           node-version: 18
 
       - name: Restore dependencies
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Restore build artifacts
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           path: |
             ./**/dist
             ./**/build
-          key: ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-${{ github.sha }}
+          key: ${{ runner.os }}-build-${{ jobs.setup.outputs.hash }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-
+            ${{ runner.os }}-build-${{ jobs.setup.outputs.hash }}-
             ${{ runner.os }}-build-
 
       - name: Run E2E tests sequentially
