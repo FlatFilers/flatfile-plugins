@@ -1,6 +1,6 @@
 <!-- START_INFOCARD -->
 
-The `@flatfile/plugin-email-validation` plugin offers a convenient way to 
+The `@flatfile/plugin-validate-email` plugin offers a convenient way to 
 validate email addresses in your Flatfile sheets. This plugin seamlessly 
 integrates with the data processing flow by setting up a record hook. It 
 supports email format validation, checks against disposable email domains, 
@@ -29,13 +29,13 @@ Custom error messages for different validation scenarios. Available keys:
 ## Usage
 
 ```bash
-npm install @flatfile/plugin-email-validation
+npm install @flatfile/plugin-validate-email
 ```
 
 ### Import
 
 ```js
-import { emailValidationPlugin } from '@flatfile/plugin-email-validation';
+import { emailValidationPlugin } from '@flatfile/plugin-validate-email';
 ```
 
 ## Example Usage
@@ -44,7 +44,7 @@ This example sets up a record hook using `listener.use` to validate email fields
 
 ```javascript
 import { FlatfileListener } from '@flatfile/listener';
-import { emailValidationPlugin } from '@flatfile/plugin-email-validation';
+import { emailValidationPlugin } from '@flatfile/plugin-validate-email';
 
 export default function (listener: FlatfileListener) {
   listener.use(emailValidationPlugin({
