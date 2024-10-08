@@ -15,6 +15,7 @@ jobs:
   determine-packages:
     name: Determine Packages
     runs-on: ubuntu-latest
+    if: ${{ github.head_ref != 'changeset-release/main' }}
     outputs:
       packages: ${{ steps.set-packages.outputs.packages }}
       unit_test_packages: ${{ steps.set-packages.outputs.unit_test_packages }}
@@ -53,7 +54,7 @@ jobs:
           echo "packages=$(jq -nc '$ARGS.positional' --args "${PACKAGES[@]}")" >> $GITHUB_OUTPUT
           echo "unit_test_packages=$(jq -nc '$ARGS.positional' --args "${UNIT_TEST_PACKAGES[@]}")" >> $GITHUB_OUTPUT
           echo "e2e_test_packages=$(jq -nc '$ARGS.positional' --args "${E2E_TEST_PACKAGES[@]}")" >> $GITHUB_OUTPUT
-          
+
           echo "Found packages: ${PACKAGES[*]}"
           echo "Packages with unit tests: ${UNIT_TEST_PACKAGES[*]}"
           echo "Packages with E2E tests: ${E2E_TEST_PACKAGES[*]}"
@@ -62,6 +63,7 @@ jobs:
     name: Setup
     needs: determine-packages
     runs-on: ubuntu-latest
+    if: ${{ github.head_ref != 'changeset-release/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -151,7 +153,7 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit -- --filter=${{ matrix.package }}
         env:
-          TURBO_CACHE_ENABLED: "true"
+          TURBO_CACHE_ENABLED: 'true'
 
   e2e-tests:
     needs: [determine-packages, setup]
@@ -201,12 +203,13 @@ jobs:
           fi
         env:
           NODE_ENV: test
-          TURBO_CACHE_ENABLED: "true"
+          TURBO_CACHE_ENABLED: 'true'
 
   test:
     needs: [unit-tests, e2e-tests]
     name: Test
     runs-on: ubuntu-latest
+    if: ${{ github.head_ref != 'changeset-release/main' }}
     steps:
       - name: Check test results
         run: |
