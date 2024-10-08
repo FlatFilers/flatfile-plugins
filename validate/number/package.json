@@ -1,6 +1,7 @@
 {
   "name": "@flatfile/plugin-validate-number",
   "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/number",
   "description": "A Flatfile Listener plugin for number validation",
   "engines": {
     "node": ">= 16"
