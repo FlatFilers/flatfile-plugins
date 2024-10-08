@@ -50,9 +50,9 @@ describe('externalConstraint()', () => {
   it('correctly handles thrown errors', async () => {
     await createRecords(sheetId, defaultSimpleValueData)
 
-    await listener.waitFor('commit:created', 2)
+    await listener.waitFor('commit:created')
     const records = await getRecords(sheetId)
-    expect(records[0].values['name'].messages[0]).toMatchObject({
+    expect(records[0].values['name'].messages?.[0]).toMatchObject({
       type: 'error',
       message: 'Either name or email must be present',
     })

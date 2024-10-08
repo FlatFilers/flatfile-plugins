@@ -80,8 +80,8 @@ describe('automap() e2e', () => {
         automap({
           accuracy: 'confident',
           matchFilename: /test.csv$/g,
-          defaultTargetSheet: (fileName: string) => {
-            if (fileName.match(/test.csv$/g)) {
+          defaultTargetSheet: (fileName?: string) => {
+            if (fileName?.match(/test.csv$/g)) {
               return 'test'
             }
             return 'contacts'

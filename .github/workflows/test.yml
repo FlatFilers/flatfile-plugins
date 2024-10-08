@@ -13,41 +13,151 @@ concurrency:
 
 jobs:
   determine-packages:
+    name: Determine Packages
     runs-on: ubuntu-latest
     outputs:
       packages: ${{ steps.set-packages.outputs.packages }}
+      unit_test_packages: ${{ steps.set-packages.outputs.unit_test_packages }}
+      e2e_test_packages: ${{ steps.set-packages.outputs.e2e_test_packages }}
     steps:
       - uses: actions/checkout@v4
-      - name: Get package names
+      - name: Get package names and test info
         id: set-packages
         run: |
           SEARCH_DIRS="plugins utils validate convert enrich import export"
 
-          PACKAGES=$(
-            for dir in $SEARCH_DIRS; do
-              if [ -d "$dir" ]; then
-                find "$dir" -maxdepth 2 -name "package.json" -exec sh -c '
-                  PACKAGE_NAME=$(jq -r .name {})
-                  if [ "$PACKAGE_NAME" != "null" ]; then
-                    echo "$PACKAGE_NAME"
+          PACKAGES=()
+          UNIT_TEST_PACKAGES=()
+          E2E_TEST_PACKAGES=()
+
+          for dir in $SEARCH_DIRS; do
+            if [ -d "$dir" ]; then
+              while IFS= read -r package_json; do
+                PACKAGE_DIR=$(dirname "$package_json")
+                PACKAGE_NAME=$(jq -r .name "$package_json")
+                if [ "$PACKAGE_NAME" != "null" ]; then
+                  PACKAGES+=("$PACKAGE_NAME")
+                  
+                  if [ -n "$(find "$PACKAGE_DIR" -name "*.spec.ts" -not -name "*.e2e.spec.ts")" ]; then
+                    UNIT_TEST_PACKAGES+=("$PACKAGE_NAME")
                   fi
-                ' \;
-              fi
-            done | jq -R -s -c 'split("\n")[:-1]'
-          )
+                  
+                  if [ -n "$(find "$PACKAGE_DIR" -name "*.e2e.spec.ts")" ]; then
+                    E2E_TEST_PACKAGES+=("$PACKAGE_NAME")
+                  fi
+                fi
+              done < <(find "$dir" -maxdepth 2 -name "package.json")
+            fi
+          done
 
-          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
-          echo "Found packages: $PACKAGES"
+          echo "packages=$(jq -nc '$ARGS.positional' --args "${PACKAGES[@]}")" >> $GITHUB_OUTPUT
+          echo "unit_test_packages=$(jq -nc '$ARGS.positional' --args "${UNIT_TEST_PACKAGES[@]}")" >> $GITHUB_OUTPUT
+          echo "e2e_test_packages=$(jq -nc '$ARGS.positional' --args "${E2E_TEST_PACKAGES[@]}")" >> $GITHUB_OUTPUT
+          
+          echo "Found packages: ${PACKAGES[*]}"
+          echo "Packages with unit tests: ${UNIT_TEST_PACKAGES[*]}"
+          echo "Packages with E2E tests: ${E2E_TEST_PACKAGES[*]}"
 
-  test-packages:
+  setup:
+    name: Setup
     needs: determine-packages
-    name: Test (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: npm-cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Generate source code hash
+        id: source-hash
+        run: |
+          HASH=$(find . -type f \( -name '*.ts' -o -name '*.js' -o -name 'package.json' \) -not -path '*/node_modules/*' | sort | xargs md5sum | md5sum | cut -d' ' -f1)
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        id: build-cache
+        with:
+          path: |
+            ./**/dist
+            ./**/build
+          key: ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-
+            ${{ runner.os }}-build-
+
+      - name: Build
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: npx turbo run build
+
+  unit-tests:
+    needs: [determine-packages, setup]
+    name: Unit
     runs-on: ubuntu-latest
     if: ${{ github.head_ref != 'changeset-release/main' }}
     strategy:
       matrix:
-        package: ${{fromJson(needs.determine-packages.outputs.packages)}}
+        package: ${{ fromJson(needs.determine-packages.outputs.unit_test_packages) }}
       fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Restore build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./**/dist
+            ./**/build
+          key: ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-
+            ${{ runner.os }}-build-
+
+      - name: Run unit tests
+        run: npm run test:unit -- --filter=${{ matrix.package }}
+        env:
+          TURBO_CACHE_ENABLED: "true"
+
+  e2e-tests:
+    needs: [determine-packages, setup]
+    name: E2E
+    runs-on: ubuntu-latest
+    if: ${{ github.head_ref != 'changeset-release/main' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -56,23 +166,49 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Build
-        run: npx turbo run build
+      - name: Restore build artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./**/dist
+            ./**/build
+          key: ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ steps.source-hash.outputs.hash }}-
+            ${{ runner.os }}-build-
 
-      - name: Test
-        run: npx turbo run test --filter=${{ matrix.package }}
+      - name: Run E2E tests sequentially
+        run: |
+          E2E_PACKAGES='${{ needs.determine-packages.outputs.e2e_test_packages }}'
+          if [ "$E2E_PACKAGES" != "[]" ] && [ "$E2E_PACKAGES" != "" ]; then
+            echo "$E2E_PACKAGES" | jq -r '.[]' | while read -r package; do
+              echo "Running E2E tests for $package"
+              npm run test:e2e -- --filter=$package
+              if [ $? -ne 0 ]; then
+                echo "E2E tests failed for $package"
+                exit 1
+              fi
+            done
+          else
+            echo "No E2E test packages found"
+          fi
+        env:
+          NODE_ENV: test
+          TURBO_CACHE_ENABLED: "true"
 
   test:
-    needs: test-packages
+    needs: [unit-tests, e2e-tests]
     name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Check test results
         run: |
-          echo "All package tests completed successfully"
+          echo "All unit and E2E tests completed successfully"
           exit 0
