@@ -138,10 +138,10 @@ describe('parser', () => {
     const basicResult = await parseBuffer(colonBasicBuffer, { delimiter: '#' })
     const complexResult = await parseBuffer(colonComplexBuffer, {
       delimiter: '#',
-      skipEmptyLines: true
+      skipEmptyLines: 'greedy',
     })
 
-    expect(complexResult).toEqual(expect.objectContaining(basicResult))
+    expect(complexResult).toEqual(basicResult)
   })
   test('skip empty lines: true', async () => {
     const parsedBuffer = await parseBuffer(emptyLinesBuffer, {
