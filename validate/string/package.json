@@ -1,7 +1,8 @@
 {
   "name": "@flatfile/plugin-validate-string",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A Flatfile plugin for string configuration and validation",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/record-hook",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -33,15 +34,11 @@
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [
-    "flatfile",
-    "plugin",
-    "string",
-    "validator",
     "flatfile-plugins",
     "category-transform"
   ],
-  "author": "Your Name",
-  "license": "MIT",
+  "author": "Flatfile, Inc",
+  "license": "ISC",
   "dependencies": {
     "@flatfile/plugin-record-hook": "^1.7.0"
   },
@@ -54,7 +51,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/string-validator"
+    "directory": "validate/string"
   },
   "browserslist": [
     "> 0.5%",
