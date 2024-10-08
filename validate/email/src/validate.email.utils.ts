@@ -4,15 +4,16 @@ const emailRegex =
 export function validateEmailAddress(
   email: string,
   disposableDomains: string[]
-): string | null {
+): { isValid: boolean; email: string | null; error: string | null } {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {
-    return 'Invalid email format'
+    return { isValid: false, email, error: 'Invalid email format' }
   }
 
-  const domain = email.split('@')[1]
+  const domain = email.split('@')[1].toLowerCase()
   if (disposableDomains.includes(domain)) {
-    return 'Disposable email addresses are not allowed'
+    return { isValid: false, email, error: 'Disposable email addresses are not allowed' }
   }
 
-  return null
+  return { isValid: true, email, error: '' }
 }

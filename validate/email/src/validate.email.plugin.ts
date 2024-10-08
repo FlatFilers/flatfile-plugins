@@ -22,12 +22,19 @@ export function validateEmail(config: EmailValidationConfig) {
       if (!email) {
         record.addError(field, errorMessages.required || 'Email is required')
       } else {
-        const errorMessage = validateEmailAddress(
+        const validationResult = validateEmailAddress(
           email,
           config.disposableDomains || []
         )
-        if (errorMessage) {
-          record.addError(field, errorMessages.invalid || errorMessage)
+        
+        if (!validationResult.isValid) {
+          let errorMessage = errorMessages.invalid || validationResult.error
+          
+          if (validationResult.error === 'Disposable email addresses are not allowed') {
+            errorMessage = errorMessages.disposable || validationResult.error
+          }
+          
+          record.addError(field, errorMessage)
         }
       }
     }
