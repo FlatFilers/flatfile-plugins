@@ -1,5 +1,11 @@
 # @flatfile/plugin-view-mapped
 
+## 1.0.4
+
+### Patch Changes
+
+- e77d0e3: This release turns off job acknowledgement
+
 ## 1.0.3
 
 ### Patch Changes
