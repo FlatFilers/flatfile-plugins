@@ -4,7 +4,7 @@
 
 This plugin provides automatic text summarization capabilities for Flatfile using natural language processing. It uses the compromise library to generate summaries and extract key phrases from specified fields.
 
-**Event Type:** `listener.on('commit:created')`
+**Event Type:** `commit:created`
 
 **Supported Field Types:** `string`
 
@@ -38,9 +38,6 @@ Number of sentences in the summary. Default is 2.
 #### `summaryPercentage` - `number` - (optional)
 Percentage of content to include in summary.
 
-#### `autoSummarize` - `boolean` - (optional)
-Automatically generate summaries. Default is false.
-
 ## Usage
 
 **install**
@@ -51,7 +48,7 @@ npm install @flatfile/plugin-enrich-summarize
 **import**
 ```javascript
 import { FlatfileListener } from "@flatfile/listener";
-import { textSummarization } from "@flatfile/plugin-enrich-summarize";
+import { summarize } from "@flatfile/plugin-enrich-summarize";
 ```
 
 **listener.js**
@@ -59,13 +56,12 @@ import { textSummarization } from "@flatfile/plugin-enrich-summarize";
 const listener = new FlatfileListener();
 
 listener.use(
-  textSummarization({
+  summarize({
     sheetSlug: "articles",
     contentField: "full_text",
     summaryField: "summary",
     keyPhrasesField: "key_phrases",
-    summaryLength: 3,
-    autoSummarize: true
+    summaryLength: 3
   })
 );
 ```
