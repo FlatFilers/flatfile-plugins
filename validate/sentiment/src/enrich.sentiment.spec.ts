@@ -1,14 +1,14 @@
-import { performSentimentAnalysis } from './analyze.sentiment'
+import { performEnrichSentiment } from './enrich.sentiment'
 
-describe('performSentimentAnalysis', () => {
+describe('performEnrichSentiment', () => {
   it('should return an error for empty input', () => {
-    const result = performSentimentAnalysis('', 'description')
+    const result = performEnrichSentiment('', 'description')
     expect(result.error).toBe('No text found for sentiment analysis in field: description')
     expect(result.result).toBeNull()
   })
 
   it('should analyze positive sentiment correctly', () => {
-    const result = performSentimentAnalysis('I love this product!', 'review')
+    const result = performEnrichSentiment('I love this product!', 'review')
     expect(result.error).toBeNull()
     expect(result.result).toBeTruthy()
     expect(result.result?.score).toBeGreaterThan(0)
@@ -17,7 +17,7 @@ describe('performSentimentAnalysis', () => {
   })
 
   it('should analyze negative sentiment correctly', () => {
-    const result = performSentimentAnalysis('I hate this product!', 'review')
+    const result = performEnrichSentiment('I hate this product!', 'review')
     expect(result.error).toBeNull()
     expect(result.result).toBeTruthy()
     expect(result.result?.score).toBeLessThan(0)
@@ -26,7 +26,7 @@ describe('performSentimentAnalysis', () => {
   })
 
   it('should analyze neutral sentiment correctly', () => {
-    const result = performSentimentAnalysis('This product is okay.', 'review')
+    const result = performEnrichSentiment('This product is okay.', 'review')
     expect(result.error).toBeNull()
     expect(result.result).toBeTruthy()
     expect(result.result?.score).toBe(0)
@@ -35,7 +35,7 @@ describe('performSentimentAnalysis', () => {
   })
 
   it('should handle complex sentences', () => {
-    const result = performSentimentAnalysis('The product has some good features, but overall it\'s disappointing.', 'feedback')
+    const result = performEnrichSentiment('The product has some good features, but overall it\'s disappointing.', 'feedback')
     expect(result.error).toBeNull()
     expect(result.result).toBeTruthy()
     expect(result.result?.score).toBeDefined()

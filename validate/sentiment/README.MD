@@ -1,6 +1,12 @@
-# Flatfile Sentiment Analysis Plugin
+<!-- START_INFOCARD -->
+# @flatfile/plugin-enrich-sentiment
 
-This plugin implements sentiment analysis for Flatfile using the RecordHook. It analyzes specified text fields in records, adds sentiment scores and categories as new fields, and provides informative messages about the analysis process.
+The `@flatfile/plugin-enrich-sentiment` implements sentiment analysis for Flatfile using the RecordHook. It analyzes specified text fields in records, adds sentiment scores and categories as new fields, and provides informative messages about the analysis process.
+
+**Event Type:**
+`listener.on('commit:created')`
+
+<!-- END_INFOCARD -->
 
 ## Features
 
@@ -15,14 +21,14 @@ This plugin implements sentiment analysis for Flatfile using the RecordHook. It 
 To install the Flatfile Sentiment Analysis Plugin, use npm:
 
 ```bash
-npm install @flatfile/plugin-sentiment-analysis
+npm install @flatfile/plugin-enrich-sentiment
 ```
 
 ## Example Usage
 
 ```javascript
 import { FlatfileRecord } from '@flatfile/hooks';
-import sentimentAnalysisHook from '@flatfile/plugin-sentiment-analysis';
+import sentimentAnalysisHook from '@flatfile/plugin-enrich-sentiment';
 
 export default function flatfileEventListener(listener) {
   listener.use(sentimentAnalysisHook);

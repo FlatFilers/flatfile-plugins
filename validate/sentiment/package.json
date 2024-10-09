@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-sentiment-analysis",
+  "name": "@flatfile/plugin-enrich-sentiment",
   "version": "1.0.0",
   "description": "A Flatfile plugin for sentiment analysis of text fields in records",
   "main": "./dist/index.js",

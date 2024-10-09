@@ -1,1 +1,1 @@
-export * from './analyze.sentiment'
+export * from './enrich.sentiment'

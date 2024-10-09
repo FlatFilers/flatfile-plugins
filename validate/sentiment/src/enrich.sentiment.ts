@@ -2,7 +2,7 @@ import { recordHook } from '@flatfile/plugin-record-hook'
 import { FlatfileListener } from '@flatfile/listener'
 import Sentiment from 'sentiment'
 
-export interface SentimentAnalyzerConfig {
+export interface EnrichSentimentConfig {
   sheetSlug: string
   textFields: string[]
   automaticValidation: boolean
@@ -37,7 +37,7 @@ export function analyzeSentiment(text: string) {
 }
 
 // Separate logic for sentiment analysis
-export function performSentimentAnalysis(value: string, field: string) {
+export function performEnrichSentiment(value: string, field: string) {
   if (!value) {
     return {
       error: `No text found for sentiment analysis in field: ${field}`,
@@ -57,7 +57,7 @@ export function performSentimentAnalysis(value: string, field: string) {
 }
 
 // Create a configurable RecordHook
-export function sentimentAnalyzerPlugin(config: SentimentAnalyzerConfig) {
+export function enrichSentiment(config: EnrichSentimentConfig) {
   return (listener: FlatfileListener) => {
     listener.use(
       recordHook(config.sheetSlug, async (record, event) => {
@@ -66,7 +66,7 @@ export function sentimentAnalyzerPlugin(config: SentimentAnalyzerConfig) {
         if (config.automaticValidation) {
           for (const field of textFields) {
             const fieldValue = String(record.get(field))
-            const { error, result } = performSentimentAnalysis(
+            const { error, result } = performEnrichSentiment(
               fieldValue,
               field
             )
@@ -95,4 +95,4 @@ export function sentimentAnalyzerPlugin(config: SentimentAnalyzerConfig) {
   }
 }
 
-export default sentimentAnalyzerPlugin
+export default enrichSentiment
