@@ -14,10 +14,6 @@ const api = new FlatfileClient()
 describe('NormalizeDate e2e', () => {
   const listener = setupListener()
 
-  // Console spies
-  const logSpy = jest.spyOn(global.console, 'log')
-  const logErrorSpy = jest.spyOn(global.console, 'error')
-
   let spaceId: string
   let sheetId: string
 
@@ -39,8 +35,6 @@ describe('NormalizeDate e2e', () => {
 
   afterEach(async () => {
     listener.reset()
-    logSpy.mockReset()
-    logErrorSpy.mockReset()
     const records = await getRecords(sheetId)
     if (records.length > 0) {
       const ids = records.map((record) => record.id)
