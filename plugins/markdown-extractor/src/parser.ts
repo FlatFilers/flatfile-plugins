@@ -27,7 +27,7 @@ export function parseBuffer(
   return sheets
 }
 
-function extractTablesFromMarkdown(
+export function extractTablesFromMarkdown(
   content: string,
   options: MarkdownExtractorOptions
 ): Array<{ headers: string[]; rows: string[][] }> {
