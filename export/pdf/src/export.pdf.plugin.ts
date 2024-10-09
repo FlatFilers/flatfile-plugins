@@ -1,17 +1,14 @@
-import { FlatfileListener } from '@flatfile/listener'
+import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 import { Client } from '@anthropic-ai/sdk'
 import api from '@flatfile/api'
 import * as fs from 'fs'
+import { jobHandler } from '@flatfile/plugin-job-handler'
 
-// Initialize Flatfile client
-const flatfile = new api.Client({ token: process.env.FLATFILE_API_KEY })
+async function analyzeDataWithAI(sheetData: any[], ANTHROPIC_API_KEY: string) {
+  const dataDescription = JSON.stringify(sheetData)
 
-// Initialize Anthropic client
-const anthropic = new Client(process.env.ANTHROPIC_API_KEY)
-
-async function analyzeDataWithAI(sheetData: any[]) {
-  const dataDescription = JSON.stringify(sheetData.slice(0, 10))
+  const anthropic = new Client(ANTHROPIC_API_KEY)
 
   const prompt = `Given the following dataset: ${dataDescription}
   
@@ -25,18 +22,22 @@ async function analyzeDataWithAI(sheetData: any[]) {
   const response = await anthropic.completions.create({
     model: 'claude-2',
     prompt: prompt,
-    max_tokens_to_sample: 500,
   })
 
   return response.completion
 }
 
-async function generatePDFReport(sheetData: any[]) {
+async function generatePDFReport(sheetData: any[], event) {
   const pdfDoc = await PDFDocument.create()
   const page = pdfDoc.addPage()
   const { height } = page.getSize()
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+  const anthropicApiKey =
+    process.env.ANTHROPIC_API_KEY || event.secrets('ANTHROPIC_API_KEY')
 
+  if (!anthropicApiKey) {
+    throw new Error('Anthropic API key is not set')
+  }
   // Add title
   page.drawText('Data Analysis Report', {
     x: 50,
@@ -85,7 +86,7 @@ async function generatePDFReport(sheetData: any[]) {
   })
   yOffset -= 20
 
-  const aiAnalysis = await analyzeDataWithAI(sheetData)
+  const aiAnalysis = await analyzeDataWithAI(sheetData, anthropicApiKey)
   const words = aiAnalysis.split(' ')
   let line = ''
   for (const word of words) {
@@ -126,7 +127,7 @@ async function uploadPDFToFlatfile(
   const fileStream = fs.createReadStream(tempFilePath)
 
   try {
-    const response = await flatfile.files.upload(fileStream, {
+    const response = await api.files.upload(fileStream, {
       spaceId,
       environmentId,
     })
@@ -138,11 +139,17 @@ async function uploadPDFToFlatfile(
   }
 }
 
-async function handleJobReady(event: any) {
-  const sheetId = event.context.sheetId
-  const { data: records } = await flatfile.records.get(sheetId)
+async function handleJobReady(event: FlatfileEvent) {
+  const { context } = event.payload
+  const sheetId = context.sheetId
 
-  const pdfBytes = await generatePDFReport(records)
+  if (!sheetId) {
+    throw new Error('Sheet ID is missing from the event context')
+  }
+
+  const { data: records } = await api.records.get(sheetId, { pageSize: 50 })
+
+  const pdfBytes = await generatePDFReport(records.records, event)
 
   const fileName = `report_${sheetId}_${Date.now()}.pdf`
   const spaceId = process.env.FLATFILE_SPACE_ID
@@ -156,15 +163,11 @@ async function handleJobReady(event: any) {
 }
 
 const listener = FlatfileListener.create((listener) => {
-  listener.on('job:ready', async (event) => {
-    try {
+  listener.use(
+    jobHandler('pdf-export', async (event) => {
       await handleJobReady(event)
-      await event.acknowledge()
-    } catch (error) {
-      console.error('Error in job:ready handler:', error)
-      await event.fail(error.message)
-    }
-  })
+    })
+  )
 })
 
 export default listener
