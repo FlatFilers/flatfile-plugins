@@ -1,6 +1,7 @@
 import type { FlatfileListener } from '@flatfile/listener'
 import { rssImport } from '@flatfile/plugin-import-rss'
 import { configureSpace } from '@flatfile/plugin-space-configure'
+import { MarkdownExtractor } from '@flatfile/plugin-markdown-extractor'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
@@ -110,4 +111,7 @@ export default async function (listener: FlatfileListener) {
       ],
     })
   )
+
+  listener.use(MarkdownExtractor())
+
 }
