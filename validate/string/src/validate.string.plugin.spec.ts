@@ -1,7 +1,4 @@
-import {
-  validateAndTransformString,
-  StringValidationConfig,
-} from './validate.string.plugin'
+import { validateAndTransformString, StringValidationConfig } from '.'
 
 describe('validateAndTransformString', () => {
   it('should validate empty string', () => {
