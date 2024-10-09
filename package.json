@@ -15,6 +15,7 @@
     "plugins/*",
     "support/*",
     "utils/*",
+    "export/*",
     "validate/*",
     "enrich/*"
   ],
