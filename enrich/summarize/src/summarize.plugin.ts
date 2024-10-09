@@ -1,5 +1,5 @@
 import { type FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
-import nlp from 'compromise'
+import { generateSummary, extractKeyPhrases } from './summary.util'
 
 interface SummarizationConfig {
   sheetSlug: string
@@ -24,34 +24,13 @@ export function summarize(config: SummarizationConfig) {
     }
 
     if (!existingSummary) {
-      const doc = nlp(content)
-      const sentences = doc.sentences().out('array')
-
-      let summaryLength = config.summaryLength || 2
-      if (config.summaryPercentage) {
-        summaryLength = Math.max(
-          1,
-          Math.floor((sentences.length * config.summaryPercentage) / 100)
-        )
-      }
-
-      let summary = ''
-      if (sentences.length > 0) {
-        if (sentences.length <= summaryLength) {
-          summary = sentences.join(' ')
-        } else {
-          const middleIndex = Math.floor(summaryLength / 2)
-          const firstPart = sentences.slice(0, middleIndex).join(' ')
-          const lastPart = sentences.slice(-middleIndex).join(' ')
-          summary = `${firstPart} ... ${lastPart}`
-        }
-      }
-
+      const summary = generateSummary(content, {
+        summaryLength: config.summaryLength,
+        summaryPercentage: config.summaryPercentage
+      })
       record.set(config.summaryField, summary)
 
-      const keyPhrases = doc
-        .match('#Noun+ (#Adjective|#Noun){0,2}')
-        .out('array')
+      const keyPhrases = extractKeyPhrases(content)
       record.set(config.keyPhrasesField, keyPhrases.join(', '))
     }
 
