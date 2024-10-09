@@ -2,7 +2,7 @@ import { recordHook } from '@flatfile/plugin-record-hook'
 import { FlatfileListener } from '@flatfile/listener'
 import Sentiment from 'sentiment'
 
-interface SentimentAnalyzerConfig {
+export interface SentimentAnalyzerConfig {
   sheetSlug: string
   textFields: string[]
   automaticValidation: boolean
@@ -18,9 +18,9 @@ interface SentimentAnalyzerConfig {
 const sentiment = new Sentiment()
 
 // Function to analyze and categorize sentiment
-function analyzeSentiment(text) {
+export function analyzeSentiment(text: string) {
   const result = sentiment.analyze(text)
-  let category
+  let category: 'positive' | 'negative' | 'neutral'
 
   if (result.score > 0) {
     category = 'positive'
@@ -36,10 +36,28 @@ function analyzeSentiment(text) {
   }
 }
 
+// Separate logic for sentiment analysis
+export function performSentimentAnalysis(value: string, field: string) {
+  if (!value) {
+    return {
+      error: `No text found for sentiment analysis in field: ${field}`,
+      result: null,
+    }
+  }
+
+  const sentimentResult = analyzeSentiment(value)
+  return {
+    error: null,
+    result: {
+      score: sentimentResult.score,
+      category: sentimentResult.category,
+      message: `Sentiment analysis completed for ${field}. Score: ${sentimentResult.score}, Category: ${sentimentResult.category}`,
+    },
+  }
+}
+
 // Create a configurable RecordHook
-export default function sentimentAnalyzerPlugin(
-  config: SentimentAnalyzerConfig
-) {
+export function sentimentAnalyzerPlugin(config: SentimentAnalyzerConfig) {
   return (listener: FlatfileListener) => {
     listener.use(
       recordHook(config.sheetSlug, async (record, event) => {
@@ -47,27 +65,21 @@ export default function sentimentAnalyzerPlugin(
 
         if (config.automaticValidation) {
           for (const field of textFields) {
-            const fieldValue = record.get(field)
-            if (fieldValue) {
-              const sentimentResult = analyzeSentiment(fieldValue)
+            const fieldValue = String(record.get(field))
+            const { error, result } = performSentimentAnalysis(
+              fieldValue,
+              field
+            )
 
+            if (error) {
+              record.addWarning('sentiment_analysis', error)
+            } else if (result) {
               // Add sentiment analysis results as new fields in the record
-              record.set(`${field}_sentiment_score`, sentimentResult.score)
-              record.set(
-                `${field}_sentiment_category`,
-                sentimentResult.category
-              )
+              record.set(`${field}_sentiment_score`, result.score)
+              record.set(`${field}_sentiment_category`, result.category)
 
               // Add a message about the sentiment analysis
-              record.addInfo(
-                'sentiment_analysis',
-                `Sentiment analysis completed for ${field}. Score: ${sentimentResult.score}, Category: ${sentimentResult.category}`
-              )
-            } else {
-              record.addWarning(
-                'sentiment_analysis',
-                `No text found for sentiment analysis in field: ${field}`
-              )
+              record.addInfo('sentiment_analysis', result.message)
             }
           }
         } else {
@@ -82,3 +94,5 @@ export default function sentimentAnalyzerPlugin(
     )
   }
 }
+
+export default sentimentAnalyzerPlugin
