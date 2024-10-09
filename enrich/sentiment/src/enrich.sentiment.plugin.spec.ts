@@ -1,4 +1,4 @@
-import { performEnrichSentiment } from './enrich.sentiment'
+import { performEnrichSentiment } from './enrich.sentiment.plugin'
 
 describe('performEnrichSentiment', () => {
   it('should return an error for empty input', () => {
