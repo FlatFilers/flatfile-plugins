@@ -8,13 +8,6 @@ export interface MarkdownExtractorOptions {
 }
 
 export const MarkdownExtractor = (options: MarkdownExtractorOptions = {}) => {
-  const defaultOptions: MarkdownExtractorOptions = {
-    maxTables: Infinity,
-    errorHandling: 'lenient',
-    debug: false,
-    ...options,
-  }
-
   return Extractor('.md', 'markdown', parseBuffer, options)
 }
 
