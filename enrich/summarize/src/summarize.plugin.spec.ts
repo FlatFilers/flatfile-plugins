@@ -7,7 +7,7 @@ import {
   setupSimpleWorkbook,
   setupSpace,
 } from '@flatfile/utils-testing'
-import { summarizationPlugin } from './index'
+import { summarize } from './summarize.plugin'
 
 const api = new FlatfileClient()
 
@@ -40,7 +40,7 @@ describe('Text Summarization Plugin', () => {
     }
   })
 
-  describe('summarizationPlugin', () => {
+  describe('summarize()', () => {
     const mockConfig = {
       sheetSlug: 'test',
       contentField: 'content',
@@ -50,7 +50,7 @@ describe('Text Summarization Plugin', () => {
     }
 
     it('should add summary and key phrases to the record', async () => {
-      listener.use(summarizationPlugin(mockConfig))
+      listener.use(summarize(mockConfig))
 
       await createRecords(sheetId, [
         {
@@ -70,7 +70,7 @@ describe('Text Summarization Plugin', () => {
     })
 
     it('should handle empty content fields', async () => {
-      listener.use(summarizationPlugin(mockConfig))
+      listener.use(summarize(mockConfig))
 
       await createRecords(sheetId, [{ content: '' }])
       await listener.waitFor('commit:created')

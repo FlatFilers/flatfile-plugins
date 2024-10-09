@@ -1,10 +1,10 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { summarizationPlugin } from '@flatfile/plugin-enrich-summarize'
+import { summarize } from '@flatfile/plugin-enrich-summarize'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    summarizationPlugin({
+    summarize({
       sheetSlug: 'summarization',
       contentField: 'content',
       summaryField: 'summary',
