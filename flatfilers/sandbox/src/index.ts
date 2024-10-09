@@ -1,11 +1,16 @@
 import type { FlatfileListener } from '@flatfile/listener'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { viewMappedPlugin } from '@flatfile/plugin-view-mapped'
+import { validateDate } from '@flatfile/plugin-validate-date'
 
 export default async function (listener: FlatfileListener) {
-
-  listener.use(viewMappedPlugin())
-  
+  listener.use(
+    validateDate({
+      sheetSlug: 'contacts',
+      dateFields: ['dob', 'hire_date'],
+      outputFormat: 'MM/dd/yyyy',
+      includeTime: true,
+    })
+  )
   listener.use(
     configureSpace({
       workbooks: [
@@ -41,6 +46,16 @@ export default async function (listener: FlatfileListener) {
                   key: 'country',
                   type: 'string',
                   label: 'Country',
+                },
+                {
+                  key: 'dob',
+                  type: 'string',
+                  label: 'Date of Birth',
+                },
+                {
+                  key: 'hire_date',
+                  type: 'string',
+                  label: 'Hire Date',
                 },
               ],
             },
