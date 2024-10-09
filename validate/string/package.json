@@ -1,19 +1,11 @@
 {
-  "name": "@flatfile/plugin-validate-phone",
+  "name": "@flatfile/plugin-validate-string",
   "version": "0.0.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validators/phone",
-  "description": "A validator plugin for phone number formatting on individual data records in Flatfile.",
-  "registryMetadata": {
-    "category": "records"
-  },
-  "engines": {
-    "node": ">= 16"
-  },
-  "browserslist": [
-    "> 0.5%",
-    "last 2 versions",
-    "not dead"
-  ],
+  "description": "A Flatfile plugin for string configuration and validation",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/string",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "browser": {
     "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
@@ -30,10 +22,7 @@
     },
     "default": "./dist/index.mjs"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
   "source": "./src/index.ts",
-  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
@@ -50,21 +39,25 @@
     "flatfile-plugins",
     "category-transform"
   ],
-  "author": "Flatfile, Inc.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "validators/phone"
-  },
+  "author": "Flatfile, Inc",
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.7.0",
-    "libphonenumber-js": "^1.11.10"
+    "@flatfile/plugin-record-hook": "^1.7.0"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "^0.1.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "validate/string"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ]
 }
