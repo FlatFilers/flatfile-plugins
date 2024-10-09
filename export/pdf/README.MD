@@ -1,91 +1,82 @@
 <!-- START_INFOCARD -->
 
-# Flatfile PDF Report Generator
+# AI-Powered PDF Report Generator
 
-**A Flatfile Listener plugin for generating customizable PDF reports from contact data**
+**Automatically generate and upload AI-analyzed PDF reports from Flatfile data**
 
-The `Flatfile PDF Report Generator` plugin enhances Flatfile's capabilities by providing a custom action to generate professional PDF reports from contact data. It includes email validation, customizable styling options, and seamless integration with Flatfile's file upload system.
+The `AI-Powered PDF Report Generator` is a Flatfile Listener plugin that creates comprehensive PDF reports with AI-driven analysis when a job is ready. It fetches sheet data, utilizes Anthropic's AI for in-depth analysis, generates a visually appealing PDF report, and seamlessly uploads it back to Flatfile.
 
 **Event Type:**
-`listener.on('action:custom')`
+`listener.on('job:ready')`
 
 **Supported field types:**
-`string`, `email`
+All field types are supported as the plugin processes entire sheets.
 
 <!-- END_INFOCARD -->
 
 ## Features
 
-- Email validation for contact records
-- Customizable PDF report generation
-- Dynamic content including titles, summaries, and placeholders for charts
-- Flexible styling options for fonts, colors, and layout
-- Automatic PDF upload to Flatfile
+- Automatic PDF report generation when a job is ready
+- AI-powered data analysis using Anthropic's Claude model
+- Dynamic PDF creation with data summaries and placeholders for charts
+- Seamless upload of generated reports back to Flatfile
+- Error handling and logging for robust operation
 
 ## Installation
 
-To install the plugin, run the following command:
+1. Install the required dependencies:
 
 ```bash
-npm install @flatfile/plugin-export-pdf
+npm install @flatfile/listener @flatfile/api pdf-lib @anthropic-ai/sdk
 ```
+
+2. Set up the necessary environment variables:
+
+```
+FLATFILE_API_KEY=your_flatfile_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+FLATFILE_SPACE_ID=your_flatfile_space_id
+FLATFILE_ENVIRONMENT_ID=your_flatfile_environment_id
+```
+
+3. Import and use the plugin in your Flatfile configuration.
 
 ## Example Usage
 
 ```javascript
-import { FlatfileListener } from "@flatfile/listener";
-import pdfReportGenerator from "@flatfile/plugin-export-pdf";
+import listener from './path-to-plugin';
 
-const listener = new FlatfileListener();
-
-listener.use(pdfReportGenerator);
-
-// Your other listener configurations...
+// Use the listener in your Flatfile configuration
+export default {
+  name: "My Flatfile Project",
+  plugins: [listener],
+  // ... other configuration options
+};
 ```
 
 ## Configuration
 
-The PDF report generator can be customized using the following options:
+The plugin requires the following environment variables to be set:
 
-```javascript
-const customStyle = {
-  primaryColor: rgb(0.2, 0.4, 0.6),
-  secondaryColor: rgb(0.7, 0.7, 0.7),
-  fontFamily: StandardFonts.TimesRoman,
-  fontSize: {
-    title: 28,
-    heading: 20,
-    subheading: 16,
-    body: 14,
-  },
-  margins: {
-    top: 60,
-    right: 60,
-    bottom: 60,
-    left: 60,
-  },
-};
+- `FLATFILE_API_KEY`: Your Flatfile API key
+- `ANTHROPIC_API_KEY`: Your Anthropic API key
+- `FLATFILE_SPACE_ID`: The ID of your Flatfile space
+- `FLATFILE_ENVIRONMENT_ID`: The ID of your Flatfile environment
 
-// Pass the custom style when triggering the action
-await api.actions.create({
-  operation: "generate_pdf",
-  payload: { style: customStyle },
-  // other action parameters...
-});
-```
+Ensure these are properly set in your environment before running the plugin.
 
 ## Behavior
 
-1. **Email Validation**: The plugin includes a record hook that validates email addresses in the "contacts" sheet. Invalid email addresses will be flagged with an error message.
+1. When a `job:ready` event is triggered, the plugin fetches the sheet data from Flatfile.
+2. It then sends the first 10 rows of data to Anthropic's AI for analysis.
+3. A PDF report is generated, including:
+   - A title
+   - A summary of the total records
+   - A placeholder for charts or graphs
+   - The AI-generated analysis
+4. The PDF is temporarily saved and then uploaded back to Flatfile.
+5. The temporary PDF file is deleted after successful upload.
 
-2. **PDF Generation**: When the custom action "generate_pdf" is triggered, the plugin creates a PDF document with the following sections:
-   - Title and generation date
-   - Summary (placeholders for total contacts and valid emails)
-   - Chart placeholder
-   - Contact list placeholder
+In case of any errors during this process, they are logged, and the job is marked as failed with an error message.
 
-3. **Styling**: The PDF can be styled using custom colors, fonts, and layout options. If no custom style is provided, default styles will be applied.
-
-4. **File Upload**: After generating the PDF, the plugin automatically uploads it to Flatfile using the provided space and environment IDs.
-
-5. **Error Handling**: The plugin includes error handling for both the PDF generation and upload processes, providing appropriate feedback through event replies.
+This plugin provides a powerful way to automatically generate insightful reports from your Flatfile data, enhancing data analysis and visualization capabilities.
