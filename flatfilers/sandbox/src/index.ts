@@ -1,14 +1,14 @@
 import type { FlatfileListener } from '@flatfile/listener'
+import { summarize } from '@flatfile/plugin-enrich-summarize'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { validateDate } from '@flatfile/plugin-validate-date'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    validateDate({
-      sheetSlug: 'contacts',
-      dateFields: ['dob', 'hire_date'],
-      outputFormat: 'MM/dd/yyyy',
-      includeTime: true,
+    summarize({
+      sheetSlug: 'summarization',
+      contentField: 'content',
+      summaryField: 'summary',
+      keyPhrasesField: 'keyPhrases',
     })
   )
   listener.use(
@@ -18,44 +18,23 @@ export default async function (listener: FlatfileListener) {
           name: 'Sandbox',
           sheets: [
             {
-              name: 'Contacts',
-              slug: 'contacts',
-              allowAdditionalFields: true,
+              name: 'Summarization',
+              slug: 'summarization',
               fields: [
                 {
-                  key: 'firstName',
+                  key: 'content',
                   type: 'string',
-                  label: 'First Name',
+                  label: 'Content',
                 },
                 {
-                  key: 'lastName',
+                  key: 'summary',
                   type: 'string',
-                  label: 'Last Name',
+                  label: 'Summary',
                 },
                 {
-                  key: 'email',
+                  key: 'keyPhrases',
                   type: 'string',
-                  label: 'Email',
-                },
-                {
-                  key: 'phone',
-                  type: 'string',
-                  label: 'Phone',
-                },
-                {
-                  key: 'country',
-                  type: 'string',
-                  label: 'Country',
-                },
-                {
-                  key: 'dob',
-                  type: 'string',
-                  label: 'Date of Birth',
-                },
-                {
-                  key: 'hire_date',
-                  type: 'string',
-                  label: 'Hire Date',
+                  label: 'Key Phrases',
                 },
               ],
             },
