@@ -1,0 +1,60 @@
+{
+  "name": "@flatfile/plugin-markdown-extractor",
+  "version": "0.0.1",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/markdown-extractor",
+  "description": "A plugin for parsing markdown files in Flatfile.",
+  "registryMetadata": {
+    "category": "extractors"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "type": "module",
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
+    "default": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-extractors"
+  ],
+  "author": "FlatFilers",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/markdown-extractor"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/util-extractor": "^2.1.2"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "0.1.1"
+  }
+}
