@@ -28,10 +28,10 @@ npm install @flatfile/plugin-enrich-sentiment
 
 ```javascript
 import { FlatfileRecord } from '@flatfile/hooks';
-import sentimentAnalysisHook from '@flatfile/plugin-enrich-sentiment';
+import { enrichSentiment } from '@flatfile/plugin-enrich-sentiment';
 
 export default function flatfileEventListener(listener) {
-  listener.use(sentimentAnalysisHook);
+  listener.use(enrichSentiment({ sheetSug: 'products', textFields: ['long_description'] }));
 }
 ```
 
