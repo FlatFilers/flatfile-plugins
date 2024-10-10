@@ -2,9 +2,17 @@
   "name": "@flatfile/plugin-import-faker",
   "version": "0.0.0",
   "description": "A Flatfile plugin that generates example records using Faker",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "registryMetadata": {
+    "category": "import"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
   "browser": {
     "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
@@ -21,7 +29,10 @@
     },
     "default": "./dist/index.mjs"
   },
-  "source": "./src/index.cts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
@@ -30,31 +41,29 @@
     "build:watch": "rollup -c --watch",
     "build:prod": "NODE_ENV=production rollup -c",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest src/*.spec.ts --detectOpenHandles",
+    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
+    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
   },
   "keywords": [
     "flatfile-plugins",
-    "category-transform"
+    "category-import"
   ],
   "author": "Flatfile, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/import-faker"
+  },
   "license": "ISC",
   "dependencies": {
-    "@faker-js/faker": "^9.0.2"
+    "@faker-js/faker": "^9.0.2",
+    "@flatfile/util-common": "^1.4.1"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "^0.1.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/import-faker"
-  },
-  "browserslist": [
-    "> 0.5%",
-    "last 2 versions",
-    "not dead"
-  ]
+  }
 }

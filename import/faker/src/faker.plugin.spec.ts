@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { FlatfileEvent } from '@flatfile/listener'
-import generateExampleRecords from './faker.plugin'
+import { generateExampleRecords } from './faker.utils'
 
 jest.mock('@faker-js/faker', () => ({
   faker: {
@@ -13,15 +13,15 @@ jest.mock('@faker-js/faker', () => ({
     datatype: {
       number: jest.fn(() => 42),
       boolean: jest.fn(() => true),
-      uuid: jest.fn(() => '123e4567-e89b-12d3-a456-426614174000')
+      uuid: jest.fn(() => '123e4567-e89b-12d3-a456-426614174000'),
     },
     date: {
       past: jest.fn(() => new Date('2000-01-01')),
-      recent: jest.fn(() => new Date('2023-01-01'))
+      recent: jest.fn(() => new Date('2023-01-01')),
     },
     random: { arrayElement: jest.fn((arr) => arr[0]) },
-    commerce: { price: jest.fn(() => '9.99') }
-  }
+    commerce: { price: jest.fn(() => '9.99') },
+  },
 }))
 
 describe('generateExampleRecords', () => {
@@ -33,12 +33,27 @@ describe('generateExampleRecords', () => {
         { key: 'age', type: 'number', label: 'Age' },
         { key: 'isActive', type: 'boolean', label: 'Is Active' },
         { key: 'birthDate', type: 'date', label: 'Birth Date' },
-        { key: 'category', type: 'enum', label: 'Category', config: { options: ['A', 'B', 'C'] } },
-        { key: 'userId', type: 'reference', label: 'User ID', config: { ref: 'users' } },
-        { key: 'tags', type: 'array', label: 'Tags', config: { arrayType: 'string' } }
-      ]
+        {
+          key: 'category',
+          type: 'enum',
+          label: 'Category',
+          config: { options: ['A', 'B', 'C'] },
+        },
+        {
+          key: 'userId',
+          type: 'reference',
+          label: 'User ID',
+          config: { ref: 'users' },
+        },
+        {
+          key: 'tags',
+          type: 'array',
+          label: 'Tags',
+          config: { arrayType: 'string' },
+        },
+      ],
     },
-    update: jest.fn()
+    update: jest.fn(),
   } as any
 
   beforeEach(() => {
@@ -71,10 +86,8 @@ describe('generateExampleRecords', () => {
     const errorEvent: FlatfileEvent = {
       ...mockEvent,
       sheet: {
-        fields: [
-          { key: 'invalid', type: 'invalid', label: 'Invalid Field' }
-        ]
-      }
+        fields: [{ key: 'invalid', type: 'invalid', label: 'Invalid Field' }],
+      },
     } as any
 
     const [record] = await generateExampleRecords(errorEvent, { count: 1 })
@@ -86,7 +99,7 @@ describe('generateExampleRecords', () => {
     expect(mockEvent.update).toHaveBeenCalledTimes(2)
     expect(mockEvent.update).toHaveBeenLastCalledWith({
       message: 'Generated 10 of 10 records',
-      progress: 100
+      progress: 100,
     })
   })
 })
