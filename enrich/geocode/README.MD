@@ -1,6 +1,12 @@
-# Flatfile Geocoding Plugin
+<!-- START_INFOCARD -->
+# @flatfile/plugin-enrich-geocode
 
-A Flatfile Listener plugin for geocoding addresses using the Google Maps Geocoding API. This plugin enables automatic geocoding of addresses, reverse geocoding of coordinates, and enrichment of location data within your Flatfile imports.
+The `@flatfile/plugin-enrich-geocode` plugin for geocoding addresses using the Google Maps Geocoding API. This plugin enables automatic geocoding of addresses, reverse geocoding of coordinates, and enrichment of location data within your Flatfile imports.
+
+**Event Type:**
+`listener.on('commit:created')`
+
+<!-- END_INFOCARD -->
 
 ## Features
 
@@ -16,24 +22,24 @@ A Flatfile Listener plugin for geocoding addresses using the Google Maps Geocodi
 To install the plugin, use npm:
 
 ```bash
-npm install @flatfile/plugin-geocoding
+npm install @flatfile/plugin-enrich-geocode
 ```
 
 ## Example Usage
 
 ```javascript
 import { FlatfileListener } from "@flatfile/listener";
-import geocodingPlugin from "@flatfile/plugin-geocoding";
+import enrichGeocode from "@flatfile/plugin-enrich-geocode";
 
-const listener = new FlatfileListener();
-
-geocodingPlugin(listener, {
-  apiKey: 'YOUR_GOOGLE_MAPS_API_KEY',
-  sheetSlug: 'customer_addresses',
-  addressField: 'full_address',
-  latitudeField: 'lat',
-  longitudeField: 'lng'
-});
+listener.use(
+   enrichGeocode(listener, {
+   apiKey: 'YOUR_GOOGLE_MAPS_API_KEY',
+   sheetSlug: 'customer_addresses',
+   addressField: 'full_address',
+   latitudeField: 'lat',
+   longitudeField: 'lng'
+   })
+);
 
 // ... rest of your Flatfile setup
 ```
