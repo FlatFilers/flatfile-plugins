@@ -60,7 +60,6 @@
   "dependencies": {
     "@flatfile/api": "^1.9.19",
     "@flatfile/util-common": "^1.4.1",
-    "axios": "^1.7.7",
     "rss-parser": "^3.13.0"
   },
   "peerDependencies": {
