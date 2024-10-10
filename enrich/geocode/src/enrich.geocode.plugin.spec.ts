@@ -119,7 +119,7 @@ describe('performGeocoding', () => {
     const result = await performGeocoding({ address: 'New York' }, apiKey);
 
     expect(result).toEqual({
-      message: 'API error: 400 - Invalid request',
+      message: 'An unexpected error occurred while geocoding',
       field: 'address',
     });
   });
