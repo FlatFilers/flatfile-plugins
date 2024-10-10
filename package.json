@@ -10,6 +10,7 @@
     "convert/*",
     "enrich/*",
     "flatfilers/*",
+    "import/*",
     "plugins/*",
     "support/*",
     "utils/*",
