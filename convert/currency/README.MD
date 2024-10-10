@@ -1,8 +1,8 @@
+<!-- START_INFOCARD -->
 # @flatfile/plugin-convert-currency
 
 This plugin implements a currency converter for Flatfile using the Open Exchange Rates API. It allows automatic conversion of currency amounts in your Flatfile sheets, with support for historical exchange rates.
 
-<!-- START_INFOCARD -->
 
 **Event Type:** `listener.on('commit:created')`
 
