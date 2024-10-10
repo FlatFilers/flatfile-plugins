@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-extract-html-table",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Flatfile plugin for extracting table data from HTML files",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -22,7 +22,9 @@
     "default": "./dist/index.mjs"
   },
   "source": "./src/index.ts",
-  "files": ["dist/**"],
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "rollup -c",
     "build:watch": "rollup -c --watch",
@@ -32,7 +34,13 @@
     "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
     "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
   },
-  "keywords": ["flatfile", "flatfile-plugins", "category-extractors", "html", "table-extractor"],
+  "keywords": [
+    "flatfile",
+    "flatfile-plugins",
+    "category-extractors",
+    "html",
+    "table-extractor"
+  ],
   "author": "Flatfile",
   "license": "ISC",
   "dependencies": {

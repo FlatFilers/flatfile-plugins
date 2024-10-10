@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-what3words
 
+## 0.2.0
+
+### Minor Changes
+
+- ea88595: Initial Launch
+
 ## 0.1.0
 
 ### Minor Changes

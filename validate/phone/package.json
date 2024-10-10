@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-validate-phone",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validators/phone",
   "description": "A validator plugin for phone number formatting on individual data records in Flatfile.",
   "registryMetadata": {

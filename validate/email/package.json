@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-validate-email",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/email",
   "description": "A Flatfile Listener plugin for email validation",
   "registryMetadata": {

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-import-faker",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A Flatfile plugin that generates example records using Faker",
   "registryMetadata": {
     "category": "import"

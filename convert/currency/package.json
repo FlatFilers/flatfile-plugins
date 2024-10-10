@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-convert-currency",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A Flatfile plugin for currency conversion using Open Exchange Rates API",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
