@@ -1,6 +1,5 @@
-import { FlatfileListener } from '@flatfile/listener'
-import { recordHook } from '@flatfile/plugin-record-hook'
-import axios from 'axios'
+import { bulkRecordHook } from '@flatfile/plugin-record-hook'
+import fetch from 'cross-fetch'
 
 interface GeocodingConfig {
   sheetSlug: string
@@ -8,16 +7,6 @@ interface GeocodingConfig {
   latitudeField: string
   longitudeField: string
   autoGeocode: boolean
-  apiKey: string
-}
-
-const defaultConfig: GeocodingConfig = {
-  sheetSlug: 'addresses',
-  addressField: 'address',
-  latitudeField: 'latitude',
-  longitudeField: 'longitude',
-  autoGeocode: true,
-  apiKey: 'YOUR_API_KEY_HERE',
 }
 
 interface GeocodingResult {
@@ -39,28 +28,15 @@ export async function performGeocoding(
 ): Promise<GeocodingResult | GeocodingError> {
   try {
     let response
+    let url = 'https://maps.googleapis.com/maps/api/geocode/json'
+    let params: Record<string, string> = { key: apiKey }
+
     if (input.address) {
       // Forward geocoding
-      response = await axios.get(
-        'https://maps.googleapis.com/maps/api/geocode/json',
-        {
-          params: {
-            address: input.address,
-            key: apiKey,
-          },
-        }
-      )
+      params.address = input.address
     } else if (input.latitude && input.longitude) {
       // Reverse geocoding
-      response = await axios.get(
-        'https://maps.googleapis.com/maps/api/geocode/json',
-        {
-          params: {
-            latlng: `${input.latitude},${input.longitude}`,
-            key: apiKey,
-          },
-        }
-      )
+      params.latlng = `${input.latitude},${input.longitude}`
     } else {
       return {
         message: 'Either address or both latitude and longitude are required',
@@ -68,8 +44,12 @@ export async function performGeocoding(
       }
     }
 
-    if (response.data.status === 'OK') {
-      const result = response.data.results[0]
+    const queryString = new URLSearchParams(params).toString()
+    response = await fetch(`${url}?${queryString}`)
+    const data = await response.json()
+
+    if (data.status === 'OK') {
+      const result = data.results[0]
       const { lat, lng } = result.geometry.location
       const geocodingResult: GeocodingResult = {
         latitude: lat,
@@ -88,24 +68,22 @@ export async function performGeocoding(
       }
 
       return geocodingResult
-    } else if (response.data.status === 'ZERO_RESULTS') {
+    } else if (data.status === 'ZERO_RESULTS') {
       return {
         message: 'No results found for the given input',
         field: input.address ? 'address' : 'coordinates',
       }
     } else {
       return {
-        message: `Geocoding failed: ${response.data.status}`,
+        message: `Geocoding failed: ${data.status}`,
         field: input.address ? 'address' : 'coordinates',
       }
     }
   } catch (error) {
-    // console.error('Error calling Google Maps Geocoding API:', error)
-    if (axios.isAxiosError(error) && error.response) {
+    console.error('Error calling Google Maps Geocoding API:', error)
+    if (error instanceof Error) {
       return {
-        message: `API error: ${error.response.status} - ${
-          error.response.data.error_message || 'Unknown error'
-        }`,
+        message: `API error: ${error.message}`,
         field: input.address ? 'address' : 'coordinates',
       }
     } else {
@@ -117,14 +95,12 @@ export async function performGeocoding(
   }
 }
 
-export function enrichGeocode(
-  listener: FlatfileListener,
-  userConfig: Partial<GeocodingConfig> = {}
-) {
-  const config: GeocodingConfig = { ...defaultConfig, ...userConfig }
-
-  listener.use(
-    recordHook(config.sheetSlug, async (record, event) => {
+export function enrichGeocode(config: GeocodingConfig) {
+  return bulkRecordHook(config.sheetSlug, async (records, event) => {
+    const googleMapsApiKey =
+      process.env.GOOGLE_MAPS_API_KEY ||
+      (await event.secrets('GOOGLE_MAPS_API_KEY'))
+    for (const record of records) {
       const address = record.get(config.addressField) as string
       const latitude = record.get(config.latitudeField) as number
       const longitude = record.get(config.longitudeField) as number
@@ -135,7 +111,7 @@ export function enrichGeocode(
 
       const result = await performGeocoding(
         { address, latitude, longitude },
-        config.apiKey
+        googleMapsApiKey
       )
 
       if ('message' in result) {
@@ -147,12 +123,9 @@ export function enrichGeocode(
         if (result.country) record.set('country', result.country)
         if (result.postal_code) record.set('postal_code', result.postal_code)
       }
-
-      return record
-    })
-  )
-
-  return listener
+    }
+    return records
+  })
 }
 
 export default enrichGeocode
