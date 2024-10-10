@@ -35,13 +35,10 @@
     "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
   },
   "keywords": [
-    "flatfile",
     "flatfile-plugins",
-    "category-transform",
-    "currency",
-    "converter"
+    "category-currency"
   ],
-  "author": "Flatfile",
+  "author": "Flatfile, Inc.",
   "license": "ISC",
   "dependencies": {
     "@flatfile/plugin-record-hook": "^1.7.0",
