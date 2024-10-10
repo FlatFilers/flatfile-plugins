@@ -1,8 +1,7 @@
 {
-  "name": "@flatfile/plugin-import-rss",
+  "name": "@flatfile/plugin-import-faker",
   "version": "0.0.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/import/rss",
-  "description": "A Flatfile plugin for importing RSS feed data",
+  "description": "A Flatfile plugin that generates example records using Faker",
   "registryMetadata": {
     "category": "import"
   },
@@ -54,16 +53,15 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "import/rss"
+    "directory": "plugins/import-faker"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/api": "^1.9.19",
-    "@flatfile/util-common": "^1.4.1",
-    "rss-parser": "^3.13.0"
+    "@faker-js/faker": "^9.0.2",
+    "@flatfile/util-common": "^1.4.1"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.1"
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "^0.1.1"
