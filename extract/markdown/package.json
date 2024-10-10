@@ -1,7 +1,7 @@
 {
-  "name": "@flatfile/plugin-markdown-extractor",
+  "name": "@flatfile/plugin-extract-markdown",
   "version": "0.0.1",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/markdown-extractor",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/extract/markdown",
   "description": "A plugin for parsing markdown files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -44,13 +44,13 @@
   },
   "keywords": [
     "flatfile-plugins",
-    "category-extractors"
+    "category-extract"
   ],
   "author": "FlatFilers",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "plugins/markdown-extractor"
+    "directory": "extract/markdown"
   },
   "license": "ISC",
   "dependencies": {
