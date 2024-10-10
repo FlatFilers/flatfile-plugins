@@ -1,7 +1,7 @@
 ---
 '@flatfile/plugin-convert-currency': minor
-'@flatfile/plugin-convert-geocode': minor
 '@flatfile/plugin-convert-what3words': minor
+'@flatfile/plugin-enrich-geocode': minor
 '@flatfile/plugin-enrich-sentiment': minor
 '@flatfile/plugin-enrich-summarize': minor
 '@flatfile/plugin-extract-html-table': minor
