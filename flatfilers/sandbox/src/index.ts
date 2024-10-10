@@ -1,9 +1,32 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { exportPdfPlugin } from '@flatfile/plugin-export-pdf'
+import { exportPDF } from '@flatfile/plugin-export-pdf'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
-  listener.use(exportPdfPlugin({ jobName: 'generatePDFReport' }))
+  listener.on('job:completed', { job: 'file:extract*' }, async (event) => {
+    const { fileId } = event.context
+    const { data: file } = await api.files.get(fileId)
+
+    const isFileNameMatch = (file: Flatfile.File_): boolean => {
+      const { matchFilename: regex } = this.options
+
+      if (R.isNil(regex)) {
+        // allow mapping to continue b/c we weren't explicitly told not to
+        return true
+      } else {
+        if (regex.global) {
+          regex.lastIndex = 0
+        }
+        return regex.test(file.name)
+      }
+    }
+
+    if (!this.isFileNameMatch(file)) {
+      //create new job
+    }
+  })
+
+  listener.use(exportPDF())
 
   listener.use(
     configureSpace({

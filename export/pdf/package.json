@@ -53,6 +53,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.29.0",
     "@flatfile/api": "^1.9.19",
     "@flatfile/plugin-space-configure": "0.6.1",
     "@flatfile/util-common": "^1.4.1",

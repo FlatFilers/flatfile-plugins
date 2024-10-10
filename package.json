@@ -9,6 +9,7 @@
     "bundlers/*",
     "convert/*",
     "enrich/*",
+    "export/*",
     "extract/*",
     "flatfilers/*",
     "import/*",
