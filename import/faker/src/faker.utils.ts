@@ -9,7 +9,7 @@ const api = new FlatfileClient()
 export const generateExampleRecords = async (
   event: FlatfileEvent,
   options: GenerateExampleRecordsOptions
-): Promise<void> => {
+): Promise<Flatfile.RecordData[]> => {
   const { count = 1000, batchSize = 1000 } = options
 
   const {
@@ -72,6 +72,8 @@ export const generateExampleRecords = async (
   await api.jobs.complete(event.context.jobId, {
     info: `Generated ${records.length} records`,
   })
+
+  return records
 }
 
 // Helper function to generate field data based on type and label
@@ -158,11 +160,13 @@ function generateReferenceData(config: any): string {
 
 function generateArrayData(config: any): any[] {
   if (config && config.arrayType === 'string') {
-    return [faker.lorem.word(), faker.lorem.word(), faker.lorem.word()]
+    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], { min: 2, max: 5 });
   } else if (config && config.arrayType === 'number') {
-    return [faker.number.int(), faker.number.int(), faker.number.int()]
+    return faker.helpers.arrayElements([1, 2, 3, 4, 5], { min: 2, max: 5 }).map(Number);
+  } else {
+    // Default to string array if arrayType is not specified
+    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], { min: 2, max: 5 });
   }
-  throw new Error('Array field has unsupported or missing arrayType')
 }
 
 // Apply constraints to the generated data
