@@ -36,40 +36,42 @@ npm install @flatfile/plugin-import-rss
 ### JavaScript
 
 ```javascript
-import { FlatfileListener } from '@flatfile/listener';
 import { rssImport } from "@flatfile/plugin-import-rss";
 
-const listener = new FlatfileListener();
-
-listener.use(
-  rssImport({
-    operation: "importRSSFeed",
-    feeds: [
-      {
-        sheetSlug: "rss_feed_data",
-        rssFeedUrl: "https://example.com/rss-feed"
-      }
-    ]
-  })
-);
-
-listener.mount();
+export default function (listener) {
+  listener.use(
+    rssImport({
+      operation: "importRSSFeed",
+      feeds: [
+        {
+          sheetSlug: "rss_feed_data",
+          rssFeedUrl: "https://example.com/rss-feed"
+        }
+      ]
+    })
+  );
+}
 ```
 
 ### TypeScript
 
 ```typescript
-import { rssImport, RSSImportConfig } from "@flatfile/plugin-import-rss";
+import { FlatfileListener } from '@flatfile/listener';
+import { rssImport } from "@flatfile/plugin-import-rss";
 
-listener.use(rssImport({
-  operation: "importRSSFeed",
-  feeds: [
-    {
-      sheetSlug: "rss_feed_data",
-      rssFeedUrl: "https://example.com/rss-feed"
-    }
-  ]
-}));
+export default function (listener: FlatfileListener) {
+  listener.use(
+    rssImport({
+      operation: "importRSSFeed",
+      feeds: [
+        {
+          sheetSlug: "rss_feed_data",
+          rssFeedUrl: "https://example.com/rss-feed"
+        }
+      ]
+    })
+  );
+}
 ```
 
 ## Example Usage

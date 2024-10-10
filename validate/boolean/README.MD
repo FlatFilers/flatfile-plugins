@@ -32,15 +32,15 @@ npm install @flatfile/plugin-validate-boolean
 ```javascript
 import { validateBoolean } from '@flatfile/plugin-validate-boolean';
 
-const booleanValidator = validateBoolean({
-  fields: ['isActive', 'hasSubscription'],
-  validationType: 'truthy',
-  language: 'en',
-  handleNull: 'false',
-  convertNonBoolean: true
-});
-
-listener.use(booleanValidator);
+listener.use(
+  validateBoolean({
+    fields: ['isActive', 'hasSubscription'],
+    validationType: 'truthy',
+    language: 'en',
+    handleNull: 'false',
+    convertNonBoolean: true
+  }
+));
 ```
 
 ## Configuration
