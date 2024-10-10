@@ -109,7 +109,7 @@ describe('performGeocoding', () => {
     const result = await performGeocoding({ address: 'New York' }, apiKey)
 
     expect(result).toEqual({
-      message: 'An unexpected error occurred while geocoding',
+      message: 'API error: API error',
       field: 'address',
     })
   })
@@ -122,7 +122,7 @@ describe('performGeocoding', () => {
     const result = await performGeocoding({ address: 'New York' }, apiKey)
 
     expect(result).toEqual({
-      message: 'An unexpected error occurred while geocoding',
+      message: 'API error: Network error',
       field: 'address',
     })
   })
