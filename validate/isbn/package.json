@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-validate-isbn",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A Flatfile Listener plugin for ISBN validation with configurable options. Validates ISBN-10 and ISBN-13 formats, provides specific error messages, and optionally converts ISBN-10 to ISBN-13.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
