@@ -23,14 +23,24 @@ npm install @flatfile/plugin-record-hook @flatfile/hooks @faker-js/faker
 ## Example Usage
 
 ```javascript
-import { recordHook } from '@flatfile/plugin-record-hook';
-import generateExampleRecords from './generateExampleRecords';
+import { FlatfileListener } from '@flatfile/listener';
+import { generateExampleRecords } from './faker.plugin';
 
-export default function (listener) {
-  listener.use(
-    recordHook('generateExampleRecords', generateExampleRecords)
-  );
+export default function ExampleRecordsPlugin(listener: FlatfileListener, job?: string) {
+  listener.use(job || 'actions:generateExampleRecords', async (event) => {
+    const options = {
+      count: event.payload?.count || 1000,
+      locale: event.payload?.locale || 'en',
+      batchSize: event.payload?.batchSize || 1000,
+    };
+
+    const records = await generateExampleRecords(event, options);
+
+    await event.recordBatch(records);
+  });
 }
+
+export { generateExampleRecords };
 ```
 
 ## Configuration

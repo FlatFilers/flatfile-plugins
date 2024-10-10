@@ -1,27 +1,27 @@
 {
   "name": "@flatfile/plugin-import-faker",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A Flatfile plugin that generates example records using Faker",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "browser": {
-    "./dist/index.js": "./dist/index.browser.js",
+    "./dist/index.cjs": "./dist/index.browser.cjs",
     "./dist/index.mjs": "./dist/index.browser.mjs"
   },
   "exports": {
     "types": "./dist/index.d.ts",
     "node": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.cjs"
     },
     "browser": {
-      "require": "./dist/index.browser.js",
+      "require": "./dist/index.browser.cjs",
       "import": "./dist/index.browser.mjs"
     },
     "default": "./dist/index.mjs"
   },
-  "source": "./src/index.ts",
+  "source": "./src/index.cts",
   "files": [
     "dist/**"
   ],
@@ -33,36 +33,24 @@
     "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
   },
   "keywords": [
-    "flatfile",
-    "plugin",
-    "generate",
-    "example",
-    "records",
-    "faker",
     "flatfile-plugins",
     "category-transform"
   ],
-  "author": "Your Name",
-  "license": "MIT",
+  "author": "Flatfile, Inc.",
+  "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^9.0.2"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.5"
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/hooks": "^1.5.0",
-    "@flatfile/rollup-config": "^0.1.1",
-    "typescript": "^5.6.2",
-    "@types/node": "^22.6.1",
-    "rollup": "^4.22.4",
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.13"
+    "@flatfile/rollup-config": "^0.1.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "import/faker"
+    "directory": "plugins/import-faker"
   },
   "browserslist": [
     "> 0.5%",
