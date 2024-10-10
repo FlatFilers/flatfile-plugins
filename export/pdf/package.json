@@ -1,0 +1,71 @@
+{
+  "name": "@flatfile/plugin-export-pdf",
+  "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/export/pdf",
+  "description": "A Flatfile plugin for generating PDF reports from a Flatfile Workbook",
+  "registryMetadata": {
+    "category": "export"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "browser": {
+    "./dist/index.cjs": "./dist/index.browser.cjs",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "browser": {
+      "require": "./dist/index.browser.cjs",
+      "import": "./dist/index.browser.mjs"
+    },
+    "default": "./dist/index.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest src/*.spec.ts --detectOpenHandles",
+    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
+    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-export"
+  ],
+  "author": "Flatfile, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "export/pdf"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.29.0",
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/plugin-space-configure": "0.6.1",
+    "@flatfile/util-common": "^1.4.1",
+    "pdf-lib": "^1.17.1"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.5"
+  },
+  "devDependencies": {
+    "@flatfile/hooks": "^1.5.0",
+    "@flatfile/rollup-config": "^0.1.1",
+    "@types/node": "^22.7.4",
+    "typescript": "^5.6.2"
+  }
+}
