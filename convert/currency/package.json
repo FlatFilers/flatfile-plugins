@@ -30,7 +30,9 @@
     "build:watch": "rollup -c --watch",
     "build:prod": "NODE_ENV=production rollup -c",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest src/*.spec.ts --detectOpenHandles",
+    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
+    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
   },
   "keywords": [
     "flatfile",
@@ -50,10 +52,7 @@
     "@flatfile/listener": "^1.0.1"
   },
   "devDependencies": {
-    "@flatfile/hooks": "^1.5.0",
-    "@flatfile/rollup-config": "^0.1.1",
-    "typescript": "^5.6.2",
-    "@types/node": "^22.6.1"
+    "@flatfile/rollup-config": "^0.1.1"
   },
   "repository": {
     "type": "git",
