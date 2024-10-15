@@ -34,8 +34,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/common-plugin-utils": "^1.0.2",
-    "remeda": "^1.23.0"
+    "@flatfile/util-common": "^1.4.1",
+    "modern-async": "^2.0.4"
   },
   "peerDependencies": {
     "@flatfile/api": "^1.9.19",
