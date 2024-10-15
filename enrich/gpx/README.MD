@@ -1,6 +1,12 @@
-# Flatfile GPX Parser Plugin
+<!-- START_INFOCARD -->
+# @flatfile/plugin-enrich-gpx
 
 A powerful Flatfile Listener plugin for parsing and analyzing GPX (GPS Exchange Format) files. This plugin extracts valuable information from GPX files, performs data processing, and provides statistical analysis.
+
+**Event Type:**
+`listener.on('commit:created')`
+
+<!-- END_INFOCARD -->
 
 ## Features
 
@@ -24,10 +30,17 @@ npm install @flatfile/plugin-gpx-parser
 
 ```typescript
 import { FlatfileListener } from "@flatfile/listener";
-import gpxParser from "@flatfile/plugin-gpx-parser";
+import { enrichGpx } from "@flatfile/plugin-gpx-parser";
 
 export default function (listener: FlatfileListener) {
-  listener.use(gpxParser);
+  listener.use(enrichGpx({
+    sheetSlug: 'gpx-data',
+    gpxFileField: 'gpx_file',
+    removeDuplicatesField: 'remove_duplicates',
+    filterDatesField: 'filter_dates',
+    startDateField: 'start_date',
+    endDateField: 'end_date'
+  }));
 }
 ```
 
@@ -35,7 +48,8 @@ export default function (listener: FlatfileListener) {
 
 The plugin accepts the following configuration options through record fields:
 
-- `gpx_file`: (Required) The content of the GPX file as a string
+- `sheetSlug`: (Required) The sheet to apply the GPX enrichment to as a string
+- `gpxFileField`: (Required) The field in the record that contains the GPX file content as a string
 - `remove_duplicates`: Set to "true" to remove duplicate points
 - `filter_dates`: Set to "true" to filter points by date range
 - `start_date`: The start date for filtering (when `filter_dates` is true)
