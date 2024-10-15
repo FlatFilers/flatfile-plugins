@@ -70,18 +70,14 @@ listener.use(pivotTablePlugin({
 import { pivotTablePlugin } from "@flatfile/plugin-export-pivot-table";
 
 export default function (listener) {
-  // Initialize the pivot table plugin with configuration
-  const pivotTableConfig = {
+  listener.use(pivotTablePlugin({
     pivotColumn: 'Region',
     aggregateColumn: 'Sales',
     aggregationMethod: 'sum',
     groupByColumn: 'Category'
-  };
+  }));
 
-  // Register the plugin with the Flatfile listener
-  listener.use(pivotTablePlugin(pivotTableConfig));
-
-  // The plugin will now generate a pivot table when the 'workbook:generatePivotTable' job is triggered
+  // rest of listener.js
 }
 ```
 
