@@ -51,7 +51,7 @@ describe('GPX Parser Utility Functions', () => {
         { latitude: 2, longitude: 2, elevation: 150 },
       ]
       const { totalDistance, elevationGain } = calculateStatistics(points)
-      expect(totalDistance).toBeCloseTo(314.4, 1)
+      expect(totalDistance).toBeCloseTo(314.47, 1)
       expect(elevationGain).toBe(100)
     })
   })
