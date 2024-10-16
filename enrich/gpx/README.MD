@@ -23,14 +23,14 @@ A powerful Flatfile Listener plugin for parsing and analyzing GPX (GPS Exchange 
 To install the plugin, run the following command:
 
 ```bash
-npm install @flatfile/plugin-gpx-parser
+npm install @flatfile/plugin-enrich-gpx
 ```
 
 ## Example Usage
 
 ```typescript
 import { FlatfileListener } from "@flatfile/listener";
-import { enrichGpx } from "@flatfile/plugin-gpx-parser";
+import { enrichGpx } from "@flatfile/plugin-enrich-gpx";
 
 export default function (listener: FlatfileListener) {
   listener.use(enrichGpx({
