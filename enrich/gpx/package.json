@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-enrich-gpx",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A Flatfile plugin for parsing GPX files and extracting relevant data",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
