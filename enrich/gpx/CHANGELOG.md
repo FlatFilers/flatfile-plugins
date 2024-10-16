@@ -4,4 +4,4 @@
 
 ### Minor Changes
 
-- 246c569: Initial Commit
+- 246c569: Initial Commit 
