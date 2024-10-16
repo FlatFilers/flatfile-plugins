@@ -1,0 +1,111 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip0_435_2)">
+    <rect width="1200" height="1200" fill="#1B1B1E" />
+    <path d="M170.5 118.248H143.973L134.484 108.925V95.009H170.5V118.248Z" fill="white" />
+    <path d="M130.953 95V120.741L121.345 129.945H107V95H130.953Z" fill="white" />
+    <path d="M107 133.536H133.527L143.017 142.859V156.779H107V133.536Z" fill="white" />
+    <path d="M146.548 156.784V131.048L156.155 121.839H170.5V156.784H146.548Z" fill="white" />
+    <path d="M197.87 149.046H205.045V129.821H227.905V123.373H205.045V109.247H229.296V102.734H197.87V149.046Z"
+      fill="white" />
+    <path d="M243.055 101.191H236.277V149.046H243.055V101.191Z" fill="white" />
+    <path
+      d="M265.35 113.536C258.317 113.536 251.886 117.366 249.344 123.07L249.159 123.483L255.265 126.184L255.449 125.743C256.973 122.142 260.949 119.727 265.35 119.727C270.159 119.727 273.037 122.083 274.153 124.319V126.441C273.235 127.438 269.08 128.035 264.162 128.65C256.661 129.592 251.966 131.971 250.21 135.732L250.168 135.824V143.365L250.22 143.461C252.288 147.402 257.626 149.951 263.826 149.951C267.939 149.951 271.73 148.568 274.419 146.12V149.05H280.865V122.592L280.831 122.514C278.692 117.146 272.473 113.54 265.35 113.54V113.536ZM264.688 144.077C260.996 144.077 258.327 143.075 256.746 141.101V137.771C257.82 135.925 260.334 134.859 265.355 134.12C269.955 133.44 272.653 132.779 274.153 131.929V139.833C272.417 142.451 268.801 144.072 264.688 144.072V144.077Z"
+      fill="white" />
+    <path
+      d="M298.988 140.067V120.177H308.993V114.564H298.988V103.956H292.21V113.453C291.865 114.202 291.107 114.564 289.9 114.564H285.054V120.177H292.21V142.781L292.262 142.878C294.591 147.328 298.675 149.496 304.743 149.496C306.115 149.496 307.762 149.307 308.841 149.032L309.191 148.94V143.305H305.604C301.131 143.305 299.707 141.592 298.988 140.067Z"
+      fill="white" />
+    <path
+      d="M332.458 100.162C326.712 100.162 322.23 102.601 320.171 106.854L320.129 106.946V114.56H312.973V120.172H320.129V149.041H326.906V120.172H336.514V114.56H326.906V109.458C327.942 107.262 329.949 106.284 333.39 106.284H337.176V100.704L336.812 100.622C335.543 100.332 333.92 100.158 332.462 100.158L332.458 100.162Z"
+      fill="white" />
+    <path d="M350.367 114.565H343.589V149.046H350.367V114.565Z" fill="white" />
+    <path
+      d="M346.978 100.741C345.028 100.741 343.277 101.645 342.519 103.042L342.463 103.143V106.711L342.519 106.812C343.277 108.213 345.028 109.113 346.978 109.113C348.928 109.113 350.679 108.208 351.436 106.812L351.493 106.711V103.143L351.436 103.042C350.679 101.641 348.928 100.741 346.978 100.741Z"
+      fill="white" />
+    <path d="M364.291 101.191H357.514V149.046H364.291V101.191Z" fill="white" />
+    <path
+      d="M399.418 137.119L399.238 137.546C397.534 141.615 393.71 143.948 388.745 143.948C383.141 143.948 379.189 140.504 378.153 137.078V133.872H405.386V124.99L405.362 124.852C403.133 118.087 396.346 113.536 388.48 113.536C380.614 113.536 373.619 118.083 371.465 124.852L371.447 124.916V138.552L371.47 138.69C373.699 145.454 380.619 150.001 388.683 150.001C396.748 150.001 402.697 146.295 405.547 140.086L405.745 139.654L399.422 137.11L399.418 137.119ZM398.67 128.26H378.148V126.395C379.18 122.514 383.581 119.598 388.409 119.598C393.89 119.598 397.704 123.01 398.67 126.4V128.26Z"
+      fill="white" />
+    <text fill="#BBBBBB" style="white-space:pre" font-family="Mikro" font-size="22" font-weight="300"
+      letter-spacing="0.24em">
+      <tspan x="107" y="292.7">NEW PLUGIN RELEASE!</tspan>
+    </text>
+    <text fill="white" style="white-space:pre" font-family="Flatfile Diatype" font-size="30" font-weight="300"
+      letter-spacing="0em">
+      <tspan x="108" y="548.15">A Flatfile plugin for parsing GPX files and extracting relevant data</tspan>
+    </text>
+    <text fill="white" style="white-space:pre" font-family="Flatfile Diatype" font-size="96" font-weight="bold"
+      letter-spacing="0em">
+      <tspan x="107" y="414.78">GPX</tspan>
+    </text>
+    <text fill="white" stroke="white" stroke-width="0.5" style="white-space:pre" font-family="Flatfile Diatype Mono"
+      font-size="32" letter-spacing="0.02em">
+      <tspan x="107" y="634.76">NPM Package:</tspan>
+    </text>
+    <text fill="#FFB300" fill-opacity="0.905882" style="white-space:pre" font-family="Flatfile Diatype Mono"
+      font-size="32" letter-spacing="0em">
+      <tspan x="365" y="634.76">@flatfile/plugin-enrich-gpx</tspan>
+    </text>
+    <line x1="587" y1="912.783" x2="549.016" y2="912.783" stroke="#838383" stroke-width="1.58266" />
+    <line x1="567.217" y1="930.984" x2="567.217" y2="893" stroke="#838383" stroke-width="1.58266" />
+    <rect x="711.209" y="1085.93" width="286.28" height="286.28" transform="rotate(90 711.209 1085.93)" stroke="#838383"
+      stroke-width="1.58266" />
+    <rect x="394.072" y="768.791" width="286.28" height="286.28" transform="rotate(90 394.072 768.791)" stroke="#838383"
+      stroke-width="1.58266" />
+    <rect x="394.072" y="1085.93" width="286.28" height="286.28" transform="rotate(90 394.072 1085.93)" stroke="#838383"
+      stroke-width="1.58266" />
+    <rect x="760" y="945" width="340" height="63" fill="white" />
+    <rect x="711.209" y="768.791" width="286.28" height="286.28" transform="rotate(90 711.209 768.791)" stroke="#646464"
+      stroke-width="1.58266" stroke-dasharray="18.99 18.99" />
+    <g clip-path="url(#clip1_435_2)" id="type-selector">
+      <text fill="#646464" style="white-space:pre" font-family="Flatfile Diatype Mono" font-size="32"
+        letter-spacing="0em">
+        <tspan x="776" y="773.76">Extract</tspan>
+        <tspan x="776" y="845.76">Validate</tspan>
+        <tspan x="776" y="917.76">Convert</tspan>
+        <tspan x="776" y="989.76">Enrich</tspan>
+        <tspan x="776" y="1061.76">Transform</tspan>
+        <tspan x="776" y="1133.76">Import</tspan>
+        <tspan x="776" y="1205.76">Export</tspan>
+      </text>
+    </g>
+    <rect x="765" y="735" width="340" height="170" fill="url(#paint0_linear_435_2)" />
+    <rect x="1100" y="1216" width="340" height="170" transform="rotate(-180 1100 1216)"
+      fill="url(#paint1_linear_435_2)" />
+    <g filter="url(#filter0_d_435_2)">
+      <path
+        d="M1038.68 994.854C1038.19 993.657 1039.36 992.452 1040.57 992.912L1075.09 1006.03C1076.39 1006.53 1076.34 1008.39 1075.01 1008.82L1060.66 1013.43C1060.19 1013.58 1059.83 1013.95 1059.69 1014.42L1055.45 1028.89C1055.05 1030.23 1053.19 1030.32 1052.66 1029.03L1038.68 994.854Z"
+        fill="black" />
+      <path
+        d="M1039.24 994.624C1038.95 993.917 1039.64 993.206 1040.35 993.477L1074.87 1006.6C1075.64 1006.89 1075.61 1007.99 1074.83 1008.24L1060.48 1012.86C1059.82 1013.07 1059.31 1013.59 1059.11 1014.25L1054.87 1028.72C1054.63 1029.51 1053.53 1029.56 1053.22 1028.8L1039.24 994.624Z"
+        stroke="white" stroke-width="1.21" />
+    </g>
+  </g>
+  <defs>
+    <filter id="filter0_d_435_2" x="1032.56" y="981.812" width="57.4778" height="57.1362" filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+        result="hardAlpha" />
+      <feOffset dx="4" dy="-1" />
+      <feGaussianBlur stdDeviation="5" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.27 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_435_2" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_435_2" result="shape" />
+    </filter>
+    <linearGradient id="paint0_linear_435_2" x1="935" y1="735" x2="935" y2="905" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1B1B1E" />
+      <stop offset="1" stop-color="#1B1B1E" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="paint1_linear_435_2" x1="1270" y1="1216" x2="1270" y2="1386" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1B1B1E" />
+      <stop offset="1" stop-color="#1B1B1E" stop-opacity="0" />
+    </linearGradient>
+    <clipPath id="clip0_435_2">
+      <rect width="1200" height="1200" fill="white" />
+    </clipPath>
+    <clipPath id="clip1_435_2">
+      <rect width="175" height="465" fill="white" transform="translate(776 735)" />
+    </clipPath>
+  </defs>
+</svg>
