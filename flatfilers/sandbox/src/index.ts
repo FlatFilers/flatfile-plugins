@@ -1,23 +1,16 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { HTMLTableExtractor } from '@flatfile/plugin-extract-html-table'
-import { currencyConverterPlugin } from '@flatfile/plugin-convert-currency'
+import { pivotTablePlugin } from '@flatfile/plugin-export-pivot-table'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-import { fakerPlugin } from '@flatfile/plugin-import-faker'
 
 export default async function (listener: FlatfileListener) {
-  listener.use(HTMLTableExtractor())
-
   listener.use(
-    currencyConverterPlugin({
-      sheetSlug: 'currency-converter',
-      sourceCurrency: 'USD',
-      targetCurrency: 'EUR',
-      amountField: 'amount',
-      convertedAmountField: 'convertedAmount',
-      exchangeRateField: 'exchangeRate',
+    pivotTablePlugin({
+      pivotColumn: 'product',
+      aggregateColumn: 'salesAmount',
+      aggregationMethod: 'sum',
+      groupByColumn: 'region',
     })
   )
-  listener.use(fakerPlugin({ job: 'sheet:generateExampleRecords' }))
   listener.use(
     configureSpace({
       workbooks: [
@@ -25,90 +18,46 @@ export default async function (listener: FlatfileListener) {
           name: 'Sandbox',
           sheets: [
             {
-              name: 'Currency Converter',
-              slug: 'currency-converter',
+              name: 'Sales',
+              slug: 'sales',
               fields: [
                 {
-                  key: 'amount',
-                  type: 'number',
-                  label: 'Amount',
+                  key: 'date',
+                  type: 'string',
+                  label: 'Date',
                 },
                 {
-                  key: 'convertedAmount',
-                  type: 'number',
-                  label: 'Converted Amount',
+                  key: 'product',
+                  type: 'string',
+                  label: 'Product',
                 },
                 {
-                  key: 'exchangeRate',
+                  key: 'category',
+                  type: 'string',
+                  label: 'Category',
+                },
+                {
+                  key: 'region',
+                  type: 'string',
+                  label: 'Region',
+                },
+                {
+                  key: 'salesAmount',
                   type: 'number',
-                  label: 'Exchange Rate',
+                  label: 'Sales Amount',
                 },
               ],
             },
+          ],
+          actions: [
             {
-              name: 'People',
-              slug: 'people',
-              fields: [
-                {
-                  key: 'firstName',
-                  type: 'string',
-                  label: 'First Name',
-                },
-                {
-                  key: 'lastName',
-                  type: 'string',
-                  label: 'Last Name',
-                },
-                {
-                  key: 'email',
-                  type: 'string',
-                  label: 'Email',
-                },
-                {
-                  key: 'phone',
-                  type: 'string',
-                  label: 'Phone',
-                },
-                {
-                  key: 'address',
-                  type: 'string',
-                  label: 'Address',
-                },
-                {
-                  key: 'city',
-                  type: 'string',
-                  label: 'City',
-                },
-                {
-                  key: 'state',
-                  type: 'string',
-                  label: 'State',
-                },
-                {
-                  key: 'zip',
-                  type: 'string',
-                  label: 'Zip',
-                },
-                {
-                  key: 'country',
-                  type: 'string',
-                  label: 'Country',
-                },
-                {
-                  key: 'birthday',
-                  type: 'date',
-                  label: 'Birthday',
-                },
-              ],
-              actions: [
-                {
-                  operation: 'generateExampleRecords',
-                  label: 'Generate Example Records',
-                  primary: false,
-                  mode: 'foreground',
-                  type: 'string',
-                },
-              ],
+              operation: 'generatePivotTable',
+              label: 'Generate Pivot Table',
+              description:
+                'This custom action code generates a pivot table from the records in the People sheet.',
+              primary: false,
+              mode: 'foreground',
+              type: 'string',
             },
           ],
         },
