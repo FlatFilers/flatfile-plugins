@@ -1,5 +1,6 @@
 import api, { Flatfile } from "@flatfile/api"
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import { updateRecords, Simplified } from "../../../utils/common/src"
 
 export type Primitive = string | number | null | boolean
 export type SimpleRecord = Record<string, Primitive>
@@ -40,7 +41,7 @@ export function copyColumn() {
 
 function copyColumnValues(from_key: string, to_key: string) {
   return (record: Flatfile.Record_) => {
-    const obj = toSimpleRecord(record)
+    const obj = Simplified.toSimpleRecord(record)
     return {
       id: record.id,
       values: {
@@ -48,41 +49,6 @@ function copyColumnValues(from_key: string, to_key: string) {
       },
     }
   }
-}
-
-/**
- * Updates records in a sheet. Bypasses API SDK in order to suppress hooks
- */
- async function updateRecords(sheetId: string, records: any): Promise<string> {
-    const httpResponse = await fetch(
-      `${process.env.FLATFILE_API_URL || process.env.AGENT_INTERNAL_URL}/v1/sheets/${sheetId}/records`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${process.env.FLATFILE_BEARER_TOKEN}`,
-          "Content-Type": "application/json",
-          "x-force-hooks": "true",
-        },
-        body: JSON.stringify(records),
-      }
-    )
-  
-    if (httpResponse.status === 304) {
-      return "not-modified"
-    }
-    if (!httpResponse.ok) {
-      console.log(await httpResponse?.text())
-      throw new Error(`Updating records failed.`)
-    }
-  
-    const res = await httpResponse.json()
-    return res.data.commitId
-}
-
-function toSimpleRecord(r: Flatfile.Record_): SimpleRecord {
-    const obj = Object.fromEntries(Object.entries(r.values).map(([key, value]) => [key, value.value] as [string, any]))
-    obj.id = r.id
-    return obj as SimpleRecord
 }
 
 /**
