@@ -1,8 +1,8 @@
 {
-  "name": "@flatfile/plugin-import-faker",
-  "version": "0.1.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/import/faker",
-  "description": "A Flatfile plugin that generates example records using Faker",
+  "name": "@flatfile/plugin-import-anthropic",
+  "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/import/anthropic",
+  "description": "A Flatfile plugin that generates example records using Anthropic",
   "registryMetadata": {
     "category": "import"
   },
@@ -54,15 +54,16 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "import/faker"
+    "directory": "import/anthropic"
   },
   "license": "ISC",
   "dependencies": {
-    "@faker-js/faker": "^9.0.2",
-    "@flatfile/util-common": "^1.4.1"
+    "@anthropic-ai/sdk": "^0.27.3"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.1.0"
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/util-common": "^1.4.0",
+    "@flatfile/plugin-job-handler": "^0.6.1"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "^0.1.1"
