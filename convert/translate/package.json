@@ -1,0 +1,63 @@
+{
+  "name": "@flatfile/plugin-convert-translate",
+  "version": "1.0.0",
+  "description": "A Flatfile Listener plugin for field translation using the Google Translate API",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "browser": {
+    "./dist/index.js": "./dist/index.browser.js",
+    "./dist/index.mjs": "./dist/index.browser.mjs"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "node": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "browser": {
+      "require": "./dist/index.browser.js",
+      "import": "./dist/index.browser.mjs"
+    },
+    "default": "./dist/index.mjs"
+  },
+  "source": "./src/index.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c --watch",
+    "build:prod": "NODE_ENV=production rollup -c",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest src/*.spec.ts --detectOpenHandles",
+    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
+    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-convert"
+  ],
+  "author": "Flatfile, Inc.",
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/plugin-record-hook": "^1.6.1",
+    "@google-cloud/translate": "^8.5.0"
+  },
+  "peerDependencies": {
+    "@flatfile/listener": "^1.0.5"
+  },
+  "devDependencies": {
+    "@flatfile/rollup-config": "0.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YourGitHubUsername/flatfile-plugins.git",
+    "directory": "convert/translate"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
