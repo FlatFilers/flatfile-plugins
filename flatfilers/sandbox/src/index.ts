@@ -1,10 +1,12 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { anthropicGenerator } from '@flatfile/plugin-import-anthropic'
+import { llmRecordGenerator } from '@flatfile/plugin-import-llm'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    anthropicGenerator({
+    llmRecordGenerator({
+      llmSecretName: 'OPENAI_API_KEY',
+      model: 'gpt-4o',
       job: 'generateExampleRecords',
       numberOfRecords: 10,
       debug: true,
