@@ -9,7 +9,6 @@ This Flatfile Listener plugin enables field translation using the Google Transla
 - Configurable source and target languages
 - Allows selection of specific fields for translation
 - Creates new fields for translated content
-- Supports both automatic and manual translation workflows
 - Includes error handling and logging
 
 ## Installation
@@ -17,14 +16,14 @@ This Flatfile Listener plugin enables field translation using the Google Transla
 To install the plugin, run the following command:
 
 ```bash
-npm install @flatfile/plugin-field-translation
+npm install @flatfile/plugin-convert-translate
 ```
 
 ## Example Usage
 
 ```javascript
 import { FlatfileListener } from '@flatfile/listener';
-import flatfileListenerPlugin from '@flatfile/plugin-field-translation';
+import { convertTranslatePlugin } from '@flatfile/plugin-convert-translate';
 
 const listener = new FlatfileListener();
 
@@ -33,10 +32,11 @@ const translationConfig = {
   targetLanguage: 'es',
   sheetSlug: 'products',
   fieldsToTranslate: ['name', 'description'],
-  autoTranslate: true
+  projectId: 'your-google-cloud-project-id',
+  keyFilename: '/path/to/your/google-cloud-key.json'
 };
 
-flatfileListenerPlugin(listener, translationConfig);
+convertTranslatePlugin(listener, translationConfig);
 ```
 
 ## Configuration
@@ -47,17 +47,30 @@ The plugin accepts a configuration object with the following properties:
 - `targetLanguage`: The target language code (e.g., 'es' for Spanish)
 - `sheetSlug`: The slug of the sheet where translation should be applied
 - `fieldsToTranslate`: An array of field names to be translated
-- `autoTranslate`: A boolean indicating whether to perform automatic translation (true) or create empty fields for manual input (false)
+- `projectId`: Your Google Cloud project ID
+- `keyFilename`: The path to your Google Cloud service account key file
 
 ## Behavior
 
-1. The plugin checks if the current record belongs to the configured sheet.
-2. It identifies the fields to be translated based on the configuration.
-3. If auto-translation is enabled:
+1. The plugin initializes the Google Translate client with the provided project ID and key file.
+2. It checks if the current record belongs to the configured sheet.
+3. The plugin identifies the fields to be translated based on the configuration.
+4. If auto-translation is enabled:
    - The plugin batches the texts and sends them to the Google Translate API.
    - Translated texts are set in new fields named `{originalField}_{targetLanguage}`.
-4. If auto-translation is disabled:
+5. If auto-translation is disabled:
    - The plugin creates empty fields named `{originalField}_{targetLanguage}` for manual input.
-5. Error handling is implemented to catch and log any issues during the translation process.
+6. Error handling is implemented to catch and log any issues during the translation process.
 
-Note: You need to set up Google Cloud credentials and provide the necessary configuration (project ID and key file) to use the Google Translate API.
+## Google Cloud Setup
+
+To use this plugin, you need to set up a Google Cloud project and enable the Cloud Translation API:
+
+1. Create a Google Cloud project or use an existing one.
+2. Enable the Cloud Translation API for your project.
+3. Create a service account and download the JSON key file.
+4. Provide the project ID and the path to the key file in the plugin configuration.
+
+For detailed instructions on setting up Google Cloud and obtaining credentials, refer to the [Google Cloud documentation](https://cloud.google.com/translate/docs/setup).
+
+Note: Ensure that you keep your Google Cloud credentials secure and do not expose them in public repositories or client-side code.

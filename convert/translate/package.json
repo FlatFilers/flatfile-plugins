@@ -1,5 +1,5 @@
 {
-  "name": "@flatfile/plugin-field-translator",
+  "name": "@flatfile/plugin-convert-translate",
   "version": "1.0.0",
   "description": "A Flatfile Listener plugin for field translation using the Google Translate API",
   "main": "./dist/index.js",
@@ -30,18 +30,16 @@
     "build:watch": "rollup -c --watch",
     "build:prod": "NODE_ENV=production rollup -c",
     "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
-    "test": "jest ./**/*.spec.ts --config=../../jest.config.js --runInBand"
+    "test": "jest src/*.spec.ts --detectOpenHandles",
+    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
+    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
   },
   "keywords": [
-    "flatfile",
-    "plugin",
-    "translator",
-    "google-translate",
     "flatfile-plugins",
-    "category-transform"
+    "category-convert"
   ],
-  "author": "Your Name",
-  "license": "MIT",
+  "author": "Flatfile, Inc.",
+  "license": "ISC",
   "dependencies": {
     "@flatfile/plugin-record-hook": "^1.6.1",
     "@google-cloud/translate": "^8.5.0"
@@ -50,18 +48,12 @@
     "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
-    "@flatfile/hooks": "^1.5.0",
-    "@flatfile/rollup-config": "^0.1.1",
-    "typescript": "^5.6.2",
-    "@types/node": "^22.6.1",
-    "rollup": "^4.22.4",
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.13"
+    "@flatfile/rollup-config": "0.1.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/YourGitHubUsername/flatfile-plugins.git",
-    "directory": "plugins/field-translator"
+    "directory": "convert/translate"
   },
   "browserslist": [
     "> 0.5%",
