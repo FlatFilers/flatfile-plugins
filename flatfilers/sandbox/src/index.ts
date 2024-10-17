@@ -1,14 +1,13 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { pivotTablePlugin } from '@flatfile/plugin-export-pivot-table'
+import { anthropicGenerator } from '@flatfile/plugin-import-anthropic'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    pivotTablePlugin({
-      pivotColumn: 'product',
-      aggregateColumn: 'salesAmount',
-      aggregationMethod: 'sum',
-      groupByColumn: 'region',
+    anthropicGenerator({
+      job: 'generateExampleRecords',
+      numberOfRecords: 10,
+      debug: true,
     })
   )
   listener.use(
@@ -47,17 +46,17 @@ export default async function (listener: FlatfileListener) {
                   label: 'Sales Amount',
                 },
               ],
-            },
-          ],
-          actions: [
-            {
-              operation: 'generatePivotTable',
-              label: 'Generate Pivot Table',
-              description:
-                'This custom action code generates a pivot table from the records in the People sheet.',
-              primary: false,
-              mode: 'foreground',
-              type: 'string',
+              actions: [
+                {
+                  operation: 'generateExampleRecords',
+                  label: 'Generate Example Records',
+                  description:
+                    'This custom action code generates example records using Anthropic.',
+                  primary: false,
+                  mode: 'foreground',
+                  type: 'string',
+                },
+              ],
             },
           ],
         },
