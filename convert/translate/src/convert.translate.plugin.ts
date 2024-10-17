@@ -8,7 +8,6 @@ export interface TranslationConfig {
   targetLanguage: string
   sheetSlug: string
   fieldsToTranslate: string[]
-  autoTranslate: boolean
   projectId: string
   keyFilename: string
 }
@@ -33,22 +32,15 @@ export function translateRecord(
       return { record, error: 'No text fields to translate' }
     }
 
-    if (config.autoTranslate) {
-      const translatedTexts = batchTranslateText(
-        textsToTranslate.map((item) => item.text),
-        config.sourceLanguage,
-        config.targetLanguage
-      )
+    const translatedTexts = batchTranslateText(
+      textsToTranslate.map((item) => item.text),
+      config.sourceLanguage,
+      config.targetLanguage
+    )
 
-      textsToTranslate.forEach((item, index) => {
-        record.set(item.targetField, translatedTexts[index])
-      })
-    } else {
-      // If not auto-translating, create empty fields for manual input
-      textsToTranslate.forEach((item) => {
-        record.set(item.targetField, '')
-      })
-    }
+    textsToTranslate.forEach((item, index) => {
+      record.set(item.targetField, translatedTexts[index])
+    })
 
     return { record }
   } catch (error) {
