@@ -2,29 +2,37 @@ import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError, logInfo } from '@flatfile/util-common'
-import { generateExampleRecords } from './anthropic.generator'
+import { generateExampleRecords } from './generate.records.util'
 
 const api = new FlatfileClient()
 
-export interface AnthropicGeneratorConfig {
+export interface LLMRecordGeneratorConfig {
+  llmSecretName: string
+  model:
+    | 'gpt-4o'
+    | 'gpt-4-turbo'
+    | 'gpt-4'
+    | 'gpt-3.5-turbo'
+    | 'claude-3-opus-20240229'
+    | 'claude-3-sonnet-20240229'
+    | 'claude-3-haiku-20240307'
+    | 'mistral-large-latest'
+    | 'mistral-small-latest'
   job: string
   numberOfRecords: number
   debug?: boolean
 }
 
-export function anthropicGenerator(config: AnthropicGeneratorConfig) {
+export function llmRecordGenerator(config: LLMRecordGeneratorConfig) {
   return function (listener: FlatfileListener) {
     listener.use(
       jobHandler(`sheet:${config.job}`, async (event: FlatfileEvent, tick) => {
         const { sheetId } = event.context
-        const anthropicApiKey = await event.secrets('ANTHROPIC_API_KEY')
+        const llmApiKey = await event.secrets(config.llmSecretName)
 
-        if (!anthropicApiKey) {
-          logError(
-            '@flatfile/plugin-import-anthropic',
-            'Anthropic API key is not set'
-          )
-          throw new Error('Anthropic API key is not set')
+        if (!llmApiKey) {
+          logError('@flatfile/plugin-import-llm', 'LLM API key is not set')
+          throw new Error('LLM API key is not set')
         }
 
         try {
@@ -33,10 +41,13 @@ export function anthropicGenerator(config: AnthropicGeneratorConfig) {
 
           await tick(60, 'Generating example records')
           const exampleRecords = await generateExampleRecords(
-            anthropicApiKey,
+            config.model,
+            llmApiKey,
             sheet,
-            config.numberOfRecords
+            config.numberOfRecords,
+            config.debug
           )
+
           if (config.debug) {
             console.dir(exampleRecords, { depth: null })
           }
@@ -46,7 +57,7 @@ export function anthropicGenerator(config: AnthropicGeneratorConfig) {
 
           if (config.debug) {
             logInfo(
-              '@flatfile/plugin-import-anthropic',
+              '@flatfile/plugin-import-llm',
               `Generated ${exampleRecords.length} example records`
             )
           }
@@ -57,7 +68,7 @@ export function anthropicGenerator(config: AnthropicGeneratorConfig) {
         } catch (error) {
           if (config.debug) {
             logError(
-              '@flatfile/plugin-import-anthropic',
+              '@flatfile/plugin-import-llm',
               `Error generating example records: ${error.message}`
             )
           }

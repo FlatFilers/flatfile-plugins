@@ -1,16 +1,13 @@
-import { Anthropic } from '@anthropic-ai/sdk'
-import { TextBlock } from '@anthropic-ai/sdk/resources'
 import type { Flatfile } from '@flatfile/api'
+import { LLMHandler } from './llm.handler'
 
 export async function generateExampleRecords(
+  model: string,
   apiKey: string,
   sheet: Flatfile.Sheet,
-  count: number
+  count: number,
+  debug?: boolean
 ): Promise<Flatfile.RecordData[]> {
-  const anthropic = new Anthropic({
-    apiKey,
-  })
-
   const fieldDescriptions = sheet.config.fields
     .map(
       (field) =>
@@ -28,16 +25,21 @@ Ensure the data is diverse and contextually appropriate for each field type and 
 
 Return only the JSON data, no other text or comments.`
 
-  const response = await anthropic.messages.create({
-    model: 'claude-3-sonnet-20240229',
-    max_tokens: 1000,
-    messages: [{ role: 'user', content: prompt }],
-  })
+  const llm = new LLMHandler(model, apiKey)
+  const response = await llm.handleMessage('', prompt)
+  const responseText = response.content as string
 
-  const responseText = (response.content[0] as TextBlock).text
-  const generatedData = JSON.parse(responseText)
+  if (debug) {
+    console.dir(responseText, { depth: null })
+  }
 
-  return generatedData.map((record: any) => {
+  const jsonRegex = new RegExp(`\`\`\`json\\n([\\s\\S]*?)\\n\`\`\``)
+  const match = responseText.match(jsonRegex)
+  const generatedData = match?.[1] ?? responseText
+
+  const jsonGeneratedData = JSON.parse(generatedData)
+
+  return jsonGeneratedData.map((record: any) => {
     const formattedRecord: { [key: string]: { value: any } } = {}
     for (const [key, value] of Object.entries(record)) {
       formattedRecord[key] = { value }
