@@ -3,8 +3,8 @@ import { WorkbookCapture } from '@flatfile/util-extractor'
 import Papa, { ParseResult } from 'papaparse'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
-import { DelimiterOptions } from '../dist/types'
 import { Headerizer } from './header.detection'
+import { DelimiterOptions } from './index'
 
 type ParseBufferOptions = Omit<DelimiterOptions, 'chunkSize' | 'parallel'> & {
   readonly headerSelectionEnabled?: boolean
