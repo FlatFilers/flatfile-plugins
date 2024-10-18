@@ -3,12 +3,8 @@ import {
   bulkRecordHook,
   type FlatfileRecord,
 } from '@flatfile/plugin-record-hook'
-import what3words, {
-  ApiVersion,
-  Transport,
-  What3wordsService,
-  fetchTransport,
-} from '@what3words/api'
+import fetch from 'cross-fetch'
+import { asyncMap } from 'modern-async'
 
 interface What3WordsConfig {
   what3wordsField: string
@@ -20,29 +16,27 @@ interface What3WordsConfig {
 }
 
 export function convertWhat3words(config: What3WordsConfig) {
-  const w3wConfig: {
-    host: string
-    apiVersion: ApiVersion
-  } = {
-    host: 'https://api.what3words.com',
-    apiVersion: ApiVersion.Version3,
-  }
   return bulkRecordHook(
     config.sheetSlug || '**',
     async (records: FlatfileRecord[], event: FlatfileEvent) => {
-      const { environmentId, spaceId } = event.context
-
       const apiKey = await event.secrets('W3W_API_KEY')
-      const transport: Transport = fetchTransport()
-      const w3wService: What3wordsService = what3words(apiKey, w3wConfig, {
-        transport,
-      })
 
-      for (const record of records) {
-        const words = record.get(config.what3wordsField) as string
-        if (words) {
+      return await asyncMap(records, async (record) => {
+        const words = record.get(config.what3wordsField)
+        if (typeof words === 'string' && words.length > 0) {
           try {
-            const result = await w3wService.convertToCoordinates({ words })
+            const response = await fetch(
+              `https://api.what3words.com/v3/convert-to-coordinates?words=${words}`,
+              {
+                headers: {
+                  'X-Api-Key': apiKey,
+                },
+              }
+            )
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`)
+            }
+            const result = await response.json()
             record.set(config.countryField, result.country)
             record.set(config.nearestPlaceField, result.nearestPlace)
             record.set(config.latField, result.coordinates.lat)
@@ -56,7 +50,7 @@ export function convertWhat3words(config: What3WordsConfig) {
           }
         }
         return record
-      }
+      })
     }
   )
 }

@@ -54,7 +54,8 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/plugin-record-hook": "^1.7.0",
-    "@what3words/api": "^5.4.0"
+    "cross-fetch": "^4.0.0",
+    "modern-async": "^2.0.4"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.0.5"
