@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-what3words
 
+## 0.2.1
+
+### Patch Changes
+
+- 41bfa99: This release fixes an async bug
+
 ## 0.2.0
 
 ### Minor Changes
