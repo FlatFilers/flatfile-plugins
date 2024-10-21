@@ -1,6 +1,6 @@
 <!-- START_INFOCARD -->
 
-The `@flatfile/plugin-markdown-extractor` plugin parses Markdown files and extracts tabular data, creating sheets in Flatfile for each table found.
+The `@flatfile/plugin-extract-markdown` plugin parses Markdown files and extracts tabular data, creating sheets in Flatfile for each table found.
 
 **Event Type:** 
 `listener.on('file:created')`
@@ -30,39 +30,32 @@ The `debug` parameter enables additional logging for troubleshooting.
 Listen for a Markdown file to be uploaded to Flatfile. The platform will then extract the file automatically. Once complete, the file will be ready for import in the Files area.
 
 ```bash Install
-npm i @flatfile/plugin-markdown-extractor
+npm i @flatfile/plugin-extract-markdown
 ```
 
 ```js import
-import { MarkdownExtractor } from "@flatfile/plugin-markdown-extractor";
+import { extractMarkdown } from "@flatfile/plugin-extract-markdown";
 ```
 
 ```js listener.js
-listener.use(MarkdownExtractor());
+listener.use(extractMarkdown());
 ```
 
 ### Full Example
 
-In this example, the `MarkdownExtractor` is initialized with custom options, and then registered as middleware with the Flatfile listener. When a Markdown file is uploaded, the plugin will extract the tabular data and process it using the extractor's parser.
+In this example, the `extractMarkdown` is initialized with custom options, and then registered as middleware with the Flatfile listener. When a Markdown file is uploaded, the plugin will extract the tabular data and process it using the extractor's parser.
 
 ```javascript
-import { MarkdownExtractor } from "@flatfile/plugin-markdown-extractor";
+import { extractMarkdown } from "@flatfile/plugin-extract-markdown";
 
-export default async function (listener) {
-  // Define optional options for the extractor
-  const options = {
+export default function (listener) {
+  listener.use(extractMarkdown({
     maxTables: 5,
     errorHandling: 'strict',
     debug: true
-  };
+  }));
 
-  // Initialize the Markdown extractor
-  const markdownExtractor = MarkdownExtractor(options);
-
-  // Register the extractor as a middleware for the Flatfile listener
-  listener.use(markdownExtractor);
-
-  // When a Markdown file is uploaded, the tabular data will be extracted and processed using the extractor's parser.
+  // ...the rest of your listener...
 }
 ```
 

@@ -1,0 +1,35 @@
+{
+  "name": "@flatfile/plugin-psv-extractor",
+  "version": "1.9.1",
+  "description": "A plugin for parsing a psv file and extracting it into Flatfile.",
+  "registryMetadata": {
+    "category": "extract"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.mjs",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "parcel build",
+    "build:watch": "parcel watch",
+    "build:prod": "NODE_ENV=production parcel build",
+    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "test": "jest --passWithNoTests"
+  },
+  "keywords": [],
+  "author": "Ashley Mulligan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "extract/psv"
+  },
+  "license": "ISC",
+  "dependencies": {},
+  "peerDependencies": {
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0"
+  }
+}

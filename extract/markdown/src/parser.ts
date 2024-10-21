@@ -1,9 +1,9 @@
 import type { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
-import type { MarkdownExtractorOptions } from '.'
+import type { ExtractMarkdownOptions } from '.'
 
 export function parseBuffer(
   buffer: Buffer,
-  options: MarkdownExtractorOptions
+  options: ExtractMarkdownOptions
 ): WorkbookCapture {
   const content = buffer.toString('utf-8')
   const tables = extractTablesFromMarkdown(content, options)
@@ -29,7 +29,7 @@ export function parseBuffer(
 
 export function extractTablesFromMarkdown(
   content: string,
-  options: MarkdownExtractorOptions
+  options: ExtractMarkdownOptions
 ): Array<{ headers: string[]; rows: string[][] }> {
   const tables: Array<{ headers: string[]; rows: string[][] }> = []
   // More flexible regex pattern

@@ -1,16 +1,10 @@
 import type { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 import { parse } from 'node-html-parser'
-
-export interface HTMLTableExtractorOptions {
-  handleColspan?: boolean
-  handleRowspan?: boolean
-  maxDepth?: number
-  debug?: boolean
-}
+import { ExtractHTMLTableOptions } from '.'
 
 export function parseBuffer(
   buffer: Buffer,
-  options: HTMLTableExtractorOptions
+  options: ExtractHTMLTableOptions
 ): WorkbookCapture {
   if (options.debug) {
     console.log('Parsing buffer...')
@@ -57,7 +51,7 @@ export function parseBuffer(
 
 function extractTablesFromHTML(
   content: string,
-  options: HTMLTableExtractorOptions
+  options: ExtractHTMLTableOptions
 ): Array<{ headers: string[]; rows: string[][] }> {
   const root = parse(content)
   const tables: Array<{ headers: string[]; rows: string[][] }> = []

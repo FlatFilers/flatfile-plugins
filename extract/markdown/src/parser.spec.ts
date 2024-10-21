@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { ExtractMarkdownOptions } from './index'
 import { parseBuffer } from './parser'
-import { MarkdownExtractorOptions } from './index'
 
 describe('Markdown Extractor Parser', () => {
   const testCases = [
@@ -14,7 +14,7 @@ describe('Markdown Extractor Parser', () => {
     test(`should correctly parse ${file}`, () => {
       const filePath = path.join(__dirname, '..', 'samples', file)
       const buffer = fs.readFileSync(filePath)
-      const options: MarkdownExtractorOptions = {
+      const options: ExtractMarkdownOptions = {
         maxTables: Infinity,
       }
 
@@ -35,7 +35,7 @@ describe('Markdown Extractor Parser', () => {
   test('should respect maxTables option', () => {
     const filePath = path.join(__dirname, '..', 'samples', 'multiple_tables.md')
     const buffer = fs.readFileSync(filePath)
-    const options: MarkdownExtractorOptions = {
+    const options: ExtractMarkdownOptions = {
       maxTables: 2,
     }
 
@@ -48,10 +48,10 @@ describe('Markdown Extractor Parser', () => {
     const filePath = path.join(__dirname, '..', 'samples', 'lenient_tables.md')
     const buffer = fs.readFileSync(filePath)
 
-    const strictOptions: MarkdownExtractorOptions = { errorHandling: 'strict' }
+    const strictOptions: ExtractMarkdownOptions = { errorHandling: 'strict' }
     expect(() => parseBuffer(buffer, strictOptions)).toThrow()
 
-    const lenientOptions: MarkdownExtractorOptions = {
+    const lenientOptions: ExtractMarkdownOptions = {
       errorHandling: 'lenient',
     }
     expect(() => parseBuffer(buffer, lenientOptions)).not.toThrow()

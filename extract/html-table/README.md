@@ -41,21 +41,20 @@ This plugin provides HTML table extraction capabilities for Flatfile. It parses 
 npm install @flatfile/plugin-extract-html-table
 ```
 
-**import**
-```javascript
-import { HTMLTableExtractor } from '@flatfile/plugin-extract-html-table';
-```
-
 **listener.js**
 ```javascript
-const listener = new FlatfileListener();
+import { extractHTMLTable } from '@flatfile/plugin-extract-html-table';
 
-listener.use(
-  HTMLTableExtractor({
-    handleColspan: true,
-    handleRowspan: true,
-    maxDepth: 3,
-    debug: false
-  })
-);
+export default function (listener) {
+  listener.use(
+    extractHTMLTable({
+      handleColspan: true,
+      handleRowspan: true,
+      maxDepth: 3,
+      debug: false
+    })
+  );
+
+  // ...the rest of your listener...
+}
 ```

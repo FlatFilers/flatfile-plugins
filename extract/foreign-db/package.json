@@ -1,8 +1,8 @@
 {
-  "name": "@flatfile/plugin-extract-html-table",
-  "version": "1.1.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/extract/html-table",
-  "description": "A Flatfile plugin for extracting table data from HTML files",
+  "name": "@flatfile/plugin-foreign-db-extractor",
+  "version": "0.2.1",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/extract/foreign-db",
+  "description": "A plugin for extracting MSSQL DBs from a .bak file.",
   "registryMetadata": {
     "category": "extract"
   },
@@ -37,6 +37,7 @@
   "files": [
     "dist/**"
   ],
+  "type": "module",
   "scripts": {
     "build": "rollup -c",
     "build:watch": "rollup -c --watch",
@@ -54,17 +55,18 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "extract/html-table"
+    "directory": "extract/foreign-db"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.1.5",
-    "node-html-parser": "^6.1.13"
+    "mssql": "^10.0.1",
+    "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
+    "@flatfile/api": "^1.9.19",
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "^0.1.1"
+    "@flatfile/rollup-config": "0.1.1"
   }
 }
