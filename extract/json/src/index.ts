@@ -12,3 +12,8 @@ export const extractJSON = (options?: ExtractJSONOptions) => {
 }
 
 export const jsonParser = parseBuffer
+
+/*
+ * @deprecated use `extractJSON` instead
+ */
+export const JSONExtractor = extractJSON

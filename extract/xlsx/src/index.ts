@@ -40,3 +40,8 @@ export const excelParser = parseBuffer
  * @deprecated use `extractExcel` instead
  */
 export const xlsxExtractorPlugin = extractExcel
+
+/*
+ * @deprecated use `extractExcel` instead
+ */
+export const ExcelExtractor = extractExcel

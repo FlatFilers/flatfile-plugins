@@ -31,7 +31,7 @@ export const extractZip = (options: PluginOptions = {}) => {
 
       const jobs = await api.jobs.create({
         type: Flatfile.JobType.File,
-        operation: 'extract-plugin-zip',
+        operation: 'extract-zip',
         status: Flatfile.JobStatus.Ready,
         source: fileId,
       })
@@ -39,7 +39,7 @@ export const extractZip = (options: PluginOptions = {}) => {
     })
     listener.use(
       jobHandler(
-        { operation: 'extract-plugin-zip' },
+        { operation: 'extract-zip' },
         async (
           event: FlatfileEvent,
           tick: (
@@ -101,3 +101,8 @@ export const extractZip = (options: PluginOptions = {}) => {
     )
   }
 }
+
+/*
+ * @deprecated use `extractZip` instead
+ */
+export const ZipExtractor = extractZip

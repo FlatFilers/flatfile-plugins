@@ -81,23 +81,23 @@ npm i @flatfile/plugin-delimiter-extractor
 ```
 
 ```js import
-import { extractDelimiter } from "@flatfile/plugin-delimiter-extractor";
+import { extractDelimitedFile } from "@flatfile/plugin-delimiter-extractor";
 ```
 
 ```js listener.js
-listener.use(extractDelimiter(".txt", { delimiter: ":" }));
+listener.use(extractDelimitedFile(".txt", { delimiter: ":" }));
 ```
 
 
 ### Full Example
 
-In this example, the extractDelimiter is configured for extracting TXT files. When a TXT file is uploaded, the plugin will extract the structured data and process it using the extractor's parser.
+In this example, the extractDelimitedFile is configured for extracting TXT files. When a TXT file is uploaded, the plugin will extract the structured data and process it using the extractor's parser.
 
 ```javascript
-import { extractDelimiter } from "@flatfile/plugin-delimiter-extractor";
+import { extractDelimitedFile } from "@flatfile/plugin-delimiter-extractor";
 
 export default function (listener) {
-  listener.use(extractDelimiter(".txt", {
+  listener.use(extractDelimitedFile(".txt", {
     delimiter: ":",
     dynamicTyping: true,
     skipEmptyLines: true,

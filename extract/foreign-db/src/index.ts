@@ -130,3 +130,8 @@ export const extractForeignDB = () => {
     )
   }
 }
+
+/*
+ * @deprecated use `extractForeignDB` instead
+ */
+export const foreignDBExtractor = extractForeignDB

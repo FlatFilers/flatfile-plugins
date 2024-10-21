@@ -23,7 +23,7 @@ export interface DelimiterOptions {
   readonly debug?: boolean
 }
 
-export const extractDelimiter = (
+export const extractDelimitedFile = (
   fileExt: string,
   options: DelimiterOptions
 ) => {
@@ -37,3 +37,8 @@ export const extractDelimiter = (
 }
 
 export const delimiterParser = parseBuffer
+
+/*
+ * @deprecated use `extractDelimitedFile` instead
+ */
+export const DelimiterExtractor = extractDelimitedFile

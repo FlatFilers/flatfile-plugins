@@ -13,3 +13,8 @@ export const extractXML = (options?: {
 }
 
 export const xmlParser = parseBuffer
+
+/*
+ * @deprecated use `extractXML` instead
+ */
+export const XMLExtractor = extractXML
