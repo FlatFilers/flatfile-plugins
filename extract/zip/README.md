@@ -55,16 +55,14 @@ listener.use(extractZip());
 
 ### Full Example
 
-In this example, the `extractZip` is initialized, and then registered as middleware with the Flatfile listener. When a JSON file is uploaded, the plugin will extract the contents of the ZIP file and upload the files to FlatFile.
+In this example, the `extractZip` is attached to the listener. When a ZIP file is uploaded, the plugin will extract the contents of the ZIP file and upload the files to FlatFile.
 
 ```javascript
 import { extractZip } from "@flatfile/plugin-zip-extractor";
 
-// Initialize the ZIP extractor
-const extractZip = extractZip();
+export default function (listener) {
+  listener.use(extractZip());
 
-// Register the extractor as a middleware for the Flatfile listener
-listener.use(extractZip);
-
-// When a ZIP file is uploaded, the files will be extracted and uploaded.
+  // ...the rest of your listener...
+}
 ```

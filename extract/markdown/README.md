@@ -43,7 +43,7 @@ listener.use(extractMarkdown());
 
 ### Full Example
 
-In this example, the `extractMarkdown` is initialized with custom options, and then registered as middleware with the Flatfile listener. When a Markdown file is uploaded, the plugin will extract the tabular data and process it using the extractor's parser.
+In this example, the `extractMarkdown` is configured with custom options, and then attached to the listener. When a Markdown file is uploaded, the plugin will extract the tabular data and process it with the extractor's parser.
 
 ```javascript
 import { extractMarkdown } from "@flatfile/plugin-extract-markdown";

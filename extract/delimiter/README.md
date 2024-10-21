@@ -91,7 +91,7 @@ listener.use(extractDelimiter(".txt", { delimiter: ":" }));
 
 ### Full Example
 
-In this example, the extractDelimiter is initialized for extracting TXT files with optional options, and then registered as middleware with the Flatfile listener. When a TXT file is uploaded, the plugin will extract the structured data and process it using the extractor's parser.
+In this example, the extractDelimiter is configured for extracting TXT files. When a TXT file is uploaded, the plugin will extract the structured data and process it using the extractor's parser.
 
 ```javascript
 import { extractDelimiter } from "@flatfile/plugin-delimiter-extractor";

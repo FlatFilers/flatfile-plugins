@@ -60,7 +60,7 @@ listener.use(extractJSON());
 
 ### Full Example
 
-In this example, the `extractJSON` is initialized, and then registered as middleware with the Flatfile listener. When a JSON file is uploaded, the plugin will extract the structured data and process it the extractor's parser.
+In this example, the `extractJSON` is attached to the listener. When a JSON file is uploaded, the plugin will extract the structured data and process it with the extractor's parser.
 
 ```javascript
 import { extractJSON } from "@flatfile/plugin-json-extractor";
