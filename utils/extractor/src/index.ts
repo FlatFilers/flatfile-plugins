@@ -32,7 +32,7 @@ export const Extractor = (
 
       const jobs = await api.jobs.create({
         type: Flatfile.JobType.File,
-        operation: `extract-plugin-${extractorType}`,
+        operation: `extract-${extractorType}`,
         status: Flatfile.JobStatus.Ready,
         source: fileId,
       })
@@ -40,7 +40,7 @@ export const Extractor = (
     })
     listener.on(
       'job:ready',
-      { operation: `extract-plugin-${extractorType}` },
+      { operation: `extract-${extractorType}` },
       async (event) => {
         const { fileId, jobId, spaceId } = event.context
         const { chunkSize, parallel, debug } = {

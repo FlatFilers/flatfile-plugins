@@ -1,8 +1,8 @@
 {
-  "name": "@flatfile/plugin-extract-html-table",
-  "version": "1.1.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/extract/html-table",
-  "description": "A Flatfile plugin for extracting table data from HTML files",
+  "name": "@flatfile/plugin-xlsx-extractor",
+  "version": "3.2.2",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/extract/xlsx",
+  "description": "A plugin for parsing xlsx files in Flatfile.",
   "registryMetadata": {
     "category": "extract"
   },
@@ -50,16 +50,16 @@
     "flatfile-plugins",
     "category-extract"
   ],
-  "author": "Flatfile, Inc.",
+  "author": "David Boskovic",
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "extract/html-table"
+    "directory": "extract/xlsx"
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.1.5",
-    "node-html-parser": "^6.1.13"
+    "@flatfile/util-extractor": "^2.1.7",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.1.0"

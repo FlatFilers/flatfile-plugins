@@ -1,15 +1,15 @@
 import { Extractor } from '@flatfile/util-extractor'
 import { parseBuffer } from './parser'
 
-export interface HTMLTableExtractorOptions {
+export interface ExtractHTMLTableOptions {
   handleColspan?: boolean
   handleRowspan?: boolean
   maxDepth?: number
   debug?: boolean
 }
 
-export const HTMLTableExtractor = (options: HTMLTableExtractorOptions = {}) => {
+export const extractHTMLTable = (options: ExtractHTMLTableOptions = {}) => {
   return Extractor('html', 'html-tables', parseBuffer, options)
 }
 
-export const htmlTableParser = parseBuffer
+export const parseHTMLTable = parseBuffer
