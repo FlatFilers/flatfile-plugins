@@ -3,7 +3,7 @@
 The `@flatfile/plugin-validate-date` plugin provides date format normalization functionality for Flatfile. It detects various date formats and converts them to a specified output format, supporting multiple fields and locales.
 
 **Event Type:**
-`listener.on('commit:created')`
+`recordHook`
 
 <!-- END_INFOCARD -->
 
@@ -20,6 +20,9 @@ The `outputFormat` parameter specifies the desired output format for the normali
 
 #### `config.includeTime` - `boolean`
 The `includeTime` parameter determines whether to include time in the normalized output.
+
+#### `config.locale` - `string` - (optional)
+The `locale` parameter specifies the locale to use for date parsing. Currently, only 'en-US' is supported.
 
 ## Usage
 
@@ -45,12 +48,16 @@ export default function (listener: FlatfileListener) {
   listener.use(
     validateDate({
       sheetSlug: 'contacts',
-      dateFields: ['birthdate', 'registration_date'],
-      outputFormat: 'MM/DD/YYYY',
+      dateFields: ['birth_date', 'registration_date'],
+      outputFormat: 'MM/dd/yyyy',
       includeTime: false
     })
   )
-
-  // ... rest of your Flatfile listener configuration
 }
 ```
+
+## Notes
+
+- The plugin uses the `chrono-node` library for parsing dates, which supports a wide range of date formats.
+- If a date cannot be parsed, the plugin will add an error message to the record for that field.
+- The `locale` parameter is included in the configuration interface but is not currently used in the implementation. The plugin defaults to using the 'en-US' locale.
