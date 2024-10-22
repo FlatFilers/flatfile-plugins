@@ -1,6 +1,14 @@
-# Flatfile Field Translation Plugin
+<!-- START_INFOCARD -->
+# @flatfile/plugin-convert-translate
 
 This Flatfile Listener plugin enables field translation using the Google Translate API. It supports batch translation, configurable options, and both automatic and manual translation workflows. The plugin creates new fields for translated text and includes error handling.
+
+**Event Type:** `listener.on('commit:created')`
+
+**Supported Field Types:** `string`
+
+<!-- END_INFOCARD -->
+
 
 ## Features
 
