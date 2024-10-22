@@ -3,7 +3,7 @@
 The `@flatfile/plugin-validate-date` plugin provides date format normalization functionality for Flatfile. It detects various date formats and converts them to a specified output format, supporting multiple fields and locales.
 
 **Event Type:**
-`recordHook`
+`listener.on('commit:created')`
 
 <!-- END_INFOCARD -->
 
