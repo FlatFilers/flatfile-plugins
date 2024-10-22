@@ -17,7 +17,7 @@ export const exportToExternalAPIPlugin = (config: PluginConfig) => {
   return (listener: FlatfileListener) => {
     listener.use(
       jobHandler(
-        { operation: config.job },
+        `sheet:${config.job}`,
         async (
           event: FlatfileEvent,
           tick: (
@@ -65,6 +65,7 @@ export const exportToExternalAPIPlugin = (config: PluginConfig) => {
                 progress,
                 `Exported ${totalExported} records. Failed to export ${failedRecords} records.`
               )
+              pageNumber++
             }
 
             return {

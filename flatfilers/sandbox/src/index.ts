@@ -1,14 +1,15 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { pivotTablePlugin } from '@flatfile/plugin-export-pivot-table'
+import { exportToExternalAPIPlugin } from '@flatfile/plugin-export-external-api'
 import { configureSpace } from '@flatfile/plugin-space-configure'
-
 export default async function (listener: FlatfileListener) {
   listener.use(
-    pivotTablePlugin({
-      pivotColumn: 'product',
-      aggregateColumn: 'salesAmount',
-      aggregationMethod: 'sum',
-      groupByColumn: 'region',
+    exportToExternalAPIPlugin({
+      job: 'export-external-api',
+      apiEndpoint: 'http://localhost:5678/api/import',
+      authToken: 'your-api-token',
+      batchSize: 100,
+      maxRetries: 3,
+      retryDelay: 1000,
     })
   )
   listener.use(
@@ -47,17 +48,17 @@ export default async function (listener: FlatfileListener) {
                   label: 'Sales Amount',
                 },
               ],
-            },
-          ],
-          actions: [
-            {
-              operation: 'generatePivotTable',
-              label: 'Generate Pivot Table',
-              description:
-                'This custom action code generates a pivot table from the records in the People sheet.',
-              primary: false,
-              mode: 'foreground',
-              type: 'string',
+              actions: [
+                {
+                  operation: 'export-external-api',
+                  label: 'Export to External API',
+                  description:
+                    'This custom action code exports the records in the Sales sheet to an external API.',
+                  primary: false,
+                  mode: 'foreground',
+                  type: 'string',
+                },
+              ],
             },
           ],
         },
