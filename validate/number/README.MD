@@ -49,7 +49,8 @@ listener.use(
     thousandsSeparator: ',',
     decimalPoint: '.',
     specialTypes: ['even'],
-    round: true
+    round: true,
+    fields: ['numberField']
   })
 );
 ```
@@ -71,6 +72,8 @@ The `validateNumber` accepts a configuration object with the following options:
 - `specialTypes`: Array of special number types to validate ('prime', 'even', 'odd')
 - `round`: Round the number to the nearest integer
 - `truncate`: Truncate the decimal part of the number
+- `fields`: Array of field names to apply the validation to
+- `sheetSlug`: The slug of the sheet to apply the validation to
 
 ## Behavior
 

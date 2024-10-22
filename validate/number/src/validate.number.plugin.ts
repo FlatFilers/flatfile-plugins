@@ -15,6 +15,8 @@ export interface NumberValidationConfig {
   specialTypes?: string[]
   round?: boolean
   truncate?: boolean
+  fields: string[]
+  sheetSlug?: string
 }
 
 export interface NumberValidationResult {
@@ -120,9 +122,7 @@ export function validateNumberField(
   return result
 }
 
-export function validateNumber(
-  config: NumberValidationConfig & { fields: string[]; sheetSlug?: string }
-) {
+export function validateNumber(config: NumberValidationConfig) {
   return (listener: FlatfileListener) => {
     listener.use(
       recordHook(config.sheetSlug || '**', async (record: FlatfileRecord) => {
