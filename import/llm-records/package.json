@@ -1,8 +1,8 @@
 {
-  "name": "@flatfile/plugin-import-faker",
-  "version": "0.1.0",
-  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/import/faker",
-  "description": "A Flatfile plugin that generates example records using Faker",
+  "name": "@flatfile/plugin-import-llm-records",
+  "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/import/llm-records",
+  "description": "A Flatfile plugin that generates example records using AI",
   "registryMetadata": {
     "category": "import"
   },
@@ -54,15 +54,20 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "import/faker"
+    "directory": "import/llm-records"
   },
   "license": "ISC",
   "dependencies": {
-    "@faker-js/faker": "^9.0.2",
-    "@flatfile/util-common": "^1.4.1"
+    "@flatfile/plugin-job-handler": "^0.6.1",
+    "@flatfile/util-common": "^1.4.0"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.1.0"
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0",
+    "@langchain/anthropic": "^0.3.5",
+    "@langchain/core": "^0.3.13",
+    "@langchain/mistralai": "^0.1.1",
+    "@langchain/openai": "^0.3.8"
   },
   "devDependencies": {
     "@flatfile/rollup-config": "^0.1.1"
