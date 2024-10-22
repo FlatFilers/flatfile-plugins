@@ -2,25 +2,18 @@ import { type Flatfile } from '@flatfile/api'
 import { type FlatfileEvent, type FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { getSheetLength, Simplified } from '@flatfile/util-common'
-import {
-  exportToExternalAPI,
-  processRecord,
-  retryOperation,
-} from './external.api.utils'
+import { exportToExternalAPI, retryOperation } from './external.api.utils'
 
 export interface PluginConfig {
   job: string
   apiEndpoint: string
   authToken: string
-  dataMapping: {
-    readonly [key: string]: string
-  }
   batchSize: number
   maxRetries: number
   retryDelay: number
 }
 
-export const externalApiExportPlugin = (config: PluginConfig) => {
+export const exportToExternalAPIPlugin = (config: PluginConfig) => {
   return (listener: FlatfileListener) => {
     listener.use(
       jobHandler(
@@ -49,26 +42,22 @@ export const externalApiExportPlugin = (config: PluginConfig) => {
                 pageNumber,
               })
 
-              const processedBatch = records.map((record) =>
-                processRecord(record, config.dataMapping)
-              )
-
               try {
                 await retryOperation(
                   () =>
                     exportToExternalAPI(
-                      processedBatch,
+                      records,
                       config.apiEndpoint,
                       config.authToken
                     ),
                   config.maxRetries,
                   config.retryDelay
                 )
-                totalExported += processedBatch.length
+                totalExported += records.length
                 successfulBatches++
               } catch (error) {
                 console.error('Failed to export batch after retries:', error)
-                failedRecords += processedBatch.length
+                failedRecords += records.length
               }
 
               const progress = (successfulBatches / batchCount) * 100
@@ -91,3 +80,5 @@ export const externalApiExportPlugin = (config: PluginConfig) => {
     )
   }
 }
+
+export default exportToExternalAPIPlugin

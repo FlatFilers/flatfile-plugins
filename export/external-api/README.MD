@@ -10,7 +10,6 @@ This plugin for Flatfile enables exporting data to an external API with advanced
 
 ## Features
 
-- Data mapping from Flatfile fields to external API fields
 - Batch processing for efficient exports
 - Configurable batch size
 - Retry logic with configurable max retries and delay
@@ -30,9 +29,6 @@ The URL of the external API endpoint to send data to.
 #### `authToken` - `string` - (required)
 The authentication token for the external API.
 
-#### `dataMapping` - `object` - (required)
-A mapping of Flatfile field names to external API field names.
-
 #### `batchSize` - `number` - (required)
 The number of records to process in each batch.
 
@@ -48,24 +44,19 @@ The delay (in milliseconds) between retry attempts.
 To install the plugin, use npm:
 
 ```bash
-npm install @flatfile/plugin-external-api-export
+npm install @flatfile/plugin-export-external-api
 ```
 
 ## Example Usage
 
 ```javascript
-import externalApiExportPlugin from '@flatfile/plugin-external-api-export';
+import { exportToExternalAPIPlugin } from '@flatfile/plugin-export-external-api';
 
 export default function (listener) {
   listener.use(
-    externalApiExportPlugin({
+    exportToExternalAPIPlugin({
       apiEndpoint: 'https://api.example.com/import',
       authToken: 'your-api-token',
-      dataMapping: {
-        'First Name': 'firstName',
-        'Last Name': 'lastName',
-        'Email': 'emailAddress'
-      },
       batchSize: 100,
       maxRetries: 3,
       retryDelay: 1000

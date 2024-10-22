@@ -1,19 +1,4 @@
-import { type SimpleRecord } from '@flatfile/util-common'
 import fetch from 'cross-fetch'
-import { type PluginConfig } from './external.api.plugin'
-
-export function processRecord(
-  record: SimpleRecord,
-  mapping: PluginConfig['dataMapping']
-): Record<string, unknown> {
-  return Object.entries(mapping).reduce(
-    (acc, [from, to]) => {
-      acc[to] = record[from]
-      return acc
-    },
-    {} as Record<string, unknown>
-  )
-}
 
 export async function exportToExternalAPI(
   data: Record<string, unknown>[],

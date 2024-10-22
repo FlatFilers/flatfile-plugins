@@ -1,1 +1,1 @@
-export { externalApiExportPlugin } from './external.api.plugin'
+export * from './external.api.plugin'
