@@ -81,8 +81,8 @@ describe('NormalizeDate e2e', () => {
 
       const records = await getRecords(sheetId)
 
-      expect(records[0].values['date'].messages.length).toBeGreaterThan(0)
-      expect(records[0].values['date'].messages[0].message).toContain(
+      expect(records[0].values['date'].messages?.length).toBeGreaterThan(0)
+      expect(records[0].values['date'].messages?.[0].message).toContain(
         'Unable to parse date string'
       )
     })
