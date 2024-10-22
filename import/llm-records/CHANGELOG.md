@@ -4,4 +4,4 @@
 
 ### Minor Changes
 
-- 58f78a1: Initial Release
+- 58f78a1: Initial Release 
