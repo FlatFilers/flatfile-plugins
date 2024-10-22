@@ -1,7 +1,7 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
-import { asyncMap } from '@flatfile/common-plugin-utils'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import * as R from 'remeda'
+import { logError, logInfo, logWarn } from '@flatfile/util-common'
+import { asyncMap } from 'modern-async'
 import { AutomapOptions } from './automap.plugin'
 
 const api = new FlatfileClient()
@@ -43,13 +43,13 @@ export class AutomapService {
 
       if (!this.isFileNameMatch(file)) {
         return
-      } else {
+      } else if (!this.options.disableFileNameUpdate) {
         await this.updateFileName(file.id, `⚡️ ${file.name}`)
       }
 
-      if (R.isNil(file.workbookId)) {
+      if (this.isNil(file.workbookId)) {
         if (this.options.debug) {
-          this.logError('No Workbook Id found')
+          logError('@flatfile/plugin-automap', 'No Workbook Id found')
         }
         return
       }
@@ -60,9 +60,12 @@ export class AutomapService {
         })
 
         const destinationWorkbook = this.getTargetWorkbook(workbooks)
-        if (R.isNil(destinationWorkbook)) {
+        if (this.isNil(destinationWorkbook)) {
           if (this.options.debug) {
-            this.logError('Unable to determine destination Workbook')
+            logError(
+              '@flatfile/plugin-automap',
+              'Unable to determine destination Workbook'
+            )
           }
           return
         }
@@ -71,33 +74,29 @@ export class AutomapService {
           const mappings = await this.getMappingJobs(file)
           let destinationSheet: Flatfile.Sheet | undefined
           const jobs = await asyncMap(mappings, async ({ target, source }) => {
-            if (R.isNil(target)) {
+            if (this.isNil(target)) {
               if (this.options.debug) {
-                this.logInfo(
+                logInfo(
+                  '@flatfile/plugin-automap',
                   `Unable to determine destination sheet for source sheet with id: ${source}`
                 )
               }
               return
             }
 
-            destinationSheet = R.pipe(
-              destinationWorkbook.sheets,
-              R.find(
-                (s) =>
-                  s.name === target ||
-                  s.id === target ||
-                  s.config.slug === target
-              )
+            destinationSheet = destinationWorkbook.sheets.find(
+              (s) =>
+                s.name === target || s.id === target || s.config.slug === target
             )
 
             const destinationSheetId = destinationSheet?.id
-            if (R.isNil(destinationSheetId)) return
+            if (this.isNil(destinationSheetId)) return
 
             try {
               const { data: job } = await api.jobs.create({
                 type: 'workbook',
                 operation: 'map',
-                source: file.workbookId!,
+                source: file.workbookId,
                 managed: true,
                 destination: destinationWorkbook.id,
 
@@ -112,32 +111,35 @@ export class AutomapService {
 
               return job
             } catch (_jobError: unknown) {
-              this.logError('Unable to create mapping job')
+              logError(
+                '@flatfile/plugin-automap',
+                'Unable to create mapping job'
+              )
               return
             }
           })
 
-          const actualJobs = R.pipe(
-            jobs,
-            R.reject((j) => R.isNil(j))
-          )
+          const actualJobs = jobs.filter((j) => !this.isNil(j))
 
-          if (R.length(actualJobs) > 0) {
+          if (actualJobs.length > 0 && !this.options.disableFileNameUpdate) {
             await this.updateFileName(
               file.id,
               `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`
             )
           }
         } catch (_mappingsError: unknown) {
-          this.logError('Unable to fetch mappings')
+          logError('@flatfile/plugin-automap', 'Unable to fetch mappings')
           return
         }
       } catch (_workbookError: unknown) {
-        this.logError('Unable to list workbooks')
+        logError('@flatfile/plugin-automap', 'Unable to list workbooks')
         return
       }
     } catch (_fileError: unknown) {
-      this.logError(`Unable to fetch file with id: ${fileId}`)
+      logError(
+        '@flatfile/plugin-automap',
+        `Unable to fetch file with id: ${fileId}`
+      )
       return
     }
   }
@@ -152,27 +154,20 @@ export class AutomapService {
     workbooks: Array<Flatfile.Workbook>
   ): Flatfile.Workbook | undefined {
     const { targetWorkbook } = this.options
-    const targets = R.pipe(
-      workbooks,
-      R.reject((w) => w.labels?.includes('file'))
-    )
+    const targets = workbooks.filter((w) => !w.labels?.includes('file'))
 
-    if (R.length(targets) === 0) {
+    if (targets.length === 0) {
       return undefined
-    } else if (!R.isNil(targetWorkbook)) {
-      const target = R.pipe(
-        targets,
-        R.find((w) => w.id === targetWorkbook || w.name === targetWorkbook)
+    } else if (!this.isNil(targetWorkbook)) {
+      const target = targets.find(
+        (w) => w.id === targetWorkbook || w.name === targetWorkbook
       )
 
-      if (!R.isNil(target)) return target
-    } else if (R.length(targets) === 1) {
-      return R.first(targets)
+      if (!this.isNil(target)) return target
+    } else if (targets.length === 1) {
+      return targets[0]
     } else {
-      return R.pipe(
-        targets,
-        R.find((w) => w.labels?.includes('primary'))
-      )
+      return targets.find((w) => w.labels?.includes('primary'))
     }
   }
 
@@ -190,15 +185,18 @@ export class AutomapService {
 
     if (!job.data.input?.isAutomap) {
       if (this.options.debug) {
-        this.logInfo(`Not an automap job: ${jobId}`)
+        logInfo('@flatfile/plugin-automap', `Not an automap job: ${jobId}`)
       }
       return
     }
 
     // Plan generation is async, so we need to wait for the job to be in the planning state
-    if(job.data.status !== Flatfile.JobStatus.Planning){
+    if (job.data.status !== Flatfile.JobStatus.Planning) {
       if (this.options.debug) {
-        this.logInfo(`Job is not in planning state: ${jobId}. Waiting for future event`)
+        logInfo(
+          '@flatfile/plugin-automap',
+          `Job is not in planning state: ${jobId}. Waiting for future event`
+        )
       }
       return
     }
@@ -208,21 +206,24 @@ export class AutomapService {
         data: { plan },
       }: Flatfile.JobPlanResponse = await api.jobs.getExecutionPlan(jobId)
 
-      if (R.isNil(plan)) {
+      if (this.isNil(plan)) {
         if (this.options.debug) {
-          this.logInfo('No job execution plan found')
+          logInfo('@flatfile/plugin-automap', 'No job execution plan found')
         }
         return
       }
 
       if (this.options.debug) {
-        this.logInfo(`Job Execution Plan:\n${JSON.stringify(plan, null, 2)}`)
+        logInfo(
+          '@flatfile/plugin-automap',
+          `Job Execution Plan:\n${JSON.stringify(plan, null, 2)}`
+        )
       }
 
-      if (R.length((plan as Flatfile.JobExecutionPlan).fieldMapping) === 0) {
-        this.logWarn('At least one field must be mapped')
+      if ((plan as Flatfile.JobExecutionPlan).fieldMapping.length === 0) {
+        logWarn('@flatfile/plugin-automap', 'At least one field must be mapped')
 
-        if (!R.isNil(this.options.onFailure)) {
+        if (!this.isNil(this.options.onFailure)) {
           this.options.onFailure(event)
         }
         return
@@ -235,10 +236,13 @@ export class AutomapService {
               await api.jobs.execute(jobId)
             } else {
               if (this.options.debug) {
-                this.logWarn('Skipping automap due to lack of confidence')
+                logWarn(
+                  '@flatfile/plugin-automap',
+                  'Skipping automap due to lack of confidence'
+                )
               }
 
-              if (!R.isNil(this.options.onFailure)) {
+              if (!this.isNil(this.options.onFailure)) {
                 this.options.onFailure(event)
               }
             }
@@ -248,21 +252,30 @@ export class AutomapService {
               await api.jobs.execute(jobId)
             } else {
               if (this.options.debug) {
-                this.logWarn('Skipping automap due to lack of confidence')
+                logWarn(
+                  '@flatfile/plugin-automap',
+                  'Skipping automap due to lack of confidence'
+                )
               }
 
-              if (!R.isNil(this.options.onFailure)) {
+              if (!this.isNil(this.options.onFailure)) {
                 this.options.onFailure(event)
               }
             }
             break
         }
       } catch (_jobError: unknown) {
-        this.logError(`Unable to execute job with id: ${jobId}`)
+        logError(
+          '@flatfile/plugin-automap',
+          `Unable to execute job with id: ${jobId}`
+        )
         return
       }
     } catch (_execPlanError: unknown) {
-      this.logError(`Unable to fetch execution plan for job with id: ${jobId}`)
+      logError(
+        '@flatfile/plugin-automap',
+        `Unable to fetch execution plan for job with id: ${jobId}`
+      )
       return
     }
   }
@@ -282,7 +295,7 @@ export class AutomapService {
   private isFileNameMatch(file: Flatfile.File_): boolean {
     const { matchFilename: regex } = this.options
 
-    if (R.isNil(regex)) {
+    if (this.isNil(regex)) {
       // allow mapping to continue b/c we weren't explicitly told not to
       return true
     } else {
@@ -317,8 +330,8 @@ export class AutomapService {
         ? await defaultTargetSheet(file.name)
         : defaultTargetSheet
 
-    if (R.length(sheets) === 1 && !R.isNil(targetSheet)) {
-      return [{ source: R.first(sheets).id, target: targetSheet }]
+    if (sheets.length === 1 && !this.isNil(targetSheet)) {
+      return [{ source: sheets[0].id, target: targetSheet }]
     } else {
       return []
     }
@@ -327,22 +340,22 @@ export class AutomapService {
   private verifyAbsoluteMatchingStrategy(
     plan: Flatfile.JobExecutionPlan
   ): boolean {
-    return R.pipe(plan, (p) =>
-      p.fieldMapping?.every(
+    return (
+      plan.fieldMapping?.every(
         (edge) => edge.metadata?.certainty === Flatfile.Certainty.Absolute
-      )
+      ) ?? false
     )
   }
 
   private verifyConfidentMatchingStrategy(
     plan: Flatfile.JobExecutionPlan
   ): boolean {
-    return R.pipe(plan, (p) =>
-      p.fieldMapping?.every(
+    return (
+      plan.fieldMapping?.every(
         (edge) =>
           edge.metadata?.certainty === Flatfile.Certainty.Strong ||
           edge.metadata?.certainty === Flatfile.Certainty.Absolute
-      )
+      ) ?? false
     )
   }
 
@@ -353,15 +366,7 @@ export class AutomapService {
     return api.files.update(fileId, { name: fileName })
   }
 
-  private logError(msg: string): void {
-    console.error('[@flatfile/plugin-automap]:[FATAL] ' + msg)
-  }
-
-  private logInfo(msg: string): void {
-    console.log('[@flatfile/plugin-automap]:[INFO] ' + msg)
-  }
-
-  private logWarn(msg: string): void {
-    console.warn('[@flatfile/plugin-automap]:[WARN] ' + msg)
+  private isNil(value: any): value is null | undefined {
+    return value === null || value === undefined
   }
 }

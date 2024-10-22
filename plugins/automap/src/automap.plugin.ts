@@ -33,4 +33,5 @@ export interface AutomapOptions {
   readonly matchFilename?: RegExp
   readonly onFailure?: (event: FlatfileEvent) => void
   readonly targetWorkbook?: string
+  readonly disableFileNameUpdate?: boolean
 }
