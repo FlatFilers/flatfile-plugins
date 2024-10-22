@@ -1,10 +1,10 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { llmRecordGenerator } from '@flatfile/plugin-import-llm'
+import { importLLMRecords } from '@flatfile/plugin-import-llm-records'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    llmRecordGenerator({
+    importLLMRecords({
       llmSecretName: 'OPENAI_API_KEY',
       model: 'gpt-4o',
       job: 'generateExampleRecords',

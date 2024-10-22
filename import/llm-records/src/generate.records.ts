@@ -1,7 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
-import { LLMHandler } from './llm.handler'
+import { llmHandler } from './llm.handler'
 
-export async function generateExampleRecords(
+export async function generateRecords(
   model: string,
   apiKey: string,
   sheet: Flatfile.Sheet,
@@ -25,7 +25,7 @@ Ensure the data is diverse and contextually appropriate for each field type and 
 
 Return only the JSON data, no other text or comments.`
 
-  const llm = new LLMHandler(model, apiKey)
+  const llm = new llmHandler(model, apiKey)
   const response = await llm.handleMessage('', prompt)
   const responseText = response.content as string
 

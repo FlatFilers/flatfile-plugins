@@ -9,7 +9,7 @@ import {
 import { ChatMistralAI } from '@langchain/mistralai'
 import { ChatOpenAI } from '@langchain/openai'
 
-export class LLMHandler {
+export class llmHandler {
   private llm: BaseChatModel
   private messageHistory: BaseMessage[] = []
   private useHistory: boolean
