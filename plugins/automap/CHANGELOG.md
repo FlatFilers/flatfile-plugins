@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.6.0
+
+### Minor Changes
+
+- 484fac9: This release removes remeda & adds the `disableFileNameUpdate` option
+
 ## 0.5.2
 
 ### Patch Changes
