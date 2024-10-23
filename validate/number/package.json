@@ -7,6 +7,11 @@
   "engines": {
     "node": ">= 16"
   },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
   "exports": {
     ".": {
       "node": {
@@ -51,6 +56,11 @@
     "category-transform"
   ],
   "author": "Flatfile, Inc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "validate/number"
+  },
   "license": "ISC",
   "dependencies": {
     "@flatfile/plugin-record-hook": "^1.8.0"
@@ -60,15 +70,5 @@
   },
   "devDependencies": {
     "@flatfile/bundler-config-tsup": "^0.1.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
-    "directory": "validate/number"
-  },
-  "browserslist": [
-    "> 0.5%",
-    "last 2 versions",
-    "not dead"
-  ]
+  }
 }
