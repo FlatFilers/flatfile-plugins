@@ -2,17 +2,13 @@
     "$schema": "https://turbo.build/schema.json",
     "globalDependencies": ["**/.env.*local"],
     "pipeline": {
-        "build:rollup": {
+        "build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["^build:rollup"]
+            "dependsOn": ["^build"]
         },
-        "build:tsup": {
+        "build:prod": {
             "outputs": ["dist/**"],
             "dependsOn": ["^build:tsup"]
-        },
-        "build:rollup:prod": {
-            "outputs": ["dist/**"],
-            "dependsOn": ["^build:rollup:prod"]
         },
         "test:e2e": {
             "outputs": [],
