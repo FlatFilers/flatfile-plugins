@@ -1,5 +1,5 @@
-import { buildConfig } from '@flatfile/rollup-config';
+import { buildConfig } from '@flatfile/bundler-config-rollup'
 
-const config = buildConfig({});
+const config = buildConfig({})
 
-export default config;
+export default config

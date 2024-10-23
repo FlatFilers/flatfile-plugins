@@ -1,4 +1,4 @@
-import { buildConfig } from '@flatfile/rollup-config'
+import { buildConfig } from '@flatfile/bundler-config-rollup'
 
 const config = buildConfig({ includeBrowser: false })
 
