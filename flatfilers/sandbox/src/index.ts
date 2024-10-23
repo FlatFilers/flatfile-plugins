@@ -1,14 +1,13 @@
 import type { FlatfileListener } from '@flatfile/listener'
-import { importLLMRecords } from '@flatfile/plugin-import-llm-records'
+import { exportDelimitedZip } from '@flatfile/plugin-export-delimited-zip'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    importLLMRecords({
-      llmSecretName: 'OPENAI_API_KEY',
-      model: 'gpt-4o',
-      job: 'generateExampleRecords',
-      numberOfRecords: 10,
+    exportDelimitedZip({
+      job: 'export-delimited-zip',
+      delimiter: '\t',
+      fileExtension: 'tsv',
       debug: true,
     })
   )
@@ -56,9 +55,56 @@ export default async function (listener: FlatfileListener) {
                     'This custom action code generates example records using Anthropic.',
                   primary: false,
                   mode: 'foreground',
-                  type: 'string',
                 },
               ],
+            },
+            {
+              name: 'Sales 2',
+              slug: 'sales-2',
+              fields: [
+                {
+                  key: 'date',
+                  type: 'string',
+                  label: 'Date',
+                },
+                {
+                  key: 'product',
+                  type: 'string',
+                  label: 'Product',
+                },
+                {
+                  key: 'category',
+                  type: 'string',
+                  label: 'Category',
+                },
+                {
+                  key: 'region',
+                  type: 'string',
+                  label: 'Region',
+                },
+                {
+                  key: 'salesAmount',
+                  type: 'number',
+                  label: 'Sales Amount',
+                },
+              ],
+              actions: [
+                {
+                  operation: 'export-external-api',
+                  label: 'Export to External API',
+                  description:
+                    'This custom action code exports the records in the Sales sheet to an external API.',
+                  primary: false,
+                  mode: 'foreground',
+                },
+              ],
+            },
+          ],
+          actions: [
+            {
+              operation: 'export-delimited-zip',
+              label: 'Export to Delimited ZIP',
+              mode: 'foreground',
             },
           ],
         },
