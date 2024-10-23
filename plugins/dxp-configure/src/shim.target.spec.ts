@@ -1,4 +1,4 @@
-import { shimTarget } from './shim.target' // replace 'your-file' with actual filename
+import { shimTarget } from './shim.target'
 
 describe('shimTarget()', () => {
   it('returns "space(*)" for a file domain', () => {
