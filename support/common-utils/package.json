@@ -43,7 +43,7 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup ",
+    "build": "tsup",
     "build:watch": "tsup --watch",
     "build:prod": "NODE_ENV=production tsup",
     "check-exports": "attw --pack .",
