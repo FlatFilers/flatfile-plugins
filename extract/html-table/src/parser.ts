@@ -29,7 +29,7 @@ export function parseBuffer(
         const record: Record<string, { value: string }> = {}
         row.forEach((cell, cellIndex) => {
           if (cellIndex < table.headers.length) {
-            record[table.headers[cellIndex]] = { value: cell }
+            record[table.headers[cellIndex]!] = { value: cell }
           } else if (options.debug) {
             console.warn(
               `Row ${index + 1} has more cells than headers. Ignoring extra cell:`,
@@ -134,9 +134,9 @@ function handleRowspan(rows: string[][]) {
   rows.forEach((row, rowIndex) => {
     Object.keys(rowspanCells).forEach((colIndex) => {
       const colIndexNum = parseInt(colIndex, 10)
-      if (rowspanCells[colIndexNum].rowspan > 0) {
-        row.splice(colIndexNum, 0, rowspanCells[colIndexNum].value)
-        rowspanCells[colIndexNum].rowspan--
+      if (rowspanCells[colIndexNum]!.rowspan > 0) {
+        row.splice(colIndexNum, 0, rowspanCells[colIndexNum]!.value)
+        rowspanCells[colIndexNum]!.rowspan--
       }
     })
 

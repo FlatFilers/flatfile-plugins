@@ -235,7 +235,7 @@ export async function getPropertyType(
 
 export async function resolveReference(schema: any, ref: string): Promise<any> {
   const segments = ref.split('/')
-  const modelName = segments[segments.length - 1]
+  const modelName = segments[segments.length - 1] as string
 
   const model = schema[modelName]
 
