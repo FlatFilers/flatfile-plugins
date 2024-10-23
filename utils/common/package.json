@@ -38,12 +38,9 @@
     "dist/**"
   ],
   "scripts": {
-    "build:rollup": "rollup -c",
-    "build:rollup:watch": "rollup -c --watch",
-    "build:rollup:prod": "NODE_ENV=production rollup -c",
-    "build:tsup": "tsup",
-    "build:tsup:watch": "tsup --watch",
-    "build:tsup:prod": "NODE_ENV=production tsup",
+    "build": "tsup ",
+    "build:watch": "tsup --watch",
+    "build:prod": "NODE_ENV=production tsup",
     "check-exports": "attw --pack .",
     "lint": "tsc",
     "test": "jest src/*.spec.ts --detectOpenHandles",
