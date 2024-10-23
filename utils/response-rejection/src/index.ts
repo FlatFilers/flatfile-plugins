@@ -33,7 +33,7 @@ export async function responseRejectionHandler(
   const message = responseRejection.message ?? getMessage(totalRejectedRecords)
   let next
   if (!responseRejection.deleteSubmitted && totalRejectedRecords > 0) {
-    next = getNext(totalRejectedRecords, responseRejection.sheets[0].sheetId)
+    next = getNext(totalRejectedRecords, responseRejection.sheets[0]!.sheetId)
   }
 
   return {
@@ -94,7 +94,7 @@ async function updateSheet(
           const rejectedRecord = sheetRejections.rejectedRecords.find(
             (item) => item.id === record.id
           )
-          record.values['submissionStatus'].value = rejectedRecord
+          record.values['submissionStatus']!.value = rejectedRecord
             ? 'rejected'
             : 'submitted'
         })
@@ -117,7 +117,7 @@ async function updateSheet(
 
         rejectedRecord?.values.forEach((value) => {
           if (record.values[value.field]) {
-            record.values[value.field].messages = [
+            record.values[value.field]!.messages = [
               { type: 'error', message: value.message },
             ]
           }

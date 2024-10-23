@@ -38,7 +38,10 @@ export function viewMappedPlugin() {
         'workbook:viewMappedFieldsOnly',
         async (
           event: FlatfileEvent,
-          tick: (percentage: number, message: string) => Promise<void>
+          tick: (
+            progress: number,
+            message?: string | undefined
+          ) => Promise<Flatfile.JobResponse>
         ) => {
           const { jobId, workbookId } = event.context
 

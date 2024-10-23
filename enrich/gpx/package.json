@@ -73,6 +73,7 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.0.0"
+    "@flatfile/bundler-config-tsup": "^0.0.0",
+    "@types/xml2js": "^0.4.14"
   }
 }

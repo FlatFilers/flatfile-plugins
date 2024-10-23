@@ -1,7 +1,5 @@
-import type { Flatfile } from '@flatfile/api'
-
 import {
-  EventFilter,
+  type EventFilter,
   FlatfileEvent,
   FlatfileListener,
 } from '@flatfile/listener'

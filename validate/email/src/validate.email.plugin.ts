@@ -26,15 +26,21 @@ export function validateEmail(config: EmailValidationConfig) {
           email,
           config.disposableDomains || []
         )
-        
+
         if (!validationResult.isValid) {
           let errorMessage = errorMessages.invalid || validationResult.error
-          
-          if (validationResult.error === 'Disposable email addresses are not allowed') {
+
+          if (
+            validationResult.error ===
+            'Disposable email addresses are not allowed'
+          ) {
             errorMessage = errorMessages.disposable || validationResult.error
           }
-          
-          record.addError(field, errorMessage)
+
+          record.addError(
+            field,
+            errorMessage ? errorMessage : 'Invalid email address'
+          )
         }
       }
     }

@@ -63,7 +63,7 @@ export async function parseBuffer(
         sheetNames.map(async (sheetName) => {
           const sheet = workbook.Sheets[sheetName]
           const processedSheet = await convertSheet({
-            sheet,
+            sheet: sheet!,
             sheetName,
             rawNumbers: options?.rawNumbers || false,
             raw: options?.raw || false,
@@ -141,7 +141,7 @@ async function convertSheet({
   const headerStream = Readable.from(extractValues(rows))
   const { skip, header } = await headerizer.getHeaders(headerStream)
   const headerKey = Math.max(0, skip - 1)
-  const columnKeys = Object.keys(rows[headerKey])
+  const columnKeys = Object.keys(rows[headerKey]!)
 
   if (debug) {
     console.log('Detected header:', header)
@@ -172,7 +172,7 @@ async function convertSheet({
 
   while (
     rows.length > 0 &&
-    Object.values(rows[rows.length - 1]).every(isNullOrWhitespace)
+    Object.values(rows[rows.length - 1]!).every(isNullOrWhitespace)
   ) {
     rows.pop()
   }

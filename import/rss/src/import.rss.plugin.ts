@@ -40,7 +40,7 @@ export function rssImport(config: RSSImportConfig) {
         } catch (error) {
           await api.jobs.fail(jobId, {
             outcome: {
-              message: `Failed to import RSS feed data: ${error.message}`,
+              message: `Failed to import RSS feed data: ${(error as Error).message}`,
             },
           })
         }

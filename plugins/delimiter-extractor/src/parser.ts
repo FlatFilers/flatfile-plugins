@@ -104,9 +104,9 @@ export async function parseBuffer(
     const sheetName = 'Sheet1'
     const workbook: WorkbookCapture = {
       [sheetName]: {
-        headers,
+        headers: Object.values(headers),
         data,
-        metadata,
+        metadata: metadata!,
       },
     }
     return workbook
