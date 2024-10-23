@@ -66,7 +66,7 @@
   },
   "devDependencies": {
     "@flatfile/hooks": "^1.5.0",
-    "@flatfile/rollup-config": "^0.1.1",
+    "@flatfile/bundler-config-rollup": "^0.1.1",
     "@types/node": "^22.6.1",
     "typescript": "^5.6.2"
   }

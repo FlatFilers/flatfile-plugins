@@ -70,6 +70,6 @@
     "@langchain/openai": "^0.3.8"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "^0.1.1"
+    "@flatfile/bundler-config-rollup": "^0.1.1"
   }
 }

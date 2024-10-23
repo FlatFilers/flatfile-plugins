@@ -60,6 +60,6 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/rollup-config": "^0.1.1"
+    "@flatfile/bundler-config-rollup": "^0.1.1"
   }
 }

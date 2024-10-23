@@ -20,19 +20,19 @@
   ],
   "scripts": {
     "clean": "find ./ '(' -name 'node_modules' -o -name 'dist' -o -name '.turbo' -o -name '.parcel-cache' ')' -type d -exec rm -rf {} +",
-    "test": "turbo run test",
-    "build": "turbo build",
-    "turbo:test": "turbo test",
-    "build:prod": "turbo build:prod",
-    "build:clean": "npm run clean && npm i && turbo build",
-    "test:unit": "turbo run test:unit",
-    "test:e2e": "turbo run test:e2e",
-    "build:prod:clean": "npm run clean && npm i && turbo build:prod",
+    "test": "turbo build && turbo test --concurrency=1",
+    "build:rollup": "turbo build:rollup",
+    "build:rollup:prod": "turbo build:rollup:prod",
+    "build:rollup:clean": "npm run clean && npm i && turbo build:rollup:prod",
+    "build:tsup": "turbo build:tsup",
+    "build:tsup:prod": "turbo build:tsup:prod",
+    "build:tsup:clean": "npm run clean && npm i && turbo build:tsup:prod",
     "lint": "prettier --check **/*.ts",
     "format": "prettier --log-level warn --write **/*.ts",
     "changeset": "changeset",
     "changeset-apply": "changeset version",
-    "release": "NODE_ENV=production turbo build && changeset publish"
+    "release": "NODE_ENV=production turbo build && changeset publish",
+    "check-exports": "turbo check-exports"
   },
   "repository": {
     "type": "git",
@@ -51,6 +51,7 @@
   },
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.4",
     "@changesets/cli": "^2.26.1",
     "@flatfile/listener": "^1.1.0",
     "@flatfile/utils-testing": "^0.3.1",

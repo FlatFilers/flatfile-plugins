@@ -51,7 +51,7 @@ export function buildConfig({
         },
         {
           exports: 'auto',
-          file: 'dist/index.mjs',
+          file: 'dist/index.js',
           sourcemap: false,
           format: 'es',
         },
@@ -72,7 +72,7 @@ export function buildConfig({
               },
               {
                 exports: 'auto',
-                file: 'dist/index.browser.mjs',
+                file: 'dist/index.browser.js',
                 sourcemap: false,
                 format: 'es',
               },
@@ -95,7 +95,7 @@ export function buildConfig({
             input: 'src/index.ts',
             output: [
               {
-                file: 'dist/index.js',
+                file: 'dist/umd/index.js',
                 format: 'umd',
                 name: umdConfig.name,
               },

@@ -2,31 +2,27 @@
     "$schema": "https://turbo.build/schema.json",
     "globalDependencies": ["**/.env.*local"],
     "pipeline": {
-        "build": {
-            "outputs": [
-                "dist/**",
-                ".next/**",
-                "!.next/cache/**"
-            ],
-            "dependsOn": [
-                "^build"
-            ]
+        "build:rollup": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["^build:rollup"]
         },
-        "build:prod": {
-            "outputs": [
-                "dist/**"
-            ],
-            "dependsOn": [
-                "^build:prod"
-            ]
+        "build:tsup": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["^build:tsup"]
         },
-        "test:unit": {
-            "outputs": [],
-            "env": ["TURBO_CACHE_ENABLED"]
+        "build:rollup:prod": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["^build:rollup:prod"]
         },
-        "test:e2e": {
-            "outputs": [],
-            "env": ["TURBO_CACHE_ENABLED"]
+        "build:tsup:prod": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["^build:tsup:prod"]
+        },
+        "test": {
+            "inputs": ["**/*.spec.ts"]
+        },
+        "check-exports": {
+            "dependsOn": ["^build"]
         }
     }
 }

@@ -2,40 +2,51 @@
   "name": "@flatfile/plugin-constraints",
   "version": "3.0.1",
   "description": "A plugin for extending blueprint with external constraints",
+  "type": "module",
   "engines": {
     "node": ">= 16"
   },
   "registryMetadata": {
     "category": "records"
   },
-  "browser": {
-    "./dist/index.cjs": "./dist/index.browser.cjs",
-    "./dist/index.mjs": "./dist/index.browser.mjs"
-  },
   "exports": {
-    "types": "./dist/index.d.ts",
-    "node": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.browser.js",
+        "require": "./dist/index.browser.cjs"
+      },
+      "default": "./dist/index.js"
     },
-    "browser": {
-      "require": "./dist/index.browser.cjs",
-      "import": "./dist/index.browser.mjs"
-    },
-    "default": "./dist/index.mjs"
+    "./package.json": "./package.json"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "build:watch": "rollup -c --watch",
-    "build:prod": "NODE_ENV=production rollup -c",
-    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "build:rollup": "rollup -c",
+    "build:rollup:watch": "rollup -c --watch",
+    "build:rollup:prod": "NODE_ENV=production rollup -c",
+    "build:tsup": "tsup",
+    "build:tsup:watch": "tsup --watch",
+    "build:tsup:prod": "NODE_ENV=production tsup",
+    "check-exports": "attw --pack .",
+    "lint": "tsc",
     "test": "jest src/*.spec.ts --detectOpenHandles",
     "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
     "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
@@ -56,6 +67,6 @@
   },
   "devDependencies": {
     "@flatfile/plugin-record-hook": "^1.7.1",
-    "@flatfile/rollup-config": "0.1.1"
+    "@flatfile/bundler-config-tsup": "^0.0.0"
   }
 }
