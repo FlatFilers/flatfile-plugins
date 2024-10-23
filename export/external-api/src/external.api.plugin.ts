@@ -1,5 +1,5 @@
-import { type Flatfile } from '@flatfile/api'
-import { type FlatfileEvent, type FlatfileListener } from '@flatfile/listener'
+import type { Flatfile } from '@flatfile/api'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { getSheetLength, Simplified } from '@flatfile/util-common'
 import { exportToExternalAPI, retryOperation } from './external.api.utils'
@@ -7,7 +7,7 @@ import { exportToExternalAPI, retryOperation } from './external.api.utils'
 export interface PluginConfig {
   job: string
   apiEndpoint: string
-  authToken: string
+  secretName: string
   batchSize: number
   maxRetries: number
   retryDelay: number
@@ -27,6 +27,8 @@ export const exportToExternalAPIPlugin = (config: PluginConfig) => {
         ) => {
           const { sheetId } = event.context
 
+          const authToken = await event.secrets(config.secretName)
+
           try {
             let totalExported = 0
             let failedRecords = 0
@@ -45,11 +47,7 @@ export const exportToExternalAPIPlugin = (config: PluginConfig) => {
               try {
                 await retryOperation(
                   () =>
-                    exportToExternalAPI(
-                      records,
-                      config.apiEndpoint,
-                      config.authToken
-                    ),
+                    exportToExternalAPI(records, config.apiEndpoint, authToken),
                   config.maxRetries,
                   config.retryDelay
                 )
@@ -60,7 +58,7 @@ export const exportToExternalAPIPlugin = (config: PluginConfig) => {
                 failedRecords += records.length
               }
 
-              const progress = (successfulBatches / batchCount) * 100
+              const progress = ((pageNumber - 1) / batchCount) * 100
               await tick(
                 progress,
                 `Exported ${totalExported} records. Failed to export ${failedRecords} records.`
@@ -81,5 +79,3 @@ export const exportToExternalAPIPlugin = (config: PluginConfig) => {
     )
   }
 }
-
-export default exportToExternalAPIPlugin

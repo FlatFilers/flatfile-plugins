@@ -6,7 +6,7 @@ export default async function (listener: FlatfileListener) {
     exportToExternalAPIPlugin({
       job: 'export-external-api',
       apiEndpoint: 'http://localhost:5678/api/import',
-      authToken: 'your-api-token',
+      secretName: 'EXTERNAL_API_AUTH_SECRET',
       batchSize: 100,
       maxRetries: 3,
       retryDelay: 1000,

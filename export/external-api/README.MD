@@ -26,8 +26,8 @@ The type of job to create.
 #### `apiEndpoint` - `string` - (required)
 The URL of the external API endpoint to send data to.
 
-#### `authToken` - `string` - (required)
-The authentication token for the external API.
+#### `secretName` - `string` - (required)
+The name of the Flatfile Secret that contains the authentication token for the external API.
 
 #### `batchSize` - `number` - (required)
 The number of records to process in each batch.
@@ -56,7 +56,7 @@ export default function (listener) {
   listener.use(
     exportToExternalAPIPlugin({
       apiEndpoint: 'https://api.example.com/import',
-      authToken: 'your-api-token',
+      secretName: 'YOUR_SECRET_NAME',
       batchSize: 100,
       maxRetries: 3,
       retryDelay: 1000
