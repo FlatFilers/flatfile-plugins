@@ -6,6 +6,7 @@
   "registryMetadata": {
     "category": "export"
   },
+  "type": "module",
   "engines": {
     "node": ">= 16"
   },
@@ -14,34 +15,41 @@
     "last 2 versions",
     "not dead"
   ],
-  "browser": {
-    "./dist/index.js": "./dist/index.browser.js",
-    "./dist/index.mjs": "./dist/index.browser.mjs"
-  },
   "exports": {
-    "types": "./dist/index.d.ts",
-    "node": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.browser.js",
+        "require": "./dist/index.browser.cjs"
+      },
+      "default": "./dist/index.js"
     },
-    "browser": {
-      "require": "./dist/index.browser.js",
-      "import": "./dist/index.browser.mjs"
-    },
-    "default": "./dist/index.mjs"
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
   "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "build:watch": "rollup -c --watch",
-    "build:prod": "NODE_ENV=production rollup -c",
-    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build:prod": "NODE_ENV=production tsup",
+    "check-exports": "attw --pack .",
+    "lint": "tsc",
     "test": "jest src/*.spec.ts --detectOpenHandles",
     "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
     "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
@@ -64,6 +72,6 @@
     "@flatfile/listener": "^1.0.5"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-rollup": "^0.1.1"
+    "@flatfile/bundler-config-tsup": "^0.0.0"
   }
 }
