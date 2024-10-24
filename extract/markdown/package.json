@@ -10,7 +10,6 @@
   "engines": {
     "node": ">= 16"
   },
-  "type": "module",
   "exports": {
     ".": {
       "node": {

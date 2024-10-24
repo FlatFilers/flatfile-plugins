@@ -7,7 +7,6 @@
     "category": "enrich"
   },
   "type": "module",
-  "type": "module",
   "engines": {
     "node": ">= 16"
   },
