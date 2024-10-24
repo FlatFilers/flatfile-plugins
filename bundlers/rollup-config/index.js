@@ -34,12 +34,12 @@ function commonPlugins(browser, umd = false) {
 }
 
 export function buildConfig({
-  external = [],
   includeNode = true,
   includeBrowser = true,
   includeDefinitions = true,
   includeUmd = false,
   umdConfig = { name: undefined, external: [] },
+  external = [],
 }) {
   return [
     // Node.js build
