@@ -116,7 +116,7 @@ export const Extractor = (
             }
             await createAllRecords(
               sheet.id,
-              capture[sheet.name].data.map(normalizeRecordKeys),
+              capture[sheet.name]!.data.map(normalizeRecordKeys),
               async (_progress, part, totalParts) => {
                 await tick(
                   Math.min(99, Math.round(10 + 90 * (part / totalParts))),
@@ -142,7 +142,7 @@ export const Extractor = (
           })
         } catch (e) {
           if (debug) {
-            console.log(`Extractor error: ${e.message}`)
+            console.log(`Extractor error: ${(e as Error).message}`)
           }
           await api.files.update(fileId, {
             status: 'failed',
@@ -150,7 +150,7 @@ export const Extractor = (
           await api.jobs.fail(jobId, {
             info: 'Extraction failed',
             outcome: {
-              message: e.message,
+              message: (e as Error).message,
             },
           })
         }
@@ -218,7 +218,7 @@ function normalizeRecordKeys(record: Flatfile.RecordData): Flatfile.RecordData {
   const normalizedRecord = {} as Flatfile.RecordData
   for (const key in record) {
     if (record.hasOwnProperty(key)) {
-      normalizedRecord[normalizeKey(key)] = record[key]
+      normalizedRecord[normalizeKey(key)] = record[key]!
     }
   }
   return normalizedRecord
@@ -226,34 +226,43 @@ function normalizeRecordKeys(record: Flatfile.RecordData): Flatfile.RecordData {
 
 export function keysToFields({
   keys,
-  descriptions = {},
+  descriptions,
 }: {
   keys: string[]
-  descriptions?: Record<string, string>
+  descriptions: Record<string, string | null> | null | undefined
 }): Flatfile.Property[] {
   let index = 0
   const countOfKeys: Record<
     string,
     { count: number; index: number; metadata?: { fieldRef: string } }
-  > = keys.reduce((acc, key) => {
-    if (!key) key = ''
-    if (typeof key !== 'string') {
-      key = String(key)
-    }
-    key = key.trim()
-    if (key === '') {
-      key = 'empty'
-    }
-    if (acc[key]) {
-      const incrementKey = `${key}_${acc[key].count}`
-      acc[incrementKey] = { count: 1, index }
-      acc[key].count++
-    } else {
-      acc[key] = { count: 1, index }
-    }
-    index++
-    return acc
-  }, {})
+  > = keys.reduce(
+    (
+      acc: Record<
+        string,
+        { count: number; index: number; metadata?: { fieldRef: string } }
+      >,
+      key
+    ) => {
+      if (!key) key = ''
+      if (typeof key !== 'string') {
+        key = String(key)
+      }
+      key = key.trim()
+      if (key === '') {
+        key = 'empty'
+      }
+      if (acc[key]) {
+        const incrementKey = `${key}_${acc[key]?.count ?? 0}`
+        acc[incrementKey] = { count: 1, index }
+        acc[key] = { ...acc[key], count: (acc[key]?.count ?? 0) + 1, index }
+      } else {
+        acc[key] = { count: 1, index }
+      }
+      index++
+      return acc
+    },
+    {}
+  )
   return Object.entries(countOfKeys)
     .sort((a, b) => a[1].index - b[1].index)
     .map(([key, _]) => ({
@@ -269,8 +278,8 @@ async function updateSheetMetadata(
   workbookCapture: WorkbookCapture
 ): Promise<void> {
   await Promise.all(
-    workbook.sheets.map(async (sheet) => {
-      const { metadata } = workbookCapture[sheet.name]
+    workbook.sheets!.map(async (sheet) => {
+      const { metadata } = workbookCapture[sheet.name]!
       await api.sheets.updateSheet(sheet.id, {
         metadata,
       })

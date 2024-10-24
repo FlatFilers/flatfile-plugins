@@ -78,7 +78,7 @@ export function validateNumberField(
 
     if (config.precision !== undefined && config.scale !== undefined) {
       const [integerPart, decimalPart] = numberValue.toString().split('.')
-      if (integerPart.length > config.precision - config.scale) {
+      if (integerPart && integerPart.length > config.precision - config.scale) {
         result.warnings.push(
           `Must have at most ${config.precision - config.scale} digits before the decimal point`
         )
@@ -114,7 +114,7 @@ export function validateNumberField(
 
     result.value = numberValue
   } catch (error) {
-    result.errors.push(`Error processing value: ${error.message}`)
+    result.errors.push(`Error processing value: ${(error as Error).message}`)
   }
 
   return result

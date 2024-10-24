@@ -1,6 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
-import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+
+import { FlatfileClient } from '@flatfile/api'
 import { processRecords } from '@flatfile/util-common'
 import { keepFirst } from './keep.first.logic'
 import { keepLast } from './keep.last.logic'
@@ -37,7 +38,8 @@ export const dedupe = async (
   }
 
   await tick(0, 'Dedupe started')
-  const coreKeepOptionSelected = ['first', 'last'].includes(opts.keep)
+  const coreKeepOptionSelected =
+    opts.keep && ['first', 'last'].includes(opts.keep)
   if (coreKeepOptionSelected && opts.on === undefined) {
     throw new Error(`\`on\` is required when \`keep\` is ${opts.keep}`)
   }
@@ -48,7 +50,7 @@ export const dedupe = async (
         config: { fields },
       },
     } = await api.sheets.get(sheetId)
-    const field = fields.find((f) => f.key === opts.on)
+    const field = fields.find((f: Flatfile.Property) => f.key === opts.on)
     if (field === undefined) {
       throw new Error(`Field "${opts.on}" not found`)
     }
@@ -64,20 +66,22 @@ export const dedupe = async (
       totalPageCount?: number
     ) => {
       let removeThese: string[] = []
-      if (opts.keep === 'first') {
+      if (opts.keep === 'first' && opts.on) {
         removeThese = keepFirst(records, opts.on, uniques)
-      } else if (opts.keep === 'last') {
+      } else if (opts.keep === 'last' && opts.on) {
         removeThese = keepLast(records, opts.on, uniques)
       } else if (opts.custom) {
         removeThese = opts.custom(records, uniques)
       }
       duplicates = duplicates.concat(removeThese)
 
-      const progress = Math.min((pageNumber / totalPageCount) * 100, 99)
-      await tick(
-        progress,
-        `Processing ${records.length} records on page ${pageNumber} of ${totalPageCount}`
-      )
+      if (pageNumber && totalPageCount) {
+        const progress = Math.min((pageNumber / totalPageCount) * 100, 99)
+        await tick(
+          progress,
+          `Processing ${records.length} records on page ${pageNumber} of ${totalPageCount}`
+        )
+      }
     }
   )
 

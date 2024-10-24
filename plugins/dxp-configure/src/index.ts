@@ -31,7 +31,7 @@ export const dxpConfigure = (
       } = workbook.options
 
       const sheets = Object.keys(originalSheets)
-        .map((key) => originalSheets[key].toBlueprint(namespace, key))
+        .map((key) => originalSheets[key]!.toBlueprint(namespace, key))
         .map((sheet) => ({ ...sheet, actions: sheet.actions || [] }))
 
       const { data: newWorkbook } = await api.workbooks.create({

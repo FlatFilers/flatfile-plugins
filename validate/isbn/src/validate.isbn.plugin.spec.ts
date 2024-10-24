@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { validateAndFormatISBN } from './validate.isbn.plugin'
 
 describe('ISBN Validator Plugin', () => {
@@ -7,7 +8,7 @@ describe('ISBN Validator Plugin', () => {
       expect(result).toEqual({
         isValid: true,
         formattedISBN: '0-306-40615-2',
-        message: 'Formatted ISBN-10'
+        message: 'Formatted ISBN-10',
       })
     })
 
@@ -16,14 +17,14 @@ describe('ISBN Validator Plugin', () => {
       expect(result).toEqual({
         isValid: true,
         formattedISBN: '978-0-306-40615-7',
-        message: 'Formatted ISBN-13'
+        message: 'Formatted ISBN-13',
       })
     })
 
     it('should not format when autoFormat is false', () => {
       const result = validateAndFormatISBN('0306406152', false)
       expect(result).toEqual({
-        isValid: true
+        isValid: true,
       })
     })
 
@@ -31,7 +32,7 @@ describe('ISBN Validator Plugin', () => {
       const result = validateAndFormatISBN('invalid-isbn', true)
       expect(result).toEqual({
         isValid: false,
-        message: 'Invalid ISBN format'
+        message: 'Invalid ISBN format',
       })
     })
 
@@ -41,7 +42,7 @@ describe('ISBN Validator Plugin', () => {
         isValid: true,
         formattedISBN: '0-306-40615-2',
         convertedISBN: '978-0-306-40615-7',
-        message: 'Converted ISBN-13'
+        message: 'Converted ISBN-13',
       })
     })
 
@@ -51,7 +52,7 @@ describe('ISBN Validator Plugin', () => {
         isValid: true,
         formattedISBN: '978-0-306-40615-7',
         convertedISBN: '0-306-40615-2',
-        message: 'Converted ISBN-10'
+        message: 'Converted ISBN-10',
       })
     })
 
@@ -60,7 +61,7 @@ describe('ISBN Validator Plugin', () => {
       expect(result).toEqual({
         isValid: true,
         formattedISBN: '0-306-40615-2',
-        message: 'Formatted ISBN-10'
+        message: 'Formatted ISBN-10',
       })
     })
 
@@ -69,7 +70,7 @@ describe('ISBN Validator Plugin', () => {
       expect(result).toEqual({
         isValid: true,
         formattedISBN: '978-0-306-40615-7',
-        message: 'Formatted ISBN-13'
+        message: 'Formatted ISBN-13',
       })
     })
   })

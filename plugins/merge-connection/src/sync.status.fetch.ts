@@ -8,10 +8,12 @@ export async function fetchAllSyncStatuses(
   const allResults = []
 
   do {
-    const paginatedSyncList = await mergeClient[category].syncStatus.list({
+    const paginatedSyncList = await mergeClient[
+      category as keyof typeof mergeClient
+    ].syncStatus.list({
       cursor,
     })
-    allResults.push(...paginatedSyncList.results)
+    allResults.push(...(paginatedSyncList.results ?? []))
     cursor = paginatedSyncList.next
   } while (cursor)
 

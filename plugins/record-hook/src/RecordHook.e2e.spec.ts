@@ -1,23 +1,52 @@
-import { FlatfileClient } from '@flatfile/api'
+import { type Flatfile, FlatfileClient } from '@flatfile/api'
 import {
   createRecords,
   deleteSpace,
   getRecords,
-  setupListener,
+  setupDriver,
   setupSimpleWorkbook,
   setupSpace,
+  TestListener,
 } from '@flatfile/utils-testing'
-import { FlatfileRecord } from '.'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
+import { type FlatfileRecord } from '.'
 import { bulkRecordHook, recordHook } from './record.hook.plugin'
 
 const api = new FlatfileClient()
 
 describe('RecordHook e2e', () => {
-  const listener = setupListener()
+  const listener = new TestListener()
+  const driver = setupDriver()
+
+  beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+  })
+
+  afterAll(() => {
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
+  })
 
   // Console spies
-  const logSpy = jest.spyOn(global.console, 'log')
-  const logErrorSpy = jest.spyOn(global.console, 'error')
+  const logSpy = vi.spyOn(global.console, 'log')
+  const logErrorSpy = vi.spyOn(global.console, 'error')
 
   let spaceId: string
   let sheetId: string
@@ -26,11 +55,11 @@ describe('RecordHook e2e', () => {
     const space = await setupSpace()
     spaceId = space.id
     const workbook = await setupSimpleWorkbook(space.id, [
-      { key: 'firstName', type: 'string' },
-      { key: 'lastName', type: 'string' },
-      { key: 'email', type: 'string' },
-      { key: 'age', type: 'number' },
-      { key: 'alive', type: 'boolean' },
+      { key: 'firstName', type: 'string' } as Flatfile.Property.String,
+      { key: 'lastName', type: 'string' } as Flatfile.Property.String,
+      { key: 'email', type: 'string' } as Flatfile.Property.String,
+      { key: 'age', type: 'number' } as Flatfile.Property.Number,
+      { key: 'alive', type: 'boolean' } as Flatfile.Property.Boolean,
       {
         key: 'category',
         type: 'enum',
@@ -46,7 +75,7 @@ describe('RecordHook e2e', () => {
             },
           ],
         },
-      },
+      } as Flatfile.Property.Enum,
     ])
     sheetId = workbook.sheets![0].id
   })
@@ -68,7 +97,7 @@ describe('RecordHook e2e', () => {
 
   describe('recordHook()', () => {
     it('registers a records:* listener to the client', () => {
-      const listenerOnSpy = jest.spyOn(listener, 'on')
+      const listenerOnSpy = vi.spyOn(listener, 'on')
       const testCallback = (record) => {
         return record
       }
@@ -233,7 +262,7 @@ describe('RecordHook e2e', () => {
 
   describe('bulkRecordHook()', () => {
     it('registers a records:* listener to the client', () => {
-      const listenerOnSpy = jest.spyOn(listener, 'on')
+      const listenerOnSpy = vi.spyOn(listener, 'on')
       const testCallback = (record: FlatfileRecord[]) => {
         return record
       }

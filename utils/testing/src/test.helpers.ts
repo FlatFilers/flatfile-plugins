@@ -1,6 +1,7 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { PubSubDriver } from '@flatfile/listener-driver-pubsub'
 import fetch from 'cross-fetch'
+import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest'
 import { TestListener } from './test.listener'
 
 const api = new FlatfileClient()
@@ -11,7 +12,7 @@ const api = new FlatfileClient()
  * @returns The environment id string.
  */
 export function getEnvironmentId(): string {
-  return process.env.FLATFILE_ENVIRONMENT_ID
+  return `${process.env.FLATFILE_ENVIRONMENT_ID}`
 }
 
 /**
@@ -35,15 +36,22 @@ export async function deleteSpace(spaceId: string): Promise<Flatfile.Success> {
   return await api.spaces.delete(spaceId)
 }
 
+export function setupDriver() {
+  const environmentId = getEnvironmentId()
+  if (!environmentId) {
+    throw new Error('environmentId is not defined')
+  }
+
+  return new PubSubDriver(environmentId)
+}
+
 /**
  * Establishes a connection to a PubSub channel and binds a listener to it.
  *
  * @param listener - The listener instance to bind to the channel.
  */
 export function streamEvents(listener: TestListener) {
-  const environmentId = getEnvironmentId()
-
-  const driver = new PubSubDriver(environmentId)
+  const driver = setupDriver()
 
   beforeAll(async () => {
     await driver.start()

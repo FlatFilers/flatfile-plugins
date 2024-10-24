@@ -1,7 +1,7 @@
 import { FlatfileListener } from '@flatfile/listener'
 import { recordHook } from '@flatfile/plugin-record-hook'
 import {
-  StringValidationConfig,
+  type StringValidationConfig,
   validateAndTransformString,
 } from './validate.string.utils'
 

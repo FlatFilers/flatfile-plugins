@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { records } from './fake.data'
 import { keepFirst } from './keep.first.logic'
 

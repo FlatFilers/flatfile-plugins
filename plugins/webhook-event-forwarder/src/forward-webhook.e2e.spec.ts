@@ -2,18 +2,43 @@ import type { FlatfileEvent } from '@flatfile/listener'
 import {
   createRecords,
   deleteSpace,
-  setupListener,
+  setupDriver,
   setupSimpleWorkbook,
   setupSpace,
+  TestListener,
 } from '@flatfile/utils-testing'
-import fetchMock from 'jest-fetch-mock'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { webhookEventForward } from '.'
 
-fetchMock.enableMocks()
-fetchMock.dontMock()
-
 describe('forward-webhook() e2e', () => {
-  const listener = setupListener()
+  const listener = new TestListener()
+  const driver = setupDriver()
+
+  beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+  })
+
+  afterAll(() => {
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
+  })
 
   let spaceId
   let workbookId
@@ -28,21 +53,21 @@ describe('forward-webhook() e2e', () => {
       'notes',
     ])
     workbookId = workbook.id
-    sheetId = workbook.sheets[0].id
+    sheetId = workbook.sheets![0].id
   })
 
   afterAll(async () => {
     await deleteSpace(spaceId)
   })
 
-  let callback: jest.Mock
+  let callback
   beforeEach(async () => {
-    fetchMock.resetMocks()
+    vi.restoreAllMocks()
 
-    callback = jest.fn((data: any, event: FlatfileEvent) => {
+    callback = vi.fn((data: any, event: FlatfileEvent) => {
       return { topic: event.topic, data }
     })
-    listener.use(webhookEventForward('example.com', callback))
+    listener.use(webhookEventForward('https://example.com', callback))
   })
 
   afterEach(() => {
@@ -50,13 +75,16 @@ describe('forward-webhook() e2e', () => {
   })
 
   it('should pass event', async () => {
-    fetchMock.doMockIf(
-      'example.com',
-      JSON.stringify({
-        hello: 'Flatfile',
-      }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    )
+    const mockResponse = {
+      hello: 'Flatfile',
+    }
+    global.fetch = vi.fn().mockResolvedValue({
+      status: 200,
+      headers: {
+        get: vi.fn().mockReturnValue('application/json'),
+      },
+      json: vi.fn().mockResolvedValue(mockResponse),
+    })
 
     await createRecords(sheetId, [{ name: 'John' }])
     await listener.waitFor('commit:created')
@@ -67,17 +95,18 @@ describe('forward-webhook() e2e', () => {
     expect(callbackReturnValue[0].value).toEqual(
       expect.objectContaining({
         topic: 'commit:created',
-        data: {
-          hello: 'Flatfile',
-        },
+        data: mockResponse,
       })
     )
   })
 
   it('should error', async () => {
-    fetchMock.doMockIf('example.com', JSON.stringify({}), {
+    global.fetch = vi.fn().mockResolvedValue({
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        get: vi.fn().mockReturnValue('application/json'),
+      },
+      json: vi.fn().mockResolvedValue({}),
     })
 
     await createRecords(sheetId, [{ name: 'Jane' }])

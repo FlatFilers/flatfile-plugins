@@ -17,7 +17,7 @@ export async function parseRSSFeed(url: string) {
   } catch (error) {
     logError(
       '@flatfile/plugin-rss-import',
-      `Error parsing RSS feed: ${error.message}`
+      `Error parsing RSS feed: ${(error as Error).message}`
     )
     throw error
   }
@@ -43,7 +43,7 @@ export async function mapToSheetColumns(sheetId: string, records: any[]) {
   } catch (error) {
     logError(
       '@flatfile/plugin-rss-import',
-      `Error mapping records to sheet columns: ${error.message}`
+      `Error mapping records to sheet columns: ${(error as Error).message}`
     )
     throw error
   }

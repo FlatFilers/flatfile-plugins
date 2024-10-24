@@ -1,7 +1,5 @@
-import type { Flatfile } from '@flatfile/api'
-
 import {
-  EventFilter,
+  type EventFilter,
   FlatfileEvent,
   FlatfileListener,
 } from '@flatfile/listener'
@@ -33,7 +31,7 @@ export class TestListener extends FlatfileListener {
     await super.dispatchEvent(event)
 
     if (this.invocations.has(event.topic)) {
-      this.invocations.get(event.topic).push(event)
+      this.invocations.get(event.topic)?.push(event)
     } else {
       this.invocations.set(event.topic, [event])
     }

@@ -1,9 +1,9 @@
-import { randomUUID } from 'node:crypto'
 import api, { Flatfile } from '@flatfile/api'
 import { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
-import { asyncMap } from 'modern-async'
 import { Simplified } from '@flatfile/util-common'
+import { asyncMap } from 'modern-async'
+import { randomUUID } from 'node:crypto'
 
 /**
  * Auto update plugin that will trigger a schema update for a space
@@ -130,13 +130,13 @@ export function rollout(config: {
         })
         const updated = await config.updater(
           space,
-          workbooks.filter((wb) => !wb.name.includes('[file]'))
+          workbooks.filter((wb) => !wb.name?.includes('[file]'))
         )
         if (updated?.length) {
           await asyncMap(updated, async (wb) => {
             console.log('workbook schema updated, triggering hooks', wb.id)
             await asyncMap(
-              wb.sheets,
+              wb.sheets!,
               (sheet) => {
                 return triggerHooks(sheet.id)
               },

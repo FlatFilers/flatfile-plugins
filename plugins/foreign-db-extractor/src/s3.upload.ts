@@ -28,7 +28,9 @@ export async function s3Upload(
     }
     return jsonResponse.data.success
   } catch (e) {
-    throw new Error(`An error occurred during S3 upload: ${e.message}`)
+    throw new Error(
+      `An error occurred during S3 upload: ${(e as Error).message}`
+    )
   }
 }
 

@@ -1,9 +1,10 @@
+import { describe, expect, it } from 'vitest'
 import {
   calculateDistance,
-  removeDuplicatePoints,
-  filterByDateRange,
   calculateStatistics,
   convertToTabularFormat,
+  filterByDateRange,
+  removeDuplicatePoints,
 } from './enrich.gpx.plugin'
 
 describe('GPX Parser Utility Functions', () => {
@@ -19,9 +20,24 @@ describe('GPX Parser Utility Functions', () => {
   describe('removeDuplicatePoints', () => {
     it('should remove duplicate points', () => {
       const points = [
-        { latitude: 0, longitude: 0, elevation: 100, time: '2023-01-01T00:00:00Z' },
-        { latitude: 0, longitude: 0, elevation: 100, time: '2023-01-01T00:00:00Z' },
-        { latitude: 1, longitude: 1, elevation: 200, time: '2023-01-01T00:01:00Z' },
+        {
+          latitude: 0,
+          longitude: 0,
+          elevation: 100,
+          time: '2023-01-01T00:00:00Z',
+        },
+        {
+          latitude: 0,
+          longitude: 0,
+          elevation: 100,
+          time: '2023-01-01T00:00:00Z',
+        },
+        {
+          latitude: 1,
+          longitude: 1,
+          elevation: 200,
+          time: '2023-01-01T00:01:00Z',
+        },
       ]
       const result = removeDuplicatePoints(points)
       expect(result.length).toBe(2)
@@ -58,15 +74,25 @@ describe('GPX Parser Utility Functions', () => {
 
   describe('convertToTabularFormat', () => {
     it('should convert waypoints, tracks, and routes to tabular format', () => {
-      const waypoints = [{ latitude: 0, longitude: 0, time: '2023-01-01T00:00:00Z' }]
-      const tracks = [{
-        segments: [{
-          points: [{ latitude: 1, longitude: 1, time: '2023-01-01T00:01:00Z' }]
-        }]
-      }]
-      const routes = [{
-        points: [{ latitude: 2, longitude: 2, time: '2023-01-01T00:02:00Z' }]
-      }]
+      const waypoints = [
+        { latitude: 0, longitude: 0, time: '2023-01-01T00:00:00Z' },
+      ]
+      const tracks = [
+        {
+          segments: [
+            {
+              points: [
+                { latitude: 1, longitude: 1, time: '2023-01-01T00:01:00Z' },
+              ],
+            },
+          ],
+        },
+      ]
+      const routes = [
+        {
+          points: [{ latitude: 2, longitude: 2, time: '2023-01-01T00:02:00Z' }],
+        },
+      ]
       const result = convertToTabularFormat(waypoints, tracks, routes)
       expect(result.length).toBe(3)
       expect(result[0].latitude).toBe(0)

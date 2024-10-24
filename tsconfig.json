@@ -8,11 +8,9 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
-    // TODO: set this to true once we have a better way to handle types
-    "verbatimModuleSyntax": false,
+    "verbatimModuleSyntax": true,
     /* Strictness */
-    // TODO: set this to true once we have a better way to handle types
-    "strict": false,
+    "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     /* If transpiling with TypeScript: */

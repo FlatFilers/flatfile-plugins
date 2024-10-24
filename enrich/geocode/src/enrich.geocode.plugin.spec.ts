@@ -1,13 +1,14 @@
 import fetch from 'cross-fetch'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { performGeocoding } from './enrich.geocode.plugin'
 
-jest.mock('cross-fetch')
+vi.mock('cross-fetch')
 
 describe('performGeocoding', () => {
   const apiKey = 'test_api_key'
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should perform forward geocoding successfully', async () => {
@@ -26,8 +27,8 @@ describe('performGeocoding', () => {
         },
       ],
     }
-    ;(fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue({
-      json: jest.fn().mockResolvedValue(mockResponse),
+    vi.mocked(fetch).mockResolvedValue({
+      json: vi.fn().mockResolvedValue(mockResponse),
     } as any)
 
     const result = await performGeocoding({ address: 'New York' }, apiKey)
@@ -60,8 +61,8 @@ describe('performGeocoding', () => {
         },
       ],
     }
-    ;(fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue({
-      json: jest.fn().mockResolvedValue(mockResponse),
+    vi.mocked(fetch).mockResolvedValue({
+      json: vi.fn().mockResolvedValue(mockResponse),
     } as any)
 
     const result = await performGeocoding(
@@ -86,8 +87,8 @@ describe('performGeocoding', () => {
       status: 'ZERO_RESULTS',
       results: [],
     }
-    ;(fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue({
-      json: jest.fn().mockResolvedValue(mockResponse),
+    vi.mocked(fetch).mockResolvedValue({
+      json: vi.fn().mockResolvedValue(mockResponse),
     } as any)
 
     const result = await performGeocoding(
@@ -102,9 +103,7 @@ describe('performGeocoding', () => {
   })
 
   it('should handle API errors', async () => {
-    ;(fetch as jest.MockedFunction<typeof fetch>).mockRejectedValue(
-      new Error('API error')
-    )
+    vi.mocked(fetch).mockRejectedValue(new Error('API error'))
 
     const result = await performGeocoding({ address: 'New York' }, apiKey)
 
@@ -115,9 +114,7 @@ describe('performGeocoding', () => {
   })
 
   it('should handle unexpected errors', async () => {
-    ;(fetch as jest.MockedFunction<typeof fetch>).mockRejectedValue(
-      new Error('Network error')
-    )
+    vi.mocked(fetch).mockRejectedValue(new Error('Network error'))
 
     const result = await performGeocoding({ address: 'New York' }, apiKey)
 

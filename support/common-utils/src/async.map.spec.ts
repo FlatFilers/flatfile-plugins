@@ -1,8 +1,9 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { asyncMap } from './async.map'
 
 describe('asyncMap', () => {
   const mockArray = ['a', 'b', 'c']
-  const mockCallback = jest
+  const mockCallback = vi
     .fn()
     .mockImplementation((item) => Promise.resolve(item.toUpperCase()))
 
@@ -28,7 +29,7 @@ describe('asyncMap', () => {
 
   it('rejects when any callback function rejects', async () => {
     const mockError = new Error('Error')
-    const mockCallbackWithError = jest.fn().mockRejectedValueOnce(mockError)
+    const mockCallbackWithError = vi.fn().mockRejectedValueOnce(mockError)
     await expect(
       asyncMap(mockArray, mockCallbackWithError)
     ).rejects.toBeTruthy()
@@ -36,7 +37,7 @@ describe('asyncMap', () => {
 
   it('times out when any callback function takes too long', async () => {
     const LONG_TIMEOUT = 100
-    const mockSlowCallback = jest
+    const mockSlowCallback = vi
       .fn()
       .mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, LONG_TIMEOUT + 10))

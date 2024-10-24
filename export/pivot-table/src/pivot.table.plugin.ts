@@ -35,8 +35,8 @@ export function pivotTablePlugin(config: PivotTableConfig) {
             progress: 10,
           })
 
-          const sheets = await api.sheets.list({ workbookId })
-          const sheetId = sheets.data[0].id
+          const { data: sheets } = await api.sheets.list({ workbookId })
+          const sheetId = sheets[0]!.id
           const {
             data: { records },
           } = await api.records.get(sheetId)
@@ -67,7 +67,7 @@ export function pivotTablePlugin(config: PivotTableConfig) {
           }
           await api.jobs.fail(jobId, {
             outcome: {
-              message: `Pivot table generation or document creation failed: ${error.message}`,
+              message: `Pivot table generation or document creation failed: ${(error as Error).message}`,
             },
           })
         }

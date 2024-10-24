@@ -1,6 +1,7 @@
+import { describe, expect, it } from 'vitest'
 import {
-  validateNumberField,
   NumberValidationConfig,
+  validateNumberField,
 } from './validate.number.plugin'
 
 describe('validateNumberField', () => {

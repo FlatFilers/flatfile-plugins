@@ -1,5 +1,6 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { getEnvironmentId, setupSpace } from '@flatfile/utils-testing'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { getRecordsRaw, processRecords } from './all.records'
 
 const api = new FlatfileClient()
@@ -38,14 +39,14 @@ describe('all.records', () => {
       })
 
       const findSheetId = (slug: string) => {
-        return workbook.sheets.find((sheet) => sheet.config.slug === slug).id
+        return workbook.sheets?.find((sheet) => sheet.config.slug === slug)?.id
       }
 
-      emptySheetId = findSheetId('empty')
-      populatedSheetId = findSheetId('populated')
+      emptySheetId = findSheetId('empty') as string
+      populatedSheetId = findSheetId('populated') as string
 
-      const generateRecords = (length) => {
-        const records = []
+      const generateRecords = (length: number) => {
+        const records: Flatfile.RecordData[] = []
         for (let i = 0; i < length; i++) {
           records.push({
             name: { value: 'John Doe' },
@@ -64,7 +65,7 @@ describe('all.records', () => {
     })
 
     it('should call callback function', async () => {
-      const callback = jest.fn()
+      const callback = vi.fn()
 
       await processRecords(emptySheetId, callback)
       expect(callback).toHaveBeenCalled()
@@ -76,7 +77,7 @@ describe('all.records', () => {
     })
 
     it('should return results', async () => {
-      const callback = jest.fn((records) => records.length)
+      const callback = vi.fn((records) => records.length)
 
       const emptyResults = await processRecords(emptySheetId, callback)
       expect(emptyResults).toEqual([0])
@@ -86,7 +87,7 @@ describe('all.records', () => {
     })
 
     it('should filter records by "valid" status', async () => {
-      const callback = jest.fn((records) => records.length)
+      const callback = vi.fn((records) => records.length)
 
       const emptyResults = await processRecords(emptySheetId, callback, {
         filter: 'valid',
@@ -104,7 +105,7 @@ describe('all.records', () => {
     })
 
     it('should filter records by "error" status', async () => {
-      const callback = jest.fn((records) => records.length)
+      const callback = vi.fn((records) => records.length)
 
       const emptyResults = await processRecords(emptySheetId, callback, {
         filter: 'error',
@@ -122,7 +123,7 @@ describe('all.records', () => {
     })
 
     it('should fetch records with custom page size', async () => {
-      const callback = jest.fn((records) => records.length)
+      const callback = vi.fn((records) => records.length)
 
       const emptyResults = await processRecords(emptySheetId, callback, {
         pageSize: 500,

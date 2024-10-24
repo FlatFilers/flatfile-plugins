@@ -1,10 +1,11 @@
 import type { FlatfileEvent } from '@flatfile/listener'
+import { describe, expect, it, vi } from 'vitest'
 import { asyncBatch, chunkify } from './async.batch'
 
 describe('asyncBatch', () => {
   it('should split the array into chunks and call the callback for each chunk', async () => {
     const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    const callback = jest.fn((chunk: number[], event?: FlatfileEvent) => {
+    const callback = vi.fn((chunk: number[], event?: FlatfileEvent) => {
       return Promise.resolve(chunk.reduce((sum, num) => sum + num, 0))
     })
     const options = {
@@ -24,7 +25,7 @@ describe('asyncBatch', () => {
 
   it('should handle empty array', async () => {
     const arr: number[] = []
-    const callback = jest.fn((chunk: number[], event?: FlatfileEvent) => {
+    const callback = vi.fn((chunk: number[], event?: FlatfileEvent) => {
       return Promise.resolve(chunk.reduce((sum, num) => sum + num, 0))
     })
     const options = {
@@ -40,7 +41,7 @@ describe('asyncBatch', () => {
 
   it('should handle array smaller than chunk size', async () => {
     const arr = [1, 2]
-    const callback = jest.fn((chunk: number[], event?: FlatfileEvent) => {
+    const callback = vi.fn((chunk: number[], event?: FlatfileEvent) => {
       return Promise.resolve(chunk.reduce((sum, num) => sum + num, 0))
     })
     const options = {
@@ -57,7 +58,7 @@ describe('asyncBatch', () => {
 
   it('should handle array size equal to chunk size', async () => {
     const arr = [1, 2, 3]
-    const callback = jest.fn((chunk: number[], event?: FlatfileEvent) => {
+    const callback = vi.fn((chunk: number[], event?: FlatfileEvent) => {
       return Promise.resolve(chunk.reduce((sum, num) => sum + num, 0))
     })
     const options = {
@@ -74,7 +75,7 @@ describe('asyncBatch', () => {
 
   it('should handle parallel value greater than array size', async () => {
     const arr = [1, 2, 3, 4, 5]
-    const callback = jest.fn((chunk: number[], event?: FlatfileEvent) => {
+    const callback = vi.fn((chunk: number[], event?: FlatfileEvent) => {
       return Promise.resolve(chunk.reduce((sum, num) => sum + num, 0))
     })
     const options = {
@@ -93,7 +94,7 @@ describe('asyncBatch', () => {
 
   it('should handle asynchronous callbacks', async () => {
     const arr = [1, 2, 3]
-    const callback = jest.fn((chunk: number[], event?: FlatfileEvent) => {
+    const callback = vi.fn((chunk: number[], event?: FlatfileEvent) => {
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(chunk.reduce((sum, num) => sum + num, 0))

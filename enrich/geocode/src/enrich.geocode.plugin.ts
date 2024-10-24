@@ -1,3 +1,6 @@
+import type { FlatfileEvent } from '@flatfile/listener'
+import type { FlatfileRecord } from '@flatfile/plugin-record-hook'
+
 import { bulkRecordHook } from '@flatfile/plugin-record-hook'
 import fetch from 'cross-fetch'
 
@@ -96,36 +99,39 @@ export async function performGeocoding(
 }
 
 export function enrichGeocode(config: GeocodingConfig) {
-  return bulkRecordHook(config.sheetSlug, async (records, event) => {
-    const googleMapsApiKey =
-      process.env.GOOGLE_MAPS_API_KEY ||
-      (await event.secrets('GOOGLE_MAPS_API_KEY'))
-    for (const record of records) {
-      const address = record.get(config.addressField) as string
-      const latitude = record.get(config.latitudeField) as number
-      const longitude = record.get(config.longitudeField) as number
+  return bulkRecordHook(
+    config.sheetSlug,
+    async (records: FlatfileRecord[], event: FlatfileEvent) => {
+      const googleMapsApiKey =
+        process.env.GOOGLE_MAPS_API_KEY ||
+        (await event.secrets('GOOGLE_MAPS_API_KEY'))
+      for (const record of records) {
+        const address = record.get(config.addressField) as string
+        const latitude = record.get(config.latitudeField) as number
+        const longitude = record.get(config.longitudeField) as number
 
-      if (!config.autoGeocode) {
-        return record
+        if (!config.autoGeocode) {
+          return record
+        }
+
+        const result = await performGeocoding(
+          { address, latitude, longitude },
+          googleMapsApiKey
+        )
+
+        if ('message' in result) {
+          record.addError(result.field, result.message)
+        } else {
+          record.set(config.latitudeField, result.latitude)
+          record.set(config.longitudeField, result.longitude)
+          record.set('formatted_address', result.formatted_address)
+          if (result.country) record.set('country', result.country)
+          if (result.postal_code) record.set('postal_code', result.postal_code)
+        }
       }
-
-      const result = await performGeocoding(
-        { address, latitude, longitude },
-        googleMapsApiKey
-      )
-
-      if ('message' in result) {
-        record.addError(result.field, result.message)
-      } else {
-        record.set(config.latitudeField, result.latitude)
-        record.set(config.longitudeField, result.longitude)
-        record.set('formatted_address', result.formatted_address)
-        if (result.country) record.set('country', result.country)
-        if (result.postal_code) record.set('postal_code', result.postal_code)
-      }
+      return records
     }
-    return records
-  })
+  )
 }
 
 export default enrichGeocode

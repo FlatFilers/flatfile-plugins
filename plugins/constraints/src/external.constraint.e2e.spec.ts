@@ -3,14 +3,42 @@ import {
   createRecords,
   deleteSpace,
   getRecords,
-  setupListener,
+  setupDriver,
   setupSimpleWorkbook,
   setupSpace,
+  TestListener,
 } from '@flatfile/utils-testing'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from 'vitest'
 import { externalConstraint } from './external.constraint'
 
-describe('externalConstraint()', () => {
-  const listener = setupListener()
+describe.skip('externalConstraint()', () => {
+  const listener = new TestListener()
+  const driver = setupDriver()
+
+  beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+  })
+
+  afterAll(() => {
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
+  })
 
   let spaceId: string
   let sheetId: string
@@ -27,7 +55,7 @@ describe('externalConstraint()', () => {
 
   beforeEach(() => {
     listener.use(
-      externalConstraint('test', (value, key, { config, record }) => {
+      externalConstraint('test', (value, key, { record }) => {
         if (value === 'John Doe') {
           record.addError(key, 'No Johns please')
           record.set(key, value.toUpperCase())

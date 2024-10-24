@@ -76,8 +76,8 @@ export function validateTruthyBoolean(
 
   if (normalizedValue === true || normalizedValue === false) {
     return { value: normalizedValue, error: null }
-  } else if (mapping.hasOwnProperty(normalizedValue)) {
-    return { value: mapping[normalizedValue], error: null }
+  } else if (mapping && mapping.hasOwnProperty(normalizedValue)) {
+    return { value: mapping[normalizedValue]!, error: null }
   } else if (typeof normalizedValue === 'number') {
     return { value: Boolean(normalizedValue), error: null }
   } else if (config.convertNonBoolean) {

@@ -17,10 +17,7 @@ export interface RecordHookOptions {
 
 export const RecordHook = async (
   event: FlatfileEvent,
-  handler: (
-    record: FlatfileRecord,
-    event?: FlatfileEvent
-  ) => any | Promise<any>,
+  handler: (record: FlatfileRecord, event: FlatfileEvent) => any | Promise<any>,
   options: RecordHookOptions = {}
 ) => {
   const { concurrency = 10 } = options
@@ -30,7 +27,7 @@ export const RecordHook = async (
       const promises = new Set<Promise<any>>()
 
       for (const record of records) {
-        const promise = Promise.resolve(handler(record, event)).finally(() =>
+        const promise = Promise.resolve(handler(record, event!)).finally(() =>
           promises.delete(promise)
         )
         promises.add(promise)
@@ -56,7 +53,7 @@ export const BulkRecordHook = async (
   event: FlatfileEvent,
   handler: (
     records: FlatfileRecord[],
-    event?: FlatfileEvent
+    event: FlatfileEvent
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
@@ -85,13 +82,18 @@ export const BulkRecordHook = async (
       'records',
       async () => await prepareXRecords(data)
     )
-
     // Execute client-defined data hooks
-    await asyncBatch(batch.records, handler, options, event)
+    await asyncBatch(
+      batch.records,
+      async (records, event) => {
+        await handler(records, event!)
+      },
+      options
+    )
 
     event.afterAll(async () => {
       const { records: batch } =
-        event.cache.get<FlatfileRecords<any>>('records')
+        event.cache.get<FlatfileRecords<any>>('records') || {}
       const records: Flatfile.RecordsWithLinks =
         await prepareFlatfileRecords(batch)
 

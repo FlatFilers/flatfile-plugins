@@ -1,7 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { parseBuffer } from './parser'
+import { describe, expect, test } from 'vitest'
 import { MarkdownExtractorOptions } from './index'
+import { parseBuffer } from './parser'
 
 describe('Markdown Extractor Parser', () => {
   const testCases = [

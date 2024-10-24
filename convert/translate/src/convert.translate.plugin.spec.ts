@@ -1,12 +1,16 @@
 import { FlatfileListener } from '@flatfile/listener'
-import { convertTranslatePlugin, TranslationConfig } from './convert.translate.plugin'
 import { Translate } from '@google-cloud/translate/build/src/v2'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  convertTranslatePlugin,
+  TranslationConfig,
+} from './convert.translate.plugin'
 
 // Mock the @google-cloud/translate module
-jest.mock('@google-cloud/translate/build/src/v2', () => {
+vi.mock('@google-cloud/translate/build/src/v2', () => {
   return {
-    Translate: jest.fn().mockImplementation(() => ({
-      translate: jest.fn().mockResolvedValue([['Hola', 'Mundo']]),
+    Translate: vi.fn().mockImplementation(() => ({
+      translate: vi.fn().mockResolvedValue([['Hola', 'Mundo']]),
     })),
   }
 })
@@ -37,7 +41,7 @@ describe('convertTranslatePlugin', () => {
   })
 
   it('should add a record hook to the listener', () => {
-    const useSpy = jest.spyOn(listener, 'use')
+    const useSpy = vi.spyOn(listener, 'use')
 
     convertTranslatePlugin(listener, config)
 

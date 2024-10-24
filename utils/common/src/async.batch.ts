@@ -23,7 +23,7 @@ export async function asyncBatch<T, R>(
       console.log(`Thread ${threadId} processing chunk ${chunkIndex}`)
     }
 
-    const result = await callback(chunks[chunkIndex], event)
+    const result = await callback(chunks[chunkIndex] || [], event)
     results.set(chunkIndex, result)
   }
 

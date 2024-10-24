@@ -72,7 +72,7 @@ export function importLLMRecords(config: PluginConfig) {
           if (config.debug) {
             logError(
               '@flatfile/plugin-import-llm-records',
-              `Error generating example records: ${error.message}`
+              `Error generating example records: ${(error as Error).message}`
             )
           }
           throw new Error('Error generating example records')
