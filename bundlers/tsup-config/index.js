@@ -9,40 +9,33 @@ export function defineConfig({ includeBrowser = true, includeNode = true }) {
     console.log('Not in production mode - skipping minification')
   }
 
-  const EXTENSION_MAP = {
-    browser: {
-      cjs: '.browser.cjs',
-      esm: '.browser.js',
-    },
-    node: {
-      cjs: '.cjs',
-      esm: '.js',
-    },
-  }
-
-  const getOutExtension =
-    (platform) =>
-    ({ format }) => ({
-      js: EXTENSION_MAP[platform][format],
-    })
-
-  const createConfig = (platform) => ({
-    name: platform,
-    platform,
+  const nodeConfig = {
+    name: 'node',
+    platform: 'node',
     minify,
     entryPoints: ['src/index.ts'],
     format: ['cjs', 'esm'],
     dts: true,
     outDir: 'dist',
     clean: true,
-    sourcemap: true,
-    treeshake: true,
-    splitting: true,
-    outExtension: getOutExtension(platform),
-  })
+    outExtension: ({ format }) => ({
+      js: format === 'cjs' ? '.cjs' : '.js',
+    }),
+  }
 
-  const nodeConfig = createConfig('node')
-  const browserConfig = createConfig('browser')
+  const browserConfig = {
+    name: 'browser',
+    platform: 'browser',
+    minify,
+    entryPoints: ['src/index.ts'],
+    format: ['cjs', 'esm'],
+    dts: true,
+    outDir: 'dist',
+    clean: true,
+    outExtension: ({ format }) => ({
+      js: format === 'cjs' ? '.browser.cjs' : '.browser.js',
+    }),
+  }
 
   const configs = []
   if (includeNode) configs.push(nodeConfig)
