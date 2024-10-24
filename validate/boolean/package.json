@@ -48,7 +48,7 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "build:prod": "NODE_ENV=production tsup",
-    "check-exports": "attw --pack .",
+    "checks": "tsc && attw --pack . && publint . && publint deps",
     "lint": "tsc",
     "test": "jest src/*.spec.ts --detectOpenHandles",
     "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
@@ -61,7 +61,7 @@
   "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
     "directory": "validate/boolean"
   },
   "license": "ISC",

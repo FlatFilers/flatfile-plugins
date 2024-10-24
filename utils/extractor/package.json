@@ -45,13 +45,13 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "build:prod": "NODE_ENV=production tsup",
-    "check-exports": "attw --pack .",
+    "checks": "tsc && attw --pack . && publint . && publint deps",
     "lint": "tsc",
     "test": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
     "directory": "utils/extractor"
   },
   "license": "ISC",

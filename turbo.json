@@ -28,7 +28,7 @@
             "outputs": [],
             "env": ["TURBO_CACHE_ENABLED"]
         },
-        "check-exports": {
+        "checks": {
             "dependsOn": ["^build"]
         }
     }

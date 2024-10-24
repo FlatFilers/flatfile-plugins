@@ -3,12 +3,7 @@ import { defineConfig as tsupDefineConfig } from 'tsup'
 
 dotenv.config()
 
-export function defineConfig({
-  includeBrowser = true,
-  includeNode = true,
-  includeUmd = false,
-  umdConfig = { name: undefined, external: [] },
-}) {
+export function defineConfig({ includeBrowser = true, includeNode = true }) {
   const minify = process.env.NODE_ENV === 'production'
   if (!minify) {
     console.log('Not in production mode - skipping minification')
@@ -28,15 +23,6 @@ export function defineConfig({
     }),
   }
 
-  if (includeUmd) {
-    nodeConfig.format.push('iife')
-    nodeConfig.globalName = umdConfig.name
-    nodeConfig.outExtension = ({ format }) => ({
-      js: format === 'cjs' ? '.cjs' : format === 'iife' ? '.umd.js' : '.js',
-    })
-    nodeConfig.external = umdConfig.external
-  }
-
   const browserConfig = {
     name: 'browser',
     platform: 'browser',
@@ -49,20 +35,6 @@ export function defineConfig({
     outExtension: ({ format }) => ({
       js: format === 'cjs' ? '.browser.cjs' : '.browser.js',
     }),
-  }
-
-  if (includeUmd) {
-    browserConfig.format.push('iife')
-    browserConfig.globalName = umdConfig.name
-    browserConfig.outExtension = ({ format }) => ({
-      js:
-        format === 'cjs'
-          ? '.browser.cjs'
-          : format === 'iife'
-            ? '.browser.umd.js'
-            : '.browser.js',
-    })
-    browserConfig.external = umdConfig.external
   }
 
   const configs = []
