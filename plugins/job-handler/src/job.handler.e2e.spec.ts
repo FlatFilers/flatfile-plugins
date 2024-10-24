@@ -1,10 +1,52 @@
-import { deleteSpace, setupListener, setupSpace } from '@flatfile/utils-testing'
+import { PubSubDriver } from '@flatfile/listener-driver-pubsub'
+import {
+  deleteSpace,
+  getEnvironmentId,
+  setupListener,
+  setupSpace,
+  TestListener,
+} from '@flatfile/utils-testing'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from 'vitest'
 import { jobHandler } from '.'
 
 describe('JobHandler plugin e2e tests', () => {
   describe('jobHandler() successful', () => {
-    const listener = setupListener()
-    const mockFn = jest.fn()
+    const listener = new TestListener()
+    const environmentId = getEnvironmentId()
+    console.log('environmentId', environmentId)
+    if (!environmentId) {
+      throw new Error('environmentId is not defined')
+    }
+
+    const driver = new PubSubDriver(environmentId)
+
+    beforeAll(async () => {
+      await driver.start()
+      listener.mount(driver)
+    })
+
+    afterAll(() => {
+      driver.shutdown()
+    })
+
+    beforeEach(() => {
+      listener.resetCount()
+    })
+
+    afterEach(() => {
+      listener.reset()
+    })
+
+    const mockFn = vi.fn()
     let spaceId: string
 
     beforeAll(async () => {
@@ -26,9 +68,33 @@ describe('JobHandler plugin e2e tests', () => {
   })
 
   describe('jobHandler() failure', () => {
-    const logErrorSpy = jest.spyOn(global.console, 'error')
-    const listener = setupListener()
-    const mockErrorFn = jest.fn(() => {
+    const listener = new TestListener()
+    const environmentId = getEnvironmentId()
+    if (!environmentId) {
+      throw new Error('environmentId is not defined')
+    }
+
+    const driver = new PubSubDriver(environmentId)
+
+    beforeAll(async () => {
+      await driver.start()
+      listener.mount(driver)
+    })
+
+    afterAll(() => {
+      driver.shutdown()
+    })
+
+    beforeEach(() => {
+      listener.resetCount()
+    })
+
+    afterEach(() => {
+      listener.reset()
+    })
+
+    const logErrorSpy = vi.spyOn(global.console, 'error')
+    const mockErrorFn = vi.fn(() => {
       throw new Error('trigger job:failed')
     })
     let spaceId: string

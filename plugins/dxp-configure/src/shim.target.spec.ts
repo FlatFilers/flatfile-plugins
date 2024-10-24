@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { shimTarget } from './shim.target'
 
 describe('shimTarget()', () => {

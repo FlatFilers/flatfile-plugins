@@ -1,18 +1,16 @@
-import type { MatcherFunction } from 'expect'
 import * as util from 'node:util'
+import { expect } from 'vitest'
 
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toBePending(): R
-    }
-    interface Expect {
-      toBePending<T>(): JestMatchers<T>
-    }
+declare module 'vitest' {
+  interface Assertion<T = any> {
+    toBePending(): T
+  }
+  interface AsymmetricMatchersContaining {
+    toBePending(): void
   }
 }
 
-const toBePending: MatcherFunction<[recieved: unknown]> = (received) => {
+const toBePending = (received: unknown) => {
   const isPending = (promise: Promise<any>) =>
     util.inspect(promise).includes('pending')
 
@@ -22,16 +20,12 @@ const toBePending: MatcherFunction<[recieved: unknown]> = (received) => {
 
   const pass = isPending(received)
 
-  if (pass) {
-    return {
-      message: () => `expected recieved promise not to be pending`,
-      pass: true,
-    }
-  } else {
-    return {
-      message: () => `expected recieved promise to be pending`,
-      pass: false,
-    }
+  return {
+    pass,
+    message: () =>
+      pass
+        ? `expected received promise not to be pending`
+        : `expected received promise to be pending`,
   }
 }
 

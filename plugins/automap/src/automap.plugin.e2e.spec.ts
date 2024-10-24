@@ -1,18 +1,46 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import {
   getEnvironmentId,
-  setupListener,
+  setupDriver,
   setupSimpleWorkbook,
   setupSpace,
+  TestListener,
 } from '@flatfile/utils-testing'
 import fs from 'fs'
 import path from 'path'
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { automap } from './automap.plugin'
 
 const api = new FlatfileClient()
 
 describe('automap() e2e', () => {
-  const listener = setupListener()
+  const listener = new TestListener()
+  const driver = setupDriver()
+
+  beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+  })
+
+  afterAll(() => {
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
+  })
 
   let spaceId: string
 
@@ -27,7 +55,7 @@ describe('automap() e2e', () => {
   })
 
   describe('record created - static sheet slug', () => {
-    const mockFn = jest.fn()
+    const mockFn = vi.fn()
 
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))
@@ -66,7 +94,7 @@ describe('automap() e2e', () => {
   })
 
   describe('record created - dynamic sheet slug', () => {
-    const mockFn = jest.fn()
+    const mockFn = vi.fn()
 
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))

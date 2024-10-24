@@ -1,3 +1,4 @@
+import { describe, expect, it, vi } from 'vitest'
 import { generateField } from './generate.field'
 
 describe('generateField', () => {
@@ -59,7 +60,7 @@ describe('generateField', () => {
       type: { kind: 'UNSUPPORTED' },
       description: 'An unsupported field',
     }
-    const consoleSpy = jest.spyOn(console, 'log')
+    const consoleSpy = vi.spyOn(console, 'log')
 
     expect(generateField(field, 'TestSheet')).toBeNull()
     expect(consoleSpy).toHaveBeenCalledWith(
@@ -147,7 +148,7 @@ describe('generateField', () => {
       type: { kind: 'STRANGE', name: 'StrangeType' },
       description: 'A strange field',
     }
-    const consoleSpy = jest.spyOn(console, 'log')
+    const consoleSpy = vi.spyOn(console, 'log')
     expect(generateField(field, 'WeirdSheet')).toBeNull()
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.stringContaining("'STRANGE' is unsupported.")

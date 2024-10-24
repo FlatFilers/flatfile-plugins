@@ -1,6 +1,7 @@
 import { WorkbookCapture } from '@flatfile/util-extractor'
 import * as fs from 'fs'
 import * as path from 'path'
+import { beforeAll, describe, expect, test } from 'vitest'
 import { parseBuffer } from './parser'
 
 describe('parser', () => {
