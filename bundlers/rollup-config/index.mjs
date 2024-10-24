@@ -105,7 +105,7 @@ export function buildConfig({
             input: 'src/index.ts',
             output: [
               {
-                file: 'dist/umd/index.js',
+                file: 'dist/index.umd.js',
                 format: 'umd',
                 name: umdConfig.name,
               },

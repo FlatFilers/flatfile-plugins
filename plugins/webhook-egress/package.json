@@ -43,8 +43,7 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "build:prod": "NODE_ENV=production tsup",
-    "check-exports": "attw --pack .",
-    "lint": "tsc",
+    "checks": "tsc && attw --pack . && publint . && publint deps",
     "test": "jest src/*.spec.ts --detectOpenHandles",
     "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
     "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
@@ -56,7 +55,7 @@
   "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
     "directory": "plugins/webhook-egress"
   },
   "license": "ISC",

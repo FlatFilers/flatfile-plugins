@@ -32,7 +32,7 @@
     "changeset": "changeset",
     "changeset-apply": "changeset version",
     "release": "NODE_ENV=production turbo build && changeset publish",
-    "check-exports": "turbo check-exports"
+    "checks": "turbo checks"
   },
   "repository": {
     "type": "git",
@@ -66,6 +66,7 @@
     "jest": "^29.5.0",
     "parcel": "latest",
     "prettier": "^3.2.5",
+    "publint": "^0.2.12",
     "ts-jest": "^29.2.5",
     "turbo": "^1.10.2",
     "typescript": "^5.0.4"
