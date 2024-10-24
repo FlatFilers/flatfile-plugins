@@ -20,7 +20,7 @@ Now you can create your Flatfile listener:
 
 Javascript:
 ```js
-import mergePlugin from "@flatfile/plugin-connect-via-merge";
+import { mergePlugin } from "@flatfile/plugin-connect-via-merge";
 
 export default function (listener) {
   listener.use(mergePlugin());
@@ -30,7 +30,7 @@ export default function (listener) {
 Typescript:
 ```ts
 import type { FlatfileListener } from "@flatfile/listener";
-import mergePlugin from "@flatfile/plugin-connect-via-merge";
+import {mergePlugin } from "@flatfile/plugin-connect-via-merge";
 
 export default function (listener: FlatfileListener) {
   listener.use(mergePlugin());
