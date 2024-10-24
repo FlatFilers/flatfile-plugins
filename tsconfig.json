@@ -1,14 +1,24 @@
 {
   "compilerOptions": {
+    /* Base Options: */
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
     "isolatedModules": true,
-    "lib": [
-      "es2015",
-      "dom"
-    ],
-    "target": "es2015",
-    "moduleResolution": "node"
+    // TODO: set this to true once we have a better way to handle types
+    "verbatimModuleSyntax": false,
+    /* Strictness */
+    // TODO: set this to true once we have a better way to handle types
+    "strict": false,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    /* If transpiling with TypeScript: */
+    "module": "Preserve",
+    "lib": [ "es2022", "dom" ],
+    "noEmit": true
   },
   "exclude": [
     "**/node_modules/",
