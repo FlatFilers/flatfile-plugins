@@ -44,7 +44,9 @@
     "build:prod": "NODE_ENV=production tsup",
     "check-exports": "attw --pack .",
     "lint": "tsc",
-    "test": "jest --passWithNoTests"
+    "test": "vitest --passWithNoTests",
+    "test:unit": "vitest run src/*.spec.ts --exclude '**/*.e2e.spec.ts' --passWithNoTests",
+    "test:e2e": "vitest --mode defaults run src/*.e2e.spec.ts --passWithNoTests"
   },
   "keywords": [],
   "author": "Flatfile, Inc.",

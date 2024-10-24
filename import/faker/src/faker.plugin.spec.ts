@@ -1,12 +1,13 @@
-import { FlatfileEvent } from '@flatfile/listener'
-import { generateExampleRecords } from './faker.utils'
 import { FlatfileClient } from '@flatfile/api'
+import { FlatfileEvent } from '@flatfile/listener'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { generateExampleRecords } from './faker.utils'
 
 // Mock FlatfileClient
-jest.mock('@flatfile/api', () => ({
-  FlatfileClient: jest.fn().mockImplementation(() => ({
+vi.mock('@flatfile/api', () => ({
+  FlatfileClient: vi.fn().mockImplementation(() => ({
     sheets: {
-      get: jest.fn().mockResolvedValue({
+      get: vi.fn().mockResolvedValue({
         data: {
           config: {
             fields: [
@@ -39,49 +40,49 @@ jest.mock('@flatfile/api', () => ({
       }),
     },
     jobs: {
-      update: jest.fn(),
-      complete: jest.fn(),
+      update: vi.fn(),
+      complete: vi.fn(),
     },
   })),
 }))
 
 // Mock @faker-js/faker
-jest.mock('@faker-js/faker', () => ({
+vi.mock('@faker-js/faker', () => ({
   faker: {
-    setLocale: jest.fn(),
+    setLocale: vi.fn(),
     person: {
-      fullName: jest.fn(() => 'John Doe'),
-      firstName: jest.fn(() => 'John'),
-      lastName: jest.fn(() => 'Doe'),
+      fullName: vi.fn(() => 'John Doe'),
+      firstName: vi.fn(() => 'John'),
+      lastName: vi.fn(() => 'Doe'),
     },
-    internet: { email: jest.fn(() => 'john@example.com') },
-    phone: { number: jest.fn(() => '123-456-7890') },
-    location: { streetAddress: jest.fn(() => '123 Main St') },
-    lorem: { word: jest.fn(() => 'lorem') },
+    internet: { email: vi.fn(() => 'john@example.com') },
+    phone: { number: vi.fn(() => '123-456-7890') },
+    location: { streetAddress: vi.fn(() => '123 Main St') },
+    lorem: { word: vi.fn(() => 'lorem') },
     number: {
-      int: jest.fn(() => 42),
+      int: vi.fn(() => 42),
     },
     datatype: {
-      boolean: jest.fn(() => true),
+      boolean: vi.fn(() => true),
     },
     string: {
-      uuid: jest.fn(() => '123e4567-e89b-12d3-a456-426614174000'),
+      uuid: vi.fn(() => '123e4567-e89b-12d3-a456-426614174000'),
     },
     date: {
-      past: jest.fn(() => new Date('2000-01-01')),
-      recent: jest.fn(() => new Date('2023-01-01')),
+      past: vi.fn(() => new Date('2000-01-01')),
+      recent: vi.fn(() => new Date('2023-01-01')),
     },
     helpers: {
-      arrayElement: jest.fn((arr) => arr[0]),
-      arrayElements: jest.fn((arr, options) => arr.slice(0, options?.min || 3)),
+      arrayElement: vi.fn((arr) => arr[0]),
+      arrayElements: vi.fn((arr, options) => arr.slice(0, options?.min || 3)),
     },
-    commerce: { price: jest.fn(() => '9.99') },
+    commerce: { price: vi.fn(() => '9.99') },
   },
 }))
 
 // Mock createAllRecords
-jest.mock('@flatfile/util-common', () => ({
-  createAllRecords: jest.fn(),
+vi.mock('@flatfile/util-common', () => ({
+  createAllRecords: vi.fn(),
 }))
 
 describe('generateExampleRecords', () => {
@@ -91,9 +92,8 @@ describe('generateExampleRecords', () => {
       jobId: 'job-456',
     },
   } as any
-
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should generate the correct number of records', async () => {
@@ -124,23 +124,26 @@ describe('generateExampleRecords', () => {
 
   it('should handle errors and set error message', async () => {
     // Mock the API to return an invalid field type
-    ;(FlatfileClient as jest.Mock).mockImplementationOnce(() => ({
-      sheets: {
-        get: jest.fn().mockResolvedValue({
-          data: {
-            config: {
-              fields: [
-                { key: 'invalid', type: 'invalid', label: 'Invalid Field' },
-              ],
-            },
+    vi.mocked(FlatfileClient).mockImplementationOnce(
+      () =>
+        ({
+          sheets: {
+            get: vi.fn().mockResolvedValue({
+              data: {
+                config: {
+                  fields: [
+                    { key: 'invalid', type: 'invalid', label: 'Invalid Field' },
+                  ],
+                },
+              },
+            }),
           },
-        }),
-      },
-      jobs: {
-        update: jest.fn(),
-        complete: jest.fn(),
-      },
-    }))
+          jobs: {
+            update: vi.fn(),
+            complete: vi.fn(),
+          },
+        }) as unknown as FlatfileClient
+    )
 
     const records = await generateExampleRecords(mockEvent, { count: 1 })
     expect(records[0].invalid).toBeUndefined()

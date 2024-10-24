@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { extractKeyPhrases, generateSummary } from './summary.util'
 
 describe('Summary Utility Functions', () => {
