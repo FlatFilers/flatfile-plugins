@@ -78,6 +78,7 @@
     "@langchain/openai": "^0.3.8"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.1.0"
+    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/config-vitest": "^0.0.0"
   }
 }

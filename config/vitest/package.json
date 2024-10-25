@@ -1,0 +1,14 @@
+{
+  "name": "@flatfile/config-vitest",
+  "version": "0.0.0",
+  "description": "",
+  "private": true,
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {},
+  "author": "Flatfile, Inc.",
+  "license": "ISC",
+  "dependencies": {
+    "vitest": "^2.1.3"
+  }
+}

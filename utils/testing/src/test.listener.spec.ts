@@ -1,7 +1,7 @@
 import { TestListener } from './index'
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import '../../../test/toBePendingMatcher'
+import './toBePendingMatcher'
 
 const currentEventLoopEnd = () =>
   new Promise((resolve) => setImmediate(resolve))

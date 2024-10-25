@@ -63,6 +63,7 @@
   "devDependencies": {
     "@flatfile/plugin-job-handler": "^0.7.0",
     "@flatfile/util-common": "^1.5.0",
-    "@flatfile/bundler-config-tsup": "^0.1.0"
+    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/config-vitest": "^0.0.0"
   }
 }

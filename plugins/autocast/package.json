@@ -72,6 +72,7 @@
   },
   "devDependencies": {
     "@flatfile/plugin-record-hook": "^1.9.0",
-    "@flatfile/bundler-config-tsup": "^0.1.0"
+    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/config-vitest": "^0.0.0"
   }
 }

@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@flatfile/bundler-config-tsup": "^0.1.0",
-    "@flatfile/utils-testing": "^0.4.0"
+    "@flatfile/utils-testing": "^0.4.0",
+    "@flatfile/config-vitest": "^0.0.0"
   }
 }
