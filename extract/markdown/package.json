@@ -64,6 +64,6 @@
     "@flatfile/util-extractor": "^2.1.2"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-rollup": "0.1.1"
+    "@flatfile/bundler-config-tsup": "^0.0.0"
   }
 }
