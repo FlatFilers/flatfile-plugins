@@ -1,10 +1,11 @@
 import fs from 'fs'
-import fetchMock from 'jest-fetch-mock'
 import path from 'path'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { generateSetup } from '.'
 
-fetchMock.enableMocks()
-fetchMock.dontMock()
+// Create a mock for fetch
+const fetchMock = vi.fn()
+vi.stubGlobal('fetch', fetchMock)
 
 describe('configureSpaceWithYamlSchema() e2e', () => {
   const expectedResult = {
@@ -54,7 +55,7 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
   }
 
   beforeEach(() => {
-    fetchMock.resetMocks()
+    fetchMock.mockClear()
   })
 
   it('should generate a SetupFactory from YAML Schema', async () => {
@@ -62,8 +63,10 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
       path.resolve(__dirname, 'mock/schema.yml'),
       'utf-8'
     )
-    fetchMock.doMockIf('http://example.com/schema.yaml', schema, {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
       status: 200,
+      text: () => Promise.resolve(schema),
     })
 
     const results = await generateSetup([

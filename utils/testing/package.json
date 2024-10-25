@@ -42,9 +42,9 @@
     "build:prod": "NODE_ENV=production tsup",
     "checks": "tsc --noEmit && attw --pack . && publint .",
     "lint": "tsc --noEmit",
-    "test": "jest src/*.spec.ts --detectOpenHandles",
-    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
-    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
+    "test": "vitest run --mode defaults src/*.spec.ts --passWithNoTests",
+    "test:unit": "vitest run --mode defaults src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
+    "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
   },
   "author": "Carl Brugger",
   "repository": {
@@ -57,7 +57,6 @@
     "@flatfile/api": "^1.9.19",
     "@flatfile/listener": "^1.1.0",
     "@flatfile/listener-driver-pubsub": "^2.0.0",
-    "@jest/globals": "^29.6.4",
     "cross-fetch": "^4.0.0"
   },
   "devDependencies": {

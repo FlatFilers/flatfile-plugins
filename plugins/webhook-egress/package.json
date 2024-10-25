@@ -45,9 +45,9 @@
     "build:prod": "NODE_ENV=production tsup",
     "checks": "tsc --noEmit && attw --pack . && publint .",
     "lint": "tsc --noEmit",
-    "test": "jest src/*.spec.ts --detectOpenHandles",
-    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
-    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
+    "test": "vitest run --mode defaults src/*.spec.ts --passWithNoTests",
+    "test:unit": "vitest run --mode defaults src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
+    "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
   },
   "keywords": [
     "flatfile-plugins",
@@ -72,7 +72,6 @@
   },
   "devDependencies": {
     "@flatfile/bundler-config-tsup": "^0.1.0",
-    "@flatfile/utils-testing": "^0.4.0",
-    "jest-fetch-mock": "^3.0.3"
+    "@flatfile/utils-testing": "^0.4.0"
   }
 }

@@ -45,7 +45,9 @@
     "build:prod": "NODE_ENV=production tsup",
     "checks": "tsc --noEmit && attw --pack . && publint .",
     "lint": "tsc --noEmit",
-    "test": "jest --passWithNoTests"
+    "test": "vitest run --mode defaults src/*.spec.ts --passWithNoTests",
+    "test:unit": "vitest run --mode defaults src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
+    "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
   },
   "keywords": [
     "flatfile-plugins",

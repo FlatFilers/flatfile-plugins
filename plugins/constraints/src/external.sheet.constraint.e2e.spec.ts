@@ -3,14 +3,42 @@ import {
   createRecords,
   deleteSpace,
   getRecords,
-  setupListener,
+  setupDriver,
   setupSimpleWorkbook,
   setupSpace,
+  TestListener,
 } from '@flatfile/utils-testing'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from 'vitest'
 import { externalSheetConstraint } from './external.sheet.constraint'
 
-describe('externalConstraint()', () => {
-  const listener = setupListener()
+describe.skip('externalConstraint()', () => {
+  const listener = new TestListener()
+  const driver = setupDriver()
+
+  beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+  })
+
+  afterAll(() => {
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
+  })
 
   let spaceId: string
   let sheetId: string

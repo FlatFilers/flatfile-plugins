@@ -1,33 +1,58 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import {
   getEnvironmentId,
-  setupListener,
+  setupDriver,
   setupSimpleWorkbook,
   setupSpace,
+  TestListener,
 } from '@flatfile/utils-testing'
 import fs from 'fs'
 import path from 'path'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import { automap } from './automap.plugin'
 
 const api = new FlatfileClient()
 
 describe('automap() e2e', () => {
-  const listener = setupListener()
+  const listener = new TestListener()
+  const driver = setupDriver()
 
   let spaceId: string
 
   beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
     const space = await setupSpace()
     spaceId = space.id
     await setupSimpleWorkbook(spaceId, ['name', 'email', 'notes'])
   })
 
   afterAll(async () => {
+    driver.shutdown()
+
     await api.spaces.delete(spaceId)
   })
 
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
+  })
+
   describe('record created - static sheet slug', () => {
-    const mockFn = jest.fn()
+    const mockFn = vi.fn()
 
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))
@@ -66,7 +91,7 @@ describe('automap() e2e', () => {
   })
 
   describe('record created - dynamic sheet slug', () => {
-    const mockFn = jest.fn()
+    const mockFn = vi.fn()
 
     beforeEach(async () => {
       const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))
