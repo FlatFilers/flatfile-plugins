@@ -8,6 +8,7 @@ const config = ({ mode }) => {
       globals: true,
       env: {
         ...loadEnv(mode),
+        TZ: 'UTC',
       },
     },
     plugins: [],
