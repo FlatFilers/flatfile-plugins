@@ -9,26 +9,25 @@ export function defineConfig({ includeBrowser = true, includeNode = true }) {
     console.log('Not in production mode - skipping minification')
   }
 
-  const nodeConfig = {
-    name: 'node',
-    platform: 'node',
-    minify,
-    entryPoints: ['src/index.ts'],
-    format: ['cjs', 'esm'],
-    dts: true,
-    outDir: 'dist',
-    clean: true,
-    sourcemap: true,
-    treeshake: true,
-    splitting: false,
-    outExtension: ({ format }) => ({
-      js: format === 'cjs' ? '.cjs' : '.js',
-    }),
+  const EXTENSION_MAP = {
+    browser: {
+      cjs: '.browser.cjs',
+      default: '.browser.js',
+    },
+    node: {
+      cjs: '.cjs',
+      default: '.js',
+    },
   }
+  const getOutExtension =
+    (platform) =>
+    ({ format }) => ({
+      js: EXTENSION_MAP[platform][format] || EXTENSION_MAP[platform].default,
+    })
 
-  const browserConfig = {
-    name: 'browser',
-    platform: 'browser',
+  const createConfig = (platform) => ({
+    name: platform,
+    platform,
     minify,
     entryPoints: ['src/index.ts'],
     format: ['cjs', 'esm'],
@@ -37,11 +36,13 @@ export function defineConfig({ includeBrowser = true, includeNode = true }) {
     clean: true,
     sourcemap: true,
     treeshake: true,
-    splitting: false,
-    outExtension: ({ format }) => ({
-      js: format === 'cjs' ? '.browser.cjs' : '.browser.js',
-    }),
-  }
+    splitting: true,
+    globalName: 'FlatFileJavaScript',
+    outExtension: getOutExtension(platform),
+  })
+
+  const nodeConfig = createConfig('node')
+  const browserConfig = createConfig('browser')
 
   const configs = []
   if (includeNode) configs.push(nodeConfig)
