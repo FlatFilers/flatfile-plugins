@@ -46,9 +46,9 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup",
-    "build:watch": "tsup --watch",
-    "build:prod": "NODE_ENV=production tsup",
+    "build": "tsup && rollup -c",
+    "build:watch": "tsup --watch && rollup -c --watch",
+    "build:prod": "NODE_ENV=production tsup && rollup -c",
     "checks": "tsc --noEmit && attw --pack . && publint . && publint deps",
     "lint": "tsc --noEmit",
     "test": "jest src/*.spec.ts --detectOpenHandles",
