@@ -18,6 +18,9 @@ export function defineConfig({ includeBrowser = true, includeNode = true }) {
     dts: true,
     outDir: 'dist',
     clean: true,
+    sourcemap: true,
+    treeshake: true,
+    splitting: false,
     outExtension: ({ format }) => ({
       js: format === 'cjs' ? '.cjs' : '.js',
     }),
@@ -32,6 +35,9 @@ export function defineConfig({ includeBrowser = true, includeNode = true }) {
     dts: true,
     outDir: 'dist',
     clean: true,
+    sourcemap: true,
+    treeshake: true,
+    splitting: false,
     outExtension: ({ format }) => ({
       js: format === 'cjs' ? '.browser.cjs' : '.browser.js',
     }),
