@@ -1,4 +1,4 @@
-# @flatfile/rollup-config
+# @flatfile/bundler-config-rollup
 
 ## 0.1.1
 

@@ -35,30 +35,36 @@ function commonPlugins(browser, umd = false) {
 
 export function buildConfig({
   external = [],
+  includeNode = true,
   includeBrowser = true,
+  includeDefinition = true,
   includeUmd = false,
   umdConfig = { name: undefined, external: [] },
 }) {
   return [
     // Node.js build
-    {
-      input: 'src/index.ts',
-      output: [
-        {
-          exports: 'auto',
-          file: 'dist/index.cjs',
-          format: 'cjs',
-        },
-        {
-          exports: 'auto',
-          file: 'dist/index.mjs',
-          sourcemap: false,
-          format: 'es',
-        },
-      ],
-      plugins: commonPlugins(false),
-      external,
-    },
+    ...(includeNode
+      ? [
+          {
+            input: 'src/index.ts',
+            output: [
+              {
+                exports: 'auto',
+                file: 'dist/index.cjs',
+                format: 'cjs',
+              },
+              {
+                exports: 'auto',
+                file: 'dist/index.js',
+                sourcemap: false,
+                format: 'es',
+              },
+            ],
+            plugins: commonPlugins(false),
+            external,
+          },
+        ]
+      : []),
     // Browser build
     ...(includeBrowser
       ? [
@@ -72,7 +78,7 @@ export function buildConfig({
               },
               {
                 exports: 'auto',
-                file: 'dist/index.browser.mjs',
+                file: 'dist/index.browser.js',
                 sourcemap: false,
                 format: 'es',
               },
@@ -83,11 +89,15 @@ export function buildConfig({
         ]
       : []),
     // Definition file
-    {
-      input: 'src/index.ts',
-      output: [{ file: 'dist/index.d.ts', format: 'es' }],
-      plugins: [dts()],
-    },
+    ...(includeDefinition
+      ? [
+          {
+            input: 'src/index.ts',
+            output: [{ file: 'dist/index.d.ts', format: 'es' }],
+            plugins: [dts()],
+          },
+        ]
+      : []),
     // UMD build
     ...(includeUmd
       ? [
@@ -95,7 +105,7 @@ export function buildConfig({
             input: 'src/index.ts',
             output: [
               {
-                file: 'dist/index.js',
+                file: 'dist/index.umd.js',
                 format: 'umd',
                 name: umdConfig.name,
               },

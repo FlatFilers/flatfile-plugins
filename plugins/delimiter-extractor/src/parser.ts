@@ -3,8 +3,8 @@ import { WorkbookCapture } from '@flatfile/util-extractor'
 import Papa, { ParseResult } from 'papaparse'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
+import { DelimiterOptions } from '.'
 import { Headerizer } from './header.detection'
-import { DelimiterOptions } from './index'
 
 type ParseBufferOptions = Omit<DelimiterOptions, 'chunkSize' | 'parallel'> & {
   readonly headerSelectionEnabled?: boolean
@@ -17,7 +17,7 @@ export async function parseBuffer(
   try {
     const skipEmptyLines = options?.headerSelectionEnabled
       ? false
-      : options?.skipEmptyLines ?? false
+      : (options?.skipEmptyLines ?? false)
     const fileContents = buffer.toString('utf8')
     const results: ParseResult<Record<string, string>> = Papa.parse(
       fileContents,

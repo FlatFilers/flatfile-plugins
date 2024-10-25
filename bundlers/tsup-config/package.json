@@ -1,0 +1,13 @@
+{
+  "name": "@flatfile/bundler-config-tsup",
+  "version": "0.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.mjs",
+  "scripts": {},
+  "author": "Flatfile, Inc.",
+  "license": "ISC",
+  "dependencies": {
+    "tsup": "^8.3.0"
+  }
+}

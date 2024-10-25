@@ -1,3 +1,1 @@
-import mergePlugin from './merge.plugin'
-
-export default mergePlugin
+export * as mergePlugin from './merge.plugin'
