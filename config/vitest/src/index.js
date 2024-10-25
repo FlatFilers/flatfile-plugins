@@ -1,13 +1,17 @@
-const config = {
-  test: {
-    environment: 'node',
-    testTimeout: 30000,
-    globals: true,
-    env: {
-      TZ: 'UTC',
+import loadEnv from './utils.js'
+
+const config = ({ mode }) => {
+  return {
+    test: {
+      environment: 'node',
+      testTimeout: 30000,
+      globals: true,
+      env: {
+        ...loadEnv(mode),
+      },
     },
-  },
-  plugins: [],
+    plugins: [],
+  }
 }
 
 export default config
