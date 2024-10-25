@@ -45,8 +45,8 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "build:prod": "NODE_ENV=production tsup",
-    "checks": "tsc && attw --pack . && publint . && publint deps",
-    "lint": "tsc",
+    "checks": "tsc --noEmit && attw --pack . && publint . && publint deps",
+    "lint": "tsc --noEmit",
     "test": "jest --passWithNoTests"
   },
   "repository": {

@@ -1,7 +1,6 @@
 import type { Flatfile } from '@flatfile/api'
 import { generateFields } from '@flatfile/plugin-convert-json-schema'
 import { Setup, SetupFactory } from '@flatfile/plugin-space-configure'
-
 import jsYaml from 'js-yaml'
 
 export interface ModelToSheetConfig extends PartialSheetConfig {

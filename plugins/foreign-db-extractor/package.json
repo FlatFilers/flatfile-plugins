@@ -1,6 +1,7 @@
 {
   "name": "@flatfile/plugin-foreign-db-extractor",
   "version": "0.2.1",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/foreign-db-extractor",
   "description": "A plugin for extracting MSSQL DBs from a .bak file.",
   "registryMetadata": {
     "category": "extractor"
@@ -42,8 +43,8 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "build:prod": "NODE_ENV=production tsup",
-    "checks": "tsc && attw --pack . && publint . && publint deps",
-    "lint": "tsc",
+    "checks": "tsc --noEmit && attw --pack . && publint . && publint deps",
+    "lint": "tsc --noEmit",
     "test": "jest --passWithNoTests"
   },
   "keywords": [],

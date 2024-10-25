@@ -1,6 +1,7 @@
 {
   "name": "@flatfile/plugin-xml-extractor",
   "version": "0.7.1",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/xml-extractor",
   "description": "A plugin for parsing .xml files in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
@@ -42,8 +43,8 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "build:prod": "NODE_ENV=production tsup",
-    "checks": "tsc && attw --pack . && publint . && publint deps",
-    "lint": "tsc",
+    "checks": "tsc --noEmit && attw --pack . && publint . && publint deps",
+    "lint": "tsc --noEmit",
     "test": "jest src/*.spec.ts --detectOpenHandles",
     "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
     "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
