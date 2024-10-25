@@ -1,6 +1,7 @@
 {
   "name": "@flatfile/plugin-graphql-schema",
   "version": "1.3.1",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/graphql-schema",
   "description": "A plugin for converting GraphQL to Flatfile blueprint.",
   "registryMetadata": {
     "category": "core"
@@ -42,8 +43,8 @@
     "build": "tsup",
     "build:watch": "tsup --watch",
     "build:prod": "NODE_ENV=production tsup",
-    "checks": "tsc && attw --pack . && publint . && publint deps",
-    "lint": "tsc",
+    "checks": "tsc --noEmit && attw --pack . && publint . && publint deps",
+    "lint": "tsc --noEmit",
     "test": "jest src/*.spec.ts --detectOpenHandles",
     "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
     "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
