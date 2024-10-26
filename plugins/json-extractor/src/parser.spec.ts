@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { describe, expect, it, test } from 'vitest'
 import { parseBuffer } from './parser'
 
 describe('parser', function () {

@@ -1,6 +1,6 @@
 import { type FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
+import type { FormatNumberOptions, NumberFormat } from 'libphonenumber-js'
 import { formatPhoneNumber } from './validate.phone.utils'
-import { FormatNumberOptions, NumberFormat } from 'libphonenumber-js'
 
 export interface PhoneFormatPluginConfig {
   sheetSlug?: string

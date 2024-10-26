@@ -15,7 +15,7 @@ export interface PartialWorkbookConfig
   name?: string
 }
 
-export async function getSchemas(models?: ModelToSheetConfig[]) {
+export async function getSchemas(models: ModelToSheetConfig[]) {
   const schemas = models.map(async (model: ModelToSheetConfig) => {
     return await fetchExternalReference(model.sourceUrl)
   })

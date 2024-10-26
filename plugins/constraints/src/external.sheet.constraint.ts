@@ -39,29 +39,40 @@ export const externalSheetConstraint = (
     })
 
     listener.use(
-      bulkRecordHook('**', async (records, event) => {
-        const schema: Flatfile.SheetConfig = event.cache.get('sheet-schema')
+      bulkRecordHook(
+        '**',
+        async (records: FlatfileRecord[], event?: FlatfileEvent) => {
+          if (!event) {
+            throw new Error('Event is required')
+          }
 
-        const constraints = getSheetConstraints(schema, validator)
+          const schema: Flatfile.SheetConfig = event.cache.get('sheet-schema')
 
-        constraints.forEach((constraint) => {
-          const fields = constraint.fields || []
-          records.forEach((record) => {
-            try {
-              cb(partialObject(record, fields), constraint.fields, {
-                config: constraint.config,
-                record,
-                properties: partialProperties(schema, fields),
-                event,
-              })
-            } catch (e) {
-              fields.forEach((key) => {
-                record.addError(key, String(e))
-              })
-            }
+          const constraints = getSheetConstraints(schema, validator)
+
+          constraints.forEach((constraint) => {
+            const fields = constraint.fields || []
+            records.forEach((record) => {
+              try {
+                cb(
+                  partialObject(record, fields || []),
+                  constraint.fields || [],
+                  {
+                    config: constraint.config,
+                    record,
+                    properties: partialProperties(schema, fields || []),
+                    event,
+                  }
+                )
+              } catch (e) {
+                fields.forEach((key: string) => {
+                  record.addError(key, String(e))
+                })
+              }
+            })
           })
-        })
-      })
+        }
+      )
     )
   }
 }

@@ -17,7 +17,7 @@ export function parseBuffer(
       data: table.rows.map((row) => {
         const record: Record<string, { value: string }> = {}
         row.forEach((cell, cellIndex) => {
-          record[table.headers[cellIndex]] = { value: cell }
+          record[table.headers[cellIndex]!] = { value: cell }
         })
         return record
       }),
@@ -56,7 +56,7 @@ export function extractTablesFromMarkdown(
         console.log('Found potential table:', match[0])
       }
 
-      const headerRow = match[1]
+      const headerRow = match[1]!
         .split('|')
         .map((h) => h.trim())
         .filter(Boolean)
@@ -66,7 +66,7 @@ export function extractTablesFromMarkdown(
       }
 
       const dataRowsText = match[2]
-      const dataRows = dataRowsText
+      const dataRows = dataRowsText!
         .split('\n')
         .map((row) =>
           row
@@ -119,7 +119,7 @@ export function extractTablesFromMarkdown(
       if (options.errorHandling === 'strict') {
         throw error
       } else {
-        console.warn('Error parsing table:', error.message)
+        console.warn('Error parsing table:', (error as Error).message)
       }
     }
   }

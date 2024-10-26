@@ -146,7 +146,7 @@ class OriginalDetector extends Headerizer {
 // This implementation simply returns an explicit list of headers
 // it was provided with.
 class ExplicitHeaders extends Headerizer {
-  headers: string[]
+  headers: string[] = []
   constructor(private readonly options: ExplicitHeadersOptions) {
     super()
 
@@ -198,7 +198,7 @@ class SpecificRows extends Headerizer {
               if (header[i] === '') {
                 header[i] = row[i].trim()
               } else {
-                header[i] = `${header[i].trim()} ${row[i].trim()}`
+                header[i] = `${header[i]!.trim()} ${row[i].trim()}`
               }
               letters[i] = indexToLetters(i)
             }
@@ -305,10 +305,10 @@ class DataRowAndSubHeaderDetection extends Headerizer {
     // check if any rows after the header fuzzy match with the
     // chosen header, indicating it's a sub header
     for (let i = skip; i < rows.length; i++) {
-      const row = rows[i]
-      if (countNonEmptyCells(header) === countNonEmptyCells(row)) {
+      const row = rows[i] as string[]
+      if (row && countNonEmptyCells(header) === countNonEmptyCells(row)) {
         const fuzzyMatches = header.filter((cell, index) => {
-          const rowCell = row[index].trim()
+          const rowCell = row[index]!.trim()
           return rowCell
             .split(/\s+/)
             .every((word) => cell.toLowerCase().includes(word.toLowerCase()))

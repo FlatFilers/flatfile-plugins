@@ -1,5 +1,5 @@
-import { recordHook, FlatfileRecord } from '@flatfile/plugin-record-hook'
-import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import { FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
 import { Translate } from '@google-cloud/translate/build/src/v2'
 
 // Configuration options
@@ -15,10 +15,10 @@ export interface TranslationConfig {
 // Initialize the Google Translate client
 let translate: Translate
 
-export function translateRecord(
+export async function translateRecord(
   record: FlatfileRecord,
   config: TranslationConfig
-): { record: FlatfileRecord; error?: string } {
+): Promise<{ record: FlatfileRecord; error?: string }> {
   try {
     const textsToTranslate = config.fieldsToTranslate
       .map((field) => ({
@@ -32,14 +32,14 @@ export function translateRecord(
       return { record, error: 'No text fields to translate' }
     }
 
-    const translatedTexts = batchTranslateText(
+    const translatedTexts = await batchTranslateText(
       textsToTranslate.map((item) => item.text),
       config.sourceLanguage,
       config.targetLanguage
     )
 
     textsToTranslate.forEach((item, index) => {
-      record.set(item.targetField, translatedTexts[index])
+      record.set(item.targetField, translatedTexts[index]!)
     })
 
     return { record }
@@ -68,7 +68,10 @@ export function convertTranslatePlugin(
           return record
         }
 
-        const { record: updatedRecord, error } = translateRecord(record, config)
+        const { record: updatedRecord, error } = await translateRecord(
+          record,
+          config
+        )
 
         if (error) {
           updatedRecord.addError('general', error)

@@ -1,5 +1,6 @@
+import type { Flatfile } from '@flatfile/api'
+
 import { faker } from '@faker-js/faker'
-import { Flatfile } from '@flatfile/api'
 
 export const records: Flatfile.RecordsWithLinks = [
   {

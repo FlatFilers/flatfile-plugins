@@ -1,9 +1,11 @@
-import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
+import type { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
+import type { ExcelExtractorOptions } from '.'
+import type { GetHeadersOptions } from './header.detection'
+
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
-import { ExcelExtractorOptions } from '.'
-import { GetHeadersOptions, Headerizer } from './header.detection'
+import { Headerizer } from './header.detection'
 import { prependNonUniqueHeaderColumns } from './utils'
 
 type ParseBufferOptions = Omit<
@@ -28,10 +30,13 @@ export async function parseBuffer(
       WTF: true,
     })
   } catch (e) {
+    const isErrorWithCode = (error: unknown): error is { code: string } => {
+      return typeof error === 'object' && error !== null && 'code' in error
+    }
     // catch the error if the file is too large to parse, and throw a more helpful error.
     // ref: https://docs.sheetjs.com/docs/miscellany/errors/#invalid-string-length-or-err_string_too_long
     // i.e. 'Cannot create a string longer than 0x1fffffe8 characters'
-    if (e.code === 'ERR_STRING_TOO_LONG') {
+    if (isErrorWithCode(e) && e.code === 'ERR_STRING_TOO_LONG') {
       if (options?.debug) {
         console.log(
           'File is too large to parse. Try converting this file to CSV.'
@@ -58,7 +63,7 @@ export async function parseBuffer(
         sheetNames.map(async (sheetName) => {
           const sheet = workbook.Sheets[sheetName]
           const processedSheet = await convertSheet({
-            sheet,
+            sheet: sheet!,
             sheetName,
             rawNumbers: options?.rawNumbers || false,
             raw: options?.raw || false,
@@ -75,7 +80,7 @@ export async function parseBuffer(
           return [sheetName, processedSheet]
         })
       )
-    ).filter(Boolean) as ProcessedSheet[]
+    ).filter((item): item is [string, SheetCapture] => item !== undefined)
     return Object.fromEntries(processedSheets)
   } catch (e) {
     console.error(e)
@@ -128,11 +133,15 @@ async function convertSheet({
   const extractValues = (data: Record<string, any>[]) =>
     data.map((row) => Object.values(row))
 
-  const headerizer = Headerizer.create(headerDetectionOptions)
+  const headerizer = Headerizer.create(
+    headerDetectionOptions || {
+      algorithm: 'default',
+    }
+  )
   const headerStream = Readable.from(extractValues(rows))
   const { skip, header } = await headerizer.getHeaders(headerStream)
   const headerKey = Math.max(0, skip - 1)
-  const columnKeys = Object.keys(rows[headerKey])
+  const columnKeys = Object.keys(rows[headerKey]!)
 
   if (debug) {
     console.log('Detected header:', header)
@@ -149,24 +158,28 @@ async function convertSheet({
   }
 
   const toExcelHeader = (data: string[], keys: string[]) =>
-    data.reduce((result, value, index) => {
-      result[keys[index]] = value
-      return result
-    }, {})
+    data.reduce(
+      (result, value, index) => {
+        result[keys[index] as keyof typeof result] = value
+        return result
+      },
+      {} as Record<string, string>
+    )
+
   const columnHeaders = headerSelectionEnabled ? columnKeys : header
   const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
 
   while (
     rows.length > 0 &&
-    Object.values(rows[rows.length - 1]).every(isNullOrWhitespace)
+    Object.values(rows[rows.length - 1]!).every(isNullOrWhitespace)
   ) {
     rows.pop()
   }
 
-  const data = rows.map((row) =>
+  const data = rows.map((row: Record<string, any>) =>
     mapValues(
-      mapKeys(row, (key) => headers[key as keyof typeof headers]),
+      mapKeys(row, (key) => headers[key as keyof typeof headers]!),
       (value) => ({ value })
     )
   )

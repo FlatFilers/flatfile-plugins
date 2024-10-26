@@ -71,9 +71,10 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
+    "@flatfile/bundler-config-tsup": "^0.0.0",
     "@flatfile/utils-testing": "^0.3.1",
+    "@types/js-yaml": "^4.0.9",
     "express": "^4.18.2",
-    "jest-fetch-mock": "^3.0.3",
-    "@flatfile/bundler-config-tsup": "^0.0.0"
+    "jest-fetch-mock": "^3.0.3"
   }
 }

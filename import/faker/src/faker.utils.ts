@@ -42,7 +42,7 @@ export const generateExampleRecords = async (
           applyConstraints(record, key, config)
         } catch (error) {
           console.error(`Error generating data for field ${key}:`, error)
-          record[key] = { value: `Error: ${error.message}` }
+          record[key] = { value: `Error: ${(error as Error).message}` }
         }
       }
 
@@ -160,12 +160,20 @@ function generateReferenceData(config: any): string {
 
 function generateArrayData(config: any): any[] {
   if (config && config.arrayType === 'string') {
-    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], { min: 2, max: 5 });
+    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], {
+      min: 2,
+      max: 5,
+    })
   } else if (config && config.arrayType === 'number') {
-    return faker.helpers.arrayElements([1, 2, 3, 4, 5], { min: 2, max: 5 }).map(Number);
+    return faker.helpers
+      .arrayElements([1, 2, 3, 4, 5], { min: 2, max: 5 })
+      .map(Number)
   } else {
     // Default to string array if arrayType is not specified
-    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], { min: 2, max: 5 });
+    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], {
+      min: 2,
+      max: 5,
+    })
   }
 }
 

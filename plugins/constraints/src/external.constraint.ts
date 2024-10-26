@@ -30,26 +30,34 @@ export const externalConstraint = (
     })
 
     listener.use(
-      bulkRecordHook('**', async (records, event) => {
-        const schema: Flatfile.SheetConfig = event.cache.get('sheet-schema')
+      bulkRecordHook(
+        '**',
+        async (records: FlatfileRecord[], event?: FlatfileEvent) => {
+          if (!event) {
+            throw new Error('Event is required')
+          }
+          const schema: Flatfile.SheetConfig = event.cache.get('sheet-schema')
 
-        const constraints = getConstraints(schema, validator)
+          const constraints: Array<
+            [Flatfile.Property, Flatfile.Constraint.External]
+          > = getConstraints(schema, validator)
 
-        constraints.forEach(([property, constraint]) => {
-          records.forEach((record) => {
-            try {
-              cb(record.get(property.key), property.key, {
-                config: constraint.config,
-                record,
-                property,
-                event,
-              })
-            } catch (e) {
-              record.addError(property.key, String(e))
-            }
+          constraints.forEach(([property, constraint]) => {
+            records.forEach((record) => {
+              try {
+                cb(record.get(property.key), property.key, {
+                  config: constraint.config,
+                  record,
+                  property,
+                  event,
+                })
+              } catch (e) {
+                record.addError(property.key, String(e))
+              }
+            })
           })
-        })
-      })
+        }
+      )
     )
   }
 }
