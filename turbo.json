@@ -29,7 +29,7 @@
             "env": ["TURBO_CACHE_ENABLED"]
         },
         "checks": {
-            "dependsOn": ["^build"]
+            "dependsOn": []
         }
     }
 }
