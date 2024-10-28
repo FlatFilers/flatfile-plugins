@@ -1,5 +1,5 @@
-import { Flatfile } from '@flatfile/api'
-import { PartialWb, Setup } from '@flatfile/plugin-space-configure'
+import type { Flatfile } from '@flatfile/api'
+import type { PartialWb, Setup } from '@flatfile/plugin-space-configure'
 import fetch from 'cross-fetch'
 
 export type OpenAPISetupFactory = {

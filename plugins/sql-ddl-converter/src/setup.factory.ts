@@ -1,6 +1,6 @@
-import { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
 import { generateFields } from '@flatfile/plugin-convert-json-schema'
-import { PartialWb, Setup } from '@flatfile/plugin-space-configure'
+import type { PartialWb, Setup } from '@flatfile/plugin-space-configure'
 import { Parser } from 'sql-ddl-to-json-schema'
 
 import * as fs from 'fs'
