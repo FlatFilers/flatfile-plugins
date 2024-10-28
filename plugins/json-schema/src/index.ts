@@ -11,9 +11,7 @@ export function configureSpaceWithJsonSchema(
     tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => any | Promise<any>
 ) {
-  return configureSpace(() => {
-    return generateSetup(setupFactory)
-  }, callback)
+  return configureSpace(() => generateSetup(setupFactory), callback)
 }
 
 export * from './setup.factory'

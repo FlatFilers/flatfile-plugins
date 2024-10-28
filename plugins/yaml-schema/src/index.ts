@@ -16,9 +16,7 @@ export function configureSpaceWithYamlSchema(
     tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => any | Promise<any>
 ) {
-  return configureSpace(() => {
-    return generateSetup(models, options)
-  }, callback)
+  return configureSpace(() => generateSetup(models, options), callback)
 }
 
 export * from './setup.factory'

@@ -2,10 +2,10 @@ import type { Flatfile } from '@flatfile/api'
 import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import {
-  PartialSheetConfig,
-  SetupFactory,
+  type PartialSheetConfig,
   generateSetup,
 } from '@flatfile/plugin-convert-openapi-schema'
+import type { Setup } from '@flatfile/plugin-space-configure'
 import { MergeClient } from '@mergeapi/merge-node-client'
 import {
   CATEGORY_MODELS,
@@ -103,7 +103,7 @@ export function handleCreateConnectedWorkbooks() {
         }
       })
 
-      const setup: SetupFactory = await generateSetup({
+      const config: Setup = await generateSetup({
         workbooks: [
           {
             source: `https://api.merge.dev/api/${category}/v1/schema`,
@@ -111,7 +111,6 @@ export function handleCreateConnectedWorkbooks() {
           },
         ],
       })
-      const config = typeof setup === 'function' ? await setup(event) : setup
       config.workbooks.map((workbook) => {
         workbook.sheets.map((sheet) => {
           sheet.fields.map((field) => {

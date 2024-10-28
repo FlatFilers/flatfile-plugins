@@ -61,8 +61,6 @@ export async function generateSetup(setup: SqlSetupFactory): Promise<Setup> {
         )
       ).filter(Boolean)
 
-      delete workbook.source
-
       return {
         ...workbook,
         sheets,

@@ -7,7 +7,7 @@ import {
   fetchExternalReference,
 } from '@flatfile/plugin-convert-json-schema'
 
-export default async function (listener: FlatfileListener) {
+export default function (listener: FlatfileListener) {
   const workbookActions: Flatfile.Action[] = [
     {
       operation: 'submitAction',
@@ -66,8 +66,8 @@ export default async function (listener: FlatfileListener) {
   }
 
   const productModel: PartialSheetConfig = {
-    source: async () =>
-      await fetchExternalReference(
+    source: () =>
+      fetchExternalReference(
         'https://raw.githubusercontent.com/FlatFilers/flatfile-docs-kitchen-sink/main/typescript/dynamic-configurations-json-schema/example-schemas/product.json'
       ),
     slug: 'product',

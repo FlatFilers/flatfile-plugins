@@ -32,7 +32,7 @@ export async function generateSetup(
     models.map(async (model: ModelToSheetConfig, i) => {
       const data = asdf[i]
       const fields = await generateFields(data)
-      delete model.sourceUrl
+
       return {
         name: model?.name || data.title,
         ...(data?.description && { description: data.description }),

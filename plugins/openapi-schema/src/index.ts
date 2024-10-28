@@ -11,9 +11,7 @@ export function configureSpaceWithOpenAPI(
     tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => any | Promise<any>
 ) {
-  return configureSpace(() => {
-    return generateSetup(setupFactory)
-  }, callback)
+  return configureSpace(() => generateSetup(setupFactory), callback)
 }
 
 export type { SetupFactory } from '@flatfile/plugin-space-configure'

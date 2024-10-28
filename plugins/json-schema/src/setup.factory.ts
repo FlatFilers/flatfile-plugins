@@ -26,7 +26,6 @@ export async function generateSetup(
       const sheets = await Promise.all(
         workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) => {
           const model = await getModel(partialSheetConfig.source)
-          delete partialSheetConfig.source
           const fields = await generateFields(model)
 
           return {
@@ -72,7 +71,7 @@ function isValidUrl(url: string) {
 }
 
 export async function generateFields(data: any): Promise<Flatfile.Property[]> {
-  if (!data.properties) return []
+  if (!data || !data.properties) return []
 
   const getOrigin = (url: string) => {
     try {

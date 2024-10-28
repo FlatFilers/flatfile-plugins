@@ -80,8 +80,6 @@ export async function generateSetup(
           )
         ).filter(Boolean)
 
-        delete workbook.source
-
         return {
           name: data.info.title,
           ...workbook,
@@ -100,7 +98,7 @@ export async function generateFields(
   data: any,
   origin: any
 ): Promise<Flatfile.Property[]> {
-  if (!data.properties) return []
+  if (!data || !data.properties) return []
 
   const fields = await Promise.all(
     Object.keys(data.properties).map((key) =>
