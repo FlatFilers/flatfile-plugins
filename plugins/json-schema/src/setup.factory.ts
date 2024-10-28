@@ -1,5 +1,5 @@
-import { Flatfile } from '@flatfile/api'
-import { SetupFactory } from '@flatfile/plugin-space-configure'
+import type { Flatfile } from '@flatfile/api'
+import type { Setup } from '@flatfile/plugin-space-configure'
 import fetch from 'cross-fetch'
 
 export type JsonSetupFactory = {
@@ -20,7 +20,7 @@ export interface PartialSheetConfig
 
 export async function generateSetup(
   setupFactory: JsonSetupFactory
-): Promise<SetupFactory> {
+): Promise<Setup> {
   const workbooks = await Promise.all(
     setupFactory.workbooks.map(async (workbook) => {
       const sheets = await Promise.all(

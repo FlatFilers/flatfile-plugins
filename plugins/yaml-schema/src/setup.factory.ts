@@ -1,6 +1,6 @@
 import type { Flatfile } from '@flatfile/api'
 import { generateFields } from '@flatfile/plugin-convert-json-schema'
-import { Setup, SetupFactory } from '@flatfile/plugin-space-configure'
+import { Setup } from '@flatfile/plugin-space-configure'
 
 import jsYaml from 'js-yaml'
 
@@ -24,7 +24,7 @@ export async function generateSetup(
     workbookConfig?: PartialWorkbookConfig
     debug?: boolean
   }
-): Promise<SetupFactory> {
+): Promise<Setup> {
   const schemas = await getSchemas(models)
   const asdf = schemas.map((schema) => jsYaml.load(schema))
 

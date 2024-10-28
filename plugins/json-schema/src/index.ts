@@ -1,6 +1,6 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
-import { configureSpace, type Setup } from '@flatfile/plugin-space-configure'
+import { configureSpace } from '@flatfile/plugin-space-configure'
 import { generateSetup, type JsonSetupFactory } from './setup.factory'
 
 export function configureSpaceWithJsonSchema(
@@ -11,8 +11,8 @@ export function configureSpaceWithJsonSchema(
     tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
   ) => any | Promise<any>
 ) {
-  return configureSpace((_event: FlatfileEvent): Promise<Setup> => {
-    return generateSetup(setupFactory) as Promise<Setup>
+  return configureSpace(() => {
+    return generateSetup(setupFactory)
   }, callback)
 }
 
