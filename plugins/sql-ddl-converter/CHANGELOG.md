@@ -1,5 +1,13 @@
 # @flatfile/plugin-convert-sql-ddl
 
+## 0.2.2
+
+### Patch Changes
+
+- aa6c10b: This release fixes an async/await bug
+- Updated dependencies [aa6c10b]
+  - @flatfile/plugin-convert-json-schema@0.4.2
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.3.2
+
+### Patch Changes
+
+- aa6c10b: This release fixes an async/await bug
+- Updated dependencies [aa6c10b]
+  - @flatfile/plugin-convert-json-schema@0.4.2
+
 ## 0.3.1
 
 ### Patch Changes
