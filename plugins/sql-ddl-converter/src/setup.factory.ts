@@ -1,6 +1,6 @@
-import { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
 import { generateFields } from '@flatfile/plugin-convert-json-schema'
-import { PartialWb, SetupFactory } from '@flatfile/plugin-space-configure'
+import type { PartialWb, Setup } from '@flatfile/plugin-space-configure'
 import { Parser } from 'sql-ddl-to-json-schema'
 
 import * as fs from 'fs'
@@ -22,9 +22,7 @@ export interface PartialSheetConfig
   slug: string
 }
 
-export async function generateSetup(
-  setup: SqlSetupFactory
-): Promise<SetupFactory> {
+export async function generateSetup(setup: SqlSetupFactory): Promise<Setup> {
   const workbooks: PartialWb[] = await Promise.all(
     setup.workbooks.map(async (workbook) => {
       const sql: string = retrieveFromSource(workbook.source)
@@ -62,8 +60,6 @@ export async function generateSetup(
           })
         )
       ).filter(Boolean)
-
-      delete workbook.source
 
       return {
         ...workbook,

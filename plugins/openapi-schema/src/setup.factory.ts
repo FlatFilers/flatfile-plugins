@@ -1,5 +1,5 @@
-import { Flatfile } from '@flatfile/api'
-import { PartialWb, SetupFactory } from '@flatfile/plugin-space-configure'
+import type { Flatfile } from '@flatfile/api'
+import type { PartialWb, Setup } from '@flatfile/plugin-space-configure'
 import fetch from 'cross-fetch'
 
 export type OpenAPISetupFactory = {
@@ -40,7 +40,7 @@ interface ApiSchemas {
 
 export async function generateSetup(
   setupFactory: OpenAPISetupFactory
-): Promise<SetupFactory> {
+): Promise<Setup> {
   try {
     const workbooks: PartialWb[] = await Promise.all(
       setupFactory.workbooks.map(async (workbook) => {
@@ -80,8 +80,6 @@ export async function generateSetup(
           )
         ).filter(Boolean)
 
-        delete workbook.source
-
         return {
           name: data.info.title,
           ...workbook,
@@ -100,7 +98,7 @@ export async function generateFields(
   data: any,
   origin: any
 ): Promise<Flatfile.Property[]> {
-  if (!data.properties) return []
+  if (!data || !data.properties) return []
 
   const fields = await Promise.all(
     Object.keys(data.properties).map((key) =>

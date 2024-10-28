@@ -1,7 +1,6 @@
 import type { Flatfile } from '@flatfile/api'
 import { generateFields } from '@flatfile/plugin-convert-json-schema'
-import { Setup, SetupFactory } from '@flatfile/plugin-space-configure'
-
+import type { Setup } from '@flatfile/plugin-space-configure'
 import jsYaml from 'js-yaml'
 
 export interface ModelToSheetConfig extends PartialSheetConfig {
@@ -24,7 +23,7 @@ export async function generateSetup(
     workbookConfig?: PartialWorkbookConfig
     debug?: boolean
   }
-): Promise<SetupFactory> {
+): Promise<Setup> {
   const schemas = await getSchemas(models)
   const asdf = schemas.map((schema) => jsYaml.load(schema))
 
@@ -32,7 +31,7 @@ export async function generateSetup(
     models.map(async (model: ModelToSheetConfig, i) => {
       const data = asdf[i]
       const fields = await generateFields(data)
-      delete model.sourceUrl
+
       return {
         name: model?.name || data.title,
         ...(data?.description && { description: data.description }),
