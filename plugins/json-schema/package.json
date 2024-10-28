@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-convert-json-schema",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/json-schema",
   "description": "A plugin for converting JSON Schema to Flatfile Blueprint and configuring a Flatfile Space.",
   "registryMetadata": {

@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-json-schema
 
+## 0.4.2
+
+### Patch Changes
+
+- aa6c10b: This release fixes an async/await bug
+
 ## 0.4.1
 
 ### Patch Changes

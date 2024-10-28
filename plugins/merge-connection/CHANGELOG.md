@@ -1,5 +1,13 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.4.2
+
+### Patch Changes
+
+- aa6c10b: This release fixes an async/await bug
+- Updated dependencies [aa6c10b]
+  - @flatfile/plugin-convert-openapi-schema@0.3.2
+
 ## 0.4.1
 
 ### Patch Changes

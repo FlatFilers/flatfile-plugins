@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.3.2
+
+### Patch Changes
+
+- aa6c10b: This release fixes an async/await bug
+
 ## 0.3.1
 
 ### Patch Changes
