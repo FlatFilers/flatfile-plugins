@@ -1,5 +1,16 @@
 # @flatfile/plugin-extract-html-table
 
+## 1.2.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [3b9eedd]
+  - @flatfile/util-extractor@2.2.0
+
 ## 1.1.0
 
 ### Minor Changes

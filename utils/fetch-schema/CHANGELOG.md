@@ -1,5 +1,11 @@
 # @flatfile/util-fetch-schema
 
+## 0.3.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
 ## 0.2.4
 
 ### Patch Changes

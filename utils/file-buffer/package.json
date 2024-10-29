@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-file-buffer",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/file-buffer",
   "description": "A utility for extracting data from any file and making it available as a buffer",
   "registryMetadata": {
@@ -64,6 +64,6 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.0.0"
+    "@flatfile/bundler-config-tsup": "^0.1.0"
   }
 }

@@ -1,5 +1,11 @@
 # @flatfile/plugin-foreign-db-extractor
 
+## 0.3.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-graphql-schema",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/graphql-schema",
   "description": "A plugin for converting GraphQL to Flatfile blueprint.",
   "registryMetadata": {
@@ -58,7 +58,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-space-configure": "^0.6.1",
+    "@flatfile/plugin-space-configure": "^0.7.0",
     "change-case": "^5.4.3",
     "cross-fetch": "^4.0.0",
     "graphql": "^16.8.1"
@@ -67,6 +67,6 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.0.0"
+    "@flatfile/bundler-config-tsup": "^0.1.0"
   }
 }

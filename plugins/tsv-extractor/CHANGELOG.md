@@ -1,5 +1,11 @@
 # @flatfile/plugin-tsv-extractor
 
+## 1.9.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
 ## 1.8.1
 
 ### Patch Changes

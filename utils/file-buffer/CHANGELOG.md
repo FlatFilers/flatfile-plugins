@@ -1,5 +1,11 @@
 # @flatfile/util-file-buffer
 
+## 0.5.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
 ## 0.4.1
 
 ### Patch Changes

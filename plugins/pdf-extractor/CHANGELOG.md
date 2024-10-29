@@ -1,5 +1,17 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.4.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [3b9eedd]
+  - @flatfile/util-file-buffer@0.5.0
+  - @flatfile/util-common@1.5.0
+
 ## 0.3.1
 
 ### Patch Changes

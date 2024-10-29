@@ -1,5 +1,17 @@
 # @flatfile/plugin-autocast
 
+## 3.0.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [3b9eedd]
+  - @flatfile/plugin-record-hook@1.8.0
+  - @flatfile/util-common@1.5.0
+
 ## 2.0.1
 
 ### Patch Changes
