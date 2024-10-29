@@ -1,8 +1,8 @@
-import api, { Flatfile } from '@flatfile/api'
+import api, { type Flatfile } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import {
-  PartialSheetConfig,
-  PartialWorkbookConfig,
+  type PartialSheetConfig,
+  type PartialWorkbookConfig,
   configureSpaceWithJsonSchema,
   fetchExternalReference,
 } from '@flatfile/plugin-convert-json-schema'

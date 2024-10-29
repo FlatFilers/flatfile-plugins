@@ -15,9 +15,10 @@
     "strict": false,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    /* If transpiling with TypeScript: */
+    /* If not transpiling with TypeScript: */
     "module": "Preserve",
     "lib": [ "es2022", "dom" ],
+    "moduleResolution": "bundler",
     "noEmit": true
   },
   "exclude": [
