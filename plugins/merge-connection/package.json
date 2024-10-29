@@ -60,14 +60,12 @@
     "@flatfile/plugin-job-handler": "^0.6.1",
     "@mergeapi/merge-node-client": "^1.0.4"
   },
-  "devDependencies": {
-    "@flatfile/plugin-space-configure": "^0.6.1"
-  },
   "peerDependencies": {
     "@flatfile/api": "^1.9.19",
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
+    "@flatfile/plugin-space-configure": "^0.6.1",
     "@flatfile/bundler-config-tsup": "^0.0.0"
   }
 }
