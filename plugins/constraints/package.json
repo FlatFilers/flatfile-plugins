@@ -1,41 +1,50 @@
 {
   "name": "@flatfile/plugin-constraints",
   "version": "3.0.1",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/constraints",
   "description": "A plugin for extending blueprint with external constraints",
+  "type": "module",
   "engines": {
     "node": ">= 16"
   },
   "registryMetadata": {
     "category": "records"
   },
-  "browser": {
-    "./dist/index.cjs": "./dist/index.browser.cjs",
-    "./dist/index.mjs": "./dist/index.browser.mjs"
-  },
   "exports": {
-    "types": "./dist/index.d.ts",
-    "node": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.browser.js",
+        "require": "./dist/index.browser.cjs"
+      },
+      "default": "./dist/index.js"
     },
-    "browser": {
-      "require": "./dist/index.browser.cjs",
-      "import": "./dist/index.browser.mjs"
-    },
-    "default": "./dist/index.mjs"
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "build:watch": "rollup -c --watch",
-    "build:prod": "NODE_ENV=production rollup -c",
-    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build:prod": "NODE_ENV=production tsup",
+    "checks": "tsc --noEmit && attw --pack . && publint .",
+    "lint": "tsc --noEmit",
     "test": "jest src/*.spec.ts --detectOpenHandles",
     "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
     "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
@@ -44,7 +53,7 @@
   "author": "David Boskovic",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
     "directory": "plugins/constraints"
   },
   "license": "ISC",
@@ -56,6 +65,6 @@
   },
   "devDependencies": {
     "@flatfile/plugin-record-hook": "^1.7.1",
-    "@flatfile/rollup-config": "0.1.1"
+    "@flatfile/bundler-config-tsup": "^0.0.0"
   }
 }

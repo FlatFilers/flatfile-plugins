@@ -27,6 +27,9 @@
         "test:e2e": {
             "outputs": [],
             "env": ["TURBO_CACHE_ENABLED"]
+        },
+        "checks": {
+            "dependsOn": []
         }
     }
 }

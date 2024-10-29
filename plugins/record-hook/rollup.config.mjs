@@ -1,4 +1,4 @@
-import { buildConfig } from '@flatfile/rollup-config'
+import { buildConfig } from '@flatfile/bundler-config-rollup'
 
 const umdExternals = [
   '@flatfile/api',
@@ -8,6 +8,9 @@ const umdExternals = [
 ]
 
 const config = buildConfig({
+  includeNode: false,
+  includeBrowser: false,
+  includeDefinitions: false,
   includeUmd: true,
   umdConfig: { name: 'PluginRecordHook', external: umdExternals },
 })

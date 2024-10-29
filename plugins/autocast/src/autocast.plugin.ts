@@ -2,7 +2,7 @@ import { FlatfileClient } from '@flatfile/api'
 import type { TRecordValue } from '@flatfile/hooks'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import type { FlatfileRecord } from '@flatfile/plugin-record-hook'
-import { bulkRecordHookPlugin } from '@flatfile/plugin-record-hook'
+import { bulkRecordHook } from '@flatfile/plugin-record-hook'
 import { logInfo } from '@flatfile/util-common'
 
 const api = new FlatfileClient()
@@ -18,7 +18,7 @@ export function autocast(
 ) {
   return (listener: FlatfileListener) => {
     listener.use(
-      bulkRecordHookPlugin(
+      bulkRecordHook(
         sheetSlug,
         async (records: FlatfileRecord[], event: FlatfileEvent) => {
           const sheetId = event.context.sheetId

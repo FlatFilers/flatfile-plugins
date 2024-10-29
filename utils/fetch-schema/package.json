@@ -1,29 +1,57 @@
 {
   "name": "@flatfile/util-fetch-schema",
   "version": "0.2.4",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/fetch-schema",
   "description": "A utility for fetching schemas for processing",
   "registryMetadata": {
     "category": "utilities"
   },
+  "type": "module",
   "engines": {
     "node": ">= 16"
   },
-  "source": "src/index.ts",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.browser.js",
+        "require": "./dist/index.browser.cjs"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "parcel build",
-    "build:watch": "parcel watch",
-    "build:prod": "NODE_ENV=production parcel build",
-    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build:prod": "NODE_ENV=production tsup",
+    "checks": "tsc --noEmit && attw --pack . && publint .",
+    "lint": "tsc --noEmit",
     "test": "jest --passWithNoTests"
   },
   "keywords": [],
   "author": "Morgan Daley",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
     "directory": "utils/fetch-schema"
   },
   "license": "ISC",
@@ -32,5 +60,8 @@
   },
   "peerDependencies": {
     "@flatfile/api": "^1.9.19"
+  },
+  "devDependencies": {
+    "@flatfile/bundler-config-tsup": "^0.0.0"
   }
 }

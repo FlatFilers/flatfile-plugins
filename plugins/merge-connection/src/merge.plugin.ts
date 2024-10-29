@@ -3,7 +3,7 @@ import { jobHandler } from '@flatfile/plugin-job-handler'
 import { handleCreateConnectedWorkbooks } from './create.workbook'
 import { handleConnectedWorkbookSync } from './sync.workbook'
 
-export default function mergePlugin() {
+export function mergePlugin() {
   return (listener: FlatfileListener) => {
     // The `space:createConnectedWorkbook` job is fired when a Merge connection has been made in the UI.
     // `handleCreateConnectedWorkbooks()` creates the connected workbook mirroring the Merge schema.
@@ -23,3 +23,5 @@ export default function mergePlugin() {
     )
   }
 }
+
+export default mergePlugin

@@ -6,37 +6,37 @@
   "registryMetadata": {
     "category": "export"
   },
+  "type": "module",
   "engines": {
     "node": ">= 16"
   },
-  "browser": {
-    "./dist/index.cjs": "./dist/index.browser.cjs",
-    "./dist/index.mjs": "./dist/index.browser.mjs"
-  },
   "exports": {
-    "types": "./dist/index.d.ts",
-    "node": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "default": "./dist/index.js"
     },
-    "browser": {
-      "require": "./dist/index.browser.cjs",
-      "import": "./dist/index.browser.mjs"
-    },
-    "default": "./dist/index.mjs"
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "build:watch": "rollup -c --watch",
-    "build:prod": "NODE_ENV=production rollup -c",
-    "check": "tsc ./**/*.ts --noEmit --esModuleInterop",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build:prod": "NODE_ENV=production tsup",
+    "checks": "tsc --noEmit && attw --pack . && publint .",
+    "lint": "tsc --noEmit",
     "test": "jest --passWithNoTests"
   },
   "keywords": [
@@ -46,7 +46,7 @@
   "author": "Flatfile, Inc.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FlatFilers/flatfile-plugins.git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
     "directory": "plugins/export-workbook"
   },
   "license": "ISC",
@@ -60,6 +60,7 @@
   },
   "devDependencies": {
     "@flatfile/plugin-job-handler": "^0.6.1",
-    "@flatfile/util-common": "^1.4.1"
+    "@flatfile/util-common": "^1.4.1",
+    "@flatfile/bundler-config-tsup": "^0.0.0"
   }
 }
