@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { FlatfileClient, type Flatfile } from '@flatfile/api'
-import { FlatfileEvent } from '@flatfile/listener'
+import { type FlatfileEvent, type FlatfileListener } from '@flatfile/listener'
 import { createAllRecords } from '@flatfile/util-common'
 import { GenerateExampleRecordsOptions } from './faker.plugin'
 
@@ -160,12 +160,20 @@ function generateReferenceData(config: any): string {
 
 function generateArrayData(config: any): any[] {
   if (config && config.arrayType === 'string') {
-    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], { min: 2, max: 5 });
+    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], {
+      min: 2,
+      max: 5,
+    })
   } else if (config && config.arrayType === 'number') {
-    return faker.helpers.arrayElements([1, 2, 3, 4, 5], { min: 2, max: 5 }).map(Number);
+    return faker.helpers
+      .arrayElements([1, 2, 3, 4, 5], { min: 2, max: 5 })
+      .map(Number)
   } else {
     // Default to string array if arrayType is not specified
-    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], { min: 2, max: 5 });
+    return faker.helpers.arrayElements(['lorem', 'ipsum', 'dolor'], {
+      min: 2,
+      max: 5,
+    })
   }
 }
 

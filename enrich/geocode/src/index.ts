@@ -1,1 +1,1 @@
-export * from './enrich.geocode.plugin';
+export * from './enrich.geocode.plugin'

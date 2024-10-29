@@ -1,5 +1,5 @@
+import type { FlatfileListener } from '@flatfile/listener'
 import { recordHook } from '@flatfile/plugin-record-hook'
-import { FlatfileListener } from '@flatfile/listener'
 import Sentiment from 'sentiment'
 
 export interface EnrichSentimentConfig {
@@ -66,10 +66,7 @@ export function enrichSentiment(config: EnrichSentimentConfig) {
         if (config.automaticValidation) {
           for (const field of textFields) {
             const fieldValue = String(record.get(field))
-            const { error, result } = performEnrichSentiment(
-              fieldValue,
-              field
-            )
+            const { error, result } = performEnrichSentiment(fieldValue, field)
 
             if (error) {
               record.addWarning('sentiment_analysis', error)

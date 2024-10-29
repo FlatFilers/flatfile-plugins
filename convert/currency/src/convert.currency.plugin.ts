@@ -30,7 +30,9 @@ function validateConfig(config: CurrencyConverterConfig): void {
     throw new Error('Converted amount field is required')
 }
 
-export function validateAmount(amount: any): { value: number } | { error: string } {
+export function validateAmount(
+  amount: any
+): { value: number } | { error: string } {
   if (!amount) {
     return { error: 'Amount is required' }
   }
@@ -40,7 +42,9 @@ export function validateAmount(amount: any): { value: number } | { error: string
   return { value: Number(amount) }
 }
 
-export function validateDate(date: string): { value: string } | { error: string } {
+export function validateDate(
+  date: string
+): { value: string } | { error: string } {
   if (!date) {
     return { value: new Date().toISOString().split('T')[0] }
   }
@@ -73,9 +77,11 @@ export async function fetchExchangeRates(
 
   const response = await fetch(fullUrl)
   if (!response.ok) {
-    throw new Error(`Status: ${response.status} Message: ${response.statusText}`)
+    throw new Error(
+      `Status: ${response.status} Message: ${response.statusText}`
+    )
   }
-  return await response.json() as ExchangeRateResponse
+  return (await response.json()) as ExchangeRateResponse
 }
 
 export function convertCurrency(
@@ -103,7 +109,7 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
         async (record: FlatfileRecord, event: FlatfileEvent) => {
           const apiKey = await event.secrets('OPENEXCHANGERATES_API_KEY')
           const amountResult = validateAmount(record.get(config.amountField))
-          
+
           if ('error' in amountResult) {
             record.addError(config.amountField, amountResult.error)
             return record
@@ -113,7 +119,9 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
 
           let date: string
           if (config.dateField) {
-            const dateResult = validateDate(record.get(config.dateField) as string)
+            const dateResult = validateDate(
+              record.get(config.dateField) as string
+            )
             if ('error' in dateResult) {
               record.addError(config.dateField, dateResult.error)
               return record
@@ -124,24 +132,42 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
           }
 
           try {
-            const data = await fetchExchangeRates(apiKey, config.sourceCurrency, config.targetCurrency, date)
+            const data = await fetchExchangeRates(
+              apiKey,
+              config.sourceCurrency,
+              config.targetCurrency,
+              date
+            )
 
             const usdToSourceRate = data.rates[config.sourceCurrency]
             const usdToTargetRate = data.rates[config.targetCurrency]
 
             if (!usdToSourceRate) {
-              record.addError('currency', `Invalid source currency: ${config.sourceCurrency}`)
+              record.addError(
+                'currency',
+                `Invalid source currency: ${config.sourceCurrency}`
+              )
             }
             if (!usdToTargetRate) {
-              record.addError('currency', `Invalid target currency: ${config.targetCurrency}`)
+              record.addError(
+                'currency',
+                `Invalid target currency: ${config.targetCurrency}`
+              )
             }
 
             if (usdToSourceRate && usdToTargetRate) {
-              const convertedAmount = convertCurrency(amount, usdToSourceRate, usdToTargetRate)
+              const convertedAmount = convertCurrency(
+                amount,
+                usdToSourceRate,
+                usdToTargetRate
+              )
               record.set(config.convertedAmountField, convertedAmount)
 
               if (config.exchangeRateField) {
-                const exchangeRate = calculateExchangeRate(usdToSourceRate, usdToTargetRate)
+                const exchangeRate = calculateExchangeRate(
+                  usdToSourceRate,
+                  usdToTargetRate
+                )
                 record.set(config.exchangeRateField, exchangeRate)
               }
 
@@ -157,7 +183,10 @@ export function currencyConverterPlugin(config: CurrencyConverterConfig) {
               if (error.message.includes('API Error')) {
                 record.addError('general', error.message)
               } else if (error.message.includes('Failed to fetch')) {
-                record.addError('general', 'Network error: Unable to reach the API')
+                record.addError(
+                  'general',
+                  'Network error: Unable to reach the API'
+                )
               } else {
                 record.addError('general', `Error: ${error.message}`)
               }
