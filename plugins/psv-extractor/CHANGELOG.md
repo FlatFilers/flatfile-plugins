@@ -1,5 +1,11 @@
 # @flatfile/plugin-psv-extractor
 
+## 1.10.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
 ## 1.9.1
 
 ### Patch Changes

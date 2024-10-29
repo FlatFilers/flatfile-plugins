@@ -1,5 +1,16 @@
 # @flatfile/plugin-json-extractor
 
+## 0.9.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [3b9eedd]
+  - @flatfile/util-extractor@2.2.0
+
 ## 0.8.2
 
 ### Patch Changes

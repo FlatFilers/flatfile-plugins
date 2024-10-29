@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.5.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
 ## 1.4.1
 
 ### Patch Changes

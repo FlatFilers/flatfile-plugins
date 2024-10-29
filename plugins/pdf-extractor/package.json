@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-pdf-extractor",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/pdf-extractor",
   "description": "A plugin for parsing PDF files in Flatfile.",
   "registryMetadata": {
@@ -59,8 +59,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-common": "^1.4.1",
-    "@flatfile/util-file-buffer": "^0.4.1",
+    "@flatfile/util-common": "^1.5.0",
+    "@flatfile/util-file-buffer": "^0.5.0",
     "cross-fetch": "^4.0.0",
     "form-data": "^4.0.0",
     "fs-extra": "^11.1.1",
@@ -72,6 +72,6 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
-    "@flatfile/bundler-config-tsup": "^0.0.0"
+    "@flatfile/bundler-config-tsup": "^0.1.0"
   }
 }

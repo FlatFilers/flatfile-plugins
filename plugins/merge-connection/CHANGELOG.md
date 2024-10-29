@@ -1,5 +1,17 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.5.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [3b9eedd]
+  - @flatfile/plugin-convert-openapi-schema@0.4.0
+  - @flatfile/plugin-job-handler@0.7.0
+
 ## 0.4.2
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-convert-openapi-schema",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/openapi-schema",
   "description": "A plugin for converting OpenAPI schema to Flatfile Blueprint.",
   "registryMetadata": {
@@ -61,7 +61,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-space-configure": "^0.6.1",
+    "@flatfile/plugin-space-configure": "^0.7.0",
     "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {
@@ -69,6 +69,6 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.0.0"
+    "@flatfile/bundler-config-tsup": "^0.1.0"
   }
 }

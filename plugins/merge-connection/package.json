@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-connect-via-merge",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/merge-connection",
   "description": "A connect plugin for Merge.dev",
   "registryMetadata": {
@@ -56,8 +56,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-convert-openapi-schema": "^0.3.2",
-    "@flatfile/plugin-job-handler": "^0.6.1",
+    "@flatfile/plugin-convert-openapi-schema": "^0.4.0",
+    "@flatfile/plugin-job-handler": "^0.7.0",
     "@mergeapi/merge-node-client": "^1.0.4"
   },
   "peerDependencies": {
@@ -65,7 +65,7 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/plugin-space-configure": "^0.6.1",
-    "@flatfile/bundler-config-tsup": "^0.0.0"
+    "@flatfile/plugin-space-configure": "^0.7.0",
+    "@flatfile/bundler-config-tsup": "^0.1.0"
   }
 }

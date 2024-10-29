@@ -1,5 +1,16 @@
 # @flatfile/plugin-graphql-schema
 
+## 1.4.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [3b9eedd]
+  - @flatfile/plugin-space-configure@0.7.0
+
 ## 1.3.1
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.5.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [3b9eedd]
+  - @flatfile/util-response-rejection@1.5.0
+  - @flatfile/plugin-job-handler@0.7.0
+  - @flatfile/util-common@1.5.0
+
 ## 1.4.1
 
 ### Patch Changes

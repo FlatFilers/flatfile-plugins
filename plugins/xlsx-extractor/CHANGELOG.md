@@ -1,5 +1,16 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.3.0
+
+### Minor Changes
+
+- 3b9eedd: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [3b9eedd]
+  - @flatfile/util-extractor@2.2.0
+
 ## 3.2.2
 
 ### Patch Changes
