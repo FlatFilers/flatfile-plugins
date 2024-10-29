@@ -13,8 +13,16 @@
             ]
         },
         "build:prod": {
-            "outputs": ["dist/**"],
-            "dependsOn": ["^build:tsup"]
+            "outputs": [
+                "dist/**"
+            ],
+            "dependsOn": [
+                "^build:prod"
+            ]
+        },
+        "test:unit": {
+            "outputs": [],
+            "env": ["TURBO_CACHE_ENABLED"]
         },
         "test:e2e": {
             "outputs": [],
