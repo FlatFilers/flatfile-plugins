@@ -62,18 +62,19 @@ export function exportDelimitedZip(options: PluginOptions) {
             }
 
             const {
-              data: { records: records },
-            } = await api.records.get(sheet.id, {
-              pageSize: 1,
-            })
+              data: {
+                config: { fields },
+              },
+            } = await api.sheets.get(sheet.id)
 
-            const header = Object.keys(records[0].values)
+            const header = fields.map((field) => field.key)
+            const headerLabels = fields.map((field) => field.label)
 
             const fileName = `${trimmedSheetName}.${options.fileExtension}`
             const filePath = `${dir}/${fileName}`
 
             // Write header only once before processing records
-            const headerContent = stringify([header], {
+            const headerContent = stringify([headerLabels], {
               delimiter: options.delimiter,
             })
             fs.writeFileSync(filePath, headerContent)
