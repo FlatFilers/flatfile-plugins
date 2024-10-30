@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.2.1
+
+### Patch Changes
+
+- 615542b: This release fixes misc bugs
+
 ## 2.2.0
 
 ### Minor Changes
