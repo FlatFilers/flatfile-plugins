@@ -61,7 +61,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.2.0"
+    "@flatfile/util-extractor": "^2.3.0"
   },
   "devDependencies": {
     "@flatfile/bundler-config-tsup": "^0.1.0"

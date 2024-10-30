@@ -293,3 +293,53 @@ export type SheetCapture = {
   data: Flatfile.RecordData[]
   metadata?: { rowHeaders: number[] }
 }
+
+export function parseSheet(jsonArray: any[]): SheetCapture {
+  try {
+    // Ensure all items are objects
+    const filteredResults = jsonArray.filter(
+      (item) => typeof item === 'object' && item !== null
+    )
+
+    if (filteredResults.length === 0) {
+      return {} as SheetCapture
+    }
+
+    // Custom flatten function
+    const flattenObject = (obj: any, parent: string = '', res: any = {}) => {
+      for (let key in obj) {
+        const propName = parent ? parent + '.' + key : key
+        if (typeof obj[key] === 'object') {
+          flattenObject(obj[key], propName, res)
+        } else {
+          res[propName] = obj[key]
+        }
+      }
+      return res
+    }
+
+    // Flatten the first item to determine headers
+    const firstItem = flattenObject(filteredResults[0])
+    const headers = Object.keys(firstItem).filter((header) => header !== '')
+
+    // Flatten and filter all rows
+    const filteredData = filteredResults.map((row) => {
+      const flattedRow = flattenObject(row)
+      return headers.reduce((filteredRow, header) => {
+        const cell = flattedRow[header]
+        filteredRow[header] = {
+          value: Array.isArray(cell) ? JSON.stringify(cell) : cell,
+        }
+        return filteredRow
+      }, {})
+    })
+
+    return {
+      headers,
+      data: filteredData,
+    } as SheetCapture;
+  } catch (error) {
+    console.error('An error occurred:', error)
+    throw error
+  }
+}
