@@ -69,7 +69,7 @@
     "@flatfile/plugin-record-hook": "^1.9.0"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.5"
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
     "@flatfile/bundler-config-rollup": "^0.3.0",

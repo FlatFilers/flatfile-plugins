@@ -60,8 +60,8 @@
     "cross-fetch": "^3.1.5"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.5.17",
-    "@flatfile/listener": "^1.0.1"
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
     "@flatfile/bundler-config-tsup": "^0.1.0",

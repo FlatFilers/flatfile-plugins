@@ -66,7 +66,7 @@
     "@flatfile/plugin-record-hook": "^1.8.0"
   },
   "peerDependencies": {
-    "@flatfile/listener": "^1.0.5"
+    "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
     "@flatfile/bundler-config-tsup": "^0.1.0"

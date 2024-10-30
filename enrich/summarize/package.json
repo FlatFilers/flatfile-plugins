@@ -65,7 +65,7 @@
     "compromise": "^14.14.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.4.13",
+    "@flatfile/api": "^1.9.19",
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
