@@ -5,7 +5,7 @@ import { processRecords } from '@flatfile/util-common'
 import AdmZip from 'adm-zip'
 import { stringify } from 'csv-stringify/sync'
 import fs from 'fs'
-import os from 'os'
+import { tmpdir } from 'os'
 import path from 'path'
 
 const api = new FlatfileClient()
@@ -37,7 +37,7 @@ export function exportDelimitedZip(options: PluginOptions) {
           const dateTime = new Date().toISOString().replace(/[:.]/g, '-')
 
           // Get the path to the system's temporary directory
-          const tempDir = os.tmpdir()
+          const tempDir = tmpdir()
 
           // Create a new directory in the system's temporary directory for the delimited files
           const dir = path.join(tempDir, `${workbook.name}_${dateTime}`)

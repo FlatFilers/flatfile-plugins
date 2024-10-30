@@ -1,3 +1,3 @@
 import { defineConfig } from '@flatfile/bundler-config-tsup'
 
-export default defineConfig({})
+export default defineConfig({ includeBrowser: false })
