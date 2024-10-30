@@ -309,9 +309,9 @@ class DataRowAndSubHeaderDetection extends Headerizer {
       const row = rows[i]
       if (countNonEmptyCells(header) === countNonEmptyCells(row)) {
         const fuzzyMatches = header.filter((cell, index) => {
-          const rowCell = row[index]?.trim()
+          const rowCell = row[index]?.trim() ?? ''
           return rowCell
-            ?.split(/\s+/)
+            .split(/\s+/)
             .every((word) => cell.toLowerCase().includes(word.toLowerCase()))
         })
 
