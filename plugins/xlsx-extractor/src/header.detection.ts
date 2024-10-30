@@ -85,6 +85,7 @@ export const countNonEmptyCells = (row: string[]): number => {
 export const likelyContainsData = (row: string[]): boolean => {
   return row.some(
     (cell) =>
+      cell === null ||
       cell.trim() === '' ||
       !isNaN(Number(cell.trim())) ||
       cell.trim().toLowerCase() === 'true' ||
@@ -308,7 +309,7 @@ class DataRowAndSubHeaderDetection extends Headerizer {
       const row = rows[i]
       if (countNonEmptyCells(header) === countNonEmptyCells(row)) {
         const fuzzyMatches = header.filter((cell, index) => {
-          const rowCell = row[index].trim()
+          const rowCell = row[index]?.trim() ?? ''
           return rowCell
             .split(/\s+/)
             .every((word) => cell.toLowerCase().includes(word.toLowerCase()))

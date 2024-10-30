@@ -1,9 +1,11 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import {
   convertPivotTableToMarkdown,
   generatePivotTable,
 } from './pivot.table.utils'
+
+const api = new FlatfileClient()
 
 /**
  * Configuration interface for the Pivot Table plugin
