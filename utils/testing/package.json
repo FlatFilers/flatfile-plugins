@@ -4,7 +4,7 @@
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/testing",
   "description": "A utility package for testing plugins",
   "engines": {
-    "node": ">= 16"
+    "node": ">= 18"
   },
   "type": "module",
   "exports": {
