@@ -23,27 +23,13 @@ describe.skip('externalConstraint()', () => {
   const listener = new TestListener()
   const driver = setupDriver()
 
-  beforeAll(async () => {
-    await driver.start()
-    listener.mount(driver)
-  })
-
-  afterAll(() => {
-    driver.shutdown()
-  })
-
-  beforeEach(() => {
-    listener.resetCount()
-  })
-
-  afterEach(() => {
-    listener.reset()
-  })
-
   let spaceId: string
   let sheetId: string
 
   beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
     const space = await setupSpace()
     spaceId = space.id
     const workbook = await setupSimpleWorkbook(
@@ -61,7 +47,15 @@ describe.skip('externalConstraint()', () => {
     sheetId = workbook.sheets![0].id
   })
 
+  afterAll(async () => {
+    await deleteSpace(spaceId)
+
+    driver.shutdown()
+  })
+
   beforeEach(() => {
+    listener.resetCount()
+
     listener.use(
       externalSheetConstraint('test', (values) => {
         if (!values.name || !values.email) {
@@ -71,8 +65,8 @@ describe.skip('externalConstraint()', () => {
     )
   })
 
-  afterAll(async () => {
-    await deleteSpace(spaceId)
+  afterEach(() => {
+    listener.reset()
   })
 
   it('correctly handles thrown errors', async () => {

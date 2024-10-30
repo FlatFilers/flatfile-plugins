@@ -21,12 +21,22 @@ describe('JobHandler plugin e2e tests', () => {
     const listener = new TestListener()
     const driver = setupDriver()
 
+    const mockFn = vi.fn()
+    let spaceId: string
+
     beforeAll(async () => {
       await driver.start()
       listener.mount(driver)
+
+      listener.use(jobHandler('space:configure', mockFn))
+
+      const space = await setupSpace()
+      spaceId = space.id
     })
 
-    afterAll(() => {
+    afterAll(async () => {
+      await deleteSpace(spaceId)
+
       driver.shutdown()
     })
 
@@ -36,20 +46,6 @@ describe('JobHandler plugin e2e tests', () => {
 
     afterEach(() => {
       listener.reset()
-    })
-
-    const mockFn = vi.fn()
-    let spaceId: string
-
-    beforeAll(async () => {
-      listener.use(jobHandler('space:configure', mockFn))
-
-      const space = await setupSpace()
-      spaceId = space.id
-    })
-
-    afterAll(async () => {
-      await deleteSpace(spaceId)
     })
 
     test('jobHandler()', async () => {
@@ -63,23 +59,6 @@ describe('JobHandler plugin e2e tests', () => {
     const listener = new TestListener()
     const driver = setupDriver()
 
-    beforeAll(async () => {
-      await driver.start()
-      listener.mount(driver)
-    })
-
-    afterAll(() => {
-      driver.shutdown()
-    })
-
-    beforeEach(() => {
-      listener.resetCount()
-    })
-
-    afterEach(() => {
-      listener.reset()
-    })
-
     const logErrorSpy = vi.spyOn(global.console, 'error')
     const mockErrorFn = vi.fn(() => {
       throw new Error('trigger job:failed')
@@ -87,6 +66,9 @@ describe('JobHandler plugin e2e tests', () => {
     let spaceId: string
 
     beforeAll(async () => {
+      await driver.start()
+      listener.mount(driver)
+
       listener.on('job:failed', (event) => {
         console.log(event.topic, event.payload.job)
       })
@@ -98,6 +80,16 @@ describe('JobHandler plugin e2e tests', () => {
 
     afterAll(async () => {
       await deleteSpace(spaceId)
+
+      driver.shutdown()
+    })
+
+    beforeEach(() => {
+      listener.resetCount()
+    })
+
+    afterEach(() => {
+      listener.reset()
     })
 
     test('job:failed', async () => {

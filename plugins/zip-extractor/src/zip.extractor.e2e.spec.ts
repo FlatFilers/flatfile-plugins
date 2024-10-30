@@ -26,26 +26,12 @@ describe('ZipExtractor e2e', () => {
   const listener = new TestListener()
   const driver = setupDriver()
 
-  beforeAll(async () => {
-    await driver.start()
-    listener.mount(driver)
-  })
-
-  afterAll(() => {
-    driver.shutdown()
-  })
-
-  beforeEach(() => {
-    listener.resetCount()
-  })
-
-  afterEach(() => {
-    listener.reset()
-  })
-
   let spaceId
 
   beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
     const environmentId = getEnvironmentId()!
     const space = await setupSpace()
     spaceId = space.id
@@ -63,6 +49,16 @@ describe('ZipExtractor e2e', () => {
 
   afterAll(async () => {
     await deleteSpace(spaceId)
+
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
   })
 
   describe('test-basic.zip', () => {

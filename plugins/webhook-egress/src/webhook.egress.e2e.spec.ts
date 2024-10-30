@@ -25,28 +25,14 @@ describe('webhookEgress() e2e', () => {
   const listener = new TestListener()
   const driver = setupDriver()
 
-  beforeAll(async () => {
-    await driver.start()
-    listener.mount(driver)
-  })
-
-  afterAll(() => {
-    driver.shutdown()
-  })
-
-  beforeEach(() => {
-    listener.resetCount()
-  })
-
-  afterEach(() => {
-    listener.reset()
-  })
-
   let spaceId
   let workbookId
   let sheetId
 
   beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
     const space = await setupSpace()
     spaceId = space.id
     const workbook = await setupSimpleWorkbook(space.id, [
@@ -55,7 +41,7 @@ describe('webhookEgress() e2e', () => {
       'notes',
     ])
     workbookId = workbook.id
-    sheetId = workbook.sheets[0].id
+    sheetId = workbook.sheets![0].id
     await createRecords(sheetId, [
       {
         name: 'John Doe',
@@ -72,10 +58,18 @@ describe('webhookEgress() e2e', () => {
 
   afterAll(async () => {
     await deleteSpace(spaceId)
+
+    driver.shutdown()
   })
 
   beforeEach(() => {
+    listener.resetCount()
+
     vi.restoreAllMocks()
+  })
+
+  afterEach(() => {
+    listener.reset()
   })
 
   it('returns successful outcome message', async () => {

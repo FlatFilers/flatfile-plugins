@@ -25,27 +25,13 @@ describe('NormalizeDate e2e', () => {
   const listener = new TestListener()
   const driver = setupDriver()
 
-  beforeAll(async () => {
-    await driver.start()
-    listener.mount(driver)
-  })
-
-  afterAll(() => {
-    driver.shutdown()
-  })
-
-  beforeEach(() => {
-    listener.resetCount()
-  })
-
-  afterEach(() => {
-    listener.reset()
-  })
-
   let spaceId: string
   let sheetId: string
 
   beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
     const space = await setupSpace()
     spaceId = space.id
     const workbook = await setupSimpleWorkbook(space.id, [
@@ -59,6 +45,12 @@ describe('NormalizeDate e2e', () => {
 
   afterAll(async () => {
     await deleteSpace(spaceId)
+
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
   })
 
   afterEach(async () => {

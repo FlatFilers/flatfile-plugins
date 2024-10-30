@@ -27,23 +27,6 @@ describe('RecordHook e2e', () => {
   const listener = new TestListener()
   const driver = setupDriver()
 
-  beforeAll(async () => {
-    await driver.start()
-    listener.mount(driver)
-  })
-
-  afterAll(() => {
-    driver.shutdown()
-  })
-
-  beforeEach(() => {
-    listener.resetCount()
-  })
-
-  afterEach(() => {
-    listener.reset()
-  })
-
   // Console spies
   const logSpy = vi.spyOn(global.console, 'log')
   const logErrorSpy = vi.spyOn(global.console, 'error')
@@ -52,6 +35,9 @@ describe('RecordHook e2e', () => {
   let sheetId: string
 
   beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
     const space = await setupSpace()
     spaceId = space.id
     const workbook = await setupSimpleWorkbook(space.id, [
@@ -82,6 +68,16 @@ describe('RecordHook e2e', () => {
 
   afterAll(async () => {
     await deleteSpace(spaceId)
+
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
   })
 
   afterEach(async () => {

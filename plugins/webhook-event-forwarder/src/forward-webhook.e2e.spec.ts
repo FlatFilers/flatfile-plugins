@@ -23,28 +23,14 @@ describe('forward-webhook() e2e', () => {
   const listener = new TestListener()
   const driver = setupDriver()
 
-  beforeAll(async () => {
-    await driver.start()
-    listener.mount(driver)
-  })
-
-  afterAll(() => {
-    driver.shutdown()
-  })
-
-  beforeEach(() => {
-    listener.resetCount()
-  })
-
-  afterEach(() => {
-    listener.reset()
-  })
-
   let spaceId
   let workbookId
   let sheetId
 
   beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
     const space = await setupSpace()
     spaceId = space.id
     const workbook = await setupSimpleWorkbook(space.id, [
@@ -58,10 +44,14 @@ describe('forward-webhook() e2e', () => {
 
   afterAll(async () => {
     await deleteSpace(spaceId)
+
+    driver.shutdown()
   })
 
   let callback
   beforeEach(async () => {
+    listener.resetCount()
+
     vi.restoreAllMocks()
 
     callback = vi.fn((data: any, event: FlatfileEvent) => {

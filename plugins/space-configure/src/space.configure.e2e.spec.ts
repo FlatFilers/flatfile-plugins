@@ -51,13 +51,21 @@ describe('SpaceConfigure plugin e2e tests', () => {
   const mockFn = vi.fn()
   const listener = new TestListener()
   const driver = setupDriver()
+  let spaceId: string
 
   beforeAll(async () => {
     await driver.start()
     listener.mount(driver)
+
+    listener.use(configureSpace(setup, mockFn))
+
+    const space = await setupSpace()
+    spaceId = space.id
   })
 
-  afterAll(() => {
+  afterAll(async () => {
+    await deleteSpace(spaceId)
+
     driver.shutdown()
   })
 
@@ -67,18 +75,6 @@ describe('SpaceConfigure plugin e2e tests', () => {
 
   afterEach(() => {
     listener.reset()
-  })
-  let spaceId: string
-
-  beforeAll(async () => {
-    listener.use(configureSpace(setup, mockFn))
-
-    const space = await setupSpace()
-    spaceId = space.id
-  })
-
-  afterAll(async () => {
-    await deleteSpace(spaceId)
   })
 
   it('should configure a space & run callback', async () => {
