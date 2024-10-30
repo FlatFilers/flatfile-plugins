@@ -1,5 +1,11 @@
 # @flatfile/plugin-rollout
 
+## 1.2.1
+
+### Patch Changes
+
+- 615542b: This release fixes misc bugs
+
 ## 1.2.0
 
 ### Minor Changes

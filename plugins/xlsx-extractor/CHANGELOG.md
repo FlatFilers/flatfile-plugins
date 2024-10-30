@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.3.1
+
+### Patch Changes
+
+- 615542b: This release fixes misc bugs
+- Updated dependencies [615542b]
+  - @flatfile/util-extractor@2.2.1
+
 ## 3.3.0
 
 ### Minor Changes

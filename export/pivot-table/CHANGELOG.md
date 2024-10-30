@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-pivot-table
 
+## 0.2.1
+
+### Patch Changes
+
+- 615542b: This release fixes misc bugs
+
 ## 0.2.0
 
 ### Minor Changes

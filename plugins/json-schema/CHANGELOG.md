@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-json-schema
 
+## 0.5.1
+
+### Patch Changes
+
+- 615542b: This release fixes misc bugs
+
 ## 0.5.0
 
 ### Minor Changes
