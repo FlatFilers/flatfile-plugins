@@ -1,5 +1,12 @@
 # @flatfile/plugin-constraints
 
+## 5.0.0
+
+### Patch Changes
+
+- Updated dependencies [c55a4e3]
+  - @flatfile/plugin-record-hook@1.9.0
+
 ## 4.0.0
 
 ### Minor Changes
