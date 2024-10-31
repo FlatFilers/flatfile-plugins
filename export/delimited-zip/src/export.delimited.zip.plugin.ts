@@ -37,9 +37,7 @@ export function exportDelimitedZip(options: PluginOptions) {
       const tempDir = tmpdir()
 
       const sanitizeFileName = (name: string) =>
-        path.basename(
-          name.replace(/[<>:"/\\|?*\x00-\x1F]/g, '').replace(/\s+/g, '_')
-        )
+        path.basename(name.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '_'))
       const sanitizedWorkbookName = sanitizeFileName(workbook.name)
 
       // Create a new directory in the system's temporary directory for the delimited files
