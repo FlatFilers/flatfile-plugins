@@ -20,6 +20,10 @@
                 "^build:prod"
             ]
         },
+        "test": {
+            "outputs": [],
+            "env": ["TURBO_CACHE_ENABLED"]
+        },
         "test:unit": {
             "outputs": [],
             "env": ["TURBO_CACHE_ENABLED"]
