@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-pivot-table
 
+## 0.3.0
+
+### Minor Changes
+
+- c55a4e3: This release updates the plugin's documentation.
+
 ## 0.2.1
 
 ### Patch Changes

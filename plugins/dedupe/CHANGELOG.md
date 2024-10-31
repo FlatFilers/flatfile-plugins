@@ -1,5 +1,11 @@
 # @flatfile/plugin-dedupe
 
+## 1.4.0
+
+### Minor Changes
+
+- c55a4e3: This release updates the plugin's documentation.
+
 ## 1.3.0
 
 ### Minor Changes

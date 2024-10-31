@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-export-delimited-zip",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/export/delimited-zip",
   "description": "A Flatfile plugin for exporting Workbooks to delimited files and zipping them together",
   "registryMetadata": {

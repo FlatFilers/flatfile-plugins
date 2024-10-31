@@ -1,5 +1,11 @@
 # @flatfile/bundler-config-rollup
 
+## 0.3.0
+
+### Minor Changes
+
+- c55a4e3: This release changes the config defaults.
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.4.0
+
+### Minor Changes
+
+- c55a4e3: This release updates the plugin's documentation.
+
 ## 2.3.1
 
 ### Patch Changes

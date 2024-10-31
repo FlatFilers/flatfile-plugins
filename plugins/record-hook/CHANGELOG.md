@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.9.0
+
+### Minor Changes
+
+- c55a4e3: This release updates the Rollup config.
+
 ## 1.8.0
 
 ### Minor Changes
