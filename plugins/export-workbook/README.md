@@ -11,7 +11,7 @@ The `@flatfile/plugin-export-workbook` plugin exports data in a Flatfile Workboo
 <!-- END_INFOCARD -->
 
 
-> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](https://flatfile.com/docs/orchestration/listeners#listener-types)
+> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](/docs/orchestration/listeners#listener-types)
 
 
 ## Parameters
