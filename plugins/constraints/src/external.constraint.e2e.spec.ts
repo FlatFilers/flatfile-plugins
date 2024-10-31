@@ -40,6 +40,7 @@ describe.skip('externalConstraint()', () => {
   })
 
   beforeEach(() => {
+    listener.resetCount()
     listener.use(
       externalConstraint('test', (value, key, { record }) => {
         if (value === 'John Doe') {
@@ -54,10 +55,6 @@ describe.skip('externalConstraint()', () => {
     await deleteSpace(spaceId)
 
     driver.shutdown()
-  })
-
-  beforeEach(() => {
-    listener.resetCount()
   })
 
   afterEach(() => {
