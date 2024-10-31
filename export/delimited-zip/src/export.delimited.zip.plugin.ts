@@ -36,8 +36,14 @@ export function exportDelimitedZip(options: PluginOptions) {
       // Get the path to the system's temporary directory
       const tempDir = tmpdir()
 
+      const sanitizeFileName = (name: string) =>
+        path.basename(
+          name.replace(/[<>:"/\\|?*\x00-\x1F]/g, '').replace(/\s+/g, '_')
+        )
+      const sanitizedWorkbookName = sanitizeFileName(workbook.name)
+
       // Create a new directory in the system's temporary directory for the delimited files
-      const dir = path.join(tempDir, `${workbook.name}_${dateTime}`)
+      const dir = path.join(tempDir, `${sanitizedWorkbookName}_${dateTime}`)
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir)
       }
@@ -52,7 +58,7 @@ export function exportDelimitedZip(options: PluginOptions) {
       const totalSheets = sheets.length
       for (const [index, sheet] of sheets.entries()) {
         // Limit sheet name to 31 characters
-        const trimmedSheetName = sheet.name.substring(0, 31)
+        const trimmedSheetName = sanitizeFileName(sheet.name).substring(0, 31)
 
         if (options.debug) {
           console.log(`Processing sheet ${trimmedSheetName}`)
@@ -127,7 +133,7 @@ export function exportDelimitedZip(options: PluginOptions) {
         )
       }
 
-      const zipFileName = `${workbook.name}_${dateTime}.zip`
+      const zipFileName = `${sanitizedWorkbookName}_${dateTime}.zip`
       const zipFilePath = path.join(tempDir, zipFileName)
 
       zipFile.writeZip(zipFilePath)
@@ -147,7 +153,7 @@ export function exportDelimitedZip(options: PluginOptions) {
 
       // Cleanup temporary files
       for (const sheet of workbook.sheets) {
-        const trimmedSheetName = sheet.name.substring(0, 31)
+        const trimmedSheetName = sanitizeFileName(sheet.name).substring(0, 31)
         const fileName = `${trimmedSheetName}.${options.fileExtension}`
         const filePath = path.join(dir, fileName)
 
