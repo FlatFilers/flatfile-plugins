@@ -1,7 +1,9 @@
-import api, { Flatfile } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import { createAllRecords, slugify } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
+
+const api = new FlatfileClient()
 
 const WORKBOOK_CREATION_DELAY = 3_000
 

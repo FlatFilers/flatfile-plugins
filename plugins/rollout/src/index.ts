@@ -1,9 +1,11 @@
-import { randomUUID } from 'node:crypto'
-import api, { Flatfile } from '@flatfile/api'
-import { FlatfileListener } from '@flatfile/listener'
+import { type Flatfile, FlatfileClient } from '@flatfile/api'
+import { type FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
-import { asyncMap } from 'modern-async'
 import { Simplified } from '@flatfile/util-common'
+import { asyncMap } from 'modern-async'
+import { randomUUID } from 'node:crypto'
+
+const api = new FlatfileClient()
 
 /**
  * Auto update plugin that will trigger a schema update for a space
