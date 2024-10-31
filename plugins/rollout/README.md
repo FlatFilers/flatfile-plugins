@@ -14,6 +14,8 @@ This plugin listens for new agent deployments and automatically applies schema c
 
 <!-- END_INFOCARD -->
 
+> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](/docs/orchestration/listeners#listener-types)
+
 
 ## Parameters
 

@@ -12,7 +12,7 @@ The `@flatfile/plugin-delimiter-extractor` package is a plugin for parsing delim
 
 <!-- END_INFOCARD -->
 
-> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](/deocs/orchestration/listeners#listener-types)
+> When embedding Flatfile, this plugin should be deployed in a server-side listener. [Learn more](/docs/orchestration/listeners#listener-types)
 
 
 ## Parameters

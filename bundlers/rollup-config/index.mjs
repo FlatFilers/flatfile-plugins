@@ -35,12 +35,16 @@ function commonPlugins(browser, umd = false) {
 
 export function buildConfig({
   external = [],
-  includeNode = true,
-  includeBrowser = true,
-  includeDefinition = true,
-  includeUmd = false,
+  includeNode = false,
+  includeBrowser = false,
+  includeDefinition = false,
+  includeUmd = true,
   umdConfig = { name: undefined, external: [] },
 }) {
+  if (includeUmd && !umdConfig.name) {
+    throw new Error('umdConfig.name is required when includeUmd is true')
+  }
+
   return [
     // Node.js build
     ...(includeNode
