@@ -49,7 +49,7 @@ npm install @flatfile/plugin-export-delimited-zip
 **listener.ts**
 ```typescript
 import type { FlatfileListener } from '@flatfile/listener'
-import exportDelimitedZip from '@flatfile/plugin-export-delimited-zip'
+import { exportDelimitedZip } from '@flatfile/plugin-export-delimited-zip'
 
 export default function (listener: FlatfileListener) {
   listener.use(exportDelimitedZip({
