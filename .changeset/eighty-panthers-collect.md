@@ -5,4 +5,4 @@
 '@flatfile/plugin-extract-markdown': patch
 ---
 
-This release updates the @flatfile/uti-extractor dependency on the extractor plugins
+This release updates the @flatfile/util-extractor dependency on the extractor plugins
