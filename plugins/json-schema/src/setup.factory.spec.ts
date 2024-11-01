@@ -63,11 +63,10 @@ describe('generateSetup()', () => {
                 type: 'number',
               },
               {
-                config: { options: [] },
-                description: 'An enum of Selected Values',
+                description: 'A column for string arrays!',
                 key: 'arrayColumn',
                 label: 'arrayColumn',
-                type: 'enum',
+                type: 'string-list',
               },
               {
                 description: 'A column for unique numbers!',

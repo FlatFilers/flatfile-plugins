@@ -192,18 +192,8 @@ export async function getPropertyType(
     boolean: { key: parentKey, type: 'boolean' },
     array: {
       key: parentKey,
-      type: 'enum',
-      description: 'An enum of Selected Values',
-      config: property.enum
-        ? {
-            options: property.enum.map((value: any) => ({
-              value,
-              label: String(value),
-            })),
-          }
-        : {
-            options: [],
-          },
+      type: 'string-list',
+      description: 'A column for string arrays!',
     },
     enum: {
       key: parentKey,
