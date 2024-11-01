@@ -35,7 +35,7 @@ describe('generateSetup()', () => {
       workbooks: [
         {
           source:
-            'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.1/webhook-example.json',
+            'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/752fbf24fc6aa4f3cd1a5b1b1247b82af8c91b6b/examples/v3.1/webhook-example.json',
           sheets: [{ model: 'Pet' }],
         },
       ],
