@@ -13,7 +13,7 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
     const parsedData = JSON.parse(fileContents) || []
     const results = Array.isArray(parsedData) ? parsedData : [parsedData]
 
-    var sheetCapture = parseSheet(results);
+    const sheetCapture = parseSheet(results);
 
     if (isEmpty(sheetCapture)) {
       return {} as WorkbookCapture

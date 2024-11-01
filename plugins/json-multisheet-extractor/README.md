@@ -1,6 +1,30 @@
 <!-- START_INFOCARD -->
 
-The `@flatfile/json-multisheet-extractor` plugin parses a JSON file and extracts second-level nested objects into first level defined Sheets in Flatfile.
+The `@flatfile/json-multisheet-extractor` plugin parses a JSON file and extracts second-level nested objects as records into first level defined Sheets in Flatfile.
+
+For example:
+```json
+{
+	"contacts": [ // sheet 1
+		{ // record 1
+			"firstName": "John", // header 1, value
+            "lastName": "Doe", // header 2, value
+            "email": "john.doe@example.com"
+		},
+		{ // record 2
+			"firstName": "Jane", // header 1, value
+            "lastName": "Smith",
+            "email": "jane.smith@example.com"
+		},
+	],
+	"orders": [ // sheet 2
+		{ // record 1
+			"id": "ORD123456", // header 1, value
+            "amount": 250 // header 2, value
+		},
+	]
+}
+```
 
 **Event Type:** 
 `listener.on('file:created')`
@@ -16,12 +40,14 @@ The `@flatfile/json-multisheet-extractor` plugin parses a JSON file and extracts
 
 ## Parameters
 
-#### `options.chunkSize` - `default: "10_000"` - `number` - (optional)
+### `options.chunkSize` - `default: "10_000"` - `number` - (optional)
 The `chunkSize` parameter allows you to specify the quantity of records to in each chunk.
+Note: Larger chunks consume more memory but may process faster
 
 
-#### `options.parallel` - `default: "1"` - `number` - (optional)
+### `options.parallel` - `default: "1"` - `number` - (optional)
 The `parallel` parameter allows you to specify the number of chunks to process in parallel.
+Note: Higher values may improve performance but increase memory usage
 
 
 

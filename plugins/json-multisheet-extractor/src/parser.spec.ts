@@ -7,31 +7,38 @@ describe('parser', function () {
     path.join(__dirname, '../ref/test-basic.json')
   )
 
+  const CONTACT_HEADERS = [
+    'First Name',
+    'Last Name',
+    'Email',
+    'Address.Street',
+    'Address.City',
+    'Address.State',
+    'Address.Zip',
+    'Address.Coordinates.Latitude',
+    'Address.Coordinates.Longitude',
+    'Father.First Name',
+    'Father.Last Name',
+    'Father.Father.First Name',
+    'Father.Father.Last Name',
+    'Father.Father.Father.First Name',
+    'Father.Father.Father.Last Name',
+    'Father.Father.Father.Father.First Name',
+    'Father.Father.Father.Father.Last Name',
+    'Father.Father.Father.Father.Father.First Name',
+    'Father.Father.Father.Father.Father.Last Name',
+  ];
+
+  const ORDER_HEADERS = [
+    'ID',
+    'Amount',
+  ]
+
   test('JSON to WorkbookCapture', () => {
     const capture = parseBuffer(buffer)
     expect(capture).toEqual({
       contacts: {
-        headers: [
-          'First Name',
-          'Last Name',
-          'Email',
-          'Address.Street',
-          'Address.City',
-          'Address.State',
-          'Address.Zip',
-          'Address.Coordinates.Latitude',
-          'Address.Coordinates.Longitude',
-          'Father.First Name',
-          'Father.Last Name',
-          'Father.Father.First Name',
-          'Father.Father.Last Name',
-          'Father.Father.Father.First Name',
-          'Father.Father.Father.Last Name',
-          'Father.Father.Father.Father.First Name',
-          'Father.Father.Father.Father.Last Name',
-          'Father.Father.Father.Father.Father.First Name',
-          'Father.Father.Father.Father.Father.Last Name',
-        ],
+        headers: CONTACT_HEADERS,
         data: [
           {
             'First Name': { value: 'Tony' },
@@ -118,10 +125,7 @@ describe('parser', function () {
         metadata: undefined,
       },
       orders: {
-        headers: [
-          'ID',
-          'Amount',
-        ],
+        headers: ORDER_HEADERS,
         data: [
           {
             ID: { value: "1234" },
@@ -138,33 +142,10 @@ describe('parser', function () {
   })
   it('has contact headers', () => {
     const headers = parseBuffer(buffer).contacts.headers
-    expect(headers).toEqual([
-      'First Name',
-      'Last Name',
-      'Email',
-      'Address.Street',
-      'Address.City',
-      'Address.State',
-      'Address.Zip',
-      'Address.Coordinates.Latitude',
-      'Address.Coordinates.Longitude',
-      'Father.First Name',
-      'Father.Last Name',
-      'Father.Father.First Name',
-      'Father.Father.Last Name',
-      'Father.Father.Father.First Name',
-      'Father.Father.Father.Last Name',
-      'Father.Father.Father.Father.First Name',
-      'Father.Father.Father.Father.Last Name',
-      'Father.Father.Father.Father.Father.First Name',
-      'Father.Father.Father.Father.Father.Last Name',
-    ])
+    expect(headers).toEqual(CONTACT_HEADERS)
   })
   it('has order headers', () => {
     const headers = parseBuffer(buffer).orders.headers
-    expect(headers).toEqual([
-      'ID',
-      'Amount',
-    ])
+    expect(headers).toEqual(ORDER_HEADERS)
   })
 })

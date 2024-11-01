@@ -305,10 +305,12 @@ export function parseSheet(jsonArray: any[]): SheetCapture {
       return {} as SheetCapture
     }
 
-    // Custom flatten function
+    // Custom flatten function that extracts all keys in an arbitrarily deep JSON object into headers,
+    // where nested levels are separated by `.` in the final header
+    // NOTE: The res input is mutated as part of this recursive function
     const flattenObject = (obj: any, parent: string = '', res: any = {}) => {
       for (let key in obj) {
-        const propName = parent ? parent + '.' + key : key
+        const propName = parent ? `${parent}.${key}` : key
         if (typeof obj[key] === 'object') {
           flattenObject(obj[key], propName, res)
         } else {
@@ -324,9 +326,9 @@ export function parseSheet(jsonArray: any[]): SheetCapture {
 
     // Flatten and filter all rows
     const filteredData = filteredResults.map((row) => {
-      const flattedRow = flattenObject(row)
+      const flattenedRow = flattenObject(row)
       return headers.reduce((filteredRow, header) => {
-        const cell = flattedRow[header]
+        const cell = flattenedRow[header]
         filteredRow[header] = {
           value: Array.isArray(cell) ? JSON.stringify(cell) : cell,
         }

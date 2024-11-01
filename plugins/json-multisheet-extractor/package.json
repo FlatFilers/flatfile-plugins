@@ -2,7 +2,7 @@
   "name": "@flatfile/plugin-json-multisheet-extractor",
   "version": "0.1.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/json-multisheet-extractor",
-  "description": "A plugin for parsing json files into multiple sheets in Flatfile.",
+  "description": "A plugin for parsing JSON files into multiple sheets in Flatfile.",
   "registryMetadata": {
     "category": "extractors"
   },

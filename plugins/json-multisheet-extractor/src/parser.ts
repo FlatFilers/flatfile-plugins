@@ -6,17 +6,17 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
     const fileContents = buffer.toString('utf8')
 
     if (!fileContents) {
-      console.log('Invalid file contents')
+      console.error('Invalid file contents')
       return {} as WorkbookCapture
     }
 
     const parsedData = JSON.parse(fileContents)
     if (typeof parsedData !== 'object' || parsedData === null) {
       console.error("Invalid input: data must be an object.");
-      return {};
+      return {} as WorkbookCapture;
     }
 
-    const results = {};
+    const results: WorkbookCapture = {};
 
     Object.keys(parsedData).forEach(sheet => {
       const value = parsedData[sheet];
@@ -34,7 +34,7 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
       }
     });
 
-    return results as WorkbookCapture;
+    return results;
   } catch (error) {
     console.error('An error occurred:', error)
     throw error
