@@ -59,7 +59,7 @@
   "author": "Flatfile",
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.2.0",
+    "@flatfile/util-extractor": "^2.2.1",
     "node-html-parser": "^6.1.13"
   },
   "devDependencies": {
