@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-xml-extractor",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/xml-extractor",
   "description": "A plugin for parsing .xml files in Flatfile.",
   "registryMetadata": {

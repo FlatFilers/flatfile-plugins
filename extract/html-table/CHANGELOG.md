@@ -1,5 +1,11 @@
 # @flatfile/plugin-extract-html-table
 
+## 1.2.1
+
+### Patch Changes
+
+- ecb5496: This release updates the @flatfile/util-extractor dependency on the extractor plugins
+
 ## 1.2.0
 
 ### Minor Changes

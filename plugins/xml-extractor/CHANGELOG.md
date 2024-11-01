@@ -1,5 +1,11 @@
 # @flatfile/plugin-dxp-config
 
+## 0.8.1
+
+### Patch Changes
+
+- ecb5496: This release updates the @flatfile/util-extractor dependency on the extractor plugins
+
 ## 0.8.0
 
 ### Minor Changes
