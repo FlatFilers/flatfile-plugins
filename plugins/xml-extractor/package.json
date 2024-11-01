@@ -61,7 +61,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.2.0",
+    "@flatfile/util-extractor": "^2.2.1",
     "remeda": "^1.24.0",
     "xml-json-format": "^1.0.8"
   },
