@@ -4,7 +4,7 @@ import { parseBuffer } from './parser'
 
 describe('parser', function () {
   const buffer: Buffer = fs.readFileSync(
-    path.join(__dirname, '../ref/test-basic.json')
+    path.join(__dirname, '../ref/test-multisheet.json')
   )
 
   const CONTACT_HEADERS = [
@@ -16,17 +16,7 @@ describe('parser', function () {
     'Address.State',
     'Address.Zip',
     'Address.Coordinates.Latitude',
-    'Address.Coordinates.Longitude',
-    'Father.First Name',
-    'Father.Last Name',
-    'Father.Father.First Name',
-    'Father.Father.Last Name',
-    'Father.Father.Father.First Name',
-    'Father.Father.Father.Last Name',
-    'Father.Father.Father.Father.First Name',
-    'Father.Father.Father.Father.Last Name',
-    'Father.Father.Father.Father.Father.First Name',
-    'Father.Father.Father.Father.Father.Last Name',
+    'Address.Coordinates.Longitude'
   ];
 
   const ORDER_HEADERS = [
@@ -50,22 +40,6 @@ describe('parser', function () {
             'Address.Zip': { value: '12345' },
             'Address.Coordinates.Latitude': { value: '40.7128° N' },
             'Address.Coordinates.Longitude': { value: '74.0060° W' },
-            'Father.First Name': { value: 'Father_First_1' },
-            'Father.Last Name': { value: 'Father_Last_1' },
-            'Father.Father.First Name': { value: 'Father_First_2' },
-            'Father.Father.Last Name': { value: 'Father_Last_2' },
-            'Father.Father.Father.First Name': { value: 'Father_First_3' },
-            'Father.Father.Father.Last Name': { value: 'Father_Last_3' },
-            'Father.Father.Father.Father.First Name': {
-              value: 'Father_First_4',
-            },
-            'Father.Father.Father.Father.Last Name': { value: 'Father_Last_4' },
-            'Father.Father.Father.Father.Father.First Name': {
-              value: 'Father_First_5',
-            },
-            'Father.Father.Father.Father.Father.Last Name': {
-              value: 'Father_Last_5',
-            },
           },
           {
             'First Name': { value: 'Christian' },
@@ -77,22 +51,6 @@ describe('parser', function () {
             'Address.Zip': { value: '67890' },
             'Address.Coordinates.Latitude': { value: '40.7128° N' },
             'Address.Coordinates.Longitude': { value: '74.0060° W' },
-            'Father.First Name': { value: 'Father_First_1' },
-            'Father.Last Name': { value: 'Father_Last_1' },
-            'Father.Father.First Name': { value: 'Father_First_2' },
-            'Father.Father.Last Name': { value: 'Father_Last_2' },
-            'Father.Father.Father.First Name': { value: 'Father_First_3' },
-            'Father.Father.Father.Last Name': { value: 'Father_Last_3' },
-            'Father.Father.Father.Father.First Name': {
-              value: 'Father_First_4',
-            },
-            'Father.Father.Father.Father.Last Name': { value: 'Father_Last_4' },
-            'Father.Father.Father.Father.Father.First Name': {
-              value: 'Father_First_5',
-            },
-            'Father.Father.Father.Father.Father.Last Name': {
-              value: 'Father_Last_5',
-            },
           },
           {
             'First Name': { value: 'Frederick' },
@@ -104,22 +62,6 @@ describe('parser', function () {
             'Address.Zip': { value: '10112' },
             'Address.Coordinates.Latitude': { value: '40.7128° N' },
             'Address.Coordinates.Longitude': { value: '74.0060° W' },
-            'Father.First Name': { value: 'Father_First_1' },
-            'Father.Last Name': { value: 'Father_Last_1' },
-            'Father.Father.First Name': { value: 'Father_First_2' },
-            'Father.Father.Last Name': { value: 'Father_Last_2' },
-            'Father.Father.Father.First Name': { value: 'Father_First_3' },
-            'Father.Father.Father.Last Name': { value: 'Father_Last_3' },
-            'Father.Father.Father.Father.First Name': {
-              value: 'Father_First_4',
-            },
-            'Father.Father.Father.Father.Last Name': { value: 'Father_Last_4' },
-            'Father.Father.Father.Father.Father.First Name': {
-              value: 'Father_First_5',
-            },
-            'Father.Father.Father.Father.Father.Last Name': {
-              value: 'Father_Last_5',
-            },
           },
         ],
         metadata: undefined,
