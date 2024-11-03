@@ -4,24 +4,31 @@ import { parseBuffer } from './parser'
 
 describe('parser', function () {
   const buffer: Buffer = fs.readFileSync(
-    path.join(__dirname, '../ref/test-basic.json')
+    path.join(__dirname, '../ref/test-multisheet.json')
   )
+
+  const CONTACT_HEADERS = [
+    'First Name',
+    'Last Name',
+    'Email',
+    'Address.Street',
+    'Address.City',
+    'Address.State',
+    'Address.Zip',
+    'Address.Coordinates.Latitude',
+    'Address.Coordinates.Longitude'
+  ];
+
+  const ORDER_HEADERS = [
+    'ID',
+    'Amount',
+  ]
 
   test('JSON to WorkbookCapture', () => {
     const capture = parseBuffer(buffer)
     expect(capture).toEqual({
-      Sheet1: {
-        headers: [
-          'First Name',
-          'Last Name',
-          'Email',
-          'Address.Street',
-          'Address.City',
-          'Address.State',
-          'Address.Zip',
-          'Address.Coordinates.Latitude',
-          'Address.Coordinates.Longitude',
-        ],
+      contacts: {
+        headers: CONTACT_HEADERS,
         data: [
           {
             'First Name': { value: 'Tony' },
@@ -59,20 +66,28 @@ describe('parser', function () {
         ],
         metadata: undefined,
       },
+      orders: {
+        headers: ORDER_HEADERS,
+        data: [
+          {
+            ID: { value: "1234" },
+            Amount: { value: 5678 }
+          },
+          {
+            ID: { value: "9876" },
+            Amount: { value: 5432 }
+          }
+        ],
+        metadata: undefined,
+      },
     })
   })
-  it('has headers', () => {
-    const headers = parseBuffer(buffer).Sheet1.headers
-    expect(headers).toEqual([
-      'First Name',
-      'Last Name',
-      'Email',
-      'Address.Street',
-      'Address.City',
-      'Address.State',
-      'Address.Zip',
-      'Address.Coordinates.Latitude',
-      'Address.Coordinates.Longitude',
-    ])
+  it('has contact headers', () => {
+    const headers = parseBuffer(buffer).contacts.headers
+    expect(headers).toEqual(CONTACT_HEADERS)
+  })
+  it('has order headers', () => {
+    const headers = parseBuffer(buffer).orders.headers
+    expect(headers).toEqual(ORDER_HEADERS)
   })
 })

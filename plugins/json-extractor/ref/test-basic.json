@@ -12,27 +12,6 @@
         "Latitude": "40.7128° N",
         "Longitude": "74.0060° W"
       }
-    },
-    "Father": {
-      "First Name": "Father_First_1",
-      "Last Name": "Father_Last_1",
-      "Father": {
-        "First Name": "Father_First_2",
-        "Last Name": "Father_Last_2",
-        "Father": {
-          "First Name": "Father_First_3",
-          "Last Name": "Father_Last_3",
-          "Father": {
-            "First Name": "Father_First_4",
-            "Last Name": "Father_Last_4",
-            "Father": {
-              "First Name": "Father_First_5",
-              "Last Name": "Father_Last_5",
-              "Father": null
-            }
-          }
-        }
-      }
     }
   },
   {
@@ -48,27 +27,6 @@
         "Latitude": "40.7128° N",
         "Longitude": "74.0060° W"
       }
-    },
-    "Father": {
-      "First Name": "Father_First_1",
-      "Last Name": "Father_Last_1",
-      "Father": {
-        "First Name": "Father_First_2",
-        "Last Name": "Father_Last_2",
-        "Father": {
-          "First Name": "Father_First_3",
-          "Last Name": "Father_Last_3",
-          "Father": {
-            "First Name": "Father_First_4",
-            "Last Name": "Father_Last_4",
-            "Father": {
-              "First Name": "Father_First_5",
-              "Last Name": "Father_Last_5",
-              "Father": null
-            }
-          }
-        }
-      }
     }
   },
   {
@@ -83,27 +41,6 @@
       "Coordinates": {
         "Latitude": "40.7128° N",
         "Longitude": "74.0060° W"
-      }
-    },
-    "Father": {
-      "First Name": "Father_First_1",
-      "Last Name": "Father_Last_1",
-      "Father": {
-        "First Name": "Father_First_2",
-        "Last Name": "Father_Last_2",
-        "Father": {
-          "First Name": "Father_First_3",
-          "Last Name": "Father_Last_3",
-          "Father": {
-            "First Name": "Father_First_4",
-            "Last Name": "Father_Last_4",
-            "Father": {
-              "First Name": "Father_First_5",
-              "Last Name": "Father_Last_5",
-              "Father": null
-            }
-          }
-        }
       }
     }
   }
