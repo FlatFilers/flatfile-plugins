@@ -1,5 +1,11 @@
 # @flatfile/plugin-convert-json-schema
 
+## 0.6.0
+
+### Minor Changes
+
+- 9ccf2dd: This release provides better support for the JSON schema array field type by mapping it to a Flatfile string-list.
+
 ## 0.5.1
 
 ### Patch Changes
