@@ -1,5 +1,12 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [9ccf2dd]
+  - @flatfile/plugin-convert-json-schema@0.6.0
+
 ## 0.4.0
 
 ### Minor Changes
