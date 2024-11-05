@@ -1,5 +1,12 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [9ccf2dd]
+  - @flatfile/plugin-convert-openapi-schema@0.5.0
+
 ## 0.5.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @flatfile/plugin-convert-sql-ddl
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [9ccf2dd]
+  - @flatfile/plugin-convert-json-schema@0.6.0
+
 ## 0.3.0
 
 ### Minor Changes
