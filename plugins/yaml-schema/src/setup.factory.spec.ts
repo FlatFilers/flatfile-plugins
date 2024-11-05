@@ -31,10 +31,9 @@ describe('configureSpaceWithYamlSchema() e2e', () => {
               },
               {
                 label: 'arrayColumn',
-                description: 'An enum of Selected Values',
+                description: 'A column for string arrays!',
                 key: 'arrayColumn',
-                type: 'enum',
-                config: { options: [] },
+                type: 'string-list',
               },
               {
                 label: 'objectColumn_nestedUniqueNumberColumn',

@@ -140,22 +140,11 @@ export async function getPropertyType(
     boolean: { key: parentKey, type: 'boolean' },
     array: {
       key: parentKey,
-      type: 'enum',
-      description: 'An enum of Selected Values',
-      config: property.enum
-        ? {
-            options: property.enum.map((value: any) => ({
-              value,
-              label: String(value),
-            })),
-          }
-        : {
-            options: [],
-          },
+      type: 'string-list',
     },
     enum: {
       key: parentKey,
-      type: 'enum',
+      type: 'enum-list',
       config: property?.enum
         ? {
             options: property.enum.map((value: any) => ({
@@ -169,6 +158,8 @@ export async function getPropertyType(
     },
   }
 
+  if (!fieldTypes[property.type]) return []
+
   const fieldConfig: Flatfile.Property = {
     label: parentKey,
     ...(property?.description && { description: property.description }),
@@ -176,7 +167,7 @@ export async function getPropertyType(
     ...fieldTypes[property.type],
   }
 
-  return fieldTypes[fieldConfig.type] ? [fieldConfig] : []
+  return [fieldConfig]
 }
 
 export async function resolveReference(
