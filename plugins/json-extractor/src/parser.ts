@@ -1,31 +1,59 @@
-import { WorkbookCapture } from '@flatfile/util-extractor'
+import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 
 export function parseBuffer(buffer: Buffer): WorkbookCapture {
   try {
     const fileContents = buffer.toString('utf8')
-    const sheetName = 'Sheet1'
 
     if (!fileContents) {
       console.log('Invalid file contents')
       return {} as WorkbookCapture
     }
 
-    const parsedData = JSON.parse(fileContents) || []
-    const results = Array.isArray(parsedData) ? parsedData : [parsedData]
+    const parsedData = JSON.parse(fileContents)
+    if (typeof parsedData !== 'object' || parsedData === null) {
+      console.error('Invalid input: data must be an object.')
+      return {} as WorkbookCapture
+    }
 
+    const results: WorkbookCapture = {}
+    const sheets = Array.isArray(parsedData)
+      ? { Sheet1: parsedData }
+      : parsedData
+
+    for (const [sheet, value] of Object.entries(sheets)) {
+      if (Array.isArray(value)) {
+        try {
+          results[sheet] = parseSheet(value)
+        } catch (error) {
+          console.error(`Error processing sheet "${sheet}":`, error)
+        }
+      }
+    }
+
+    return results
+  } catch (error) {
+    console.error('An error occurred:', error)
+    throw error
+  }
+}
+
+export function parseSheet(jsonArray: any[]): SheetCapture {
+  try {
     // Ensure all items are objects
-    const filteredResults = results.filter(
+    const filteredResults = jsonArray.filter(
       (item) => typeof item === 'object' && item !== null
     )
 
     if (filteredResults.length === 0) {
-      return {} as WorkbookCapture
+      return {} as SheetCapture
     }
 
-    // Custom flatten function
+    // Custom flatten function that extracts all keys in an arbitrarily deep JSON object into headers,
+    // where nested levels are separated by `.` in the final header
+    // NOTE: The res input is mutated as part of this recursive function
     const flattenObject = (obj: any, parent: string = '', res: any = {}) => {
       for (let key in obj) {
-        const propName = parent ? parent + '.' + key : key
+        const propName = parent ? `${parent}.${key}` : key
         if (typeof obj[key] === 'object') {
           flattenObject(obj[key], propName, res)
         } else {
@@ -41,9 +69,9 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
 
     // Flatten and filter all rows
     const filteredData = filteredResults.map((row) => {
-      const flattedRow = flattenObject(row)
+      const flattenedRow = flattenObject(row)
       return headers.reduce((filteredRow, header) => {
-        const cell = flattedRow[header]
+        const cell = flattenedRow[header]
         filteredRow[header] = {
           value: Array.isArray(cell) ? JSON.stringify(cell) : cell,
         }
@@ -52,11 +80,9 @@ export function parseBuffer(buffer: Buffer): WorkbookCapture {
     })
 
     return {
-      [sheetName]: {
-        headers,
-        data: filteredData,
-      },
-    } as WorkbookCapture
+      headers,
+      data: filteredData,
+    } as SheetCapture
   } catch (error) {
     console.error('An error occurred:', error)
     throw error
