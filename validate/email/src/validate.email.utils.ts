@@ -12,7 +12,11 @@ export function validateEmailAddress(
 
   const domain = email.split('@')[1].toLowerCase()
   if (disposableDomains.includes(domain)) {
-    return { isValid: false, email, error: 'Disposable email addresses are not allowed' }
+    return {
+      isValid: false,
+      email,
+      error: 'Disposable email addresses are not allowed',
+    }
   }
 
   return { isValid: true, email, error: '' }

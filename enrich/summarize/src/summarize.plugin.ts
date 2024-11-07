@@ -1,5 +1,5 @@
 import { type FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
-import { generateSummary, extractKeyPhrases } from './summary.util'
+import { extractKeyPhrases, generateSummary } from './summary.util'
 
 interface SummarizationConfig {
   sheetSlug: string
@@ -26,7 +26,7 @@ export function summarize(config: SummarizationConfig) {
     if (!existingSummary) {
       const summary = generateSummary(content, {
         summaryLength: config.summaryLength,
-        summaryPercentage: config.summaryPercentage
+        summaryPercentage: config.summaryPercentage,
       })
       record.set(config.summaryField, summary)
 

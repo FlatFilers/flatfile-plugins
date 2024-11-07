@@ -8,7 +8,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">= 16"
+    "node": ">= 18"
   },
   "exports": {
     ".": {
@@ -37,7 +37,9 @@
     "build:prod": "NODE_ENV=production tsup",
     "checks": "tsc --noEmit && attw --pack . && publint .",
     "lint": "tsc --noEmit",
-    "test": "jest --passWithNoTests"
+    "test": "vitest run --mode defaults src/*.spec.ts --passWithNoTests",
+    "test:unit": "vitest run --mode defaults src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
+    "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
   },
   "keywords": [
     "flatfile-plugins",
@@ -61,6 +63,7 @@
   "devDependencies": {
     "@flatfile/plugin-job-handler": "^0.7.0",
     "@flatfile/util-common": "^1.5.0",
-    "@flatfile/bundler-config-tsup": "^0.1.0"
+    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/config-vitest": "^0.0.0"
   }
 }
