@@ -1,6 +1,7 @@
 import { TestListener } from './index'
 
-import '../../../test/toBePendingMatcher'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import './toBePendingMatcher'
 
 const currentEventLoopEnd = () =>
   new Promise((resolve) => setImmediate(resolve))
@@ -40,8 +41,8 @@ describe('TestListener', () => {
     })
 
     it('fulfills pending promises that match the event', async () => {
-      const exampleReady = jest.fn()
-      const exampleCompleted = jest.fn()
+      const exampleReady = vi.fn()
+      const exampleCompleted = vi.fn()
 
       listener.waitFor('example:ready').then(exampleReady)
       listener

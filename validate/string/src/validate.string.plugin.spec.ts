@@ -1,4 +1,5 @@
-import { validateAndTransformString, StringValidationConfig } from '.'
+import { describe, expect, it } from 'vitest'
+import { validateAndTransformString, type StringValidationConfig } from '.'
 
 describe('validateAndTransformString', () => {
   it('should validate empty string', () => {

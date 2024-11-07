@@ -3,21 +3,36 @@ import {
   deleteSpace,
   getEnvironmentId,
   getFiles,
-  setupListener,
+  setupDriver,
   setupSpace,
+  TestListener,
 } from '@flatfile/utils-testing'
 import * as fs from 'fs'
 import * as path from 'path'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+} from 'vitest'
 import { ZipExtractor } from '.'
 
 const api = new FlatfileClient()
 
 describe('ZipExtractor e2e', () => {
-  const listener = setupListener()
+  const listener = new TestListener()
+  const driver = setupDriver()
 
   let spaceId
 
   beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
+    const environmentId = getEnvironmentId()!
     const space = await setupSpace()
     spaceId = space.id
 
@@ -28,16 +43,25 @@ describe('ZipExtractor e2e', () => {
     )
     await api.files.upload(stream, {
       spaceId,
-      environmentId: getEnvironmentId(),
+      environmentId,
     })
   })
 
   afterAll(async () => {
     await deleteSpace(spaceId)
+
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
   })
 
   describe('test-basic.zip', () => {
-    jest.mock('fs')
     test('files extracted and uploaded to space', async () => {
       await listener.waitFor('file:created', 4)
       const filesPostUpload = await getFiles(spaceId)

@@ -1,7 +1,7 @@
-import { FlatfileListener, FlatfileEvent } from '@flatfile/listener'
-import { recordHook, FlatfileRecord } from '@flatfile/plugin-record-hook'
-import { parseString } from 'xml2js'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import { type FlatfileRecord, recordHook } from '@flatfile/plugin-record-hook'
 import { promisify } from 'util'
+import { parseString } from 'xml2js'
 
 const parseXml = promisify(parseString)
 
@@ -180,11 +180,7 @@ async function enrichGpxData(
     tabularData = removeDuplicatePoints(tabularData)
   }
 
-  if (
-    filterDates &&
-    !isNaN(startDate.getTime()) &&
-    !isNaN(endDate.getTime())
-  ) {
+  if (filterDates && !isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
     tabularData = filterByDateRange(tabularData, startDate, endDate)
   }
 
@@ -203,14 +199,17 @@ async function enrichGpxData(
   }
 }
 
-export default function enrichGpx(listener: FlatfileListener, config: GpxParserConfig) {
+export default function enrichGpx(
+  listener: FlatfileListener,
+  config: GpxParserConfig
+) {
   const {
     sheetSlug,
     gpxFileField,
     removeDuplicatesField,
     filterDatesField,
     startDateField,
-    endDateField
+    endDateField,
   } = config
 
   listener.use(
@@ -227,7 +226,9 @@ export default function enrichGpx(listener: FlatfileListener, config: GpxParserC
         try {
           const removeDuplicates = record.get(removeDuplicatesField) === 'true'
           const filterDates = record.get(filterDatesField) === 'true'
-          const startDate = new Date((record.get(startDateField) as string) || '')
+          const startDate = new Date(
+            (record.get(startDateField) as string) || ''
+          )
           const endDate = new Date((record.get(endDateField) as string) || '')
 
           const enrichedData = await enrichGpxData(
