@@ -1,5 +1,16 @@
 # @flatfile/util-response-rejection
 
+## 1.6.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [fe21d6e]
+  - @flatfile/util-common@1.6.0
+
 ## 1.5.0
 
 ### Minor Changes

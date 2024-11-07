@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-response-rejection",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/response-rejection",
   "description": "This plugin handles response rejections returned from an external source.",
   "registryMetadata": {
@@ -61,13 +61,13 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-common": "^1.5.0"
+    "@flatfile/util-common": "^1.6.0"
   },
   "peerDependencies": {
     "@flatfile/api": "^1.9.19"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0"
   }
 }

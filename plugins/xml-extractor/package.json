@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-xml-extractor",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/xml-extractor",
   "description": "A plugin for parsing .xml files in Flatfile.",
   "registryMetadata": {
@@ -61,7 +61,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.2.1",
+    "@flatfile/util-extractor": "^2.3.0",
     "remeda": "^1.24.0",
     "xml-json-format": "^1.0.8"
   },
@@ -69,7 +69,7 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0"
   }
 }

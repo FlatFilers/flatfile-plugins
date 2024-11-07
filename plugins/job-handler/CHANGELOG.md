@@ -1,5 +1,16 @@
 # @flatfile/plugin-job-handler
 
+## 0.8.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [fe21d6e]
+  - @flatfile/util-common@1.6.0
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-psv-extractor",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/psv-extractor",
   "description": "A plugin for parsing a psv file and extracting it into Flatfile.",
   "registryMetadata": {
@@ -63,7 +63,7 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0"
   }
 }

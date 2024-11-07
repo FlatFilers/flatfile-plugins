@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/util-fetch-schema",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/utils/fetch-schema",
   "description": "A utility for fetching schemas for processing",
   "registryMetadata": {
@@ -64,7 +64,7 @@
     "@flatfile/api": "^1.9.19"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0"
   }
 }

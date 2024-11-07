@@ -1,5 +1,13 @@
 # @flatfile/plugin-export-delimited-zip
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [fe21d6e]
+  - @flatfile/plugin-job-handler@0.8.0
+  - @flatfile/util-common@1.6.0
+
 ## 0.1.0
 
 ### Minor Changes

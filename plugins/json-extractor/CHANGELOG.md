@@ -1,5 +1,17 @@
 # @flatfile/plugin-json-extractor
 
+## 0.10.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+- 25836cc: This release introduces multi-sheet extraction to the JSON extractor plugin.
+
+### Patch Changes
+
+- Updated dependencies [fe21d6e]
+  - @flatfile/util-extractor@2.3.0
+
 ## 0.9.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/utils-testing
 
+## 0.5.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+
 ## 0.4.0
 
 ### Minor Changes
