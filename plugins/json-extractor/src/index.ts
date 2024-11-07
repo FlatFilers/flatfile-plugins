@@ -1,11 +1,13 @@
 import { Extractor } from '@flatfile/util-extractor'
 import { parseBuffer } from './parser'
 
-export const JSONExtractor = (options?: {
+export interface PluginOptions {
   chunkSize?: number
   parallel?: number
   debug?: boolean
-}) => {
+}
+
+export const JSONExtractor = (options?: PluginOptions) => {
   return Extractor('.json', 'json', parseBuffer, options)
 }
 
