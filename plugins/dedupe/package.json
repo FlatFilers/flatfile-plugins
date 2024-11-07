@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-dedupe",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/dedupe",
   "description": "Dedupe records in a sheet via a sheet level custom action.",
   "registryMetadata": {
@@ -61,8 +61,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-job-handler": "^0.7.0",
-    "@flatfile/util-common": "^1.5.0"
+    "@flatfile/plugin-job-handler": "^0.8.0",
+    "@flatfile/util-common": "^1.6.0"
   },
   "peerDependencies": {
     "@flatfile/api": "^1.9.19",
@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
-    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0"
   }
 }

@@ -1,5 +1,11 @@
 # @flatfile/bundler-config-rollup
 
+## 0.4.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+
 ## 0.3.0
 
 ### Minor Changes

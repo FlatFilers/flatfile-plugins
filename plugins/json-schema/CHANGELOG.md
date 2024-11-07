@@ -1,5 +1,16 @@
 # @flatfile/plugin-convert-json-schema
 
+## 0.7.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [fe21d6e]
+  - @flatfile/plugin-space-configure@0.8.0
+
 ## 0.6.0
 
 ### Minor Changes

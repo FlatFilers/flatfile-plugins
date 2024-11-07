@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-validate-email",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/email",
   "description": "A Flatfile Listener plugin for email validation",
   "registryMetadata": {
@@ -66,13 +66,13 @@
     "directory": "validate/email"
   },
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.8.0"
+    "@flatfile/plugin-record-hook": "^1.10.0"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0"
   }
 }

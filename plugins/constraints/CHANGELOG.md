@@ -1,5 +1,16 @@
 # @flatfile/plugin-constraints
 
+## 6.0.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [fe21d6e]
+  - @flatfile/plugin-record-hook@1.10.0
+
 ## 5.0.0
 
 ### Patch Changes

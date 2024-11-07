@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-export-workbook",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/export-workbook",
   "description": "A plugin for exporting data in Flatfile to Workbooks.",
   "registryMetadata": {
@@ -55,15 +55,15 @@
   "peerDependencies": {
     "@flatfile/api": "^1.9.19",
     "@flatfile/listener": "^1.1.0",
-    "@flatfile/plugin-job-handler": "^0.7.0",
-    "@flatfile/util-common": "^1.5.0",
+    "@flatfile/plugin-job-handler": "^0.8.0",
+    "@flatfile/util-common": "^1.6.0",
     "remeda": "^1.14.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {
-    "@flatfile/plugin-job-handler": "^0.7.0",
-    "@flatfile/util-common": "^1.5.0",
-    "@flatfile/bundler-config-tsup": "^0.1.0",
+    "@flatfile/plugin-job-handler": "^0.8.0",
+    "@flatfile/util-common": "^1.6.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0"
   }
 }

@@ -1,5 +1,16 @@
 # @flatfile/plugin-dxp-config
 
+## 0.9.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [fe21d6e]
+  - @flatfile/util-extractor@2.3.0
+
 ## 0.8.1
 
 ### Patch Changes

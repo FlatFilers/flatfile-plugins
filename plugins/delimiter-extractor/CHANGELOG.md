@@ -1,5 +1,16 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.5.0
+
+### Minor Changes
+
+- fe21d6e: The release swaps the package's bundler to tsup.
+
+### Patch Changes
+
+- Updated dependencies [fe21d6e]
+  - @flatfile/util-extractor@2.3.0
+
 ## 2.4.0
 
 ### Minor Changes
