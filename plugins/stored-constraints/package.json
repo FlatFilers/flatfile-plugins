@@ -1,0 +1,74 @@
+{
+  "name": "@flatfile/plugin-stored-constraints",
+  "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/stored-constraints",
+  "description": "A plugin for running stored constraints",
+  "type": "module",
+  "engines": {
+    "node": ">= 16"
+  },
+  "registryMetadata": {
+    "category": "records"
+  },
+  "exports": {
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.browser.js",
+        "require": "./dist/index.browser.cjs"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build:prod": "NODE_ENV=production tsup",
+    "checks": "tsc --noEmit && attw --pack . && publint .",
+    "lint": "tsc --noEmit",
+    "test": "jest src/*.spec.ts --detectOpenHandles",
+    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
+    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/stored-constraints"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "country-state-city": "^3.2.1",
+    "lodash": "^4.17.21",
+    "luxon": "^3.5.0",
+    "validator": "^13.12.0"
+  },
+  "peerDependencies": {
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0",
+    "@flatfile/plugin-record-hook": "^1.9.0"
+  },
+  "devDependencies": {
+    "@flatfile/plugin-record-hook": "^1.9.0",
+    "@flatfile/bundler-config-tsup": "^0.1.0"
+  }
+}
