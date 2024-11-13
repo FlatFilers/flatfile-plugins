@@ -15,7 +15,7 @@ import { DateTime } from 'luxon'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import type { FlatfileRecord } from '@flatfile/hooks'
 
-const deps = { validator, countryStateCity, luxon: DateTime, }
+const deps = { validator, countryStateCity, luxon: DateTime }
 
 export interface Constraint {
   validator: string
@@ -36,22 +36,35 @@ async function getValidators(event: FlatfileEvent): Promise<Constraint[]> {
 export function storedConstraint() {
   return (listener: FlatfileListener) => {
     listener.use(
-      bulkRecordHook('**', async (records: FlatfileRecord[], event: FlatfileEvent) => {
-        const sheet = await getSheet(event)
-        const storedConstraintFields = getFields(sheet).filter(hasStoredConstraints)
-        const validators = await getValidators(event)
+      bulkRecordHook(
+        '**',
+        async (records: FlatfileRecord[], event: FlatfileEvent) => {
+          const sheet = await getSheet(event)
+          const storedConstraintFields =
+            getFields(sheet).filter(hasStoredConstraints)
+          const validators = await getValidators(event)
 
-        crossEach([records, storedConstraintFields], (record: FlatfileRecord, field: any) => {
-          getStoredConstraints(field.constraints).forEach(
-            async ({ validator }: { validator: string }) => {
-              const constraint = await getValidator(validators, validator)
-              if (constraint) {
-                applyConstraintToRecord(constraint, record, field, deps, sheet)
-              }
-            },
+          crossEach(
+            [records, storedConstraintFields],
+            (record: FlatfileRecord, field: any) => {
+              getStoredConstraints(field.constraints).forEach(
+                async ({ validator }: { validator: string }) => {
+                  const constraint = await getValidator(validators, validator)
+                  if (constraint) {
+                    applyConstraintToRecord(
+                      constraint,
+                      record,
+                      field,
+                      deps,
+                      sheet
+                    )
+                  }
+                }
+              )
+            }
           )
-        })
-      }),
+        }
+      )
     )
   }
 }
