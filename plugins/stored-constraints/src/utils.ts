@@ -1,7 +1,9 @@
-import api from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import * as _ from 'lodash'
 import type { FlatfileEvent } from '@flatfile/listener'
 import { Constraint } from  './stored.constraint'
+
+const api = new FlatfileClient()
 
 export const getSheet = (event: FlatfileEvent ) => api.sheets.get(event.context.sheetId)
 

@@ -5,7 +5,7 @@
   "description": "A plugin for running stored constraints",
   "type": "module",
   "engines": {
-    "node": ">= 16"
+    "node": ">= 18"
   },
   "registryMetadata": {
     "category": "records"
@@ -45,9 +45,9 @@
     "build:prod": "NODE_ENV=production tsup",
     "checks": "tsc --noEmit && attw --pack . && publint .",
     "lint": "tsc --noEmit",
-    "test": "jest src/*.spec.ts --detectOpenHandles",
-    "test:unit": "jest src/*.spec.ts --testPathIgnorePatterns=.*\\.e2e\\.spec\\.ts$ --detectOpenHandles",
-    "test:e2e": "jest src/*.e2e.spec.ts --detectOpenHandles"
+    "test": "vitest run --mode defaults src/*.spec.ts --passWithNoTests",
+    "test:unit": "vitest run --mode defaults src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
+    "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
   },
   "keywords": [],
   "repository": {
@@ -65,10 +65,11 @@
   "peerDependencies": {
     "@flatfile/api": "^1.9.19",
     "@flatfile/listener": "^1.1.0",
-    "@flatfile/plugin-record-hook": "^1.9.0"
+    "@flatfile/plugin-record-hook": "^1.10.0"
   },
   "devDependencies": {
-    "@flatfile/plugin-record-hook": "^1.9.0",
-    "@flatfile/bundler-config-tsup": "^0.1.0"
+    "@flatfile/plugin-record-hook": "^1.10.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
+    "@flatfile/config-vitest": "^0.0.0"
   }
 }
