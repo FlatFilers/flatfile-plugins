@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.5.1
+
+### Patch Changes
+
+- ce13b79: Bumping version to regenerate docs on plugins website
+
 ## 2.5.0
 
 ### Minor Changes
