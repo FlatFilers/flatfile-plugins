@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-record-hook",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/record-hook",
   "description": "A plugin for running custom logic on individual data records in Flatfile.",
   "registryMetadata": {

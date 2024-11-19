@@ -1,5 +1,12 @@
 # @flatfile/plugin-autocast
 
+## 6.0.0
+
+### Patch Changes
+
+- Updated dependencies [776b6f4]
+  - @flatfile/plugin-record-hook@1.11.0
+
 ## 5.0.0
 
 ### Minor Changes

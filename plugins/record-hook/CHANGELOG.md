@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.11.0
+
+### Minor Changes
+
+- 776b6f4: This release removes unchanged values from the payload to improve performance.
+
 ## 1.10.0
 
 ### Minor Changes
