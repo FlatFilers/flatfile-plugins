@@ -5,7 +5,7 @@ import { logError, logInfo } from '@flatfile/util-common'
 import { RecordTranslator } from './record.translator'
 
 // deepEqual is a generic object comparison function that is ambivalent to the key order
-export function deepEqual(obj1, obj2) {
+export function deepEqual(obj1, obj2, options?: { removeUnchanged: boolean }) {
   if (obj1 === obj2) {
     return true
   }
@@ -26,13 +26,41 @@ export function deepEqual(obj1, obj2) {
     return false
   }
 
+  let result = true
   for (let key of keysObj1) {
-    if (!keysObj2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+    if (!keysObj2.includes(key)) {
       return false
+    }
+
+    if (key === 'values' && options?.removeUnchanged) {
+      // Handle values object specially
+      const values1 = obj1[key]
+      const values2 = obj2[key]
+      const valueKeys = Object.keys(values1)
+
+      // Compare each field value
+      for (const fieldKey of valueKeys) {
+        const equal = deepEqual(values1[fieldKey], values2[fieldKey], options)
+        if (equal) {
+          delete values1[fieldKey]
+          delete values2[fieldKey]
+        }
+        if (!equal) result = false
+      }
+
+      // Remove values object if empty
+      if (Object.keys(values1).length === 0) {
+        delete obj1[key]
+        delete obj2[key]
+      }
+    } else {
+      if (!deepEqual(obj1[key], obj2[key], options)) {
+        result = false
+      }
     }
   }
 
-  return true
+  return result
 }
 
 /**
@@ -119,4 +147,12 @@ export async function prepareXRecords(
 ): Promise<FlatfileRecords<any>> {
   const fromX = new RecordTranslator<Flatfile.RecordWithLinks>(records)
   return fromX.toFlatfileRecords()
+}
+
+export function startTimer(label: string, debug: boolean) {
+  debug && console.time(`⏱️  ${label}`)
+}
+
+export function endTimer(label: string, debug: boolean) {
+  debug && console.timeEnd(`⏱️  ${label}`)
 }
