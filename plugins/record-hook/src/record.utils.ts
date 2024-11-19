@@ -5,34 +5,60 @@ import { logError, logInfo } from '@flatfile/util-common'
 import { RecordTranslator } from './record.translator'
 
 // deepEqual is a generic object comparison function that is ambivalent to the key order
-export function deepEqual(obj1, obj2) {
-  if (obj1 === obj2) {
-    return true
-  }
+export function deepEqual(
+  obj1: any,
+  obj2: any,
+  options?: { removeUnchanged: boolean }
+): boolean {
+  // Handle primitive comparisons
+  if (obj1 === obj2) return true
 
-  if (
-    typeof obj1 !== 'object' ||
-    obj1 === null ||
-    typeof obj2 !== 'object' ||
-    obj2 === null
-  ) {
-    return false
-  }
+  if (!isObject(obj1) || !isObject(obj2)) return false
 
-  let keysObj1 = Object.keys(obj1)
-  let keysObj2 = Object.keys(obj2)
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+  if (keys1.length !== keys2.length) return false
 
-  if (keysObj1.length !== keysObj2.length) {
-    return false
-  }
+  return keys1.every((key) => {
+    if (key === 'values') return handleValuesComparison(obj1, obj2)
+    return keys2.includes(key) && deepEqual(obj1[key], obj2[key], options)
+  })
+}
 
-  for (let key of keysObj1) {
-    if (!keysObj2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
-      return false
+function handleValuesComparison(obj1: any, obj2: any): boolean {
+  const values1 = obj1.values
+  const values2 = obj2.values
+  const valueKeys = Object.keys(values1)
+
+  let hasChanges = false
+  const unchangedKeys = []
+
+  // Compare each value and track unchanged ones
+  valueKeys.forEach((key) => {
+    if (deepEqual(values1[key], values2[key])) {
+      unchangedKeys.push(key)
+    } else {
+      hasChanges = true
     }
+  })
+
+  // Remove unchanged values
+  unchangedKeys.forEach((key) => {
+    delete values1[key]
+    delete values2[key]
+  })
+
+  // Clean up empty values object
+  if (Object.keys(values1).length === 0) {
+    delete obj1.values
+    delete obj2.values
   }
 
-  return true
+  return !hasChanges
+}
+
+function isObject(value: any): boolean {
+  return typeof value === 'object' && value !== null
 }
 
 /**
@@ -119,4 +145,12 @@ export async function prepareXRecords(
 ): Promise<FlatfileRecords<any>> {
   const fromX = new RecordTranslator<Flatfile.RecordWithLinks>(records)
   return fromX.toFlatfileRecords()
+}
+
+export function startTimer(label: string, debug: boolean) {
+  debug && console.time(`⏱️  ${label}`)
+}
+
+export function endTimer(label: string, debug: boolean) {
+  debug && console.timeEnd(`⏱️  ${label}`)
 }

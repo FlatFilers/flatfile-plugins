@@ -6,8 +6,10 @@ import {
   cleanRecord,
   completeCommit,
   deepEqual,
+  endTimer,
   prepareFlatfileRecords,
   prepareXRecords,
+  startTimer,
 } from './record.utils'
 
 export interface RecordHookOptions {
@@ -63,6 +65,7 @@ export const BulkRecordHook = async (
   const { debug = false } = options
 
   try {
+    startTimer('fetch data', debug)
     const data = await event.cache.init<Flatfile.RecordsWithLinks>(
       'data',
       async (): Promise<Flatfile.RecordsWithLinks> => {
@@ -85,11 +88,15 @@ export const BulkRecordHook = async (
       'records',
       async () => await prepareXRecords(data)
     )
+    endTimer('fetch data', debug)
 
     // Execute client-defined data hooks
+    startTimer('run handler', debug)
     await asyncBatch(batch.records, handler, options, event)
+    endTimer('run handler', debug)
 
     event.afterAll(async () => {
+      startTimer('filter modified records', debug)
       const { records: batch } =
         event.cache.get<FlatfileRecords<any>>('records')
       const records: Flatfile.RecordsWithLinks =
@@ -103,15 +110,9 @@ export const BulkRecordHook = async (
               (original: Flatfile.RecordWithLinks) => original.id === record.id
             )
           cleanRecord(originalRecord) // Remove fields that should not be compared
-          const hasChanges = !deepEqual(record, originalRecord)
-          if (debug) {
-            logInfo(
-              '@flatfile/plugin-record-hook',
-              `Record ${record.id} ${
-                hasChanges ? 'has' : 'does not have'
-              } changes`
-            )
-          }
+          const hasChanges = !deepEqual(record, originalRecord, {
+            removeUnchanged: true,
+          })
           return hasChanges
         }
       )
@@ -121,16 +122,26 @@ export const BulkRecordHook = async (
         await completeCommit(event, debug)
         return
       }
+      endTimer('filter modified records', debug)
+
+      if (debug) {
+        logInfo(
+          '@flatfile/plugin-record-hook',
+          `${modifiedRecords.length} modified records`
+        )
+      }
 
       try {
-        return await event.update(modifiedRecords)
+        startTimer('update modified records', debug)
+        await event.update(modifiedRecords)
+        endTimer('update modified records', debug)
+        return
       } catch (e) {
         throw new Error('Error updating records')
       }
     })
   } catch (e) {
     logError('@flatfile/plugin-record-hook', (e as Error).message)
-    console.log(e)
     await completeCommit(event, debug)
     return
   }
