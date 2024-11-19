@@ -5,62 +5,60 @@ import { logError, logInfo } from '@flatfile/util-common'
 import { RecordTranslator } from './record.translator'
 
 // deepEqual is a generic object comparison function that is ambivalent to the key order
-export function deepEqual(obj1, obj2, options?: { removeUnchanged: boolean }) {
-  if (obj1 === obj2) {
-    return true
-  }
+export function deepEqual(
+  obj1: any,
+  obj2: any,
+  options?: { removeUnchanged: boolean }
+): boolean {
+  // Handle primitive comparisons
+  if (obj1 === obj2) return true
 
-  if (
-    typeof obj1 !== 'object' ||
-    obj1 === null ||
-    typeof obj2 !== 'object' ||
-    obj2 === null
-  ) {
-    return false
-  }
+  if (!isObject(obj1) || !isObject(obj2)) return false
 
-  let keysObj1 = Object.keys(obj1)
-  let keysObj2 = Object.keys(obj2)
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+  if (keys1.length !== keys2.length) return false
 
-  if (keysObj1.length !== keysObj2.length) {
-    return false
-  }
+  return keys1.every((key) => {
+    if (key === 'values') return handleValuesComparison(obj1, obj2)
+    return keys2.includes(key) && deepEqual(obj1[key], obj2[key], options)
+  })
+}
 
-  let result = true
-  for (let key of keysObj1) {
-    if (!keysObj2.includes(key)) {
-      return false
-    }
+function handleValuesComparison(obj1: any, obj2: any): boolean {
+  const values1 = obj1.values
+  const values2 = obj2.values
+  const valueKeys = Object.keys(values1)
 
-    if (key === 'values' && options?.removeUnchanged) {
-      // Handle values object specially
-      const values1 = obj1[key]
-      const values2 = obj2[key]
-      const valueKeys = Object.keys(values1)
+  let hasChanges = false
+  const unchangedKeys = []
 
-      // Compare each field value
-      for (const fieldKey of valueKeys) {
-        const equal = deepEqual(values1[fieldKey], values2[fieldKey], options)
-        if (equal) {
-          delete values1[fieldKey]
-          delete values2[fieldKey]
-        }
-        if (!equal) result = false
-      }
-
-      // Remove values object if empty
-      if (Object.keys(values1).length === 0) {
-        delete obj1[key]
-        delete obj2[key]
-      }
+  // Compare each value and track unchanged ones
+  valueKeys.forEach((key) => {
+    if (deepEqual(values1[key], values2[key])) {
+      unchangedKeys.push(key)
     } else {
-      if (!deepEqual(obj1[key], obj2[key], options)) {
-        result = false
-      }
+      hasChanges = true
     }
+  })
+
+  // Remove unchanged values
+  unchangedKeys.forEach((key) => {
+    delete values1[key]
+    delete values2[key]
+  })
+
+  // Clean up empty values object
+  if (Object.keys(values1).length === 0) {
+    delete obj1.values
+    delete obj2.values
   }
 
-  return result
+  return !hasChanges
+}
+
+function isObject(value: any): boolean {
+  return typeof value === 'object' && value !== null
 }
 
 /**
