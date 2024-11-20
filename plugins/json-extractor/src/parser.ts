@@ -1,7 +1,7 @@
 import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 
 export function parseBuffer(
-  buffer: Buffer, 
+  buffer: Buffer,
   options?: { readonly fileExt?: string }
 ): WorkbookCapture {
   try {
@@ -12,8 +12,8 @@ export function parseBuffer(
       return {} as WorkbookCapture
     }
 
-    if (options?.fileExt==="jsonl" || options?.fileExt==="jsonlines"){
-      fileContents=`[${fileContents.replace(/\n/g, ",").trim().replace(/,$/, "")}]`;
+    if (options?.fileExt === 'jsonl' || options?.fileExt === 'jsonlines') {
+      fileContents = `[${fileContents.replace(/\n/g, ',').trim().replace(/,$/, '')}]`
     }
 
     const parsedData = JSON.parse(fileContents)

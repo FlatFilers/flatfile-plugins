@@ -5,7 +5,7 @@ import { parseBuffer, parseSheet } from './parser'
 
 describe('parser', function () {
   describe('parser single sheet', function () {
-    const expectedSingleSheetCapture={
+    const expectedSingleSheetCapture = {
       Sheet1: {
         headers: [
           'First Name',
@@ -156,7 +156,7 @@ describe('parser', function () {
         metadata: undefined,
       },
     }
-    
+
     it('has a single sheet from json input', () => {
       const buffer: Buffer = fs.readFileSync(
         path.join(__dirname, '../ref/test-basic.json')
@@ -170,8 +170,8 @@ describe('parser', function () {
       const buffer: Buffer = fs.readFileSync(
         path.join(__dirname, '../ref/test-basic.jsonl')
       )
-      const singleSheetCapture = parseBuffer(buffer, { fileExt: "jsonl" })
-    
+      const singleSheetCapture = parseBuffer(buffer, { fileExt: 'jsonl' })
+
       expect(singleSheetCapture).toEqual(expectedSingleSheetCapture)
     })
   })
