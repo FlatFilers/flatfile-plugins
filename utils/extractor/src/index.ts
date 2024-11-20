@@ -79,6 +79,7 @@ export const Extractor = (
           const capture = await parseBuffer(buffer, {
             ...options,
             fileId,
+            fileExt: file.ext,
             headerSelectionEnabled,
           })
 
