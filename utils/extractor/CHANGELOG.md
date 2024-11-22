@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.4.0
+
+### Minor Changes
+
+- 7ef4cd3: This release adds support for JSONL files in the JSON Extractor plugin.
+
 ## 2.3.0
 
 ### Minor Changes
