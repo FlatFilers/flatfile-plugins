@@ -1,12 +1,32 @@
 import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 
-export function parseBuffer(buffer: Buffer): WorkbookCapture {
+export function parseBuffer(
+  buffer: Buffer,
+  options?: { readonly fileExt?: string }
+): WorkbookCapture {
   try {
-    const fileContents = buffer.toString('utf8')
+    let fileContents = buffer.toString('utf8')
 
     if (!fileContents) {
       console.log('Invalid file contents')
       return {} as WorkbookCapture
+    }
+
+    if (options?.fileExt === 'jsonl' || options?.fileExt === 'jsonlines') {
+      const lines = fileContents
+        .split('\n')
+        .filter((line) => line.trim() !== '')
+        .map((line) => {
+          try {
+            JSON.parse(line)
+            return line
+          } catch (e) {
+            console.error('Invalid JSON line:', line)
+            return null
+          }
+        })
+        .filter((line) => line !== null)
+      fileContents = `[${lines.join(',')}]`
     }
 
     const parsedData = JSON.parse(fileContents)

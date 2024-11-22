@@ -8,7 +8,7 @@ export interface PluginOptions {
 }
 
 export const JSONExtractor = (options?: PluginOptions) => {
-  return Extractor('.json', 'json', parseBuffer, options)
+  return Extractor(/\.(jsonl?|jsonlines)$/i, 'json', parseBuffer, options)
 }
 
 export const jsonParser = parseBuffer
