@@ -37,7 +37,7 @@ export function viewMappedPlugin() {
 
         try {
           // First, we acknowledge the job
-          await tick(10, 'viewMapped.updatingTable')
+          await tick(10, 'plugins.viewMapped.updatingTable')
 
           // Retrieving the info on the custom job we created in the listener above, and storing that info in its own "customJobInfo" variable
           const customJobInfo = await api.jobs.get(jobId)
@@ -59,7 +59,7 @@ export function viewMappedPlugin() {
             mappedFields.push(destinationFieldKey)
           }
 
-          await tick(30, 'viewMapped.updatingTable')
+          await tick(30, 'plugins.viewMapped.updatingTable')
 
           // Making an API call to only get the "data" property out of the response, and saving it as its own "fetchedWorkbook" variable
           // We need to make this API call and cannot just use what's inside of "workbookOne" because we need data in a specific format
@@ -82,7 +82,7 @@ export function viewMappedPlugin() {
             return fields.length > 0 ? fields : null
           })
 
-          await tick(50, 'viewMapped.halfway')
+          await tick(50, 'plugins.viewMapped.halfway')
 
           const sheets = workbook.sheets.map((sheet, index) => {
             const mappedWorkbookFields = filteredWorkbookFields[index]
@@ -102,7 +102,7 @@ export function viewMappedPlugin() {
             }
           })
 
-          await tick(80, 'viewMapped.almostDone')
+          await tick(80, 'plugins.viewMapped.almostDone')
 
           // Updating each sheet in a workbook to only contain fields that a user mapped. This ensures that when the table with data loads, only mapped fields will be displayed
           await api.workbooks.update(workbookId, {
@@ -116,7 +116,7 @@ export function viewMappedPlugin() {
           // Completing the job with an appropriate message to the user
           return {
             outcome: {
-              message: 'viewMapped.complete',
+              message: 'plugins.viewMapped.complete',
               acknowledge: false,
             },
           }
@@ -127,7 +127,7 @@ export function viewMappedPlugin() {
             JSON.stringify(error, null, 2)
           )
           throw new Error(
-            'viewMapped.error'
+            'plugins.viewMapped.error'
           )
         }
       })
