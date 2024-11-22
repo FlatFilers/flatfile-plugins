@@ -54,7 +54,7 @@
   "homepage": "https://github.com/FlatFilers/flatfile-plugins#readme",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.4",
-    "@changesets/cli": "^2.26.1",
+    "@changesets/cli": "^2.27.10",
     "@flatfile/listener": "^1.1.0",
     "@flatfile/utils-testing": "^0.3.1",
     "@octokit/rest": "^21.0.2",
