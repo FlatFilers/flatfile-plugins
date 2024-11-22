@@ -13,7 +13,20 @@ export function parseBuffer(
     }
 
     if (options?.fileExt === 'jsonl' || options?.fileExt === 'jsonlines') {
-      fileContents = `[${fileContents.replace(/\n/g, ',').trim().replace(/,$/, '')}]`
+      const lines = fileContents
+        .split('\n')
+        .filter((line) => line.trim() !== '')
+        .map((line) => {
+          try {
+            JSON.parse(line)
+            return line
+          } catch (e) {
+            console.error('Invalid JSON line:', line)
+            return null
+          }
+        })
+        .filter((line) => line !== null)
+      fileContents = `[${lines.join(',')}]`
     }
 
     const parsedData = JSON.parse(fileContents)

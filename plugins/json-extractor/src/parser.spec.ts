@@ -174,6 +174,18 @@ describe('parser', function () {
 
       expect(singleSheetCapture).toEqual(expectedSingleSheetCapture)
     })
+
+    it('handles empty lines in JSONL', () => {
+      const buffer = Buffer.from('{"a": 1}\n\n{"b": 2}')
+      const result = parseBuffer(buffer, { fileExt: 'jsonl' })
+      expect(result.Sheet1.data).toHaveLength(2)
+    })
+
+    it('skips invalid lines in JSONL', () => {
+      const buffer = Buffer.from('{"a": 1}\n{invalid}\n{"b": 2}')
+      const result = parseBuffer(buffer, { fileExt: 'jsonl' })
+      expect(result.Sheet1.data).toHaveLength(2)
+    })
   })
 
   describe('parser multisheet', function () {
