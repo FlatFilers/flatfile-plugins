@@ -1,30 +1,39 @@
-import { FlatfileClient } from '@flatfile/api'
-import * as _ from 'lodash'
+import { type Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+import type { FlatfileRecord } from '@flatfile/plugin-record-hook'
 import { Constraint } from './stored.constraint'
 
 const api = new FlatfileClient()
 
-export const getSheet = (event: FlatfileEvent) =>
-  api.sheets.get(event.context.sheetId)
+export const getSheet = async (
+  event: FlatfileEvent
+): Promise<Flatfile.SheetResponse> =>
+  await api.sheets.get(event.context.sheetId)
 
-export const getFields = ({ data }) => data.config.fields
+export const getFields = ({ data }: { data: Flatfile.Sheet }) =>
+  data.config.fields
 
-export const getStoredConstraints = (constraints: Constraint[]) =>
-  constraints?.filter((c) => c.type == 'stored')
+export const getStoredConstraints = (
+  constraints: Flatfile.Constraint[]
+): Flatfile.StoredConstraint[] =>
+  constraints?.filter((c) => c.type === 'stored')
 
-export const hasStoredConstraints = (field) =>
+export const hasStoredConstraints = (field: Flatfile.Property) =>
   getStoredConstraints(field.constraints || []).length > 0
 
-export const getValidator = (v, n) => v.find((w) => w.validator === n)
+export const getValidator = (
+  v: Constraint[],
+  n: string
+): Constraint | undefined => v.find((w) => w.validator === n)
+
 export const applyConstraintToRecord = (
   constraint: Constraint,
-  record,
-  field,
-  deps,
-  sheet
+  record: FlatfileRecord,
+  field: Flatfile.Property,
+  deps: any,
+  sheet: Flatfile.SheetResponse
 ) => {
-  const storedConstraint = field.constraints?.find(
+  const storedConstraint = getStoredConstraints(field.constraints || []).find(
     (fieldConstraint) => fieldConstraint.validator === constraint.validator
   )
   const { config = {} } = storedConstraint || {}
@@ -45,8 +54,11 @@ export const applyConstraintToRecord = (
     sheet,
   })
 }
-export const crossProduct = (...a) =>
-  a.reduce((u, c) => _.flatMap(u, (a) => c.map((b) => a.concat(b))), [[]])
-export const crossEach = (a, cb) => crossProduct(...a).forEach((p) => cb(...p))
-export const getAppConstraints = (a) =>
-  api.apps.getConstraints(a, { includeBuiltins: true })
+export const crossProduct = <T>(...a: T[][]): T[][] =>
+  a.reduce((u, c) => u.flatMap((x) => c.map((b) => [...x, b])), [[]])
+export const crossEach = <T>(a: T[][], cb: (...args: T[]) => void): void =>
+  crossProduct(...a).forEach((p) => cb(...p))
+export const getAppConstraints = async (
+  a: Flatfile.AppId
+): Promise<Flatfile.ConstraintsResponse> =>
+  await api.apps.getConstraints(a, { includeBuiltins: true })

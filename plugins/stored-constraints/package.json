@@ -58,7 +58,6 @@
   "license": "ISC",
   "dependencies": {
     "country-state-city": "^3.2.1",
-    "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "validator": "^13.12.0"
   },
