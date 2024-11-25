@@ -63,7 +63,7 @@
     "validator": "^13.12.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.9.19",
+    "@flatfile/api": "^1.11.0",
     "@flatfile/listener": "^1.1.0",
     "@flatfile/plugin-record-hook": "^1.10.0"
   },
