@@ -1,115 +1,52 @@
-import type { FlatfileListener } from '@flatfile/listener'
-import { exportDelimitedZip } from '@flatfile/plugin-export-delimited-zip'
-import { JSONExtractor } from '@flatfile/plugin-json-extractor'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import {
+  bulkRecordHook,
+  type FlatfileRecord,
+} from '@flatfile/plugin-record-hook'
+import { recordHookStream } from '@flatfile/plugin-record-hook-stream'
 import { configureSpace } from '@flatfile/plugin-space-configure'
+import { contactsSheet, oneHundredSheet } from '../../playground/src/blueprints'
 
 export default async function (listener: FlatfileListener) {
-  listener.use(JSONExtractor())
+  // listener.use(
+  //   bulkRecordHook(
+  //     '**',
+  //     (records: FlatfileRecord[], event: FlatfileEvent) => {
+  //       for (const record of records) {
+  //         for (const field of oneHundredSheet.fields) {
+  //           record.addError(field.key, 'Testing streaming')
+  //         }
+  //         // record.addError('one', 'Testing streaming')
+  //       }
+  //       return records
+  //     },
+  //     { debug: true }
+  //   )
+  // )
   listener.use(
-    exportDelimitedZip({
-      job: 'export-delimited-zip',
-      delimiter: '\t',
-      fileExtension: 'tsv',
-      debug: true,
-    })
+    recordHookStream(
+      '**',
+      (records, event: FlatfileEvent) => {
+        for (const record of records) {
+          for (const field of oneHundredSheet.fields) {
+            record.err(field.key, 'Testing something')
+          }
+        }
+        return records
+      },
+      { includeMessages: true, debug: true }
+    )
   )
   listener.use(
     configureSpace({
       workbooks: [
-        {
-          name: 'Sandbox',
-          sheets: [
-            {
-              name: 'Sales',
-              slug: 'sales',
-              fields: [
-                {
-                  key: 'date',
-                  type: 'string',
-                  label: 'Date',
-                },
-                {
-                  key: 'product',
-                  type: 'string',
-                  label: 'Product',
-                },
-                {
-                  key: 'category',
-                  type: 'string',
-                  label: 'Category',
-                },
-                {
-                  key: 'region',
-                  type: 'string',
-                  label: 'Region',
-                },
-                {
-                  key: 'salesAmount',
-                  type: 'number',
-                  label: 'Sales Amount',
-                },
-              ],
-              actions: [
-                {
-                  operation: 'generateExampleRecords',
-                  label: 'Generate Example Records',
-                  description:
-                    'This custom action code generates example records using Anthropic.',
-                  primary: false,
-                  mode: 'foreground',
-                },
-              ],
-            },
-            {
-              name: 'Sales 2',
-              slug: 'sales-2',
-              fields: [
-                {
-                  key: 'date',
-                  type: 'string',
-                  label: 'Date',
-                },
-                {
-                  key: 'product',
-                  type: 'string',
-                  label: 'Product',
-                },
-                {
-                  key: 'category',
-                  type: 'string',
-                  label: 'Category',
-                },
-                {
-                  key: 'region',
-                  type: 'string',
-                  label: 'Region',
-                },
-                {
-                  key: 'salesAmount',
-                  type: 'number',
-                  label: 'Sales Amount',
-                },
-              ],
-              actions: [
-                {
-                  operation: 'export-external-api',
-                  label: 'Export to External API',
-                  description:
-                    'This custom action code exports the records in the Sales sheet to an external API.',
-                  primary: false,
-                  mode: 'foreground',
-                },
-              ],
-            },
-          ],
-          actions: [
-            {
-              operation: 'export-delimited-zip',
-              label: 'Export to Delimited ZIP',
-              mode: 'foreground',
-            },
-          ],
-        },
+        // {
+        //   name: 'Sandbox',
+        //   sheets: [
+        //     contactsSheet,
+        //   ],
+        // },
+        oneHundredSheet,
       ],
     })
   )

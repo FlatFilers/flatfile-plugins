@@ -1,0 +1,68 @@
+{
+  "name": "@flatfile/plugin-record-hook-stream",
+  "version": "0.0.1",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/record-hook-stream",
+  "description": "A plugin for running custom logic on individual data records in Flatfile.",
+  "registryMetadata": {
+    "category": "records"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">= 18"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "exports": {
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build:prod": "NODE_ENV=production tsup",
+    "checks": "tsc --noEmit && attw --pack . && publint .",
+    "lint": "tsc --noEmit",
+    "test": "vitest run --mode defaults src/*.spec.ts --passWithNoTests",
+    "test:unit": "vitest run --mode defaults src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
+    "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-transform",
+    "featured"
+  ],
+  "author": "Carl Brugger",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/record-hook-stream"
+  },
+  "license": "ISC",
+  "peerDependencies": {
+    "@flatfile/listener": "^1.1.0"
+  },
+  "devDependencies": {
+    "@flatfile/bundler-config-tsup": "^0.2.0",
+    "@flatfile/config-vitest": "^0.0.0"
+  }
+}
