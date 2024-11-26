@@ -13,10 +13,10 @@ export default async function (listener: FlatfileListener) {
   //     '**',
   //     (records: FlatfileRecord[], event: FlatfileEvent) => {
   //       for (const record of records) {
-  //         for (const field of oneHundredSheet.fields) {
-  //           record.addError(field.key, 'Testing streaming')
-  //         }
-  //         // record.addError('one', 'Testing streaming')
+  //         // for (const field of oneHundredSheet.fields) {
+  //         //   record.addError(field.key, 'Testing streaming')
+  //         // }
+  //         record.addError('one', 'Testing streaming')
   //       }
   //       return records
   //     },
@@ -28,13 +28,14 @@ export default async function (listener: FlatfileListener) {
       '**',
       (records, event: FlatfileEvent) => {
         for (const record of records) {
-          for (const field of oneHundredSheet.fields) {
-            record.err(field.key, 'Testing something')
-          }
+          // for (const field of oneHundredSheet.fields) {
+          //   record.err(field.key, 'Testing something')
+          // }
+          record.err('one', 'Testing something')
         }
         return records
       },
-      { includeMessages: true, debug: true }
+      { includeMessages: true }
     )
   )
   listener.use(

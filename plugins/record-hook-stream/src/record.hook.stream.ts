@@ -1,5 +1,5 @@
 import type { FlatfileEvent } from '@flatfile/listener'
-import { request } from 'https'
+import { request } from 'node:https'
 import { RecordHookStreamOptions } from '.'
 import { Item } from './utils/item'
 

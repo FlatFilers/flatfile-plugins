@@ -19,7 +19,7 @@ export const recordHookStream = (
         .then(
           (results: { totalProcessed: number; totalTimeSeconds: string }) => {
             console.log(
-              `Processed ${results.totalProcessed} records in ${results.totalTimeSeconds} seconds (r/s: ${Math.ceil(results.totalProcessed / parseFloat(results.totalTimeSeconds))})`
+              `[${event.src.id}] Processed ${results.totalProcessed} records in ${results.totalTimeSeconds} seconds (r/s: ${Math.ceil(results.totalProcessed / parseFloat(results.totalTimeSeconds))})`
             )
           }
         )
