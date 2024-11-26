@@ -63,9 +63,11 @@ export const BulkRecordHook = async (
   options: BulkRecordHookOptions = {}
 ) => {
   const { debug = false } = options
+  debug && console.log('🐢 bulkRecordHook')
 
   try {
-    startTimer('fetch data', debug)
+    startTimer(`bulkRecordHook duration ${event.src.id}`, debug)
+    startTimer('fetch records duration', debug)
     const data = await event.cache.init<Flatfile.RecordsWithLinks>(
       'data',
       async (): Promise<Flatfile.RecordsWithLinks> => {
@@ -88,15 +90,15 @@ export const BulkRecordHook = async (
       'records',
       async () => await prepareXRecords(data)
     )
-    endTimer('fetch data', debug)
+    endTimer('fetch records duration', debug)
 
     // Execute client-defined data hooks
-    startTimer('run handler', debug)
+    startTimer('handler duration', debug)
     await asyncBatch(batch.records, handler, options, event)
-    endTimer('run handler', debug)
+    endTimer('handler duration', debug)
 
     event.afterAll(async () => {
-      startTimer('filter modified records', debug)
+      startTimer('filter modified records duration', debug)
       const { records: batch } =
         event.cache.get<FlatfileRecords<any>>('records')
       const records: Flatfile.RecordsWithLinks =
@@ -122,19 +124,19 @@ export const BulkRecordHook = async (
         await completeCommit(event, debug)
         return
       }
-      endTimer('filter modified records', debug)
+      endTimer('filter modified records duration', debug)
 
-      if (debug) {
+      debug &&
         logInfo(
           '@flatfile/plugin-record-hook',
           `${modifiedRecords.length} modified records`
         )
-      }
 
       try {
-        startTimer('update modified records', debug)
+        startTimer('write duration', debug)
         await event.update(modifiedRecords)
-        endTimer('update modified records', debug)
+        endTimer('write duration', debug)
+        endTimer(`bulkRecordHook duration ${event.src.id}`, debug)
         return
       } catch (e) {
         throw new Error('Error updating records')

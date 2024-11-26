@@ -7,7 +7,7 @@
   "description": "",
   "license": "ISC",
   "scripts": {
-    "dev": "node --enable-source-maps --inspect ../../node_modules/.bin/flatfile develop",
+    "dev": "node --enable-source-maps  --trace-warnings --inspect ../../node_modules/.bin/flatfile develop",
     "dev:local": "dotenvx run --env-file=.env.local -- npm run dev",
     "dev:staging": "dotenvx run --env-file=.env.staging -- npm run dev",
     "dev:prod": "dotenvx run --env-file=.env.prod -- npm run dev",
@@ -30,6 +30,6 @@
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "^0.39.0",
-    "flatfile": "^3.6.1"
+    "flatfile": "^3.8.0"
   }
 }
