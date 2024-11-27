@@ -1,6 +1,4 @@
 import { WorkbookCapture } from '@flatfile/util-extractor'
-import { mapValues } from 'remeda'
-import toJSON from 'xml-json-format'
 
 export function parseBuffer(
   buffer: Buffer,
@@ -19,7 +17,9 @@ export function parseBuffer(
     [sheetName]: {
       headers,
       data: data.map((row) => {
-        return mapValues(transform(row), (value) => ({ value }))
+        return Object.fromEntries(
+          Object.entries(transform(row)).map(([key, value]) => [key, { value }])
+        )
       }),
     },
   } as WorkbookCapture
@@ -34,8 +34,10 @@ export function flatToValues(
 }
 
 export function xmlToJson(xml: string): Array<Record<string, any>> {
-  const json = findRoot(toJSON(xml))
-  return json.map((obj) => flattenObject(obj))
+  const xmlJsonFormat = require('xml-json-format').default
+  const json = xmlJsonFormat(xml)
+  const root = findRoot(json)
+  return root.map((obj) => flattenObject(obj))
 }
 
 export function headersFromObjectList(
