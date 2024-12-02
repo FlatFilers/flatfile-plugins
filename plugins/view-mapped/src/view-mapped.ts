@@ -126,9 +126,7 @@ export function viewMappedPlugin() {
             '@flatfile/plugin-view-mapped',
             JSON.stringify(error, null, 2)
           )
-          throw new Error(
-            'plugins.viewMapped.error'
-          )
+          throw new Error('plugins.viewMapped.error')
         }
       })
     )
