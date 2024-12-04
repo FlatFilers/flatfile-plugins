@@ -1,5 +1,11 @@
 # @flatfile/plugin-view-mapped
 
+## 1.3.0
+
+### Minor Changes
+
+- c71a101: This release add message translations to the view-mapped plugin.
+
 ## 1.2.0
 
 ### Minor Changes
