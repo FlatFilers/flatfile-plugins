@@ -62,7 +62,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/hooks": "^1.4.1",
+    "@flatfile/hooks": "^1.6.0",
     "@flatfile/util-common": "^1.6.0"
   },
   "peerDependencies": {

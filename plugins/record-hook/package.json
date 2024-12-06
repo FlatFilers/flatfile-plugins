@@ -72,7 +72,7 @@
   },
   "peerDependencies": {
     "@flatfile/api": "^1.9.19",
-    "@flatfile/hooks": "^1.4.1",
+    "@flatfile/hooks": "^1.6.0",
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
