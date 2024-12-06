@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 1.11.2
+
+### Patch Changes
+
+- 2d1acee: Update @flatfile/hooks dep
+
 ## 1.11.1
 
 ### Patch Changes
