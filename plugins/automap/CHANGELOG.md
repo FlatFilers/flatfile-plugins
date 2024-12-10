@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.8.1
+
+### Patch Changes
+
+- 35df72c: This release adds additional debug messaging to the automap plugin
+
 ## 0.8.0
 
 ### Minor Changes
