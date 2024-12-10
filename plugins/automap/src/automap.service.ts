@@ -90,7 +90,15 @@ export class AutomapService {
             )
 
             const destinationSheetId = destinationSheet?.id
-            if (this.isNil(destinationSheetId)) return
+            if (this.isNil(destinationSheetId)) {
+              if (this.options.debug) {
+                logError(
+                  '@flatfile/plugin-automap',
+                  'Unable to determine destination sheet'
+                )
+              }
+              return
+            }
 
             try {
               const { data: job } = await api.jobs.create({
@@ -157,6 +165,12 @@ export class AutomapService {
     const targets = workbooks.filter((w) => !w.labels?.includes('file'))
 
     if (targets.length === 0) {
+      if (this.options.debug) {
+        logError(
+          '@flatfile/plugin-automap',
+          'No workbooks found, skipping automap'
+        )
+      }
       return undefined
     } else if (!this.isNil(targetWorkbook)) {
       const target = targets.find(
@@ -333,6 +347,12 @@ export class AutomapService {
     if (sheets.length === 1 && !this.isNil(targetSheet)) {
       return [{ source: sheets[0].id, target: targetSheet }]
     } else {
+      if (this.options.debug) {
+        logWarn(
+          '@flatfile/plugin-automap',
+          'Unable to determine mapping between source and destination sheets, skipping automap'
+        )
+      }
       return []
     }
   }
