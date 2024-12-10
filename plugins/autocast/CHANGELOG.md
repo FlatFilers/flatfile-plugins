@@ -1,5 +1,13 @@
 # @flatfile/plugin-autocast
 
+## 6.0.1
+
+### Patch Changes
+
+- 2d1acee: Update @flatfile/hooks dep
+- Updated dependencies [2d1acee]
+  - @flatfile/plugin-record-hook@1.11.2
+
 ## 6.0.0
 
 ### Patch Changes
