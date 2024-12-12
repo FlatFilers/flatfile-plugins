@@ -1,4 +1,4 @@
-import { FlatfileClient } from '@flatfile/api'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
@@ -48,6 +48,10 @@ export function viewMappedPlugin() {
           // Obtaining the mapping job's execution plan to later extract "fieldMapping" out of it, which tells us which fields were mapped in the Matching step
           const jobPlan = await api.jobs.getExecutionPlan(mappingJobId)
 
+          const destinationSheetId = (
+            jobPlan.data.job.config as Flatfile.MappingProgramJobConfig
+          ).destinationSheetId
+
           // Initializing an empty array to store the keys of the mapped fields
           const mappedFields = []
 
@@ -67,11 +71,13 @@ export function viewMappedPlugin() {
 
           // Looping through all sheets of the Workbook One. For all fields that are mapped, updating those fields' metadata to "{mapped: true}"
           workbook.sheets.forEach((sheet) => {
-            sheet.config.fields.forEach((field) => {
-              if (mappedFields.includes(field.key)) {
-                field.metadata = { mapped: true }
-              }
-            })
+            if (sheet.id === destinationSheetId) {
+              sheet.config.fields.forEach((field) => {
+                if (mappedFields.includes(field.key)) {
+                  field.metadata = { mapped: true }
+                }
+              })
+            }
           })
 
           // Looping over each sheet in "workbook" and filtering for fields with metadata "mapped: true". Saving mapped fields per each sheet inside of "filteredWorkbookFields" varibable
