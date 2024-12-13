@@ -5,6 +5,8 @@ import { logError } from '@flatfile/util-common'
 
 const api = new FlatfileClient()
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 /**
  * This plugin allows you to make the post-mapping sheet only display mapped data
  */
@@ -69,6 +71,14 @@ export function viewMappedPlugin() {
           // We need to make this API call and cannot just use what's inside of "workbookOne" because we need data in a specific format
           const { data: workbook } = await api.workbooks.get(workbookId)
 
+          // If trackChanges is not enabled, we skip the rest of the job. This configuration is required to provide the plugins with the
+          // awareness that all hooks have run. Without it, we run into a race condition between the hook and the Workbook update. If the
+          // Workbook update runs before the hook, the hook will not be able to update the Workbook.
+          if (!workbook.settings.trackChanges) {
+            console.log('Skipping because trackChanges is not enabled')
+            return
+          }
+
           // Looping through all sheets of the Workbook One. For all fields that are mapped, updating those fields' metadata to "{mapped: true}"
           workbook.sheets.forEach((sheet) => {
             if (sheet.id === destinationSheetId) {
@@ -109,6 +119,23 @@ export function viewMappedPlugin() {
           })
 
           await tick(80, 'plugins.viewMapped.almostDone')
+
+          // Check that all commits are completed before running this job
+          let hasUncompletedCommits = true
+          do {
+            const { data: commits } = await api.sheets.getSheetCommits(
+              destinationSheetId,
+              {
+                completed: false,
+              }
+            )
+            console.log(`Waiting on ${commits.length} commits to complete...`)
+            hasUncompletedCommits = commits.length > 0
+            if (hasUncompletedCommits) {
+              // We wait for 200ms between each check to avoid making too many requests to the API
+              await sleep(200)
+            }
+          } while (hasUncompletedCommits)
 
           // Updating each sheet in a workbook to only contain fields that a user mapped. This ensures that when the table with data loads, only mapped fields will be displayed
           await api.workbooks.update(workbookId, {
