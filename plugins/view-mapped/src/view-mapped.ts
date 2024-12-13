@@ -1,4 +1,4 @@
-import { Flatfile, FlatfileClient } from '@flatfile/api'
+import { type Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { logError } from '@flatfile/util-common'
