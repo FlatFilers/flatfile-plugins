@@ -34,15 +34,6 @@ async function getValidators(event: FlatfileEvent): Promise<Constraint[]> {
   })
 }
 
-process.on('uncaughtException', (error) => {
-  console.error(`Uncaught exception: ${error}`)
-  process.exit(1)
-})
-process.on('unhandledRejection', (reason, promise) => {
-  console.error(`Unhandled rejection at: ${promise} reason: ${reason}`)
-  process.exit(1)
-})
-
 export function storedConstraint() {
   return bulkRecordHook(
     '**',
