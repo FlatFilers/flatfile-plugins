@@ -33,15 +33,16 @@
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
+  "umd": "./dist/index.umd.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup",
-    "build:watch": "tsup --watch",
-    "build:prod": "NODE_ENV=production tsup",
+    "build": "tsup && rollup -c",
+    "build:watch": "tsup --watch && rollup -c --watch",
+    "build:prod": "NODE_ENV=production tsup && rollup -c",
     "checks": "tsc --noEmit && attw --pack . && publint .",
     "lint": "tsc --noEmit",
     "test": "vitest run --mode defaults src/*.spec.ts --passWithNoTests",
