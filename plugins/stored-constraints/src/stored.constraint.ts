@@ -52,7 +52,7 @@ export function storedConstraint() {
                 try {
                   applyConstraintToRecord(constraint, record, field, deps, sheet)
                 } catch(error) {
-                  console.error(`Error executing constraint: ${error}`)
+                  console.error(`Error executing constraint: ${error.message}`)
                 }
               }
             }
