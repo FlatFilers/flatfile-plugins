@@ -50,8 +50,14 @@ export function storedConstraint() {
               const constraint = await getValidator(validators, validator)
               if (constraint) {
                 try {
-                  applyConstraintToRecord(constraint, record, field, deps, sheet)
-                } catch(error) {
+                  applyConstraintToRecord(
+                    constraint,
+                    record,
+                    field,
+                    deps,
+                    sheet
+                  )
+                } catch (error) {
                   console.error(`Error executing constraint: ${error.message}`)
                 }
               }
