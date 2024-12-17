@@ -34,6 +34,15 @@ async function getValidators(event: FlatfileEvent): Promise<Constraint[]> {
   })
 }
 
+process.on('uncaughtException', (error) => {
+  console.error(`Uncaught exception: ${error}`)
+  process.exit(1)
+})
+process.on('unhandledRejection', (reason, promise) => {
+  console.error(`Unhandled rejection at: ${promise} reason: ${reason}`)
+  process.exit(1)
+})
+
 export function storedConstraint() {
   return bulkRecordHook(
     '**',
@@ -42,7 +51,6 @@ export function storedConstraint() {
       const storedConstraintFields =
         getFields(sheet).filter(hasStoredConstraints)
       const validators = await getValidators(event)
-
       crossEach(
         [records, storedConstraintFields],
         (record: FlatfileRecord, field: Flatfile.Property) => {
@@ -50,7 +58,11 @@ export function storedConstraint() {
             async ({ validator }: { validator: string }) => {
               const constraint = await getValidator(validators, validator)
               if (constraint) {
-                applyConstraintToRecord(constraint, record, field, deps, sheet)
+                try {
+                  applyConstraintToRecord(constraint, record, field, deps, sheet)
+                } catch(error) {
+                  console.error(`Error executing constraint: ${error}`)
+                }
               }
             }
           )
