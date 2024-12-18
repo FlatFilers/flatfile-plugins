@@ -42,7 +42,6 @@ export function storedConstraint() {
       const storedConstraintFields =
         getFields(sheet).filter(hasStoredConstraints)
       const validators = await getValidators(event)
-
       crossEach(
         [records, storedConstraintFields],
         (record: FlatfileRecord, field: Flatfile.Property) => {
@@ -50,7 +49,24 @@ export function storedConstraint() {
             async ({ validator }: { validator: string }) => {
               const constraint = await getValidator(validators, validator)
               if (constraint) {
-                applyConstraintToRecord(constraint, record, field, deps, sheet)
+                try {
+                  applyConstraintToRecord(
+                    constraint,
+                    record,
+                    field,
+                    deps,
+                    sheet
+                  )
+                } catch (error) {
+                  if (error instanceof Error) {
+                    console.error(
+                      `Error executing constraint: ${error.message}`
+                    )
+                  } else {
+                    const errorMessage = String(error)
+                    console.error(`Error executing constraint: ${errorMessage}`)
+                  }
+                }
               }
             }
           )
