@@ -58,7 +58,7 @@ export const BulkRecordHook = async (
   event: FlatfileEvent,
   handler: (
     records: FlatfileRecord[],
-    event: FlatfileEvent
+    event?: FlatfileEvent
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
