@@ -1,6 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
 import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+import type { FlatfileTickFunction } from '../../record-hook/src'
 import {
   type PartialSheetConfig,
   generateSetup,
@@ -18,10 +19,7 @@ import { getMergeClient, getSecret, handleError, snakeToCamel } from './utils'
 const api = new FlatfileClient()
 
 export function handleCreateConnectedWorkbooks() {
-  return async (
-    event: FlatfileEvent,
-    tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
-  ) => {
+  return async (event: FlatfileEvent, tick: FlatfileTickFunction) => {
     try {
       const { spaceId, environmentId, jobId } = event.context
 

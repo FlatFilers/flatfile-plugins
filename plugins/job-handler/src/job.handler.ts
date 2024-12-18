@@ -5,6 +5,7 @@ import type {
   FlatfileEvent,
   FlatfileListener,
 } from '@flatfile/listener'
+import type { FlatfileTickFunction } from '../../record-hook/src'
 import { log, logError } from '@flatfile/util-common'
 
 const api = new FlatfileClient()
@@ -36,7 +37,7 @@ export function jobHandler(
   job: string | EventFilter,
   handler: (
     event: FlatfileEvent,
-    tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
+    tick: FlatfileTickFunction
   ) => Promise<void | Flatfile.JobCompleteDetails>,
   opts: PluginOptions = {}
 ) {

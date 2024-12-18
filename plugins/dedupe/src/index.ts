@@ -1,5 +1,5 @@
-import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { FlatfileTickFunction } from '../../record-hook/src'
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { PluginOptions, dedupe } from './dedupe.plugin'
 
@@ -14,13 +14,7 @@ export const dedupePlugin = (jobOperation: string, opts: PluginOptions) => {
     listener.use(
       jobHandler(
         { operation: jobOperation },
-        async (
-          event: FlatfileEvent,
-          tick: (
-            progress: number,
-            message?: string
-          ) => Promise<Flatfile.JobResponse>
-        ) => {
+        async (event: FlatfileEvent, tick: FlatfileTickFunction) => {
           await dedupe(event, tick, opts)
         }
       )

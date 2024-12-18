@@ -87,7 +87,7 @@ export default function (listener: FlatfileListener) {
   const callback = async (
     event: FlatfileEvent,
     workbookIds: string[],
-    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
+    tick: FlatfileTickFunction
   ) => {
     const { spaceId } = event.context;
     await api.documents.create(spaceId, {

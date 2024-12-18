@@ -1,4 +1,4 @@
-import { Flatfile } from '@flatfile/api'
+import type { FlatfileTickFunction } from '../../record-hook/src'
 import { MergeClient } from '@mergeapi/merge-node-client'
 import { MAX_SYNC_ATTEMPTS, SYNC_RETRY_INTERVAL_MS } from './config'
 import { checkAllSyncsComplete } from './sync.status.check'
@@ -7,7 +7,7 @@ import { handleError } from './utils'
 export async function waitForMergeSync(
   mergeClient: MergeClient,
   category: string,
-  tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
+  tick: FlatfileTickFunction
 ): Promise<void> {
   try {
     let attempts = 0
