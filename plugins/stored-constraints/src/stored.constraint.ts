@@ -58,7 +58,12 @@ export function storedConstraint() {
                     sheet
                   )
                 } catch (error) {
-                  console.error(`Error executing constraint: ${error.message}`)
+                  if (error instanceof Error) {
+                    console.error(`Error executing constraint: ${error.message}`)
+                  } else {
+                    const errorMessage = String(error)
+                    console.error(`Error executing constraint: ${errorMessage}`)
+                  }
                 }
               }
             }
