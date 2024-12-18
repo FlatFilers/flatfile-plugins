@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.7.0
+
+### Minor Changes
+
+- ee80aa8: Add UMD build to @flatfile/utils-common
+
 ## 1.6.0
 
 ### Minor Changes
