@@ -59,7 +59,9 @@ export function storedConstraint() {
                   )
                 } catch (error) {
                   if (error instanceof Error) {
-                    console.error(`Error executing constraint: ${error.message}`)
+                    console.error(
+                      `Error executing constraint: ${error.message}`
+                    )
                   } else {
                     const errorMessage = String(error)
                     console.error(`Error executing constraint: ${errorMessage}`)
