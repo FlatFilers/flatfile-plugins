@@ -1,4 +1,5 @@
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import type { FlatfileTickFunction } from '../../record-hook/src'
 
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import { jobHandler } from '@flatfile/plugin-job-handler'
@@ -39,13 +40,7 @@ export const ZipExtractor = (options: PluginOptions = {}) => {
     listener.use(
       jobHandler(
         { operation: 'extract-plugin-zip' },
-        async (
-          event: FlatfileEvent,
-          tick: (
-            progress: number,
-            message?: string
-          ) => Promise<Flatfile.JobResponse>
-        ) => {
+        async (event: FlatfileEvent, tick: FlatfileTickFunction) => {
           const { spaceId, environmentId } = event.context
 
           try {

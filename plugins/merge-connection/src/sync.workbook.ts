@@ -1,6 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
 import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+import type { FlatfileTickFunction } from '../../record-hook/src'
 import { MERGE_ACCESS_KEY } from './config'
 import { waitForMergeSync } from './poll.for.merge.sync'
 import { syncData } from './sync.data'
@@ -9,10 +10,7 @@ import { getMergeClient, getSecret, handleError } from './utils'
 const api = new FlatfileClient()
 
 export function handleConnectedWorkbookSync() {
-  return async (
-    event: FlatfileEvent,
-    tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
-  ) => {
+  return async (event: FlatfileEvent, tick: FlatfileTickFunction) => {
     try {
       const { spaceId, workbookId, environmentId } = event.context
       const apiKey = await getSecret(spaceId, environmentId, MERGE_ACCESS_KEY)
