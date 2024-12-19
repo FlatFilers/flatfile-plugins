@@ -1,5 +1,5 @@
 import type { FlatfileEvent } from '@flatfile/listener'
-import { TickFunction } from '@flatfile/plugin-job-handler'
+import type { TickFunction } from '@flatfile/plugin-job-handler'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 import { generateSetup, type OpenAPISetupFactory } from './setup.factory'
 
