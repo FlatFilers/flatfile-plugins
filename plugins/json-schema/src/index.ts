@@ -1,5 +1,5 @@
-import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+import type { TickFunction } from '@flatfile/plugin-job-handler'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 import { generateSetup, type JsonSetupFactory } from './setup.factory'
 
@@ -8,7 +8,7 @@ export function configureSpaceWithJsonSchema(
   callback?: (
     event: FlatfileEvent,
     workbookIds: string[],
-    tick: (progress?: number, message?: string) => Promise<Flatfile.JobResponse>
+    tick: TickFunction
   ) => any | Promise<any>
 ) {
   return configureSpace(() => generateSetup(setupFactory), callback)

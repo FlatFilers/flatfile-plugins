@@ -1,7 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
 import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { jobHandler } from '@flatfile/plugin-job-handler'
+import { type TickFunction, jobHandler } from '@flatfile/plugin-job-handler'
 
 const api = new FlatfileClient()
 
@@ -28,7 +28,7 @@ export function configureSpace(
   callback?: (
     event: FlatfileEvent,
     workbookIds: string[],
-    tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
+    tick: TickFunction
   ) => any | Promise<any>
 ) {
   return function (listener: FlatfileListener) {

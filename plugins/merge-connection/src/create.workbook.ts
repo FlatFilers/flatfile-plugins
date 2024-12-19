@@ -5,6 +5,7 @@ import {
   type PartialSheetConfig,
   generateSetup,
 } from '@flatfile/plugin-convert-openapi-schema'
+import type { TickFunction } from '@flatfile/plugin-job-handler'
 import type { Setup } from '@flatfile/plugin-space-configure'
 import { MergeClient } from '@mergeapi/merge-node-client'
 import {
@@ -18,10 +19,7 @@ import { getMergeClient, getSecret, handleError, snakeToCamel } from './utils'
 const api = new FlatfileClient()
 
 export function handleCreateConnectedWorkbooks() {
-  return async (
-    event: FlatfileEvent,
-    tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
-  ) => {
+  return async (event: FlatfileEvent, tick: TickFunction) => {
     try {
       const { spaceId, environmentId, jobId } = event.context
 

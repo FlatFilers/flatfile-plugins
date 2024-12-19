@@ -1,6 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
 import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+import type { TickFunction } from '@flatfile/plugin-job-handler'
 import { processRecords } from '@flatfile/util-common'
 import { keepFirst } from './keep.first.logic'
 import { keepLast } from './keep.last.logic'
@@ -27,7 +28,7 @@ export interface PluginOptions {
 
 export const dedupe = async (
   event: FlatfileEvent,
-  tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>,
+  tick: TickFunction,
   opts: PluginOptions
 ): Promise<void | Flatfile.JobCompleteDetails> => {
   const { sheetId, workbookId } = event.context

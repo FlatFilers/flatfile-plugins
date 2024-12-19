@@ -13,6 +13,11 @@ export interface PluginOptions {
   readonly debug?: boolean
 }
 
+export type TickFunction = (
+  progress: number,
+  info?: string
+) => Promise<Flatfile.JobResponse>
+
 /**
  * `jobHandler` is a factory function that constructs a job configuration plugin for
  * the Flatfile API. This function will take a string representing a job name and
@@ -36,7 +41,7 @@ export function jobHandler(
   job: string | EventFilter,
   handler: (
     event: FlatfileEvent,
-    tick: (progress: number, message?: string) => Promise<Flatfile.JobResponse>
+    tick: TickFunction
   ) => Promise<void | Flatfile.JobCompleteDetails>,
   opts: PluginOptions = {}
 ) {

@@ -1,5 +1,5 @@
-import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
+import type { TickFunction } from '@flatfile/plugin-job-handler'
 
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { PluginOptions, exportRecords } from './plugin'
@@ -12,13 +12,8 @@ import { PluginOptions, exportRecords } from './plugin'
 export const exportRecordsPlugin = (opts: PluginOptions = {}) => {
   return jobHandler(
     { job: opts.jobName || 'workbook:downloadWorkbook' },
-    async (
-      event: FlatfileEvent,
-      tick: (
-        progress: number,
-        message?: string
-      ) => Promise<Flatfile.JobResponse>
-    ) => await exportRecords(event, opts, tick)
+    async (event: FlatfileEvent, tick: TickFunction) =>
+      await exportRecords(event, opts, tick)
   )
 }
 
