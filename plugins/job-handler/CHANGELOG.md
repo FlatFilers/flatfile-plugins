@@ -1,5 +1,11 @@
 # @flatfile/plugin-job-handler
 
+## 0.8.1
+
+### Patch Changes
+
+- d3f8ba6: This release adds a type for the tick() function.
+
 ## 0.8.0
 
 ### Minor Changes
