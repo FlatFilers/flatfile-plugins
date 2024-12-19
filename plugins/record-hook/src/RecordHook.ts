@@ -19,10 +19,7 @@ export interface RecordHookOptions {
 
 export const RecordHook = async (
   event: FlatfileEvent,
-  handler: (
-    record: FlatfileRecord,
-    event?: FlatfileEvent
-  ) => any | Promise<any>,
+  handler: (record: FlatfileRecord, event: FlatfileEvent) => any | Promise<any>,
   options: RecordHookOptions = {}
 ) => {
   const { concurrency = 10 } = options
