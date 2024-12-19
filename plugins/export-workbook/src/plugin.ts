@@ -1,6 +1,6 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
-import type { FlatfileTickFunction } from '../../record-hook/src'
+import type { TickFunction } from '@flatfile/plugin-job-handler'
 
 import { FlatfileClient } from '@flatfile/api'
 import { logError, logInfo, processRecords } from '@flatfile/util-common'
@@ -42,7 +42,7 @@ export interface PluginOptions {
 export const exportRecords = async (
   event: FlatfileEvent,
   options: PluginOptions,
-  tick: FlatfileTickFunction
+  tick: TickFunction
 ): Promise<void | Flatfile.JobCompleteDetails> => {
   const { environmentId, spaceId, workbookId } = event.context
 

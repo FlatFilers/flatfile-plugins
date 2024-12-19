@@ -5,7 +5,6 @@ import type {
   FlatfileEvent,
   FlatfileListener,
 } from '@flatfile/listener'
-import type { FlatfileTickFunction } from '../../record-hook/src'
 import { log, logError } from '@flatfile/util-common'
 
 const api = new FlatfileClient()
@@ -13,6 +12,11 @@ const api = new FlatfileClient()
 export interface PluginOptions {
   readonly debug?: boolean
 }
+
+export type TickFunction = (
+  progress: number,
+  info?: string
+) => Promise<Flatfile.JobResponse>
 
 /**
  * `jobHandler` is a factory function that constructs a job configuration plugin for
@@ -37,13 +41,14 @@ export function jobHandler(
   job: string | EventFilter,
   handler: (
     event: FlatfileEvent,
-    tick: FlatfileTickFunction
+    tick: TickFunction
   ) => Promise<void | Flatfile.JobCompleteDetails>,
   opts: PluginOptions = {}
 ) {
   return (listener: FlatfileListener) => {
     const filter = typeof job === 'string' ? { job } : job
     listener.on('job:ready', filter, async (event) => {
+      console.log('jobHandler')
       const { jobId } = event.context
 
       await api.jobs.ack(jobId, {

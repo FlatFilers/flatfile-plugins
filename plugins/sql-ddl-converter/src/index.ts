@@ -1,5 +1,5 @@
 import type { FlatfileEvent } from '@flatfile/listener'
-import { FlatfileTickFunction } from '../../record-hook/src'
+import { TickFunction } from '@flatfile/plugin-job-handler'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 import { generateSetup, type SqlSetupFactory } from './setup.factory'
 
@@ -8,7 +8,7 @@ export function configureSpaceWithSqlDDL(
   callback?: (
     event: FlatfileEvent,
     workbookIds: string[],
-    tick: FlatfileTickFunction
+    tick: TickFunction
   ) => any | Promise<any>
 ) {
   return configureSpace(() => generateSetup(setupFactory), callback)
