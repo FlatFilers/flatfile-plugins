@@ -1,5 +1,14 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.6.1
+
+### Patch Changes
+
+- d3f8ba6: This release adds a type for the tick() function.
+- Updated dependencies [d3f8ba6]
+  - @flatfile/plugin-convert-openapi-schema@0.6.1
+  - @flatfile/plugin-job-handler@0.8.1
+
 ## 0.6.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @flatfile/plugin-export-workbook
 
+## 4.0.1
+
+### Patch Changes
+
+- d3f8ba6: This release adds a type for the tick() function.
+- Updated dependencies [d3f8ba6]
+  - @flatfile/plugin-job-handler@0.8.1
+
 ## 4.0.0
 
 ### Patch Changes
