@@ -7,7 +7,7 @@ export const recordHookPlugin = (
   sheetSlug: string,
   callback: (
     record: FlatfileRecord,
-    event?: FlatfileEvent
+    event: FlatfileEvent
   ) => any | Promise<any>,
   options: RecordHookOptions = {}
 ) => {
@@ -22,7 +22,7 @@ export const bulkRecordHookPlugin = (
   sheetSlug: string,
   callback: (
     records: FlatfileRecord[],
-    event?: FlatfileEvent
+    event: FlatfileEvent
   ) => any | Promise<any>,
   options: BulkRecordHookOptions = {}
 ) => {
