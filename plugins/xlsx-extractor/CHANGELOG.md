@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.4.1
+
+### Patch Changes
+
+- 62d2bf3: This release fixes trims the header row to the last non-null header cell
+
 ## 3.4.0
 
 ### Minor Changes
