@@ -55,7 +55,7 @@
   "dependencies": {
     "@flatfile/util-extractor": "^2.3.0",
     "remeda": "^1.14.0",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.1.0"

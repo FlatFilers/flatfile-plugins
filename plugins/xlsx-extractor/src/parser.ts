@@ -117,6 +117,23 @@ async function convertSheet({
     blankrows: headerSelectionEnabled || !skipEmptyLines,
   })
 
+  let maxNonNullIndex = 0
+  rows = rows.map((row) => {
+    const keys = Object.keys(row)
+    let lastNonNullIndex = 0
+    const newRow: Record<string, any> = {}
+    for (let i = 0; i < keys.length; i++) {
+      if (row[keys[i]] !== null) {
+        lastNonNullIndex = i
+      }
+      newRow[keys[i]] = row[keys[i]]
+    }
+    maxNonNullIndex = Math.max(maxNonNullIndex, lastNonNullIndex)
+    return Object.fromEntries(
+      Object.entries(newRow).slice(0, maxNonNullIndex + 1)
+    )
+  })
+
   // return if there are no rows
   if (!rows || rows.length === 0) {
     if (debug) {
