@@ -117,23 +117,6 @@ async function convertSheet({
     blankrows: headerSelectionEnabled || !skipEmptyLines,
   })
 
-  let maxNonNullIndex = 0
-  rows = rows.map((row) => {
-    const keys = Object.keys(row)
-    let lastNonNullIndex = 0
-    const newRow: Record<string, any> = {}
-    for (let i = 0; i < keys.length; i++) {
-      if (row[keys[i]] !== null) {
-        lastNonNullIndex = i
-      }
-      newRow[keys[i]] = row[keys[i]]
-    }
-    maxNonNullIndex = Math.max(maxNonNullIndex, lastNonNullIndex)
-    return Object.fromEntries(
-      Object.entries(newRow).slice(0, maxNonNullIndex + 1)
-    )
-  })
-
   // return if there are no rows
   if (!rows || rows.length === 0) {
     if (debug) {
@@ -148,11 +131,12 @@ async function convertSheet({
   const headerizer = Headerizer.create(headerDetectionOptions)
   const headerStream = Readable.from(extractValues(rows))
   const { skip, header } = await headerizer.getHeaders(headerStream)
+  const slicedHeader = trimmedHeader(header)
   const headerKey = Math.max(0, skip - 1)
-  const columnKeys = Object.keys(rows[headerKey])
+  const columnKeys = Object.keys(rows[headerKey]).slice(0, slicedHeader.length)
 
   if (debug) {
-    console.log('Detected header:', header)
+    console.log('Detected header:', slicedHeader)
   }
 
   if (!headerSelectionEnabled) rows.splice(0, skip)
@@ -170,7 +154,7 @@ async function convertSheet({
       result[keys[index]] = value
       return result
     }, {})
-  const columnHeaders = headerSelectionEnabled ? columnKeys : header
+  const columnHeaders = headerSelectionEnabled ? columnKeys : slicedHeader
   const excelHeader = toExcelHeader(columnHeaders, columnKeys)
   const headers = prependNonUniqueHeaderColumns(excelHeader)
 
@@ -203,3 +187,13 @@ async function convertSheet({
 
 const isNullOrWhitespace = (value: any) =>
   value === null || (typeof value === 'string' && value.trim() === '')
+
+const trimmedHeader = (row: string[]): string[] => {
+  let lastNonNullIndex = 0
+  for (let i = 0; i < row.length; i++) {
+    if (!isNullOrWhitespace(row[i])) {
+      lastNonNullIndex = i
+    }
+  }
+  return row.slice(0, lastNonNullIndex + 1)
+}
