@@ -4,7 +4,11 @@ import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
 import { ExcelExtractorOptions } from '.'
 import { GetHeadersOptions, Headerizer } from './header.detection'
-import { prependNonUniqueHeaderColumns } from './utils'
+import {
+  isNullOrWhitespace,
+  prependNonUniqueHeaderColumns,
+  trimTrailingEmptyCells,
+} from './utils'
 
 type ParseBufferOptions = Omit<
   ExcelExtractorOptions,
@@ -117,6 +121,16 @@ async function convertSheet({
     blankrows: headerSelectionEnabled || !skipEmptyLines,
   })
 
+  const excelHeaders = Object.keys(rows[0])
+
+  // Convert rows to an array of arrays
+  rows = rows.map((row) => Object.values(row))
+
+  // remove **trailing** empty rows
+  while (rows.length > 0 && rows[rows.length - 1].every(isNullOrWhitespace)) {
+    rows.pop()
+  }
+
   // return if there are no rows
   if (!rows || rows.length === 0) {
     if (debug) {
@@ -125,15 +139,10 @@ async function convertSheet({
     return
   }
 
-  const extractValues = (data: Record<string, any>[]) =>
-    data.map((row) => Object.values(row))
-
   const headerizer = Headerizer.create(headerDetectionOptions)
-  const headerStream = Readable.from(extractValues(rows))
+  const headerStream = Readable.from(rows)
   const { skip, header } = await headerizer.getHeaders(headerStream)
-  const slicedHeader = trimmedHeader(header)
-  const headerKey = Math.max(0, skip - 1)
-  const columnKeys = Object.keys(rows[headerKey]).slice(0, slicedHeader.length)
+  const slicedHeader = trimTrailingEmptyCells(header)
 
   if (debug) {
     console.log('Detected header:', slicedHeader)
@@ -149,28 +158,22 @@ async function convertSheet({
     return
   }
 
-  const toExcelHeader = (data: string[], keys: string[]) =>
-    data.reduce((result, value, index) => {
-      result[keys[index]] = value
-      return result
-    }, {})
-  const columnHeaders = headerSelectionEnabled ? columnKeys : slicedHeader
-  const excelHeader = toExcelHeader(columnHeaders, columnKeys)
-  const headers = prependNonUniqueHeaderColumns(excelHeader)
+  const columnHeaders = headerSelectionEnabled
+    ? excelHeaders.slice(0, slicedHeader.length)
+    : slicedHeader
+  const headers = prependNonUniqueHeaderColumns(columnHeaders)
 
-  while (
-    rows.length > 0 &&
-    Object.values(rows[rows.length - 1]).every(isNullOrWhitespace)
-  ) {
-    rows.pop()
-  }
-
+  // Convert rows to Flatfile Record format
   const data = rows.map((row) =>
-    mapValues(
-      mapKeys(row, (key) => headers[key as keyof typeof headers]),
-      (value) => ({ value })
-    )
+    row.reduce((acc, value, index) => {
+      const header = headers[index]
+      if (header) {
+        acc[header] = { value }
+      }
+      return acc
+    }, {})
   )
+
   let metadata: { rowHeaders: number[] } | undefined = undefined
   if (headerSelectionEnabled) {
     metadata = {
@@ -179,21 +182,8 @@ async function convertSheet({
   }
 
   return {
-    headers: Object.values(headers).filter(Boolean),
+    headers,
     data,
     metadata,
   }
-}
-
-const isNullOrWhitespace = (value: any) =>
-  value === null || (typeof value === 'string' && value.trim() === '')
-
-const trimmedHeader = (row: string[]): string[] => {
-  let lastNonNullIndex = 0
-  for (let i = 0; i < row.length; i++) {
-    if (!isNullOrWhitespace(row[i])) {
-      lastNonNullIndex = i
-    }
-  }
-  return row.slice(0, lastNonNullIndex + 1)
 }

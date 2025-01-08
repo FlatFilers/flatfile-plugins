@@ -1,22 +1,24 @@
-export function prependNonUniqueHeaderColumns(
-  record: Record<string, string>
-): Record<string, string> {
-  const counts: Record<string, number> = {}
-  const result: Record<string, string> = {}
+export function prependNonUniqueHeaderColumns(headers: string[]): string[] {
+  const counts = new Map<string, number>()
 
-  for (const [key, value] of Object.entries(record)) {
-    const newValue = value ? value : 'empty'
-    const cleanValue =
-      typeof newValue === 'string' ? newValue.replace('*', '') : newValue
+  return headers.map((value) => {
+    const cleanValue = (value || 'empty').replace('*', '')
+    const count = counts.get(cleanValue) || 0
+    counts.set(cleanValue, count + 1)
 
-    if (cleanValue && counts[cleanValue]) {
-      result[key] = `${cleanValue}_${counts[cleanValue]}`
-      counts[cleanValue]++
-    } else {
-      result[key] = cleanValue
-      counts[cleanValue] = 1
+    return count ? `${cleanValue}_${count}` : cleanValue
+  })
+}
+
+export const isNullOrWhitespace = (value: any) =>
+  value === null || (typeof value === 'string' && value.trim() === '')
+
+export const trimTrailingEmptyCells = (row: string[]): string[] => {
+  let lastNonNullIndex = 0
+  for (let i = 0; i < row.length; i++) {
+    if (!isNullOrWhitespace(row[i])) {
+      lastNonNullIndex = i
     }
   }
-
-  return result
+  return row.slice(0, lastNonNullIndex + 1)
 }
