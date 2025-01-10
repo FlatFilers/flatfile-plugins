@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-validate-isbn",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/isbn",
   "description": "A Flatfile Listener plugin for ISBN validation with configurable options. Validates ISBN-10 and ISBN-13 formats, provides specific error messages, and optionally converts ISBN-10 to ISBN-13.",
   "registryMetadata": {
@@ -56,7 +56,7 @@
   "author": "Flatfile, Inc..",
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.10.0",
+    "@flatfile/plugin-record-hook": "^2.0.0",
     "isbn3": "^1.2.0"
   },
   "peerDependencies": {

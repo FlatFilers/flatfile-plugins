@@ -1,5 +1,12 @@
 # @flatfile/plugin-stored-constraints
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [762ff77]
+  - @flatfile/plugin-record-hook@2.0.0
+
 ## 0.0.2
 
 ### Patch Changes

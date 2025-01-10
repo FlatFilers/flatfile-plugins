@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-convert-translate",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/convert/translate",
   "description": "A Flatfile Listener plugin for field translation using the Google Translate API",
   "registryMetadata": {
@@ -66,7 +66,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.10.0",
+    "@flatfile/plugin-record-hook": "^2.0.0",
     "@google-cloud/translate": "^8.5.0"
   },
   "peerDependencies": {

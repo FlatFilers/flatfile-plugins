@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-enrich-sentiment",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/enrich/sentiment",
   "description": "A Flatfile plugin for sentiment analysis of text fields in records",
   "registryMetadata": {
@@ -56,7 +56,7 @@
   "author": "Flatfile, Inc.",
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.10.0",
+    "@flatfile/plugin-record-hook": "^2.0.0",
     "sentiment": "^5.0.2"
   },
   "peerDependencies": {
