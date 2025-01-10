@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 2.0.0
+
+### Major Changes
+
+- 762ff77: Mark the event as non optional BulkRecordHook
+
 ## 1.11.2
 
 ### Patch Changes

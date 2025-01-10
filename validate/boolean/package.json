@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-validate-boolean",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/validate/boolean",
   "description": "A Flatfile plugin for boolean validation with multi-language support",
   "registryMetadata": {
@@ -66,7 +66,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-record-hook": "^1.10.0"
+    "@flatfile/plugin-record-hook": "^2.0.0"
   },
   "peerDependencies": {
     "@flatfile/listener": "^1.1.0"
