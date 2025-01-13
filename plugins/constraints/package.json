@@ -50,7 +50,8 @@
     "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
   },
   "keywords": [
-    "flatfile-plugins"
+    "flatfile-plugins",
+    "category-transform"
   ],
   "author": "David Boskovic",
   "repository": {
