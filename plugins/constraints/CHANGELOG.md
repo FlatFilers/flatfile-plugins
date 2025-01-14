@@ -1,5 +1,11 @@
 # @flatfile/plugin-constraints
 
+## 8.0.1
+
+### Patch Changes
+
+- 1d69da6: Update keywords of constraints package
+
 ## 8.0.0
 
 ### Patch Changes
