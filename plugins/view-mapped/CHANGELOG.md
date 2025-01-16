@@ -1,5 +1,11 @@
 # @flatfile/plugin-view-mapped
 
+## 1.3.2
+
+### Patch Changes
+
+- ad94b22: This release adds a brief delay to the view-mapped plugin prior to updating the workbook's fields. Additionally fixes a dead link in util-extractor.
+
 ## 1.3.1
 
 ### Patch Changes
