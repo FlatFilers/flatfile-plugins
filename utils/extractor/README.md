@@ -10,7 +10,7 @@ The `@flatfile/util-extractor` utility is designed to handle various file format
 
 ## Code Breakdown
 
-This code defines a shared utility used in Flatfile Extractor plugins for data extraction. The purpose of this utility is to process files and extract structured data from them using the Flatfile API. It leverages various Flatfile SDK components and utilities ([@flatfile/util-file-buffer](/docs/plugins-docs/utils/file-buffer) to perform the data extraction process efficiently. Let's break down the main components of the code:
+This code defines a shared utility used in Flatfile Extractor plugins for data extraction. The purpose of this utility is to process files and extract structured data from them using the Flatfile API. It leverages various Flatfile SDK components and utilities ([@flatfile/util-file-buffer](/plugins/util-/file-buffer) to perform the data extraction process efficiently. Let's break down the main components of the code:
 
 ### **Import Statements**
 
