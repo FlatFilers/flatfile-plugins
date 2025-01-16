@@ -136,6 +136,8 @@ export function viewMappedPlugin() {
               await sleep(200)
             }
           } while (hasUncompletedCommits)
+          // For good measure, sleep for 300ms to ensure that the workbook is updated before the next job is run
+          await sleep(300)
 
           // Updating each sheet in a workbook to only contain fields that a user mapped. This ensures that when the table with data loads, only mapped fields will be displayed
           await api.workbooks.update(workbookId, {
