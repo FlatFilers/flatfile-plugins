@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.4.1
+
+### Patch Changes
+
+- ad94b22: This release adds a brief delay to the view-mapped plugin prior to updating the workbook's fields. Additionally fixes a dead link in util-extractor.
+
 ## 2.4.0
 
 ### Minor Changes
