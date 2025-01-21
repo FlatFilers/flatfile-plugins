@@ -91,9 +91,9 @@ export function configureSpaceFromTemplate(
         const documents = await api.documents.list(spaceTemplateId)
 
         // ...and create them in the new space
-        documents.data.forEach(async (document) => {
+        for (const document of documents.data) {
           await api.documents.create(spaceId, document)
-        })
+        }
 
         if (callback) {
           await callback(event, workbookIds, tick)
