@@ -55,20 +55,21 @@ export function configureSpaceFromTemplate(
         })
 
         // Convert workbooks from the template to workbook configs
-        const workbookConfigs: Flatfile.CreateWorkbookConfig[] = workbooks.data.map((workbook) => ({
-          name: workbook.name,
-          labels: workbook.labels,
-          spaceId: spaceId,
-          environmentId: environmentId,
-          namespace: app.data.namespace,
-          sheets: workbook.sheets.map((sheet) => ({
-            ...sheet.config,
-          })),
-          actions: workbook.actions,
-          settings: workbook.settings,
-          metadata: workbook.metadata,
-          treatments: workbook.treatments,
-        }))
+        const workbookConfigs: Flatfile.CreateWorkbookConfig[] =
+          workbooks.data.map((workbook) => ({
+            name: workbook.name,
+            labels: workbook.labels,
+            spaceId: spaceId,
+            environmentId: environmentId,
+            namespace: app.data.namespace,
+            sheets: workbook.sheets.map((sheet) => ({
+              ...sheet.config,
+            })),
+            actions: workbook.actions,
+            settings: workbook.settings,
+            metadata: workbook.metadata,
+            treatments: workbook.treatments,
+          }))
 
         // Create the workbooks
         const workbookIds = await Promise.all(
@@ -84,7 +85,7 @@ export function configureSpaceFromTemplate(
         await api.spaces.update(spaceId, {
           primaryWorkbookId:
             workbookIds && workbookIds.length > 0 ? workbookIds[0] : '',
-          settings: spaceTemplate.settings
+          settings: spaceTemplate.settings,
         })
 
         // Get all the documents for the space template...
