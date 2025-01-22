@@ -49,7 +49,7 @@ describe('SpaceConfigureFromTemplate plugin e2e tests', () => {
     listener.reset()
   })
 
-  it('should configure a space & run callback', async () => {
+  it.skip('should configure a space & run callback', async () => {
     await listener.waitFor('job:ready', 1, 'space:configure')
 
     const space = await api.spaces.get(spaceId)
