@@ -36,7 +36,7 @@ export function configureSpaceFromTemplate(
         // Get all the space templates for the app sorted by creation date, oldest first
         const spaceTemplates = await api.spaces.list({
           namespace: app.data.namespace,
-          isCollaborative: true, // TODO: change to isTemplate
+          isAppTemplate: true,
           sortField: 'createdAt',
           sortDirection: 'asc',
         })
