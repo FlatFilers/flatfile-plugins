@@ -41,9 +41,7 @@ export async function parseBuffer(
           'File is too large to parse. Try converting this file to CSV.'
         )
       }
-      throw new Error(
-        'File is too large to parse. Try converting this file to CSV.'
-      )
+      throw new Error('files.errors.fileTooLarge')
     }
 
     // Try reading the file again without the 'WTF' option.
@@ -83,7 +81,7 @@ export async function parseBuffer(
     return Object.fromEntries(processedSheets)
   } catch (e) {
     console.error(e)
-    throw new Error('Failed to parse workbook')
+    throw new Error('files.errors.failedToParseWorkbook')
   }
 }
 
