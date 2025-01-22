@@ -86,6 +86,12 @@ export function configureSpaceFromTemplate(
           primaryWorkbookId:
             workbookIds && workbookIds.length > 0 ? workbookIds[0] : '',
           settings: spaceTemplate.settings,
+          metadata: spaceTemplate.metadata,
+          actions: spaceTemplate.actions,
+          access: spaceTemplate.access,
+          labels: spaceTemplate.labels,
+          translationsPath: spaceTemplate.translationsPath,
+          languageOverride: spaceTemplate.languageOverride,
         })
 
         // Get all the documents for the space template...
