@@ -64,11 +64,10 @@
     "@flatfile/plugin-job-handler": "^0.8.1"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.9.19",
+    "@flatfile/api": "^1.15.0",
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/api": "^1.9.19",
     "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0",
     "@flatfile/utils-testing": "^0.5.0"

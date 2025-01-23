@@ -30,82 +30,86 @@ export function configureSpaceFromTemplate(
   return function (listener: FlatfileListener) {
     listener.use(
       jobHandler('space:configure', async (event, tick) => {
-        const { spaceId, environmentId, appId } = event.context
-        const app = await api.apps.get(appId)
+        try {
+          const { spaceId, environmentId, appId } = event.context
 
-        // Get all the space templates for the app sorted by creation date, oldest first
-        const spaceTemplates = await api.spaces.list({
-          namespace: app.data.namespace,
-          isAppTemplate: true,
-          sortField: 'createdAt',
-          sortDirection: 'asc',
-        })
-
-        if (spaceTemplates.data.length === 0) {
-          throw new Error('No space template found')
-        }
-
-        // Get the oldest space template
-        const spaceTemplate = spaceTemplates.data[0]
-        const spaceTemplateId = spaceTemplate.id
-
-        // Get all the workbooks for the space template
-        const workbooks = await api.workbooks.list({
-          spaceId: spaceTemplateId,
-        })
-
-        // Convert workbooks from the template to workbook configs
-        const workbookConfigs: Flatfile.CreateWorkbookConfig[] =
-          workbooks.data.map((workbook) => ({
-            name: workbook.name,
-            labels: workbook.labels,
-            spaceId: spaceId,
-            environmentId: environmentId,
-            namespace: app.data.namespace,
-            sheets: workbook.sheets.map((sheet) => ({
-              ...sheet.config,
-            })),
-            actions: workbook.actions,
-            settings: workbook.settings,
-            metadata: workbook.metadata,
-            treatments: workbook.treatments,
-          }))
-
-        // Create the workbooks
-        const workbookIds = await Promise.all(
-          workbookConfigs.map(async (workbookConfig) => {
-            const workbook = await api.workbooks.create(workbookConfig)
-            return workbook.data.id
+          // Get all the space templates for the app sorted by creation date, oldest first
+          const spaceTemplates = await api.spaces.list({
+            appId,
+            isAppTemplate: true,
+            sortField: 'createdAt',
+            sortDirection: 'asc',
           })
-        )
 
-        await tick(50, 'Workbook created')
+          if (spaceTemplates.data.length === 0) {
+            throw new Error('No space template found')
+          }
 
-        // Set some metadata on the space
-        await api.spaces.update(spaceId, {
-          primaryWorkbookId:
-            workbookIds && workbookIds.length > 0 ? workbookIds[0] : '',
-          settings: spaceTemplate.settings,
-          metadata: spaceTemplate.metadata,
-          actions: spaceTemplate.actions,
-          access: spaceTemplate.access,
-          labels: spaceTemplate.labels,
-          translationsPath: spaceTemplate.translationsPath,
-          languageOverride: spaceTemplate.languageOverride,
-        })
+          // Get the oldest space template
+          const spaceTemplate = spaceTemplates.data[0]
+          const spaceTemplateId = spaceTemplate.id
 
-        // Get all the documents for the space template...
-        const documents = await api.documents.list(spaceTemplateId)
+          // Get all the workbooks for the space template
+          const workbooks = await api.workbooks.list({
+            spaceId: spaceTemplateId,
+          })
 
-        // ...and create them in the new space
-        for (const document of documents.data) {
-          await api.documents.create(spaceId, document)
+          // Convert workbooks from the template to workbook configs
+          const workbookConfigs: Flatfile.CreateWorkbookConfig[] =
+            workbooks.data.map((workbook) => ({
+              name: workbook.name,
+              labels: workbook.labels,
+              spaceId: spaceId,
+              environmentId: environmentId,
+              namespace: spaceTemplate.namespace,
+              sheets: workbook.sheets.map((sheet) => ({
+                ...sheet.config,
+              })),
+              actions: workbook.actions,
+              settings: workbook.settings,
+              metadata: workbook.metadata,
+              treatments: workbook.treatments,
+            }))
+
+          // Create the workbooks
+          const workbookIds = await Promise.all(
+            workbookConfigs.map(async (workbookConfig) => {
+              const workbook = await api.workbooks.create(workbookConfig)
+              return workbook.data.id
+            })
+          )
+
+          await tick(50, 'Workbook created')
+
+          // Set some metadata on the space
+          await api.spaces.update(spaceId, {
+            primaryWorkbookId:
+              workbookIds && workbookIds.length > 0 ? workbookIds[0] : '',
+            settings: spaceTemplate.settings || {},
+            metadata: spaceTemplate.metadata,
+            actions: spaceTemplate.actions || [],
+            access: spaceTemplate.access || [],
+            labels: spaceTemplate.labels,
+            translationsPath: spaceTemplate.translationsPath || '',
+            languageOverride: spaceTemplate.languageOverride || '',
+          })
+
+          // Get all the documents for the space template...
+          const documents = await api.documents.list(spaceTemplateId)
+
+          // ...and create them in the new space
+          for (const document of documents.data) {
+            await api.documents.create(spaceId, document)
+          }
+
+          if (callback) {
+            await callback(event, workbookIds, tick)
+          }
+          return { info: 'Space configured' }
+        } catch (error: any) {
+          console.log('Space configuration failed with error:', error)
+          throw new Error('Space configuration failed')
         }
-
-        if (callback) {
-          await callback(event, workbookIds, tick)
-        }
-        return { info: 'Space configured' }
       })
     )
   }
