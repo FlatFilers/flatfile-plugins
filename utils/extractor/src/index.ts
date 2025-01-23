@@ -60,7 +60,7 @@ export const Extractor = (
         }
 
         try {
-          await tick(1, 'files.extraction.retrieveFile')
+          await tick(1, 'plugins.extraction.retrieveFile')
           const { data: file } = await api.files.get(fileId)
           const buffer = await getFileBuffer(event)
 
@@ -75,7 +75,7 @@ export const Extractor = (
             (e) => e.key === 'sourceEditor'
           )
 
-          await tick(3, 'files.extraction.parseSheets')
+          await tick(3, 'plugins.extraction.parseSheets')
           const capture = await parseBuffer(buffer, {
             ...options,
             fileId,
@@ -83,7 +83,7 @@ export const Extractor = (
             headerSelectionEnabled,
           })
 
-          await tick(5, 'files.extraction.createWorkbook')
+          await tick(5, 'plugins.extraction.createWorkbook')
           const workbook = await createWorkbook(
             event.context.environmentId,
             file,
@@ -98,10 +98,10 @@ export const Extractor = (
           })
 
           if (!workbook.sheets || workbook.sheets.length === 0) {
-            throw new Error('files.extraction.noSheets')
+            throw new Error('plugins.extraction.noSheets')
           }
 
-          await tick(10, 'files.extraction.addingRecords')
+          await tick(10, 'plugins.extraction.addingRecords')
 
           let processedRecords = 0
           const totalLength = Object.values(capture).reduce(
@@ -123,7 +123,7 @@ export const Extractor = (
               async (_progress, part, totalParts) => {
                 await tick(
                   Math.min(99, Math.round(10 + 90 * (part / totalParts))),
-                  'files.extraction.addingRecords'
+                  'plugins.extraction.addingRecords'
                 )
               }
             )
@@ -140,7 +140,7 @@ export const Extractor = (
           await api.jobs.complete(jobId, {
             info: 'files.uploadFile.popovers.extractionCompleted',
             outcome: {
-              message: 'files.extraction.extractedFile',
+              message: 'plugins.extraction.extractedFile',
             },
           })
         } catch (e) {
