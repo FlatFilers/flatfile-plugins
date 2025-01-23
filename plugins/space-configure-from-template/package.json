@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-space-configure-from-template",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/space-configure-from-template",
   "description": "A plugin for configuring a Flatfile Space from a Space Template.",
   "registryMetadata": {
