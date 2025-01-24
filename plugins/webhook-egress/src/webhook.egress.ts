@@ -46,17 +46,28 @@ export function webhookEgress(job: string, webhookUrl?: string) {
           })
 
           if (response.status === 200) {
-            const responseData = await response.json()
-            const rejections: RejectionResponse = responseData.rejections
+            try {
+              const responseData = await response.json()
+              const rejections: RejectionResponse = responseData.rejections
+              if (rejections) {
+                return await responseRejectionHandler(rejections)
+              }
 
-            if (rejections) {
-              return await responseRejectionHandler(rejections)
-            }
-
-            return {
-              outcome: {
-                message: `Data was successfully submitted to the provided webhook. Go check it out at ${webhookReceiver}.`,
-              },
+              return {
+                outcome: {
+                  message: `Data was successfully submitted to the provided webhook. Go check it out at ${webhookReceiver}.`,
+                },
+              }
+            } catch (error) {
+              logError(
+                '@flatfile/plugin-webhook-egress',
+                `Failed to parse response JSON from ${webhookReceiver}. Error: ${error.message}`
+              )
+              return {
+                outcome: {
+                  message: `Request succeeded but failed to parse response from webhook. The webhook may not be returning valid JSON.`,
+                },
+              }
             }
           } else {
             logError(
