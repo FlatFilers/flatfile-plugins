@@ -2,8 +2,10 @@ import type { FlatfileListener } from '@flatfile/listener'
 import { exportDelimitedZip } from '@flatfile/plugin-export-delimited-zip'
 import { JSONExtractor } from '@flatfile/plugin-json-extractor'
 import { configureSpace } from '@flatfile/plugin-space-configure'
+import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
 
 export default async function (listener: FlatfileListener) {
+  listener.use(ExcelExtractor())
   listener.use(JSONExtractor())
   listener.use(
     exportDelimitedZip({
