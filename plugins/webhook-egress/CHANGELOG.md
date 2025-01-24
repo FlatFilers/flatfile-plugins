@@ -1,5 +1,11 @@
 # @flatfile/plugin-webhook-egress
 
+## 1.6.1
+
+### Patch Changes
+
+- 6d1e2e2: Response 200 returns success always
+
 ## 1.6.0
 
 ### Minor Changes
