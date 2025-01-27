@@ -151,7 +151,7 @@ export const Extractor = (
             status: 'failed',
           })
           await api.jobs.fail(jobId, {
-            info: 'files.uploadFile.popovers.extractionFailed',
+            info: 'plugins.extraction.extractionFailed',
             outcome: {
               message: e.message,
             },
