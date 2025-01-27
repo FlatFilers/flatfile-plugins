@@ -49,7 +49,10 @@
     "test:unit": "vitest run --mode defaults src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
     "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
   },
-  "keywords": [],
+  "keywords": [
+    "flatfile-plugins",
+    "category-transform"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
