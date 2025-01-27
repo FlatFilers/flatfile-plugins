@@ -1,5 +1,11 @@
 # @flatfile/plugin-stored-constraints
 
+## 1.0.1
+
+### Patch Changes
+
+- 92be668: Tag for docs release
+
 ## 1.0.0
 
 ### Patch Changes
