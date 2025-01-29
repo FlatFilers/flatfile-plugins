@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.4.2
+
+### Patch Changes
+
+- 6b17584: This release fixes XLSX file extraction when the file contains empty sheets
+
 ## 3.4.1
 
 ### Patch Changes
