@@ -121,6 +121,10 @@ async function convertSheet({
     blankrows: headerSelectionEnabled || !skipEmptyLines,
   })
 
+  if (rows.length === 0) {
+    return
+  }
+
   const excelHeaders = Object.keys(rows[0])
 
   // Convert rows to an array of arrays
