@@ -9,6 +9,7 @@ const api = new FlatfileClient()
 export class AutomapService {
   constructor(public readonly options: AutomapOptions) {}
 
+
   /**
    * Create listeners for Flatfile to respond to for auto mapping.
    *
@@ -43,8 +44,8 @@ export class AutomapService {
 
       if (!this.isFileNameMatch(file)) {
         return
-      } else if (!this.options.disableFileNameUpdate) {
-        await this.updateFileName(file.id, `⚡️ ${file.name}`)
+      } else  {
+        await this.updateFileName('check', file.id)
       }
 
       if (this.isNil(file.workbookId)) {
@@ -129,10 +130,11 @@ export class AutomapService {
 
           const actualJobs = jobs.filter((j) => !this.isNil(j))
 
-          if (actualJobs.length > 0 && !this.options.disableFileNameUpdate) {
+          if (actualJobs.length > 0) {
             await this.updateFileName(
+              'start',
               file.id,
-              `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`
+              destinationSheet?.name
             )
           }
         } catch (_mappingsError: unknown) {
@@ -196,6 +198,9 @@ export class AutomapService {
     const { jobId } = event.context
 
     const job = await api.jobs.get(jobId)
+    const workbook = await api.workbooks.get(job.data.destination)
+    const sheet = workbook.data.sheets.find(s => s.slug === this.options.defaultTargetSheet)
+    const sheetName = sheet?.name
 
     if (!job.data.input?.isAutomap) {
       if (this.options.debug) {
@@ -214,6 +219,11 @@ export class AutomapService {
       }
       return
     }
+
+    //Get file 
+    const sourceWorkbook = await api.workbooks.get(job.data.source)
+    const files = await api.files.list({spaceId: sourceWorkbook.data.spaceId})
+    const file = files.data.find(f => f.workbookId === sourceWorkbook.data.id)
 
     try {
       const {
@@ -244,39 +254,90 @@ export class AutomapService {
       }
 
       try {
-        switch (this.options.accuracy) {
-          case 'confident':
-            if (this.verifyConfidentMatchingStrategy(plan)) {
-              await api.jobs.execute(jobId)
-            } else {
-              if (this.options.debug) {
-                logWarn(
-                  '@flatfile/plugin-automap',
-                  'Skipping automap due to lack of confidence'
-                )
-              }
+        if(this.verifyMappedColumns(plan)) {
+          switch (this.options.accuracy) {
+            case 'confident':
+              if (this.verifyConfidentMatchingStrategy(plan)) {
+                await api.jobs.execute(jobId)
 
-              if (!this.isNil(this.options.onFailure)) {
-                this.options.onFailure(event)
-              }
-            }
-            break
-          case 'exact':
-            if (this.verifyAbsoluteMatchingStrategy(plan)) {
-              await api.jobs.execute(jobId)
-            } else {
-              if (this.options.debug) {
-                logWarn(
-                  '@flatfile/plugin-automap',
-                  'Skipping automap due to lack of confidence'
+                await this.updateFileName(
+                  'success',
+                  file.id,
+                  sheetName
                 )
-              }
 
-              if (!this.isNil(this.options.onFailure)) {
-                this.options.onFailure(event)
+                if (!this.isNil(this.options.onSuccess)) {
+                  this.options.onSuccess(event)
+                }
+              } else {
+                if (this.options.debug) {
+                  logWarn(
+                    '@flatfile/plugin-automap',
+                    'Skipping automap due to lack of confidence'
+                  )
+                }
+
+                await this.updateFileName(
+                  'failure',
+                  file.id,
+                  sheetName
+                )
+
+                if (!this.isNil(this.options.onFailure)) {
+                  this.options.onFailure(event)
+                }
               }
-            }
-            break
+              break
+            case 'exact':
+              if (this.verifyAbsoluteMatchingStrategy(plan)) {
+                await api.jobs.execute(jobId)
+
+                await this.updateFileName(
+                  'success',
+                  file.id,
+                  sheetName
+                )
+
+                if (!this.isNil(this.options.onSuccess)) {
+                  this.options.onSuccess(event)
+                }
+              } else {
+                if (this.options.debug) {
+                  logWarn(
+                    '@flatfile/plugin-automap',
+                    'Skipping automap due to lack of confidence'
+                  )
+                }
+
+                await this.updateFileName(
+                  'failure',
+                  file.id,
+                  sheetName
+                )
+
+                if (!this.isNil(this.options.onFailure)) {
+                  this.options.onFailure(event)
+                }
+              }
+              break
+          }
+        } else{
+          if (this.options.debug) {
+            logWarn(
+              '@flatfile/plugin-automap',
+              'Skipping automap due to lack of confidence'
+            )
+          }
+
+          await this.updateFileName(
+            'failure',
+            file.id,
+            sheetName
+          )
+
+          if (!this.isNil(this.options.onFailure)) {
+            this.options.onFailure(event)
+          }
         }
       } catch (_jobError: unknown) {
         logError(
@@ -357,6 +418,35 @@ export class AutomapService {
     }
   }
 
+  private verifyMappedColumns(
+    plan: Flatfile.JobExecutionPlan
+  ): boolean {
+    let mappedColumnsVerified = false
+
+    if(this.options.allColumnsMustBeMapped === 'none') {
+      mappedColumnsVerified = true
+    }
+    if(this.options.allColumnsMustBeMapped === 'both' &&
+      plan.unmappedDestinationFields?.length === 0 &&
+      plan.unmappedSourceFields?.length === 0) 
+    {
+      mappedColumnsVerified = true
+    }
+    if(this.options.allColumnsMustBeMapped === 'only-source' &&
+      plan.unmappedSourceFields?.length === 0) 
+    {
+      mappedColumnsVerified = true
+    }
+    if(this.options.allColumnsMustBeMapped === 'only-target' &&
+      plan.unmappedDestinationFields?.length === 0) 
+    {
+      mappedColumnsVerified = true
+    }
+
+    return mappedColumnsVerified
+  }
+
+
   private verifyAbsoluteMatchingStrategy(
     plan: Flatfile.JobExecutionPlan
   ): boolean {
@@ -379,14 +469,79 @@ export class AutomapService {
     )
   }
 
-  private updateFileName(
+  private async updateFileName(
+    stage: 'manual' | 'check' | 'start' | 'success' | 'failure',
     fileId: string,
-    fileName: string
+    destinationSheetName?: string
   ): Promise<Flatfile.FileResponse> {
-    return api.files.update(fileId, { name: fileName })
+    
+    const file = await api.files.get(fileId)
+    const currentFileName = file.data.name
+    let newFileName = ''
+    if(this.options.disableFileNameUpdate) {
+      return 
+    }
+
+    if(stage === 'check') {
+      newFileName = this.resolveVariablesInFileName(this.options.filenameOnCheck, {fileName: currentFileName})
+      return api.files.update(fileId, { name: newFileName })
+    }
+
+    if(stage === 'start') {
+      const oldFileName = this.getFileNameFromOldFileName(this.options.filenameOnCheck, currentFileName)
+      newFileName = this.resolveVariablesInFileName(this.options.filenameOnStart, {fileName: oldFileName, destinationSheetName: destinationSheetName})
+      return api.files.update(fileId, { name: newFileName })
+    }
+
+    if(stage === 'success' && !this.options.disableFileNameUpdateOnSuccess) {
+      const oldFileName = this.getFileNameFromOldFileName(this.options.filenameOnStart, currentFileName)
+      newFileName = this.resolveVariablesInFileName(this.options.filenameOnSuccess, {fileName: oldFileName, destinationSheetName: destinationSheetName})
+      return api.files.update(fileId, { name: newFileName })
+    }
+
+    if(stage === 'failure' && !this.options.disableFileNameUpdateOnFailure) {
+      const oldFileName = this.getFileNameFromOldFileName(this.options.filenameOnStart, currentFileName)
+      newFileName = this.resolveVariablesInFileName(this.options.filenameOnFailure, {fileName: oldFileName, destinationSheetName: destinationSheetName})
+      return api.files.update(fileId, { name: newFileName })
+    }
+
+    return
   }
 
   private isNil(value: any): value is null | undefined {
     return value === null || value === undefined
   }
+
+  private resolveVariablesInFileName(fileName: string, variables: { destinationSheetName?: string, fileName?: string }): string {
+    if(variables.destinationSheetName) {
+      fileName = fileName.replace('{{destinationSheetName}}', variables.destinationSheetName)
+    }
+    if(variables.fileName) {
+      fileName = fileName.replace('{{fileName}}', variables.fileName)
+    }
+    return fileName
+  }
+
+  private getFileNameFromOldFileName(pattern: string, filename: string): string {
+    // Convert the pattern into a regex pattern by escaping special characters
+    // and replacing the variables with capture groups
+    const regexPattern = this.escapeRegExp(pattern)
+      .replace(this.escapeRegExp('{{fileName}}'), '(.*?)')
+      .replace(this.escapeRegExp('{{destinationSheetName}}'), '.*?');
+
+    const regex = new RegExp(`^${regexPattern}$`);
+    const match = filename.match(regex);
+
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+
+    // Fallback to original filename if no match
+    return filename;
+  }
+
+  private escapeRegExp(string: string): string {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
 }
+
