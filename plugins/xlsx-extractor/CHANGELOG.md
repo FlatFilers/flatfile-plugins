@@ -1,5 +1,16 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.5.0
+
+### Minor Changes
+
+- 40717d0: This release adds job message translations
+
+### Patch Changes
+
+- Updated dependencies [40717d0]
+  - @flatfile/util-extractor@2.5.0
+
 ## 3.4.2
 
 ### Patch Changes

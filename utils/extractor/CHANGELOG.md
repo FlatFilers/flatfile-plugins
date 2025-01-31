@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.5.0
+
+### Minor Changes
+
+- 40717d0: This release adds job message translations
+
 ## 2.4.1
 
 ### Patch Changes
