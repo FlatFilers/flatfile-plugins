@@ -2,4 +2,7 @@
 '@flatfile/plugin-automap': minor
 ---
 
-Add onSuccess callback. New options to only map if there is no unmatched columns, change file name for untocuhed files and filename prefix/suffix
+Add onSuccess callback. 
+Add new options to only map if there is no unmatched columns (none, both, only-source, only-target)
+Add options to change file name in success/failure case
+Add options to overwrite file name patterns
