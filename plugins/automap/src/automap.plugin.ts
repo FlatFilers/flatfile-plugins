@@ -41,7 +41,11 @@ export interface AutomapOptions {
     | string
     | ((fileName?: string, event?: FlatfileEvent) => string | Promise<string>)
   readonly matchFilename?: RegExp
-  readonly allColumnsMustBeMapped?: 'none' | 'both' | 'only-source' | 'only-target'
+  readonly allColumnsMustBeMapped?:
+    | 'none'
+    | 'both'
+    | 'only-source'
+    | 'only-target'
   readonly onSuccess?: (event: FlatfileEvent) => void
   readonly onFailure?: (event: FlatfileEvent) => void
   readonly targetWorkbook?: string
@@ -60,29 +64,35 @@ export function defaultOptions(options: AutomapOptions): AutomapOptions {
     accuracy: options.accuracy || 'confident',
     allColumnsMustBeMapped: options.allColumnsMustBeMapped || 'none',
     filenameOnCheck: options.filenameOnCheck || '⚡️ {{fileName}}',
-    filenameOnStart: options.filenameOnStart || '⚡️ {{fileName}} 🔁 {{destinationSheetName}}',
-    filenameOnSuccess: options.filenameOnSuccess || '⚡️ {{fileName}} 🔁 {{destinationSheetName}}',
-    filenameOnFailure: options.filenameOnFailure || '⚡️ {{fileName}} 🔁 {{destinationSheetName}}',
+    filenameOnStart:
+      options.filenameOnStart || '⚡️ {{fileName}} 🔁 {{destinationSheetName}}',
+    filenameOnSuccess:
+      options.filenameOnSuccess ||
+      '⚡️ {{fileName}} 🔁 {{destinationSheetName}}',
+    filenameOnFailure:
+      options.filenameOnFailure ||
+      '⚡️ {{fileName}} 🔁 {{destinationSheetName}}',
   }
 
-  if(!defaultedOptions.filenameOnCheck.includes("{{fileName}}")) {
-    defaultedOptions.filenameOnCheck = defaultedOptions.filenameOnCheck + " {{fileName}}";
+  if (!defaultedOptions.filenameOnCheck.includes('{{fileName}}')) {
+    defaultedOptions.filenameOnCheck =
+      defaultedOptions.filenameOnCheck + ' {{fileName}}'
   }
 
-  if(!defaultedOptions.filenameOnStart.includes("{{fileName}}")) {
-    defaultedOptions.filenameOnStart = defaultedOptions.filenameOnStart + " {{fileName}}";
+  if (!defaultedOptions.filenameOnStart.includes('{{fileName}}')) {
+    defaultedOptions.filenameOnStart =
+      defaultedOptions.filenameOnStart + ' {{fileName}}'
   }
 
-  if(!defaultedOptions.filenameOnSuccess.includes("{{fileName}}")) {
-    defaultedOptions.filenameOnSuccess = defaultedOptions.filenameOnSuccess + " {{fileName}}";
+  if (!defaultedOptions.filenameOnSuccess.includes('{{fileName}}')) {
+    defaultedOptions.filenameOnSuccess =
+      defaultedOptions.filenameOnSuccess + ' {{fileName}}'
   }
 
-  if(!defaultedOptions.filenameOnFailure.includes("{{fileName}}")) {
-    defaultedOptions.filenameOnFailure = defaultedOptions.filenameOnFailure + " {{fileName}}";
+  if (!defaultedOptions.filenameOnFailure.includes('{{fileName}}')) {
+    defaultedOptions.filenameOnFailure =
+      defaultedOptions.filenameOnFailure + ' {{fileName}}'
   }
-  
+
   return defaultedOptions
-  
 }
-
-

@@ -9,7 +9,6 @@ const api = new FlatfileClient()
 export class AutomapService {
   constructor(public readonly options: AutomapOptions) {}
 
-
   /**
    * Create listeners for Flatfile to respond to for auto mapping.
    *
@@ -44,7 +43,7 @@ export class AutomapService {
 
       if (!this.isFileNameMatch(file)) {
         return
-      } else  {
+      } else {
         await this.updateFileName('check', file.id)
       }
 
@@ -131,11 +130,7 @@ export class AutomapService {
           const actualJobs = jobs.filter((j) => !this.isNil(j))
 
           if (actualJobs.length > 0) {
-            await this.updateFileName(
-              'start',
-              file.id,
-              destinationSheet?.name
-            )
+            await this.updateFileName('start', file.id, destinationSheet?.name)
           }
         } catch (_mappingsError: unknown) {
           logError('@flatfile/plugin-automap', 'Unable to fetch mappings')
@@ -199,7 +194,9 @@ export class AutomapService {
 
     const job = await api.jobs.get(jobId)
     const workbook = await api.workbooks.get(job.data.destination)
-    const sheet = workbook.data.sheets.find(s => s.slug === this.options.defaultTargetSheet)
+    const sheet = workbook.data.sheets.find(
+      (s) => s.slug === this.options.defaultTargetSheet
+    )
     const sheetName = sheet?.name
 
     if (!job.data.input?.isAutomap) {
@@ -220,10 +217,10 @@ export class AutomapService {
       return
     }
 
-    //Get file 
+    //Get file
     const sourceWorkbook = await api.workbooks.get(job.data.source)
-    const files = await api.files.list({spaceId: sourceWorkbook.data.spaceId})
-    const file = files.data.find(f => f.workbookId === sourceWorkbook.data.id)
+    const files = await api.files.list({ spaceId: sourceWorkbook.data.spaceId })
+    const file = files.data.find((f) => f.workbookId === sourceWorkbook.data.id)
 
     try {
       const {
@@ -254,17 +251,13 @@ export class AutomapService {
       }
 
       try {
-        if(this.verifyMappedColumns(plan)) {
+        if (this.verifyMappedColumns(plan)) {
           switch (this.options.accuracy) {
             case 'confident':
               if (this.verifyConfidentMatchingStrategy(plan)) {
                 await api.jobs.execute(jobId)
 
-                await this.updateFileName(
-                  'success',
-                  file.id,
-                  sheetName
-                )
+                await this.updateFileName('success', file.id, sheetName)
 
                 if (!this.isNil(this.options.onSuccess)) {
                   this.options.onSuccess(event)
@@ -277,11 +270,7 @@ export class AutomapService {
                   )
                 }
 
-                await this.updateFileName(
-                  'failure',
-                  file.id,
-                  sheetName
-                )
+                await this.updateFileName('failure', file.id, sheetName)
 
                 if (!this.isNil(this.options.onFailure)) {
                   this.options.onFailure(event)
@@ -292,11 +281,7 @@ export class AutomapService {
               if (this.verifyAbsoluteMatchingStrategy(plan)) {
                 await api.jobs.execute(jobId)
 
-                await this.updateFileName(
-                  'success',
-                  file.id,
-                  sheetName
-                )
+                await this.updateFileName('success', file.id, sheetName)
 
                 if (!this.isNil(this.options.onSuccess)) {
                   this.options.onSuccess(event)
@@ -309,11 +294,7 @@ export class AutomapService {
                   )
                 }
 
-                await this.updateFileName(
-                  'failure',
-                  file.id,
-                  sheetName
-                )
+                await this.updateFileName('failure', file.id, sheetName)
 
                 if (!this.isNil(this.options.onFailure)) {
                   this.options.onFailure(event)
@@ -321,7 +302,7 @@ export class AutomapService {
               }
               break
           }
-        } else{
+        } else {
           if (this.options.debug) {
             logWarn(
               '@flatfile/plugin-automap',
@@ -329,11 +310,7 @@ export class AutomapService {
             )
           }
 
-          await this.updateFileName(
-            'failure',
-            file.id,
-            sheetName
-          )
+          await this.updateFileName('failure', file.id, sheetName)
 
           if (!this.isNil(this.options.onFailure)) {
             this.options.onFailure(event)
@@ -418,34 +395,34 @@ export class AutomapService {
     }
   }
 
-  private verifyMappedColumns(
-    plan: Flatfile.JobExecutionPlan
-  ): boolean {
+  private verifyMappedColumns(plan: Flatfile.JobExecutionPlan): boolean {
     let mappedColumnsVerified = false
 
-    if(this.options.allColumnsMustBeMapped === 'none') {
+    if (this.options.allColumnsMustBeMapped === 'none') {
       mappedColumnsVerified = true
     }
-    if(this.options.allColumnsMustBeMapped === 'both' &&
+    if (
+      this.options.allColumnsMustBeMapped === 'both' &&
       plan.unmappedDestinationFields?.length === 0 &&
-      plan.unmappedSourceFields?.length === 0) 
-    {
+      plan.unmappedSourceFields?.length === 0
+    ) {
       mappedColumnsVerified = true
     }
-    if(this.options.allColumnsMustBeMapped === 'only-source' &&
-      plan.unmappedSourceFields?.length === 0) 
-    {
+    if (
+      this.options.allColumnsMustBeMapped === 'only-source' &&
+      plan.unmappedSourceFields?.length === 0
+    ) {
       mappedColumnsVerified = true
     }
-    if(this.options.allColumnsMustBeMapped === 'only-target' &&
-      plan.unmappedDestinationFields?.length === 0) 
-    {
+    if (
+      this.options.allColumnsMustBeMapped === 'only-target' &&
+      plan.unmappedDestinationFields?.length === 0
+    ) {
       mappedColumnsVerified = true
     }
 
     return mappedColumnsVerified
   }
-
 
   private verifyAbsoluteMatchingStrategy(
     plan: Flatfile.JobExecutionPlan
@@ -473,35 +450,55 @@ export class AutomapService {
     stage: 'manual' | 'check' | 'start' | 'success' | 'failure',
     fileId: string,
     destinationSheetName?: string
-  ): Promise<Flatfile.FileResponse> {
-    
+  ): Promise<Flatfile.FileResponse | void> {
     const file = await api.files.get(fileId)
     const currentFileName = file.data.name
     let newFileName = ''
-    if(this.options.disableFileNameUpdate) {
-      return 
+    if (this.options.disableFileNameUpdate) {
+      return
     }
 
-    if(stage === 'check') {
-      newFileName = this.resolveVariablesInFileName(this.options.filenameOnCheck, {fileName: currentFileName})
+    if (stage === 'check') {
+      newFileName = this.resolveVariablesInFileName(
+        this.options.filenameOnCheck,
+        { fileName: currentFileName }
+      )
       return api.files.update(fileId, { name: newFileName })
     }
 
-    if(stage === 'start') {
-      const oldFileName = this.getFileNameFromOldFileName(this.options.filenameOnCheck, currentFileName)
-      newFileName = this.resolveVariablesInFileName(this.options.filenameOnStart, {fileName: oldFileName, destinationSheetName: destinationSheetName})
+    if (stage === 'start') {
+      const oldFileName = await this.getFileNameFromOldFileName(
+        this.options.filenameOnCheck,
+        currentFileName
+      )
+      newFileName = this.resolveVariablesInFileName(
+        this.options.filenameOnStart,
+        { fileName: oldFileName, destinationSheetName: destinationSheetName }
+      )
       return api.files.update(fileId, { name: newFileName })
     }
 
-    if(stage === 'success' && !this.options.disableFileNameUpdateOnSuccess) {
-      const oldFileName = this.getFileNameFromOldFileName(this.options.filenameOnStart, currentFileName)
-      newFileName = this.resolveVariablesInFileName(this.options.filenameOnSuccess, {fileName: oldFileName, destinationSheetName: destinationSheetName})
+    if (stage === 'success' && !this.options.disableFileNameUpdateOnSuccess) {
+      const oldFileName = await this.getFileNameFromOldFileName(
+        this.options.filenameOnStart,
+        currentFileName
+      )
+      newFileName = this.resolveVariablesInFileName(
+        this.options.filenameOnSuccess,
+        { fileName: oldFileName, destinationSheetName: destinationSheetName }
+      )
       return api.files.update(fileId, { name: newFileName })
     }
 
-    if(stage === 'failure' && !this.options.disableFileNameUpdateOnFailure) {
-      const oldFileName = this.getFileNameFromOldFileName(this.options.filenameOnStart, currentFileName)
-      newFileName = this.resolveVariablesInFileName(this.options.filenameOnFailure, {fileName: oldFileName, destinationSheetName: destinationSheetName})
+    if (stage === 'failure' && !this.options.disableFileNameUpdateOnFailure) {
+      const oldFileName = await this.getFileNameFromOldFileName(
+        this.options.filenameOnStart,
+        currentFileName
+      )
+      newFileName = this.resolveVariablesInFileName(
+        this.options.filenameOnFailure,
+        { fileName: oldFileName, destinationSheetName: destinationSheetName }
+      )
       return api.files.update(fileId, { name: newFileName })
     }
 
@@ -512,36 +509,73 @@ export class AutomapService {
     return value === null || value === undefined
   }
 
-  private resolveVariablesInFileName(fileName: string, variables: { destinationSheetName?: string, fileName?: string }): string {
-    if(variables.destinationSheetName) {
-      fileName = fileName.replace('{{destinationSheetName}}', variables.destinationSheetName)
+  private resolveVariablesInFileName(
+    fileName: string,
+    variables: { destinationSheetName?: string; fileName?: string }
+  ): string {
+    if (variables.destinationSheetName) {
+      fileName = fileName.replace(
+        '{{destinationSheetName}}',
+        variables.destinationSheetName
+      )
     }
-    if(variables.fileName) {
+    if (variables.fileName) {
       fileName = fileName.replace('{{fileName}}', variables.fileName)
     }
     return fileName
   }
 
-  private getFileNameFromOldFileName(pattern: string, filename: string): string {
-    // Convert the pattern into a regex pattern by escaping special characters
-    // and replacing the variables with capture groups
-    const regexPattern = this.escapeRegExp(pattern)
-      .replace(this.escapeRegExp('{{fileName}}'), '(.*?)')
-      .replace(this.escapeRegExp('{{destinationSheetName}}'), '.*?');
+  private async getFileNameFromOldFileName(
+    pattern: string,
+    filename: string
+  ): Promise<string> {
+    try {
+      // Find the position of {{fileName}} in the pattern
+      const fileNameMatch = pattern.match(/{{fileName}}/)
+      if (!fileNameMatch) {
+        return filename
+      }
 
-    const regex = new RegExp(`^${regexPattern}$`);
-    const match = filename.match(regex);
+      // Get the text before and after {{fileName}}
+      const beforePattern = pattern.substring(0, fileNameMatch.index)
+      const afterPattern = pattern.substring(
+        fileNameMatch.index + '{{fileName}}'.length
+      )
 
-    if (match && match[1]) {
-      return match[1].trim();
+      // Escape special characters in the before/after patterns
+      const beforeRegex = this.escapeRegExp(beforePattern)
+      const afterRegex = this.escapeRegExp(afterPattern).replace(
+        this.escapeRegExp('{{destinationSheetName}}'),
+        '.*?'
+      )
+
+      // Create a safe regex pattern that matches the exact structure
+      const safeRegex = new RegExp(`^${beforeRegex}(.*?)${afterRegex}$`)
+
+      // Add timeout protection
+      const MAX_EXECUTION_TIME = 100
+      const timeoutPromise = new Promise<string>((_, reject) => {
+        setTimeout(() => reject(new Error('Regex timeout')), MAX_EXECUTION_TIME)
+      })
+
+      const matchPromise = new Promise<string>((resolve) => {
+        const match = filename.match(safeRegex)
+        if (match?.[1]) {
+          resolve(match[1].trim())
+        } else {
+          resolve(filename)
+        }
+      })
+
+      return Promise.race([matchPromise, timeoutPromise])
+        .then((result) => result)
+        .catch(() => filename)
+    } catch (error) {
+      return filename
     }
-
-    // Fallback to original filename if no match
-    return filename;
   }
 
   private escapeRegExp(string: string): string {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   }
 }
-
