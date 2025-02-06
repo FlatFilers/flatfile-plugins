@@ -77,7 +77,6 @@ export class RecordTranslator<
                 ? v.value
                 : v,
             messages: messages,
-            valid: true,
           }
         }
         const metadata = recordWithInfo.row.metadata
