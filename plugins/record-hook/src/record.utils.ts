@@ -78,12 +78,12 @@ export function cleanRecord(record: Flatfile.RecordWithLinks | undefined) {
   if (!record) {
     return
   }
-  // Remove 'valid' at the root level of the Record, but not on the Record's fields
+  // Remove `valid` at the root level of the Record, but not on the Record's fields
   if (Object.keys(record).includes('valid')) {
     delete record.valid
   }
-  // Remove 'updatedAt' at all levels of the Record
-  deleteKeys(record.values, ['updatedAt'])
+  // Remove `updatedAt` and `valid` at all levels of the Record
+  deleteKeys(record.values, ['updatedAt', 'valid'])
 }
 
 function deleteKeys(obj, keys) {
