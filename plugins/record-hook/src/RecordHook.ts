@@ -121,12 +121,10 @@ export const BulkRecordHook = async (
       }
       endTimer('filter modified records', debug)
 
-      if (debug) {
-        logInfo(
-          '@flatfile/plugin-record-hook',
-          `${modifiedRecords.length} modified records`
-        )
-      }
+      logInfo(
+        '@flatfile/plugin-record-hook',
+        `${modifiedRecords.length} modified records`
+      )
 
       try {
         startTimer('update modified records', debug)
