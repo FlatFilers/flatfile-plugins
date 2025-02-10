@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 2.0.1
+
+### Patch Changes
+
+- cff9172: This release fixes record diff-ing.
+
 ## 2.0.0
 
 ### Major Changes
