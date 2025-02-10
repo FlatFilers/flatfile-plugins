@@ -312,8 +312,9 @@ class DataRowAndSubHeaderDetection extends Headerizer {
           const rowCell = String(row[index])?.trim() ?? ''
           return rowCell
             .split(/\s+/)
-            .every((word) =>
-              cell && String(cell.toLowerCase()).includes(word.toLowerCase())
+            .every(
+              (word) =>
+                cell && String(cell.toLowerCase()).includes(word.toLowerCase())
             )
         })
 
