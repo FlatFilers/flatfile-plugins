@@ -309,10 +309,12 @@ class DataRowAndSubHeaderDetection extends Headerizer {
       const row = rows[i]
       if (countNonEmptyCells(header) === countNonEmptyCells(row)) {
         const fuzzyMatches = header.filter((cell, index) => {
-          const rowCell = row[index]?.trim() ?? ''
+          const rowCell = String(row[index])?.trim() ?? ''
           return rowCell
             .split(/\s+/)
-            .every((word) => cell.toLowerCase().includes(word.toLowerCase()))
+            .every((word) =>
+              cell && String(cell.toLowerCase()).includes(word.toLowerCase())
+            )
         })
 
         if (fuzzyMatches.length / header.length > 0.5) {
