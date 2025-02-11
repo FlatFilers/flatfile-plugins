@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.5.1
+
+### Patch Changes
+
+- f648488: Add edge-case handling to DataRowAndSubHeaderDetection fix issue when `raw` or `rawNumbers` options are enabled
+
 ## 3.5.0
 
 ### Minor Changes
