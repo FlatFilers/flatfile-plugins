@@ -1,11 +1,8 @@
-import { FlatfileClient } from '@flatfile/api'
-import { FlatfileEvent } from '@flatfile/listener'
+import { Flatfile, FlatfileClient } from '@flatfile/api'
 
 const api = new FlatfileClient()
 
-export const createDataChecklist = async (event: FlatfileEvent) => {
-  const { spaceId } = event.context
-
+export const createDataChecklist = async (spaceId: Flatfile.SpaceId) => {
   const { data: workbooks } = await api.workbooks.list({ spaceId })
 
   let body = `<div class="my-doc">\n`

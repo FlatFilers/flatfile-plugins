@@ -160,7 +160,7 @@ export default async function (listener: FlatfileListener) {
         _workbookIds: string[],
         _tick: TickFunction
       ) => {
-        await createDataChecklist(event)
+        await createDataChecklist(event.context.spaceId)
       }
     )
   )
