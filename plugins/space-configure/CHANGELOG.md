@@ -1,5 +1,11 @@
 # @flatfile/plugin-space-configure
 
+## 0.9.0
+
+### Minor Changes
+
+- 136fa9b: This release adds a data checklist utility that can be used to create a Data Checklist Document
+
 ## 0.8.1
 
 ### Patch Changes
