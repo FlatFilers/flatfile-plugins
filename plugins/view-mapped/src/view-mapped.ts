@@ -13,34 +13,30 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 export function viewMappedPlugin() {
   return (listener: FlatfileListener) => {
     // Defining what needs to be done when Flatfile is done mapping columns based on user input during the Mapping stage of the import process
-    listener.on(
-      'job:completed',
-      { job: 'workbook:map' },
-      async (event) => {
-        const { jobId } = event.context
+    listener.on('job:completed', { job: 'workbook:map' }, async (event) => {
+      const { jobId } = event.context
 
-        // Obtaining the mapping job's execution plan to later extract "fieldMapping" out of it, which tells us which fields were mapped in the Matching step
-        const jobPlan = await api.jobs.getExecutionPlan(jobId)
+      // Obtaining the mapping job's execution plan to later extract "fieldMapping" out of it, which tells us which fields were mapped in the Matching step
+      const jobPlan = await api.jobs.getExecutionPlan(jobId)
 
-        const destinationSheetId = (
-          jobPlan.data.job.config as Flatfile.MappingProgramJobConfig
-        ).destinationSheetId
+      const destinationSheetId = (
+        jobPlan.data.job.config as Flatfile.MappingProgramJobConfig
+      ).destinationSheetId
 
-        // Creating a custom job that we will use in the next listener to ensure users only see mapped fields in the table
-        await api.jobs.create({
-          // We are creating a sheet level job so that the record counts will recompute
-          type: 'sheet',
-          operation: 'viewMappedFieldsOnly',
-          source: destinationSheetId,
-          // This ensures that our custom job will execute automatically when the "job:ready" event of the listener below triggers
-          trigger: 'immediate',
-          // This ensures that users are not able to interact with records in the table until it is updated to only show mapped fields
-          mode: 'foreground',
-          // This ensures that in the next listener we are able to access the jobId of the mapping job specifically, and not just the jobId of this custom job
-          input: { mappingJobId: jobId },
-        })
-      }
-    )
+      // Creating a custom job that we will use in the next listener to ensure users only see mapped fields in the table
+      await api.jobs.create({
+        // We are creating a sheet level job so that the record counts will recompute
+        type: 'sheet',
+        operation: 'viewMappedFieldsOnly',
+        source: destinationSheetId,
+        // This ensures that our custom job will execute automatically when the "job:ready" event of the listener below triggers
+        trigger: 'immediate',
+        // This ensures that users are not able to interact with records in the table until it is updated to only show mapped fields
+        mode: 'foreground',
+        // This ensures that in the next listener we are able to access the jobId of the mapping job specifically, and not just the jobId of this custom job
+        input: { mappingJobId: jobId },
+      })
+    })
 
     // Defining what needs to be done when our custom job triggers. Because we create it when mapping job completes, this is when this job will begin executing
     listener.use(
