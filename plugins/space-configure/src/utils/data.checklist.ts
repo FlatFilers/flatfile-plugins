@@ -2,7 +2,7 @@ import { Flatfile, FlatfileClient } from '@flatfile/api'
 
 const api = new FlatfileClient()
 
-export const createDataChecklist = async (spaceId: Flatfile.SpaceId) => {
+export const dataChecklist = async (spaceId: Flatfile.SpaceId) => {
   const { data: workbooks } = await api.workbooks.list({ spaceId })
 
   let body = `<div class="my-doc">\n`
@@ -48,8 +48,19 @@ export const createDataChecklist = async (spaceId: Flatfile.SpaceId) => {
 
   body += `\n</div>`
 
-  await api.documents.create(spaceId, {
-    title: `Data Checklist`,
-    body,
-  })
+  const { data: documents } = await api.documents.list(spaceId)
+  const checklistDocument = documents.find(
+    (document) => document.title === 'Data Checklist'
+  )
+  if (checklistDocument) {
+    await api.documents.update(spaceId, checklistDocument.id, {
+      title: 'Data Checklist',
+      body,
+    })
+  } else {
+    await api.documents.create(spaceId, {
+      title: 'Data Checklist',
+      body,
+    })
+  }
 }
