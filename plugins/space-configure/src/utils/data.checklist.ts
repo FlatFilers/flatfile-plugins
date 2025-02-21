@@ -54,12 +54,11 @@ export const dataChecklist = async (spaceId: Flatfile.SpaceId) => {
   )
   if (checklistDocument) {
     await api.documents.update(spaceId, checklistDocument.id, {
-      title: `Data Checklist`,
       body,
     })
   } else {
     await api.documents.create(spaceId, {
-      title: `Data Checklist`,
+      title: 'Data Checklist',
       body,
     })
   }
