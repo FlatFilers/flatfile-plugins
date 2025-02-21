@@ -1,5 +1,12 @@
 # @flatfile/plugin-graphql-schema
 
+## 1.5.3
+
+### Patch Changes
+
+- Updated dependencies [3df7554]
+  - @flatfile/plugin-space-configure@0.10.0
+
 ## 1.5.2
 
 ### Patch Changes

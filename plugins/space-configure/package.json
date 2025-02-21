@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-space-configure",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/space-configure",
   "description": "A plugin for configuring a Flatfile Space.",
   "registryMetadata": {

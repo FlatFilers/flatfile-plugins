@@ -1,5 +1,13 @@
 # @flatfile/plugin-convert-yaml-schema
 
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies [3df7554]
+  - @flatfile/plugin-space-configure@0.10.0
+  - @flatfile/plugin-convert-json-schema@0.7.3
+
 ## 0.5.2
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @flatfile/plugin-convert-json-schema
 
+## 0.7.3
+
+### Patch Changes
+
+- Updated dependencies [3df7554]
+  - @flatfile/plugin-space-configure@0.10.0
+
 ## 0.7.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @flatfile/plugin-space-configure
 
+## 0.10.0
+
+### Minor Changes
+
+- 3df7554: This release creates a dataChecklist plugin for ease of use
+
 ## 0.9.0
 
 ### Minor Changes
