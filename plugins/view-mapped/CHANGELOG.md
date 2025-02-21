@@ -1,5 +1,11 @@
 # @flatfile/plugin-view-mapped
 
+## 1.3.3
+
+### Patch Changes
+
+- 2411e56: This release fixes an issue computing records by running the view-mapped job at the sheet level
+
 ## 1.3.2
 
 ### Patch Changes
