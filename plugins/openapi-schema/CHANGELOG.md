@@ -1,5 +1,12 @@
 # @flatfile/plugin-convert-openapi-schema
 
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies [3df7554]
+  - @flatfile/plugin-space-configure@0.10.0
+
 ## 0.6.2
 
 ### Patch Changes

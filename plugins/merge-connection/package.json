@@ -58,7 +58,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/plugin-convert-openapi-schema": "^0.6.2",
+    "@flatfile/plugin-convert-openapi-schema": "^0.6.3",
     "@flatfile/plugin-job-handler": "^0.8.1",
     "@mergeapi/merge-node-client": "^1.0.4"
   },
@@ -67,7 +67,7 @@
     "@flatfile/listener": "^1.1.0"
   },
   "devDependencies": {
-    "@flatfile/plugin-space-configure": "^0.9.0",
+    "@flatfile/plugin-space-configure": "^0.10.0",
     "@flatfile/bundler-config-tsup": "^0.2.0",
     "@flatfile/config-vitest": "^0.0.0"
   }
