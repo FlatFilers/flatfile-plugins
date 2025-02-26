@@ -134,10 +134,16 @@ export const exportRecords = async (
             v: '',
             c: [] as Comments,
           }
+
           results = [
-            sheet.config.fields.map((field) => ({
-              [columnNameTransformer(field.key)]: emptyCell,
-            })),
+            [
+              Object.fromEntries(
+                sheet.config.fields.map((field) => [
+                  columnNameTransformer(field.key),
+                  emptyCell,
+                ])
+              ),
+            ],
           ]
         }
         const rows = results.flat()
