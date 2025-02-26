@@ -1,3 +1,6 @@
+import { ExportSheetOptions, SheetAddress } from './options'
+import { JSON2SheetOpts, OriginOption } from 'xlsx'
+
 export function sanitize(fileName: string): string {
   // List of invalid characters that are commonly not allowed in file names
   const invalidChars = /[\/\?%\*:|"<>]/g
@@ -54,4 +57,31 @@ export const genCyclicPattern = (length: number = 104): Array<string> => {
   }
 
   return alphaPattern
+}
+
+/**
+ * Convert sheetOptions to JSON2SheetOpts.
+ *
+ * @param sheetOptions Sheet options
+ */
+export function createXLSXSheetOptions(
+  sheetOptions?: ExportSheetOptions
+): JSON2SheetOpts {
+  const options: JSON2SheetOpts = {}
+
+  if (sheetOptions?.origin) {
+    if (typeof sheetOptions.origin === 'number') {
+      options.origin = sheetOptions.origin
+    } else {
+      options.origin = {
+        c: sheetOptions.origin.column,
+        r: sheetOptions.origin.row,
+      }
+    }
+  }
+
+  if (sheetOptions?.skipColumnHeaders) {
+    options.skipHeader = true
+  }
+  return options
 }

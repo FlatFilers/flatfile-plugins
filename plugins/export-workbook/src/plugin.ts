@@ -8,36 +8,24 @@ import * as fs from 'fs'
 import path from 'path'
 import * as R from 'remeda'
 import * as XLSX from 'xlsx'
-import { sanitize, sanitizeExcelSheetName } from './utils'
+import {
+  createXLSXSheetOptions,
+  sanitize,
+  sanitizeExcelSheetName,
+} from './utils'
+import { Comments } from 'xlsx'
+import { PluginOptions } from './options'
 
 const api = new FlatfileClient()
 
-/**
- * Plugin config options.
- *
- * @property {string} jobName - name of the job
- * @property {string[]} excludedSheets - list of sheet names to exclude from the exported data.
- * @property {string[]} excludeFields - list of field names to exclude from the exported data. This applies to all sheets.
- * @property {Flatfile.Filter} recordFilter - filter to apply to the records before exporting.
- * @property {boolean} includeRecordIds - include record ids in the exported data.
- * @property {boolean} autoDownload - auto download the file after exporting
- * @property {boolean} debug - show helpul messages useful for debugging (use intended for development).
- */
-export interface PluginOptions {
-  readonly jobName?: string
-  readonly excludedSheets?: string[]
-  readonly excludeFields?: string[]
-  readonly recordFilter?: Flatfile.Filter
-  readonly includeRecordIds?: boolean
-  readonly autoDownload?: boolean
-  readonly debug?: boolean
-}
+const LOG_NAME = '@flatfile/plugin-export-workbook'
 
 /**
  * Runs extractor and creates an `.xlsx` file with all Flatfile Workbook data.
  *
  * @param event - Flatfile event
  * @param options - plugin config options
+ * @param tick
  */
 export const exportRecords = async (
   event: FlatfileEvent,
@@ -61,10 +49,7 @@ export const exportRecords = async (
         }, '')
       )
 
-      logInfo(
-        '@flatfile/plugin-export-workbook',
-        `Sheets found in Flatfile workbook: ${meta}`
-      )
+      logInfo(LOG_NAME, `Sheets found in Flatfile workbook: ${meta}`)
     }
 
     const xlsxWorkbook = XLSX.utils.book_new()
@@ -72,13 +57,16 @@ export const exportRecords = async (
     for (const [sheetIndex, sheet] of sheets.entries()) {
       if (options.excludedSheets?.includes(sheet.config.slug)) {
         if (options.debug) {
-          logInfo(
-            '@flatfile/plugin-export-workbook',
-            `Skipping sheet: ${sheet.name}`
-          )
+          logInfo(LOG_NAME, `Skipping sheet: ${sheet.name}`)
         }
         continue
       }
+
+      const columnNameTransformer = options.columnNameTransformer
+        ? (name: string) =>
+            options.columnNameTransformer(name, sheet.config.slug)
+        : (name: string) => name
+
       try {
         let results = await processRecords<Record<string, any>[]>(
           sheet.id,
@@ -95,7 +83,7 @@ export const exportRecords = async (
                 }) => {
                   const rowValue = R.pipe(
                     Object.keys(row),
-                    R.reduce((acc, colName) => {
+                    R.reduce((acc, colName: string) => {
                       if (options.excludeFields?.includes(colName)) {
                         return acc
                       }
@@ -104,14 +92,14 @@ export const exportRecords = async (
                         const cell: XLSX.CellObject = {
                           t: 's',
                           v: Array.isArray(value) ? value.join(', ') : value,
-                          c: [],
+                          c: [] as Comments,
                         }
                         if (R.length(messages) > 0) {
                           cell.c = messages.map((m) => ({
                             a: 'Flatfile',
                             t: `[${m.type.toUpperCase()}]: ${m.message}`,
                             T: true,
-                          }))
+                          })) as Comments
                           cell.c.hidden = true
                         }
 
@@ -120,7 +108,9 @@ export const exportRecords = async (
 
                       return {
                         ...acc,
-                        [colName]: formatCell(row[colName]),
+                        [columnNameTransformer(colName)]: formatCell(
+                          row[colName]
+                        ),
                       }
                     }, {})
                   )
@@ -142,15 +132,20 @@ export const exportRecords = async (
           const emptyCell: XLSX.CellObject = {
             t: 's',
             v: '',
-            c: [],
+            c: [] as Comments,
           }
           results = [
-            sheet.config.fields.map((field) => ({ [field.key]: emptyCell })),
+            sheet.config.fields.map((field) => ({
+              [columnNameTransformer(field.key)]: emptyCell,
+            })),
           ]
         }
         const rows = results.flat()
 
-        const worksheet = XLSX.utils.json_to_sheet(rows)
+        const worksheet = XLSX.utils.json_to_sheet(
+          rows,
+          createXLSXSheetOptions(options.sheetOptions?.[sheet.config.slug])
+        )
 
         XLSX.utils.book_append_sheet(
           xlsxWorkbook,
@@ -163,7 +158,7 @@ export const exportRecords = async (
         )
       } catch (_) {
         logError(
-          '@flatfile/plugin-export-workbook',
+          LOG_NAME,
           `Failed to fetch records for sheet with id: ${sheet.id}`
         )
 
@@ -180,10 +175,7 @@ export const exportRecords = async (
 
     if (xlsxWorkbook.SheetNames.length === 0) {
       if (options.debug) {
-        logError(
-          '@flatfile/plugin-export-workbook',
-          'No data to write to Excel file'
-        )
+        logError(LOG_NAME, 'No data to write to Excel file')
       }
 
       throw new Error('No data to write to Excel file.')
@@ -196,13 +188,10 @@ export const exportRecords = async (
       await tick(80, 'Excel file written to disk')
 
       if (options.debug) {
-        logInfo('@flatfile/plugin-export-workbook', 'File written to disk')
+        logInfo(LOG_NAME, 'File written to disk')
       }
     } catch (_) {
-      logError(
-        '@flatfile/plugin-export-workbook',
-        'Failed to write file to disk'
-      )
+      logError(LOG_NAME, 'Failed to write file to disk')
 
       throw new Error('Failed writing the Excel file to disk.')
     }
@@ -226,18 +215,18 @@ export const exportRecords = async (
 
       if (options.debug) {
         logInfo(
-          '@flatfile/plugin-export-workbook',
+          LOG_NAME,
           `Excel document uploaded. View file at https://spaces.flatfile.com/space/${spaceId}/files?mode=export`
         )
       }
     } catch (_) {
-      logError('@flatfile/plugin-export-workbook', 'Failed to upload file')
+      logError(LOG_NAME, 'Failed to upload file')
 
       throw new Error('Failed uploading Excel file to Flatfile.')
     }
 
     if (options.debug) {
-      logInfo('@flatfile/plugin-export-workbook', 'Done')
+      logInfo(LOG_NAME, 'Done')
     }
 
     return options.autoDownload
@@ -267,7 +256,7 @@ export const exportRecords = async (
           },
         }
   } catch (error) {
-    logError('@flatfile/plugin-export-workbook', error)
+    logError(LOG_NAME, error)
 
     throw new Error((error as Error).message)
   }
