@@ -13,7 +13,6 @@ import {
   sanitize,
   sanitizeExcelSheetName,
 } from './utils'
-import { Comments } from 'xlsx'
 import { PluginOptions } from './options'
 
 const api = new FlatfileClient()
@@ -92,14 +91,14 @@ export const exportRecords = async (
                         const cell: XLSX.CellObject = {
                           t: 's',
                           v: Array.isArray(value) ? value.join(', ') : value,
-                          c: [] as Comments,
+                          c: [],
                         }
                         if (R.length(messages) > 0) {
                           cell.c = messages.map((m) => ({
                             a: 'Flatfile',
                             t: `[${m.type.toUpperCase()}]: ${m.message}`,
                             T: true,
-                          })) as Comments
+                          }))
                           cell.c.hidden = true
                         }
 
@@ -132,7 +131,7 @@ export const exportRecords = async (
           const emptyCell: XLSX.CellObject = {
             t: 's',
             v: '',
-            c: [] as Comments,
+            c: [],
           }
 
           results = [

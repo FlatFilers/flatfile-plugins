@@ -72,7 +72,10 @@ export function createXLSXSheetOptions(
   if (sheetOptions?.origin) {
     if (typeof sheetOptions.origin === 'number') {
       options.origin = sheetOptions.origin
-    } else {
+    } else if (
+      'column' in sheetOptions.origin &&
+      'row' in sheetOptions.origin
+    ) {
       options.origin = {
         c: sheetOptions.origin.column,
         r: sheetOptions.origin.row,
