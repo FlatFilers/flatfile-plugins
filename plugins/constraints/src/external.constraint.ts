@@ -17,7 +17,7 @@ export const externalConstraint = (
       property: Flatfile.Property
       event: FlatfileEvent
     }
-  ) => any
+  ) => any | Promise<any>
 ) => {
   return (listener: FlatfileListener) => {
     // setup the cache
@@ -35,10 +35,10 @@ export const externalConstraint = (
 
         const constraints = getConstraints(schema, validator)
 
-        constraints.forEach(([property, constraint]) => {
-          records.forEach((record) => {
+        for (const [property, constraint] of constraints) {
+          for (const record of records) {
             try {
-              cb(record.get(property.key), property.key, {
+              await cb(record.get(property.key), property.key, {
                 config: constraint.config,
                 record,
                 property,
@@ -47,8 +47,8 @@ export const externalConstraint = (
             } catch (e) {
               record.addError(property.key, String(e))
             }
-          })
-        })
+          }
+        }
       })
     )
   }
