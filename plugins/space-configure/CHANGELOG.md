@@ -1,5 +1,11 @@
 # @flatfile/plugin-space-configure
 
+## 0.10.1
+
+### Patch Changes
+
+- 0855e70: This release filters out file workbooks preventing dataChecklists from being generated on them
+
 ## 0.10.0
 
 ### Minor Changes
