@@ -10,16 +10,7 @@ export function dataChecklistPlugin() {
     listener.on(
       ['workbook:created', 'workbook:updated'],
       async (event: FlatfileEvent) => {
-        const { spaceId, workbookId } = event.context
-
-        const { data: workbook } = await api.workbooks.get(workbookId)
-        if (
-          workbook.labels.includes('file') &&
-          workbook.name.startsWith('[file]')
-        ) {
-          console.log('Skipping file workbook')
-          return
-        }
+        const { spaceId } = event.context
 
         console.log(
           `\`dataChecklist\` firing on \`${event.topic}\` for space \`${spaceId}\``
