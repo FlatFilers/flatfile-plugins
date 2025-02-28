@@ -15,7 +15,7 @@ export const dataChecklist = async (spaceId: Flatfile.SpaceId) => {
       console.log(`Skipping file workbook \`${workbook.name}\``)
       continue
     }
-    
+
     const { data: sheets } = await api.sheets.list({ workbookId: workbook.id })
     body += `  <h2>${workbook.name}</h2>`
 
