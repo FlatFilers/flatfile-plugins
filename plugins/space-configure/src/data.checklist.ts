@@ -1,9 +1,6 @@
 import type { Flatfile } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { dataChecklist } from './utils/data.checklist'
-import { FlatfileClient } from '@flatfile/api'
-
-const api = new FlatfileClient()
 
 export function dataChecklistPlugin() {
   return function (listener: FlatfileListener) {
@@ -11,7 +8,6 @@ export function dataChecklistPlugin() {
       ['workbook:created', 'workbook:updated'],
       async (event: FlatfileEvent) => {
         const { spaceId } = event.context
-
         console.log(
           `\`dataChecklist\` firing on \`${event.topic}\` for space \`${spaceId}\``
         )
