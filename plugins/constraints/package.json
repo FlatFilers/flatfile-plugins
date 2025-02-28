@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-constraints",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/constraints",
   "description": "A plugin for extending blueprint with external constraints",
   "type": "module",

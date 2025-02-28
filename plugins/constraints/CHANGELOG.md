@@ -1,5 +1,11 @@
 # @flatfile/plugin-constraints
 
+## 8.0.2
+
+### Patch Changes
+
+- 362e0f9: Support async callbacks
+
 ## 8.0.1
 
 ### Patch Changes
