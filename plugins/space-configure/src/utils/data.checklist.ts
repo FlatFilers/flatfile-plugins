@@ -8,6 +8,14 @@ export const dataChecklist = async (spaceId: Flatfile.SpaceId) => {
   let body = `<div class="my-doc">\n`
 
   for (const workbook of workbooks) {
+    if (
+      workbook.labels.includes('file') &&
+      workbook.name.startsWith('[file]')
+    ) {
+      console.log(`Skipping file workbook \`${workbook.name}\``)
+      continue
+    }
+
     const { data: sheets } = await api.sheets.list({ workbookId: workbook.id })
     body += `  <h2>${workbook.name}</h2>`
 
