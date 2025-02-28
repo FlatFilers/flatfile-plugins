@@ -2,7 +2,8 @@ import type { FlatfileEvent } from '@flatfile/listener'
 import type { TickFunction } from '@flatfile/plugin-job-handler'
 
 import { jobHandler } from '@flatfile/plugin-job-handler'
-import { PluginOptions, exportRecords } from './plugin'
+import { exportRecords } from './plugin'
+import { PluginOptions } from './options'
 
 /**
  * Export records plugin for Flatfile.
