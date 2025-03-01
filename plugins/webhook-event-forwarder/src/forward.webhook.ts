@@ -1,7 +1,7 @@
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 
 export function webhookEventForward(
-  url?: string,
+  url: string,
   callback?: (data: any, event: FlatfileEvent) => Promise<any> | any,
   options?: {
     debug?: boolean
@@ -10,13 +10,7 @@ export function webhookEventForward(
   return async (listener: FlatfileListener) => {
     return listener.on('**', async (event) => {
       try {
-        const apiUrl = url || process.env.WEBHOOK_SITE_URL
-
-        if (typeof apiUrl === 'undefined') {
-          throw new Error('No url provided')
-        }
-
-        const response = await fetch(apiUrl, {
+        const response = await fetch(url, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -24,7 +18,7 @@ export function webhookEventForward(
           body: JSON.stringify(event),
         })
 
-        if (response.status !== 200) throw new Error('Error forwarding webhook')
+        if (!response.ok) throw new Error('Error forwarding webhook')
 
         const contentType = response.headers.get('content-type')
         const isJson = contentType && contentType.includes('application/json')
