@@ -10,7 +10,8 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 /**
  * This plugin allows you to make the post-mapping sheet only display mapped data
  */
-export function viewMappedPlugin() {
+export function viewMappedPlugin(options?: { includeRequired?: boolean }) {
+  const { includeRequired = false } = options
   return (listener: FlatfileListener) => {
     // Defining what needs to be done when Flatfile is done mapping columns based on user input during the Mapping stage of the import process
     listener.on('job:completed', { job: 'workbook:map' }, async (event) => {
@@ -71,6 +72,33 @@ export function viewMappedPlugin() {
             mappedFields.push(destinationFieldKey)
           }
 
+          //If the includeRequired bool value is set to true, we will add all required fields to the mappedFields array
+          if (includeRequired) {
+            for (
+              let i = 0;
+              i < jobPlan.data.plan.unmappedDestinationFields.length;
+              i++
+            ) {
+              for (
+                let j = 0;
+                j <
+                jobPlan.data.plan.unmappedDestinationFields[i].destinationField
+                  .constraints?.length;
+                j++
+              ) {
+                if (
+                  jobPlan.data.plan.unmappedDestinationFields[i]
+                    .destinationField.constraints[j].type === 'required'
+                ) {
+                  const requiredFieldKey =
+                    jobPlan.data.plan.unmappedDestinationFields[i]
+                      .destinationField.key
+                  mappedFields.push(requiredFieldKey)
+                }
+              }
+            }
+          }
+
           await tick(30, 'plugins.viewMapped.updatingTable')
 
           // Making an API call to only get the "data" property out of the response, and saving it as its own "fetchedWorkbook" variable
@@ -85,7 +113,7 @@ export function viewMappedPlugin() {
             return
           }
 
-          // Looping through all sheets of the Workbook One. For all fields that are mapped, updating those fields' metadata to "{mapped: true}"
+          // Looping through all sheets of the Workbook One. For all fields that are mapped or are required (if the includeRequired bool value is set to true), updating those fields' metadata to "{mapped: true}"
           workbook.sheets.forEach((sheet) => {
             if (sheet.id === destinationSheetId) {
               sheet.config.fields.forEach((field) => {
