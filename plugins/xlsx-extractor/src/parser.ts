@@ -4,6 +4,7 @@ import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
 import { ExcelExtractorOptions } from '.'
 import { GetHeadersOptions, Headerizer } from './header.detection'
+import { processMergedCells } from './merged-cells'
 import {
   isNullOrWhitespace,
   prependNonUniqueHeaderColumns,
@@ -58,7 +59,16 @@ export async function parseBuffer(
     const processedSheets = (
       await Promise.all(
         sheetNames.map(async (sheetName) => {
-          const sheet = workbook.Sheets[sheetName]
+          let sheet = workbook.Sheets[sheetName]
+
+          // Process merged cells if options are provided
+          if (options?.mergedCellOptions) {
+            if (options?.debug) {
+              console.log(`Processing merged cells in sheet '${sheetName}'`)
+            }
+            sheet = processMergedCells(sheet, options)
+          }
+
           const processedSheet = await convertSheet({
             sheet,
             sheetName,

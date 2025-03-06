@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 3.6.0
+
+### Minor Changes
+
+- Added merged cell handling options to control how merged cells are processed during extraction
+- Added support for different treatments based on merge type (across columns, rows, or ranges)
+- Added options to apply values to all cells, top-left cell only, coalesce, or concatenate values
+
 ## 3.5.1
 
 ### Patch Changes

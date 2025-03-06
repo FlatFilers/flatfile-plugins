@@ -13,6 +13,7 @@ import { parseBuffer } from './parser'
  * @property {GetHeadersOptions} headerDetectionOptions - the options for header detection.
  * @property {boolean} skipEmptyLines - if true, skip empty lines; if false, include empty lines.
  * @property {boolean} debug - if true, display helpful console logs.
+ * @property {object} mergedCellOptions - the options for merged cell handling.
  */
 export interface ExcelExtractorOptions {
   readonly raw?: boolean
@@ -23,6 +24,19 @@ export interface ExcelExtractorOptions {
   readonly chunkSize?: number
   readonly parallel?: number
   readonly debug?: boolean
+  readonly mergedCellOptions?: {
+    acrossColumns?: {
+      treatment: 'applyToAll' | 'applyToTopLeft' | 'coalesce' | 'concatenate'
+      separator?: string
+    }
+    acrossRows?: {
+      treatment: 'applyToAll' | 'applyToTopLeft' | 'coalesce' | 'concatenate'
+      separator?: string
+    }
+    acrossRanges?: {
+      treatment: 'applyToAll' | 'applyToTopLeft'
+    }
+  }
 }
 
 export const ExcelExtractor = (options?: ExcelExtractorOptions) => {
