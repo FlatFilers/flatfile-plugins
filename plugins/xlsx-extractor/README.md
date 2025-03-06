@@ -59,6 +59,12 @@ skipped. By default, empty lines are included.
 The `debug` parameter lets you toggle on/off helpful debugging messages for
 development purposes.
 
+#### `cascadeRowValues` - `default: "false"` - `boolean` - (optional)
+The `cascadeRowValues` parameter automatically cascades values down the dataset until a blank row, new value, or end of dataset. This is useful for hierarchical data where values in a column apply to multiple rows below them.
+
+#### `cascadeHeaderValues` - `default: "false"` - `boolean` - (optional)
+The `cascadeHeaderValues` parameter automatically cascades values across the header rows until a blank column, new value, or end of dataset. This is useful for multi-level headers where a header value applies to multiple columns.
+
 #### `mergedCellOptions` - `Object` - (optional)
 The `mergedCellOptions` parameter allows you to specify how merged cells should be handled during extraction. You can define different treatments for cells merged across columns, rows, or ranges.
 
@@ -135,6 +141,8 @@ listener.use(ExcelExtractor());
 listener.use(ExcelExtractor({ 
   raw: true, 
   rawNumbers: true,
+  cascadeRowValues: true,
+  cascadeHeaderValues: true,
   mergedCellOptions: {
     acrossColumns: {
       treatment: 'concatenate',
@@ -239,6 +247,8 @@ export default async function (listener) {
   const options = {
     raw: true,
     rawNumbers: true,
+    cascadeRowValues: true,
+    cascadeHeaderValues: true,
   };
 
   // Initialize the Excel extractor

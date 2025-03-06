@@ -14,6 +14,8 @@ import { parseBuffer } from './parser'
  * @property {boolean} skipEmptyLines - if true, skip empty lines; if false, include empty lines.
  * @property {boolean} debug - if true, display helpful console logs.
  * @property {object} mergedCellOptions - the options for merged cell handling.
+ * @property {boolean} cascadeRowValues - if true, cascade values down the dataset until a blank row, new value, or end of dataset.
+ * @property {boolean} cascadeHeaderValues - if true, cascade values across the header rows until a blank column, new value, or end of dataset.
  */
 export interface ExcelExtractorOptions {
   readonly raw?: boolean
@@ -37,6 +39,8 @@ export interface ExcelExtractorOptions {
       treatment: 'applyToAll' | 'applyToTopLeft'
     }
   }
+  readonly cascadeRowValues?: boolean
+  readonly cascadeHeaderValues?: boolean
 }
 
 export const ExcelExtractor = (options?: ExcelExtractorOptions) => {
