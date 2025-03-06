@@ -4,7 +4,10 @@ import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
 import { ExcelExtractorOptions } from '.'
 import { GetHeadersOptions, Headerizer } from './header.detection'
+import { processMergedCells } from './merged-cells'
 import {
+  cascadeHeaderValues,
+  cascadeRowValues,
   isNullOrWhitespace,
   prependNonUniqueHeaderColumns,
   trimTrailingEmptyCells,
@@ -53,36 +56,43 @@ export async function parseBuffer(
     })
   }
 
-  const sheetNames = Object.keys(workbook.Sheets)
-  try {
-    const processedSheets = (
-      await Promise.all(
-        sheetNames.map(async (sheetName) => {
-          const sheet = workbook.Sheets[sheetName]
-          const processedSheet = await convertSheet({
-            sheet,
-            sheetName,
-            rawNumbers: options?.rawNumbers || false,
-            raw: options?.raw || false,
-            headerDetectionOptions: options?.headerDetectionOptions || {
-              algorithm: 'default',
-            },
-            headerSelectionEnabled: options?.headerSelectionEnabled ?? false,
-            skipEmptyLines: options?.skipEmptyLines ?? false,
-            debug: options?.debug,
-          })
-          if (!processedSheet) {
-            return
-          }
-          return [sheetName, processedSheet]
-        })
-      )
-    ).filter(Boolean) as ProcessedSheet[]
-    return Object.fromEntries(processedSheets)
-  } catch (e) {
-    console.error(e)
-    throw new Error('plugins.extraction.failedToParseWorkbook')
+  // Process merged cells if options are provided
+  if (options?.mergedCellOptions) {
+    for (const sheetName of workbook.SheetNames) {
+      const sheet = workbook.Sheets[sheetName]
+      workbook.Sheets[sheetName] = processMergedCells(sheet, options)
+    }
   }
+
+  // Process each sheet
+  const processedSheets = await Promise.all(
+    workbook.SheetNames.map(async (sheetName) => {
+      const sheet = workbook.Sheets[sheetName]
+      const sheetCapture = await convertSheet({
+        sheet,
+        sheetName,
+        rawNumbers: options?.rawNumbers ?? false,
+        raw: options?.raw ?? false,
+        headerDetectionOptions: options?.headerDetectionOptions ?? {
+          algorithm: 'default',
+        },
+        headerSelectionEnabled: options?.headerSelectionEnabled ?? false,
+        skipEmptyLines: options?.skipEmptyLines ?? false,
+        debug: options?.debug,
+        cascadeRowValues: options?.cascadeRowValues,
+        cascadeHeaderValues: options?.cascadeHeaderValues,
+      })
+      return [sheetName, sheetCapture] as ProcessedSheet
+    })
+  )
+
+  // Filter out undefined sheets and convert to an object
+  return processedSheets.reduce((acc, [sheetName, sheetCapture]) => {
+    if (sheetCapture) {
+      acc[sheetName as string] = sheetCapture
+    }
+    return acc
+  }, {} as WorkbookCapture)
 }
 
 type ConvertSheetArgs = {
@@ -94,6 +104,8 @@ type ConvertSheetArgs = {
   headerSelectionEnabled: boolean
   skipEmptyLines: boolean
   debug?: boolean
+  cascadeRowValues?: boolean
+  cascadeHeaderValues?: boolean
 }
 
 /**
@@ -110,6 +122,8 @@ async function convertSheet({
   headerSelectionEnabled,
   skipEmptyLines,
   debug,
+  cascadeRowValues: shouldCascadeRowValues,
+  cascadeHeaderValues: shouldCascadeHeaderValues,
 }: ConvertSheetArgs): Promise<SheetCapture | undefined> {
   let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
@@ -126,23 +140,35 @@ async function convertSheet({
   const excelHeaders = Object.keys(rows[0])
 
   // Convert rows to an array of arrays
-  rows = rows.map((row) => Object.values(row))
+  let rowsAsArrays = rows.map((row) => Object.values(row))
 
   // remove **trailing** empty rows
-  while (rows.length > 0 && rows[rows.length - 1].every(isNullOrWhitespace)) {
-    rows.pop()
+  while (
+    rowsAsArrays.length > 0 &&
+    rowsAsArrays[rowsAsArrays.length - 1].every(isNullOrWhitespace)
+  ) {
+    rowsAsArrays.pop()
   }
 
   // return if there are no rows
-  if (!rows || rows.length === 0) {
+  if (!rowsAsArrays || rowsAsArrays.length === 0) {
     if (debug) {
       console.log(`No rows found in '${sheetName}'`)
     }
     return
   }
 
+  // Apply cascadeHeaderValues if enabled
+  let headerRows = [...rowsAsArrays]
+  if (shouldCascadeHeaderValues) {
+    headerRows = cascadeHeaderValues(headerRows)
+    if (debug) {
+      console.log(`Applied cascadeHeaderValues to '${sheetName}'`)
+    }
+  }
+
   const headerizer = Headerizer.create(headerDetectionOptions)
-  const headerStream = Readable.from(rows)
+  const headerStream = Readable.from(headerRows)
   const { skip, header } = await headerizer.getHeaders(headerStream)
   const slicedHeader = trimTrailingEmptyCells(header)
 
@@ -150,14 +176,22 @@ async function convertSheet({
     console.log('Detected header:', slicedHeader)
   }
 
-  if (!headerSelectionEnabled) rows.splice(0, skip)
+  if (!headerSelectionEnabled) rowsAsArrays.splice(0, skip)
 
   // return if there are no rows
-  if (rows.length === 0) {
+  if (rowsAsArrays.length === 0) {
     if (debug) {
       console.log(`No rows found in '${sheetName}'`)
     }
     return
+  }
+
+  // Apply cascadeRowValues if enabled
+  if (shouldCascadeRowValues) {
+    rowsAsArrays = cascadeRowValues(rowsAsArrays)
+    if (debug) {
+      console.log(`Applied cascadeRowValues to '${sheetName}'`)
+    }
   }
 
   const columnHeaders = headerSelectionEnabled
@@ -166,7 +200,7 @@ async function convertSheet({
   const headers = prependNonUniqueHeaderColumns(columnHeaders)
 
   // Convert rows to Flatfile Record format
-  const data = rows.map((row) =>
+  const data = rowsAsArrays.map((row) =>
     row.reduce((acc, value, index) => {
       const header = headers[index]
       if (header) {
