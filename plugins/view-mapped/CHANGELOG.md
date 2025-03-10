@@ -1,5 +1,11 @@
 # @flatfile/plugin-view-mapped
 
+## 1.4.0
+
+### Minor Changes
+
+- 01e04e1: This release introduces an option to retain required fields
+
 ## 1.3.3
 
 ### Patch Changes
