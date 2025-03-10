@@ -11,7 +11,7 @@ interface ViewMappedOptions {
   /**
    * If true, the plugin will skip removal of required fields
    */
-  skipRequiredFields?: boolean
+  keepRequiredFields?: boolean
 }
 
 /**
@@ -109,11 +109,11 @@ export function viewMappedPlugin(options: ViewMappedOptions) {
               // Keep mapped fields
               if (field.metadata?.mapped === true) return true
 
-              // Handle required fields based on skipRequiredFields option
+              // Handle required fields based on keepRequiredFields option
               const isRequired = field.constraints?.some(
                 (constraint) => constraint.type === 'required'
               )
-              return !options.skipRequiredFields && isRequired
+              return options.keepRequiredFields && isRequired
             })
             return fields.length > 0 ? fields : null
           })
