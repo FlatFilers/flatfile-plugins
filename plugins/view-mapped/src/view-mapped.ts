@@ -7,10 +7,17 @@ const api = new FlatfileClient()
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+interface ViewMappedOptions {
+  /**
+   * If true, the plugin will skip removal of required fields
+   */
+  keepRequiredFields?: boolean
+}
+
 /**
  * This plugin allows you to make the post-mapping sheet only display mapped data
  */
-export function viewMappedPlugin() {
+export function viewMappedPlugin(options: ViewMappedOptions) {
   return (listener: FlatfileListener) => {
     // Defining what needs to be done when Flatfile is done mapping columns based on user input during the Mapping stage of the import process
     listener.on('job:completed', { job: 'workbook:map' }, async (event) => {
@@ -98,9 +105,16 @@ export function viewMappedPlugin() {
 
           // Looping over each sheet in "workbook" and filtering for fields with metadata "mapped: true". Saving mapped fields per each sheet inside of "filteredWorkbookFields" varibable
           const filteredWorkbookFields = workbook.sheets.map((sheet) => {
-            const fields = sheet.config.fields.filter(
-              (field) => field.metadata && field.metadata.mapped === true
-            )
+            const fields = sheet.config.fields.filter((field) => {
+              // Keep mapped fields
+              if (field.metadata?.mapped === true) return true
+
+              // Handle required fields based on keepRequiredFields option
+              const isRequired = field.constraints?.some(
+                (constraint) => constraint.type === 'required'
+              )
+              return options.keepRequiredFields && isRequired
+            })
             return fields.length > 0 ? fields : null
           })
 
