@@ -1,5 +1,11 @@
 # @flatfile/plugin-webhook-event-forwarder
 
+## 0.6.1
+
+### Patch Changes
+
+- 44211a4: Add docs to the webhook-event-forwarder plugin
+
 ## 0.6.0
 
 ### Minor Changes
