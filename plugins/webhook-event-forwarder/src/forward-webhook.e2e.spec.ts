@@ -70,6 +70,7 @@ describe('forward-webhook() e2e', () => {
     }
     global.fetch = vi.fn().mockResolvedValue({
       status: 200,
+      ok: true,
       headers: {
         get: vi.fn().mockReturnValue('application/json'),
       },
