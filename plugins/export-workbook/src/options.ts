@@ -7,8 +7,8 @@ import type { Flatfile } from '@flatfile/api'
  * @property {number} row - The row component
  */
 export interface SheetAddress {
-  column: number;
-  row: number;
+  column: number
+  row: number
 }
 
 /**
@@ -18,11 +18,14 @@ export interface SheetAddress {
  * @property {boolean} skipColumnHeaders - If true, do not include column row in output
  */
 export interface ExportSheetOptions {
-  origin?: number | SheetAddress;
-  skipColumnHeaders?: boolean;
+  origin?: number | SheetAddress
+  skipColumnHeaders?: boolean
 }
 
-export type ColumnNameTransformerCallback = (columnName: string, sheetSlug: string) => string;
+export type ColumnNameTransformerCallback = (
+  columnName: string,
+  sheetSlug: string
+) => string
 
 /**
  * Plugin config options.
@@ -45,6 +48,6 @@ export interface PluginOptions {
   readonly includeRecordIds?: boolean
   readonly autoDownload?: boolean
   readonly debug?: boolean
-  readonly sheetOptions?: Record<string, ExportSheetOptions>;
-  readonly columnNameTransformer?: ColumnNameTransformerCallback;
+  readonly sheetOptions?: Record<string, ExportSheetOptions>
+  readonly columnNameTransformer?: ColumnNameTransformerCallback
 }
