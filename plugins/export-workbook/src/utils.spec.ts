@@ -1,6 +1,6 @@
 import { createXLSXSheetOptions } from './utils'
-import { ExportSheetOptions } from './options'
-import { JSON2SheetOpts } from 'xlsx'
+import type { ExportSheetOptions } from './options'
+import type { JSON2SheetOpts } from 'xlsx'
 
 describe('createXLSXSheetOptions', () => {
   it.each([
