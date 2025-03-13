@@ -44,7 +44,36 @@ Automatically download the file after exporting
 
 The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
 
+#### `sheetOptions` - `Record<string, ExportSheetOptions>` - (optional)
 
+A map of sheet slug to `ExportSheetOptions` instance providing sheet specific export options:
+
+- `skipColumnHeaders` - `boolean` - (optional) - allows omitting column headers
+- `origin` - `number` | `SheetAddress` - (optional) - allows offsetting the start of a sheet. The parameter is either a row number or an object with `column` and `row`.
+
+Usage: 
+
+```typescript
+listener.use(
+  exportWorkbookPlugin({
+    sheetOptions: {
+      SomeSheetSlug: {
+        // Start the sheet at 5
+        origin: 5,
+        // Omit column headers
+        skipColumnHeaders: true,
+      },
+      SomeOtherSheetSlug: {
+        // Start the sheet at row 10 column 2
+        origin: {row: 10, column: 2},
+      },
+    },
+  })
+```
+
+#### `columnNameTransformer` - `ColumnNameTransformerCallback` - (optional)
+
+A callback function allowing changing how column names appear in the workbook. The function accepts two arguments: `columnName` and `sheetSlug` and returns a new column name. 
 
 ## Usage
 
