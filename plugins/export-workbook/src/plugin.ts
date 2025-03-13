@@ -13,18 +13,18 @@ import {
   sanitize,
   sanitizeExcelSheetName,
 } from './utils'
-import { PluginOptions } from './options'
+import type { PluginOptions } from './options'
 
 const api = new FlatfileClient()
 
-const LOG_NAME = '@flatfile/plugin-export-workbook'
+import { name as PACKAGE_NAME } from '../package.json'
 
 /**
  * Runs extractor and creates an `.xlsx` file with all Flatfile Workbook data.
  *
  * @param event - Flatfile event
  * @param options - plugin config options
- * @param tick
+ * @param tick - a function to update job progress
  */
 export const exportRecords = async (
   event: FlatfileEvent,
@@ -48,7 +48,7 @@ export const exportRecords = async (
         }, '')
       )
 
-      logInfo(LOG_NAME, `Sheets found in Flatfile workbook: ${meta}`)
+      logInfo(PACKAGE_NAME, `Sheets found in Flatfile workbook: ${meta}`)
     }
 
     const xlsxWorkbook = XLSX.utils.book_new()
@@ -56,7 +56,7 @@ export const exportRecords = async (
     for (const [sheetIndex, sheet] of sheets.entries()) {
       if (options.excludedSheets?.includes(sheet.config.slug)) {
         if (options.debug) {
-          logInfo(LOG_NAME, `Skipping sheet: ${sheet.name}`)
+          logInfo(PACKAGE_NAME, `Skipping sheet: ${sheet.name}`)
         }
         continue
       }
@@ -163,7 +163,7 @@ export const exportRecords = async (
         )
       } catch (_) {
         logError(
-          LOG_NAME,
+          PACKAGE_NAME,
           `Failed to fetch records for sheet with id: ${sheet.id}`
         )
 
@@ -180,7 +180,7 @@ export const exportRecords = async (
 
     if (xlsxWorkbook.SheetNames.length === 0) {
       if (options.debug) {
-        logError(LOG_NAME, 'No data to write to Excel file')
+        logError(PACKAGE_NAME, 'No data to write to Excel file')
       }
 
       throw new Error('No data to write to Excel file.')
@@ -193,10 +193,10 @@ export const exportRecords = async (
       await tick(80, 'Excel file written to disk')
 
       if (options.debug) {
-        logInfo(LOG_NAME, 'File written to disk')
+        logInfo(PACKAGE_NAME, 'File written to disk')
       }
     } catch (_) {
-      logError(LOG_NAME, 'Failed to write file to disk')
+      logError(PACKAGE_NAME, 'Failed to write file to disk')
 
       throw new Error('Failed writing the Excel file to disk.')
     }
@@ -220,18 +220,18 @@ export const exportRecords = async (
 
       if (options.debug) {
         logInfo(
-          LOG_NAME,
+          PACKAGE_NAME,
           `Excel document uploaded. View file at https://spaces.flatfile.com/space/${spaceId}/files?mode=export`
         )
       }
     } catch (_) {
-      logError(LOG_NAME, 'Failed to upload file')
+      logError(PACKAGE_NAME, 'Failed to upload file')
 
       throw new Error('Failed uploading Excel file to Flatfile.')
     }
 
     if (options.debug) {
-      logInfo(LOG_NAME, 'Done')
+      logInfo(PACKAGE_NAME, 'Done')
     }
 
     return options.autoDownload
@@ -261,7 +261,7 @@ export const exportRecords = async (
           },
         }
   } catch (error) {
-    logError(LOG_NAME, error)
+    logError(PACKAGE_NAME, error)
 
     throw new Error((error as Error).message)
   }

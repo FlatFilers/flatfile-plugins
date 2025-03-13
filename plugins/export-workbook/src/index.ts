@@ -3,7 +3,7 @@ import type { TickFunction } from '@flatfile/plugin-job-handler'
 
 import { jobHandler } from '@flatfile/plugin-job-handler'
 import { exportRecords } from './plugin'
-import { PluginOptions } from './options'
+import type { PluginOptions } from './options'
 
 /**
  * Export records plugin for Flatfile.

@@ -1,5 +1,5 @@
-import { ExportSheetOptions, SheetAddress } from './options'
-import { JSON2SheetOpts, OriginOption } from 'xlsx'
+import { ExportSheetOptions } from './options'
+import { JSON2SheetOpts } from 'xlsx'
 
 export function sanitize(fileName: string): string {
   // List of invalid characters that are commonly not allowed in file names
