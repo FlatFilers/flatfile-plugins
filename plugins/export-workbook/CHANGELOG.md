@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 5.0.0
+
+### Major Changes
+
+- d6bef61: Added options to adjust the origin and column headers
+
 ## 4.0.1
 
 ### Patch Changes
