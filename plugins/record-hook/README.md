@@ -192,8 +192,8 @@ export default async function (listener: FlatfileListener) {
 
 #### Flexible Options
 
-#### `chunkSize` *number* *default: 10_000* (optional)
-Define how many records you want to process in each batch. This allows you to balance efficiency and resource utilization based on your specific use case.
+#### `chunkSize` *number* *default: 5_000* (optional)
+Define how many records you want to process in each batch. This allows you to balance efficiency and resource utilization based on your specific use case. The maximum chunkSize is 5000.
 
 #### `parallel` *number* *default: 1* (optional)
 Choose whether the records should be processed in parallel. This enables you to optimize the execution time when dealing with large datasets.
