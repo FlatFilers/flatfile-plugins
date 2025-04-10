@@ -33,6 +33,7 @@ export type ColumnNameTransformerCallback = (
  * @property {string} jobName - name of the job
  * @property {string[]} excludedSheets - list of sheet names to exclude from the exported data.
  * @property {string[]} excludeFields - list of field names to exclude from the exported data. This applies to all sheets.
+ * @property {boolean} excludeMessages - exclude record messages from the exported data.
  * @property {Flatfile.Filter} recordFilter - filter to apply to the records before exporting.
  * @property {boolean} includeRecordIds - include record ids in the exported data.
  * @property {boolean} autoDownload - auto download the file after exporting
@@ -44,6 +45,7 @@ export interface PluginOptions {
   readonly jobName?: string
   readonly excludedSheets?: string[]
   readonly excludeFields?: string[]
+  readonly excludeMessages?: boolean
   readonly recordFilter?: Flatfile.Filter
   readonly includeRecordIds?: boolean
   readonly autoDownload?: boolean

@@ -93,7 +93,9 @@ export const exportRecords = async (
                           v: Array.isArray(value) ? value.join(', ') : value,
                           c: [],
                         }
-                        if (R.length(messages) > 0) {
+                        if (options.excludeMessages) {
+                          cell.c = []
+                        } else if (R.length(messages) > 0) {
                           cell.c = messages.map((m) => ({
                             a: 'Flatfile',
                             t: `[${m.type.toUpperCase()}]: ${m.message}`,

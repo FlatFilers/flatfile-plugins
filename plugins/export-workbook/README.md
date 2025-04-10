@@ -28,6 +28,10 @@ An array of sheets to be excluded from the export
 
 An array of fields to be excluded from the export
 
+#### `excludeMessages` - `boolean` - (optional) 
+
+If true, messages on records will be excluded from the exported data.
+
 #### `recordFilter` - `Flatfile.Filter` - (optional) 
 
 Allows filtering exported records to `valid` or `error`. By default all records will be exported
