@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 2.0.2
+
+### Patch Changes
+
+- 0c7d6cc: This release updates the @flatfile/plugin-record-hook documentation
+
 ## 2.0.1
 
 ### Patch Changes
