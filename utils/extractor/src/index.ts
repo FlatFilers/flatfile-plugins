@@ -30,10 +30,10 @@ export const Extractor = (
       if (fileExt instanceof RegExp && !fileExt.test(file.name)) {
         return
       }
-      
+
       // If the extractor is excel, check if the smart extractor is enabled
       // If it is, we need to return early because the smart extractor will handle the extraction
-      if(extractorType === 'excel') {
+      if (extractorType === 'excel') {
         const { data: entitlements } = await api.entitlements.list({
           resourceId: spaceId,
         })
@@ -87,9 +87,8 @@ export const Extractor = (
           const sourceEditorEnabled = !!entitlements.find(
             (e) => e.key === 'sourceEditor'
           )
-        
-          const buffer = await getFileBuffer(event)
 
+          const buffer = await getFileBuffer(event)
 
           await tick(3, 'plugins.extraction.parseSheets')
           const capture = await parseBuffer(buffer, {
