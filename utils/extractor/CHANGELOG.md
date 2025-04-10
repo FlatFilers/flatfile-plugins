@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.6.0
+
+### Minor Changes
+
+- f89ccc0: When smart extractor is enabled we won't create an excel extractor job because smart extractor handles excel files.
+
 ## 2.5.0
 
 ### Minor Changes
