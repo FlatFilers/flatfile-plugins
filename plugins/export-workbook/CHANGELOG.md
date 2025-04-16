@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 5.1.0
+
+### Minor Changes
+
+- b1c26f8: Added option to export workbook without record messages
+
 ## 5.0.0
 
 ### Major Changes
