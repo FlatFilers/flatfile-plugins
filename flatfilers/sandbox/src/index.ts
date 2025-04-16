@@ -6,7 +6,9 @@ import {
   dataChecklist,
   dataChecklistPlugin,
 } from '@flatfile/plugin-space-configure'
+import { viewMappedPlugin } from '@flatfile/plugin-view-mapped'
 import { contacts } from './sheets/contacts'
+import { exportWorkbookPlugin } from '@flatfile/plugin-export-workbook'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
@@ -14,12 +16,17 @@ export default async function (listener: FlatfileListener) {
       'contacts',
       async (records: FlatfileRecord[], event: FlatfileEvent) => {
         // TODO: Add your logic here
+        records.map((record) => {
+          record.set('firstName', 'John')
+        })
         return records
       },
       { debug: true }
     )
   )
-  listener.use(dataChecklistPlugin())
+
+  listener.use(viewMappedPlugin({ keepRequiredFields: true }))
+  listener.use(exportWorkbookPlugin({ excludeMessages: false }))
   listener.use(
     configureSpace(
       {
@@ -29,7 +36,7 @@ export default async function (listener: FlatfileListener) {
             sheets: [contacts],
             actions: [
               {
-                operation: 'simpleSubmitAction',
+                operation: 'downloadWorkbook',
                 mode: 'foreground',
                 label: 'Submit data',
                 description: 'Action for handling data inside of onSubmit',
