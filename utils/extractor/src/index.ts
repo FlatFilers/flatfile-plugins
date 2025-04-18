@@ -118,12 +118,6 @@ export const Extractor = (
 
           await tick(10, 'plugins.extraction.addingRecords')
 
-          let processedRecords = 0
-          const totalLength = Object.values(capture).reduce(
-            (acc: number, sheet: any) => acc + (sheet?.data?.length || 0),
-            0
-          )
-
           await new Promise((resolve) => {
             setTimeout(resolve, WORKBOOK_CREATION_DELAY)
           })
