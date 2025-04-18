@@ -1,9 +1,9 @@
-import { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
+import type { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
-import { ExcelExtractorOptions } from '.'
-import { GetHeadersOptions, Headerizer } from './header.detection'
+import type { ExcelExtractorOptions } from '.'
+import { type GetHeadersOptions, Headerizer } from './header.detection'
 import { processMergedCells } from './merged-cells'
 import {
   cascadeHeaderValues,
@@ -125,7 +125,7 @@ async function convertSheet({
   cascadeRowValues: shouldCascadeRowValues,
   cascadeHeaderValues: shouldCascadeHeaderValues,
 }: ConvertSheetArgs): Promise<SheetCapture | undefined> {
-  let rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
+  const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
     defval: null,
     rawNumbers,
@@ -198,6 +198,13 @@ async function convertSheet({
     ? excelHeaders.slice(0, slicedHeader.length)
     : slicedHeader
   const headers = prependNonUniqueHeaderColumns(columnHeaders)
+
+  if (headers.length === 0) {
+    if (debug) {
+      console.log(`No headers found in '${sheetName}'`)
+    }
+    return
+  }
 
   // Convert rows to Flatfile Record format
   const data = rowsAsArrays.map((row) =>

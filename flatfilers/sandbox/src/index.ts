@@ -9,6 +9,7 @@ import {
 import { viewMappedPlugin } from '@flatfile/plugin-view-mapped'
 import { contacts } from './sheets/contacts'
 import { exportWorkbookPlugin } from '@flatfile/plugin-export-workbook'
+import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
 
 export default async function (listener: FlatfileListener) {
   listener.use(
@@ -24,7 +25,7 @@ export default async function (listener: FlatfileListener) {
       { debug: true }
     )
   )
-
+  listener.use(ExcelExtractor({ debug: true }))
   listener.use(viewMappedPlugin({ keepRequiredFields: true }))
   listener.use(exportWorkbookPlugin({ excludeMessages: false }))
   listener.use(
