@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.0.1
+
+### Patch Changes
+
+- 815352f: This release fixes an issue when a sheet contains no discernible content/headers.
+- Updated dependencies [815352f]
+  - @flatfile/util-extractor@2.6.1
+
 ## 4.0.0
 
 ### Major Changes

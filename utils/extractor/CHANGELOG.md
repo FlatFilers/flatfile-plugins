@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.6.1
+
+### Patch Changes
+
+- 815352f: This release fixes an issue when a sheet contains no discernible content/headers.
+
 ## 2.6.0
 
 ### Minor Changes
