@@ -33,7 +33,7 @@ export const Extractor = (
 
       // If the extractor is excel, check if the smart extractor is enabled
       // If it is, we need to return early because the smart extractor will handle the extraction
-      if (extractorType === 'excel' ) {
+      if (extractorType === 'excel' && !file?.treatments?.includes(Flatfile.FileTreatments.IsBasicFileShape)) {
         const { data: entitlements } = await api.entitlements.list({
           resourceId: spaceId,
         })
@@ -42,7 +42,7 @@ export const Extractor = (
         )
         // if smart extractor is enabled and the file is not basic file shape, return
         // this is because the smart extractor will handle the extraction
-        if (smartExtractorEnabled && !file?.treatments?.includes(Flatfile.FileTreatments.IsBasicFileShape)) {
+        if (smartExtractorEnabled ) {
           return
         }
       }
