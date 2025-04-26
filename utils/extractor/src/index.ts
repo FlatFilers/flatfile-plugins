@@ -42,7 +42,7 @@ export const Extractor = (
         )
         // if smart extractor is enabled and the file is not basic file shape, return
         // this is because the smart extractor will handle the extraction
-        if (smartExtractorEnabled ) {
+        if (smartExtractorEnabled) {
           return
         }
       }
