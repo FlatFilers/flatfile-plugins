@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.6.2
+
+### Patch Changes
+
+- 905d9e3: Updated file.treatment check for isBasicFileShape
+
 ## 2.6.1
 
 ### Patch Changes
