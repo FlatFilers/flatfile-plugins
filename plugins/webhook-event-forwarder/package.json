@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-webhook-event-forwarder",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/webhook-event-forwarder",
   "description": "A plugin to forward events via webhook for clients to manipulate at their endpoints in a language-agnostic way.",
   "registryMetadata": {

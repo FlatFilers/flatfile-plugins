@@ -1,5 +1,11 @@
 # @flatfile/plugin-connect-via-merge
 
+## 0.6.2
+
+### Patch Changes
+
+- 5a92dd3: Minor bug fixes
+
 ## 0.6.1
 
 ### Patch Changes

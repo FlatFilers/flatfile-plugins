@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-connect-via-merge",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/merge-connection",
   "description": "A connect plugin for Merge.dev",
   "registryMetadata": {
