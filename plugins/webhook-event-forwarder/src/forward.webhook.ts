@@ -1,8 +1,12 @@
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import fetch from 'cross-fetch'
 
 export function webhookEventForward(
   url: string,
-  callback?: (data: any, event: FlatfileEvent) => Promise<any> | any,
+  callback?: (
+    data: unknown,
+    event: FlatfileEvent
+  ) => Promise<unknown> | unknown,
   options?: {
     debug?: boolean
   }
@@ -21,7 +25,7 @@ export function webhookEventForward(
         if (!response.ok) throw new Error('Error forwarding webhook')
 
         const contentType = response.headers.get('content-type')
-        const isJson = contentType && contentType.includes('application/json')
+        const isJson = contentType?.includes('application/json')
         const data = isJson ? await response.json() : await response.text()
 
         callback ? await callback(data, event) : null
