@@ -33,9 +33,10 @@ export const Extractor = (
 
       // If the extractor is excel, check if the smart extractor is enabled
       // If it is, we need to return early because the smart extractor will handle the extraction
+      const fileTreatments = file?.treatments.map((t) => t.toLowerCase())
       if (
         extractorType === 'excel' &&
-        !file?.treatments?.includes(Flatfile.FileTreatments.IsBasicFileShape)
+        !fileTreatments?.includes('is_basic_file_shape')
       ) {
         const { data: entitlements } = await api.entitlements.list({
           resourceId: spaceId,
