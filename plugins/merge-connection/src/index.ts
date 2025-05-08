@@ -1,1 +1,1 @@
-export * as mergePlugin from './merge.plugin'
+export * from './merge.plugin'
