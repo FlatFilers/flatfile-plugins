@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.6.3
+
+### Patch Changes
+
+- 58d93ad: Fixed file treatment check case issue
+
 ## 2.6.2
 
 ### Patch Changes
