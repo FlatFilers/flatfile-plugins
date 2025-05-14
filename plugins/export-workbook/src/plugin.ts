@@ -177,7 +177,9 @@ export const exportRecords = async (
 
     // Lambdas only allow writing to /tmp directory
     const timestamp = new Date().toISOString()
-    const fileName = `${sanitizedName}-${timestamp}.xlsx`
+    const fileName = options.filename
+      ? `${options.filename}.xlsx`
+      : `${sanitizedName}-${timestamp}.xlsx`
     const filePath = path.join('/tmp', fileName)
 
     if (xlsxWorkbook.SheetNames.length === 0) {
