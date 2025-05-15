@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 5.2.0
+
+### Minor Changes
+
+- 77c7be2: This release adds an option to provided a file name
+
 ## 5.1.0
 
 ### Minor Changes
