@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 5.2.1
+
+### Patch Changes
+
+- Enable compression in Excel export to reduce file size
+
 ## 5.2.0
 
 ### Minor Changes

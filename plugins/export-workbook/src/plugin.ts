@@ -192,7 +192,7 @@ export const exportRecords = async (
 
     try {
       XLSX.set_fs(fs)
-      XLSX.writeFile(xlsxWorkbook, filePath)
+      XLSX.writeFile(xlsxWorkbook, filePath, { compression: true })
 
       await tick(80, 'Excel file written to disk')
 
