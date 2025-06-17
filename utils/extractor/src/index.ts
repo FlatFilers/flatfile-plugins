@@ -30,27 +30,6 @@ export const Extractor = (
       if (fileExt instanceof RegExp && !fileExt.test(file.name)) {
         return
       }
-
-      // If the extractor is excel, check if the smart extractor is enabled
-      // If it is, we need to return early because the smart extractor will handle the extraction
-      const fileTreatments = file?.treatments.map((t) => t.toLowerCase())
-      if (
-        extractorType === 'excel' &&
-        !fileTreatments?.includes('is_basic_file_shape')
-      ) {
-        const { data: entitlements } = await api.entitlements.list({
-          resourceId: spaceId,
-        })
-        const smartExtractorEnabled = !!entitlements.find(
-          (e) => e.key === 'smartExtractor'
-        )
-        // if smart extractor is enabled and the file is not basic file shape, return
-        // this is because the smart extractor will handle the extraction
-        if (smartExtractorEnabled) {
-          return
-        }
-      }
-
       const jobs = await api.jobs.create({
         type: Flatfile.JobType.File,
         operation: `extract-plugin-${extractorType}`,
