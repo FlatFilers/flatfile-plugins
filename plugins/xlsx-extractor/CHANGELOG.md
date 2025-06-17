@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.0.4
+
+### Patch Changes
+
+- 962e64f: Uitl Extractor version push for xlsx extractor
+
 ## 4.0.3
 
 ### Patch Changes
