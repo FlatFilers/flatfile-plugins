@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.7.0
+
+### Minor Changes
+
+- 8124a46: New Smart Extract workflow. Removed check
+
 ## 2.6.3
 
 ### Patch Changes
