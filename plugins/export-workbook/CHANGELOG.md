@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 5.2.1
+
+### Patch Changes
+
+- 8f6b2f3: This release adds compression to the outputted excel file
+
 ## 5.2.0
 
 ### Minor Changes
