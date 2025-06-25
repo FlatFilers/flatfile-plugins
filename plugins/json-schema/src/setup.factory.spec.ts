@@ -161,32 +161,41 @@ describe('generateSetup()', () => {
     const cartLineItemSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartLineItem')
     expect(cartLineItemSheet).toBeDefined()
     expect(cartLineItemSheet.name).toBe('Cart Line Item')
-    expect(cartLineItemSheet.fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          key: 'lineId',
-          type: 'string',
-          description: 'Unique identifier for a line item',
-        }),
-        expect.objectContaining({
-          key: 'productId',
-          type: 'number',
-          description: 'Unique identifier of a Product',
-        }),
-      ])
-    )
+    expect(cartLineItemSheet.fields).toHaveLength(2)
+    expect(cartLineItemSheet.fields).toEqual([
+      expect.objectContaining({
+        key: 'lineId',
+        type: 'string',
+        label: 'Line Id',
+        description: 'Unique identifier for a line item',
+      }),
+      expect.objectContaining({
+        key: 'productId',
+        type: 'number',
+        label: 'Product Id',
+        description: 'Unique identifier of a Product',
+      }),
+    ])
 
     const mainSheet = results.workbooks[0].sheets.find(s => s.slug === 'main')
     expect(mainSheet).toBeDefined()
-    expect(mainSheet.fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          key: 'import_lineItems',
-          type: 'reference-list',
-          config: { ref: 'CartLineItem', key: 'id', relationship: 'has-many' },
-        }),
-      ])
-    )
+    expect(mainSheet.name).toBe('Main')
+    expect(mainSheet.fields).toHaveLength(2)
+    expect(mainSheet.fields).toEqual([
+      expect.objectContaining({
+        key: 'import_originalBookingId',
+        type: 'string',
+        label: 'Import Original Booking Id',
+        description: 'The original booking identifier',
+        constraints: [{ type: 'required' }],
+      }),
+      expect.objectContaining({
+        key: 'import_lineItems',
+        type: 'reference-list',
+        label: 'Import Line Items',
+        config: { ref: 'CartLineItem', key: 'id', relationship: 'has-many' },
+      }),
+    ])
   })
 
   it('should handle the booking-import.schema.json correctly', async () => {
@@ -316,31 +325,114 @@ describe('generateSetup()', () => {
     expect(sheetSlugs).toContain('main')
 
     const cartLineItemSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartLineItem')
-    expect(cartLineItemSheet.fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          key: 'pricing',
-          type: 'reference',
-          config: { ref: 'LineItemPricing', key: 'id', relationship: 'has-one' },
-        }),
-      ])
-    )
+    expect(cartLineItemSheet).toBeDefined()
+    expect(cartLineItemSheet.name).toBe('Cart Line Item')
+    expect(cartLineItemSheet.fields).toHaveLength(5)
+    expect(cartLineItemSheet.fields).toEqual([
+      expect.objectContaining({
+        key: 'lineId',
+        type: 'string',
+        label: 'Line Id',
+        description: 'Unique identifier for a line item. Must be greater than 0 and must start from 1.',
+      }),
+      expect.objectContaining({
+        key: 'productId',
+        type: 'number',
+        label: 'Product Id',
+        description: 'Unique identifier of a Product',
+      }),
+      expect.objectContaining({
+        key: 'start',
+        type: 'string',
+        label: 'Start',
+        description: 'The date and time when the line item begins.',
+      }),
+      expect.objectContaining({
+        key: 'end',
+        type: 'string',
+        label: 'End',
+        description: 'The date and time when the line item ends.',
+      }),
+      expect.objectContaining({
+        key: 'pricing',
+        type: 'reference',
+        label: 'Pricing',
+        config: { ref: 'LineItemPricing', key: 'id', relationship: 'has-one' },
+      }),
+    ])
+
+    const cartFormFieldSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartFormField')
+    expect(cartFormFieldSheet).toBeDefined()
+    expect(cartFormFieldSheet.name).toBe('Cart Form Field')
+    expect(cartFormFieldSheet.fields).toHaveLength(2)
+    expect(cartFormFieldSheet.fields).toEqual([
+      expect.objectContaining({
+        key: 'fieldId',
+        type: 'string',
+        label: 'Field Id',
+        description: "The form field's identifier",
+      }),
+      expect.objectContaining({
+        key: 'value',
+        type: 'string',
+        label: 'Value',
+        description: 'The value entered for the field',
+      }),
+    ])
+
+    const lineItemPricingSheet = results.workbooks[0].sheets.find(s => s.slug === 'LineItemPricing')
+    expect(lineItemPricingSheet).toBeDefined()
+    expect(lineItemPricingSheet.name).toBe('Line Item Pricing')
+    expect(lineItemPricingSheet.fields).toHaveLength(3)
+    expect(lineItemPricingSheet.fields).toEqual([
+      expect.objectContaining({
+        key: 'subTotal',
+        type: 'number',
+        label: 'Sub Total',
+        description: 'The line item total cost, in cents',
+      }),
+      expect.objectContaining({
+        key: 'inclusiveTaxTotal',
+        type: 'number',
+        label: 'Inclusive Tax Total',
+        description: 'The total of inclusive taxes (already in line item prices, eg. VAT), in cents',
+      }),
+      expect.objectContaining({
+        key: 'taxTotal',
+        type: 'number',
+        label: 'Tax Total',
+        description: 'The total of additive taxes, in cents',
+      }),
+    ])
 
     const mainSheet = results.workbooks[0].sheets.find(s => s.slug === 'main')
-    expect(mainSheet.fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          key: 'import_lineItems',
-          type: 'reference-list',
-          config: { ref: 'CartLineItem', key: 'id', relationship: 'has-many' },
-        }),
-        expect.objectContaining({
-          key: 'import_bookingFields',
-          type: 'reference-list',
-          config: { ref: 'CartFormField', key: 'id', relationship: 'has-many' },
-        }),
-      ])
-    )
+    expect(mainSheet).toBeDefined()
+    expect(mainSheet.name).toBe('Booking Import')
+    expect(mainSheet.fields).toHaveLength(3)
+    expect(mainSheet.fields).toEqual([
+      expect.objectContaining({
+        key: 'import_originalBookingId',
+        type: 'string',
+        label: 'Import Original Booking Id',
+        description: 'The original booking identifier',
+        constraints: [{ type: 'required' }],
+      }),
+      expect.objectContaining({
+        key: 'import_lineItems',
+        type: 'reference-list',
+        label: 'Import Line Items',
+        description: 'List of LineItems to book',
+        config: { ref: 'CartLineItem', key: 'id', relationship: 'has-many' },
+        constraints: [{ type: 'required' }],
+      }),
+      expect.objectContaining({
+        key: 'import_bookingFields',
+        type: 'reference-list',
+        label: 'Import Booking Fields',
+        description: 'List of FormFields with their values',
+        config: { ref: 'CartFormField', key: 'id', relationship: 'has-many' },
+      }),
+    ])
   })
 
   it('should maintain backward compatibility with flat schemas', async () => {
@@ -369,19 +461,22 @@ describe('generateSetup()', () => {
     })
 
     expect(results.workbooks[0].sheets).toHaveLength(1)
-    expect(results.workbooks[0].sheets[0].fields).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          key: 'name',
-          type: 'string',
-          description: 'Person name',
-        }),
-        expect.objectContaining({
-          key: 'age',
-          type: 'number',
-          description: 'Person age',
-        }),
-      ])
-    )
+    const flatSheet = results.workbooks[0].sheets[0]
+    expect(flatSheet.fields).toHaveLength(2)
+    expect(flatSheet.fields).toEqual([
+      expect.objectContaining({
+        key: 'name',
+        type: 'string',
+        label: 'Name',
+        description: 'Person name',
+        constraints: [{ type: 'required' }],
+      }),
+      expect.objectContaining({
+        key: 'age',
+        type: 'number',
+        label: 'Age',
+        description: 'Person age',
+      }),
+    ])
   })
 })
