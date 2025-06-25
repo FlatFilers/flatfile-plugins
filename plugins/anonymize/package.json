@@ -1,0 +1,86 @@
+{
+  "name": "@flatfile/plugin-anonymize",
+  "version": "1.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/anonymize",
+  "description": "A plugin for anonymizing email addresses by converting them to MD5 hashes in Flatfile.",
+  "registryMetadata": {
+    "category": "transform"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">= 18"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "exports": {
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.browser.js",
+        "require": "./dist/index.browser.cjs"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "build:prod": "NODE_ENV=production tsup",
+    "checks": "tsc --noEmit && attw --pack . && publint .",
+    "lint": "tsc --noEmit",
+    "test": "vitest run src/*.spec.ts --passWithNoTests",
+    "test:unit": "vitest run src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
+    "test:e2e": "vitest run src/*.e2e.spec.ts --passWithNoTests"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-transform",
+    "anonymize",
+    "email",
+    "privacy",
+    "md5"
+  ],
+  "author": "Devin AI",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/anonymize"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/hooks": "^1.6.0",
+    "@flatfile/util-common": "^1.6.0"
+  },
+  "peerDependencies": {
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/listener": "^1.1.0",
+    "@flatfile/plugin-record-hook": "^2.0.0"
+  },
+  "devDependencies": {
+    "@flatfile/plugin-record-hook": "^2.0.0",
+    "@flatfile/bundler-config-tsup": "^0.2.0",
+    "@flatfile/config-vitest": "^0.0.0"
+  }
+}
