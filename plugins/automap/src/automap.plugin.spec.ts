@@ -20,7 +20,7 @@ describe('automap plugin', () => {
   describe('onFailure callback', () => {
     it('should call synchronous onFailure callback with correct event', () => {
       const mockOnFailure = vi.fn()
-      
+
       const plugin = automap({
         accuracy: 'confident',
         onFailure: mockOnFailure
@@ -32,7 +32,7 @@ describe('automap plugin', () => {
 
     it('should handle asynchronous onFailure callback that resolves', async () => {
       const mockOnFailure = vi.fn().mockResolvedValue(undefined)
-      
+
       const plugin = automap({
         accuracy: 'confident',
         onFailure: mockOnFailure
@@ -44,7 +44,7 @@ describe('automap plugin', () => {
 
     it('should handle asynchronous onFailure callback that rejects', async () => {
       const mockOnFailure = vi.fn().mockRejectedValue(new Error('Test error'))
-      
+
       const plugin = automap({
         accuracy: 'confident',
         onFailure: mockOnFailure
@@ -58,7 +58,7 @@ describe('automap plugin', () => {
       const syncCallback = (event: FlatfileEvent) => {
         console.log('Sync callback called')
       }
-      
+
       const asyncCallback = async (event: FlatfileEvent) => {
         console.log('Async callback called')
         return Promise.resolve()
@@ -90,7 +90,7 @@ describe('automap plugin', () => {
 
     it('should create plugin with all optional parameters including onFailure', () => {
       const mockOnFailure = vi.fn()
-      
+
       const plugin = automap({
         accuracy: 'exact',
         debug: true,
