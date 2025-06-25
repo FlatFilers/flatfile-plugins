@@ -27,7 +27,7 @@ export async function generateSetup(
       const sheets = await Promise.all(
         workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) => {
           const model = await getModel(partialSheetConfig.source)
-          
+
           if (model.$defs && Object.keys(model.$defs).length > 0) {
             return await generateHierarchicalSheets(model, partialSheetConfig)
           } else {
@@ -138,8 +138,6 @@ export async function getPropertyType(
     return propertyFields.flat()
   }
 
-
-
   const fieldTypes: Record<string, Flatfile.Property> = {
     string: { key: parentKey, type: 'string' },
     number: { key: parentKey, type: 'number' },
@@ -214,13 +212,13 @@ async function generateHierarchicalSheets(
   const origin = getOrigin(schema.$id)
 
   for (const [defName, defSchema] of Object.entries(schema.$defs || {})) {
-    if (defSchema.type === 'object' && defSchema.properties) {
+    if ((defSchema as any).type === 'object' && (defSchema as any).properties) {
       const fields = await generateFieldsForSheet(schema, defSchema, origin)
-      
+
       sheets.push({
         name: capitalCase(defName),
         slug: defName,
-        description: defSchema.description || `${capitalCase(defName)} data`,
+        description: (defSchema as any).description || `${capitalCase(defName)} data`,
         fields,
         ...partialSheetConfig,
       })
@@ -229,7 +227,7 @@ async function generateHierarchicalSheets(
 
   if (schema.properties && Object.keys(schema.properties).length > 0) {
     const fields = await generateFieldsForSheet(schema, schema, origin)
-    
+
     sheets.unshift({
       name: partialSheetConfig?.name || schema.title || 'Main',
       slug: 'main',
@@ -274,16 +272,22 @@ async function getPropertyTypeForSheet(
     const refPath = property.$ref
     if (refPath.startsWith('#/$defs/')) {
       const defName = refPath.replace('#/$defs/', '')
-      return [{
-        key: parentKey,
-        type: 'reference',
-        label: capitalCase(parentKey),
-        ...(property?.description && { description: property.description }),
-        ...(isRequired && { constraints: [{ type: 'required' }] }),
-        config: { ref: defName, key: 'id', relationship: 'has-one' }
-      }]
+      return [
+        {
+          key: parentKey,
+          type: 'reference',
+          label: capitalCase(parentKey),
+          ...(property?.description && { description: property.description }),
+          ...(isRequired && { constraints: [{ type: 'required' }] }),
+          config: { ref: defName, key: 'id' },
+        },
+      ]
     } else {
-      const resolvedProperty = await resolveReference(rootSchema, refPath, origin)
+      const resolvedProperty = await resolveReference(
+        rootSchema,
+        refPath,
+        origin
+      )
       return await getPropertyTypeForSheet(
         rootSchema,
         resolvedProperty,
@@ -373,14 +377,16 @@ async function handleArrayTypeForSheet(
 
   if (property.items.$ref && property.items.$ref.startsWith('#/$defs/')) {
     const defName = property.items.$ref.replace('#/$defs/', '')
-    return [{
-      key: parentKey,
-      type: 'reference-list',
-      label: capitalCase(parentKey),
-      ...(property?.description && { description: property.description }),
-      ...(isRequired && { constraints: [{ type: 'required' }] }),
-      config: { ref: defName, key: 'id', relationship: 'has-many' }
-    }]
+    return [
+      {
+        key: parentKey,
+        type: 'reference-list',
+        label: capitalCase(parentKey),
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+        config: { ref: defName, key: 'id' },
+      },
+    ]
   }
 
   if (property.items.type && property.items.type !== 'object') {
@@ -433,7 +439,6 @@ function getOrigin(url?: string): string {
     return ''
   }
 }
-
 
 export async function fetchExternalReference(url: string): Promise<any> {
   try {

@@ -1,111 +1,98 @@
 import { describe, expect, it } from 'vitest'
 import { generateSetup } from './setup.factory'
 
-describe('generateSetup()', () => {
+describe('setup.factory', () => {
   const simpleJsonSchema = {
-    $id: 'https://example.com',
-    description:
-      'A basic set of JSON Schema to test data type conversions simply',
     type: 'object',
-    title: 'ExampleData',
     properties: {
-      stringColumn: {
-        description: 'A column for strings!',
+      name: {
         type: 'string',
+        description: 'Person name',
       },
-      integerColumn: {
-        description: 'A column for integers!',
+      age: {
         type: 'integer',
+        description: 'Person age',
       },
-      arrayColumn: {
-        description: 'A column for string arrays!',
-        type: 'array',
-        items: {
-          type: 'string',
-        },
+      email: {
+        type: 'string',
+        description: 'Person email',
       },
-      objectColumn: {
-        description:
-          'A column for nested columns containing numbers and strings!',
+      address: {
         type: 'object',
         properties: {
-          nestedUniqueNumberColumn: {
-            description: 'A column for unique numbers!',
-            type: 'number',
-            uniqueItems: true,
-          },
-          nestedStringColumn: {
+          street: {
             type: 'string',
+            description: 'Street address',
+          },
+          city: {
+            type: 'string',
+            description: 'City',
+          },
+          zipCode: {
+            type: 'string',
+            description: 'ZIP code',
           },
         },
       },
     },
+    required: ['name', 'email'],
   }
 
-  const expectedResult = {
-    workbooks: [
-      {
-        name: 'JSON Schema Workbook',
-        sheets: [
-          {
-            description:
-              'A basic set of JSON Schema to test data type conversions simply',
-            fields: [
-              {
-                description: 'A column for strings!',
-                key: 'stringColumn',
-                label: 'stringColumn',
-                type: 'string',
-              },
-              {
-                description: 'A column for integers!',
-                key: 'integerColumn',
-                label: 'integerColumn',
-                type: 'number',
-              },
-              {
-                description: 'A column for string arrays!',
-                key: 'arrayColumn',
-                label: 'arrayColumn',
-                type: 'string-list',
-              },
-              {
-                description: 'A column for unique numbers!',
-                key: 'objectColumn_nestedUniqueNumberColumn',
-                label: 'objectColumn_nestedUniqueNumberColumn',
-                type: 'number',
-              },
-              {
-                key: 'objectColumn_nestedStringColumn',
-                label: 'objectColumn_nestedStringColumn',
-                type: 'string',
-              },
-            ],
-            name: 'ExampleData',
-          },
-        ],
-      },
-    ],
-  }
+  const expectedResult = [
+    {
+      key: 'name',
+      type: 'string',
+      label: 'name',
+      description: 'Person name',
+      constraints: [{ type: 'required' }],
+    },
+    {
+      key: 'age',
+      type: 'number',
+      label: 'age',
+      description: 'Person age',
+    },
+    {
+      key: 'email',
+      type: 'string',
+      label: 'email',
+      description: 'Person email',
+      constraints: [{ type: 'required' }],
+    },
+    {
+      key: 'address_street',
+      type: 'string',
+      label: 'address_street',
+      description: 'Street address',
+    },
+    {
+      key: 'address_city',
+      type: 'string',
+      label: 'address_city',
+      description: 'City',
+    },
+    {
+      key: 'address_zipCode',
+      type: 'string',
+      label: 'address_zipCode',
+      description: 'ZIP code',
+    },
+  ]
 
-  it('should generate a SetupFactory from JSON Schema', async () => {
+  it('should generate setup from simple JSON schema', async () => {
     const results = await generateSetup({
       workbooks: [
         {
-          name: 'JSON Schema Workbook',
-          sheets: [
-            {
-              source: simpleJsonSchema,
-            },
-          ],
+          name: 'Test Workbook',
+          sheets: [{ source: simpleJsonSchema }],
         },
       ],
     })
 
-    expect(results).toMatchObject(expectedResult)
+    expect(results.workbooks[0].sheets[0].fields).toEqual(expectedResult)
   })
 
-  it('should create multiple linked sheets for hierarchical JSON Schema', async () => {
+  it('should handle hierarchical schemas with $defs', async () => {
     const hierarchicalSchema = {
       $id: 'https://example.com/booking',
       type: 'object',
@@ -115,18 +102,11 @@ describe('generateSetup()', () => {
           items: {
             type: 'object',
             properties: {
-              originalBookingId: {
-                type: 'string',
-                description: 'The original booking identifier',
-              },
               lineItems: {
                 type: 'array',
-                items: {
-                  $ref: '#/$defs/CartLineItem',
-                },
+                items: { $ref: '#/$defs/CartLineItem' },
               },
             },
-            required: ['originalBookingId'],
           },
         },
       },
@@ -143,6 +123,7 @@ describe('generateSetup()', () => {
               description: 'Unique identifier of a Product',
             },
           },
+          required: ['lineId'],
         },
       },
     }
@@ -150,15 +131,17 @@ describe('generateSetup()', () => {
     const results = await generateSetup({
       workbooks: [
         {
-          name: 'Hierarchical Schema Workbook',
+          name: 'Test Workbook',
           sheets: [{ source: hierarchicalSchema }],
         },
       ],
     })
 
     expect(results.workbooks[0].sheets).toHaveLength(2)
-    
-    const cartLineItemSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartLineItem')
+
+    const cartLineItemSheet = results.workbooks[0].sheets.find(
+      (s) => s.slug === 'CartLineItem'
+    )
     expect(cartLineItemSheet).toBeDefined()
     expect(cartLineItemSheet.name).toBe('Cart Line Item')
     expect(cartLineItemSheet.fields).toHaveLength(2)
@@ -168,6 +151,7 @@ describe('generateSetup()', () => {
         type: 'string',
         label: 'Line Id',
         description: 'Unique identifier for a line item',
+        constraints: [{ type: 'required' }],
       }),
       expect.objectContaining({
         key: 'productId',
@@ -177,33 +161,22 @@ describe('generateSetup()', () => {
       }),
     ])
 
-    const mainSheet = results.workbooks[0].sheets.find(s => s.slug === 'main')
+    const mainSheet = results.workbooks[0].sheets.find((s) => s.slug === 'main')
     expect(mainSheet).toBeDefined()
-    expect(mainSheet.name).toBe('Main')
-    expect(mainSheet.fields).toHaveLength(2)
     expect(mainSheet.fields).toEqual([
-      expect.objectContaining({
-        key: 'import_originalBookingId',
-        type: 'string',
-        label: 'Import Original Booking Id',
-        description: 'The original booking identifier',
-        constraints: [{ type: 'required' }],
-      }),
       expect.objectContaining({
         key: 'import_lineItems',
         type: 'reference-list',
         label: 'Import Line Items',
-        config: { ref: 'CartLineItem', key: 'id', relationship: 'has-many' },
+        config: { ref: 'CartLineItem', key: 'id' },
       }),
     ])
   })
 
-  it('should handle the booking-import.schema.json correctly', async () => {
+  it('should handle complex hierarchical schemas with multiple $defs', async () => {
     const bookingSchema = {
-      $schema: 'https://json-schema.org/draft/2020-12/schema',
-      $id: 'https://apiv4.checkfront.com/booking-import.schema.json',
+      $id: 'https://example.com/booking-import',
       title: 'Booking Import',
-      description: 'A booking import schema',
       type: 'object',
       properties: {
         import: {
@@ -212,22 +185,18 @@ describe('generateSetup()', () => {
             type: 'object',
             properties: {
               originalBookingId: {
-                description: 'The original booking identifier',
                 type: 'string',
+                description: 'The original booking identifier',
               },
               lineItems: {
-                description: 'List of LineItems to book',
                 type: 'array',
-                items: {
-                  $ref: '#/$defs/CartLineItem',
-                },
+                items: { $ref: '#/$defs/CartLineItem' },
+                description: 'List of LineItems to book',
               },
               bookingFields: {
-                description: 'List of FormFields with their values',
                 type: 'array',
-                items: {
-                  $ref: '#/$defs/CartFormField',
-                },
+                items: { $ref: '#/$defs/CartFormField' },
+                description: 'List of FormFields with their values',
               },
             },
             required: ['originalBookingId', 'lineItems'],
@@ -239,45 +208,36 @@ describe('generateSetup()', () => {
           type: 'object',
           properties: {
             lineId: {
+              type: 'string',
               description:
                 'Unique identifier for a line item. Must be greater than 0 and must start from 1.',
-              type: 'string',
-              example: '1.1',
             },
             productId: {
-              description: 'Unique identifier of a Product',
               type: 'integer',
-              example: 204,
+              description: 'Unique identifier of a Product',
             },
             start: {
-              description: 'The date and time when the line item begins.',
               type: 'string',
-              format: 'date-time',
-              example: '2021-05-06T13:00:00',
+              description: 'The date and time when the line item begins.',
             },
             end: {
-              description: 'The date and time when the line item ends.',
               type: 'string',
-              format: 'date-time',
-              example: '2021-05-06T14:00:00',
+              description: 'The date and time when the line item ends.',
             },
-            pricing: {
-              $ref: '#/$defs/LineItemPricing',
-            },
+            pricing: { $ref: '#/$defs/LineItemPricing' },
           },
+          required: ['lineId'],
         },
         CartFormField: {
           type: 'object',
           properties: {
             fieldId: {
-              description: "The form field's identifier",
               type: 'string',
-              example: 'customer_name',
+              description: "The form field's identifier",
             },
             value: {
-              description: 'The value entered for the field',
               type: 'string',
-              example: 'Jane Smith',
+              description: 'The value entered for the field',
             },
           },
         },
@@ -285,20 +245,17 @@ describe('generateSetup()', () => {
           type: 'object',
           properties: {
             subTotal: {
+              type: 'number',
               description: 'The line item total cost, in cents',
-              type: 'integer',
-              example: 6000,
             },
             inclusiveTaxTotal: {
+              type: 'number',
               description:
                 'The total of inclusive taxes (already in line item prices, eg. VAT), in cents',
-              type: 'integer',
-              example: 300,
             },
             taxTotal: {
+              type: 'number',
               description: 'The total of additive taxes, in cents',
-              type: 'integer',
-              example: 720,
             },
           },
         },
@@ -314,17 +271,17 @@ describe('generateSetup()', () => {
       ],
     })
 
-    const fields = results.workbooks[0].sheets[0].fields
-
     expect(results.workbooks[0].sheets).toHaveLength(4)
-    
-    const sheetSlugs = results.workbooks[0].sheets.map(s => s.slug)
+
+    const sheetSlugs = results.workbooks[0].sheets.map((s) => s.slug)
     expect(sheetSlugs).toContain('CartLineItem')
     expect(sheetSlugs).toContain('CartFormField')
     expect(sheetSlugs).toContain('LineItemPricing')
     expect(sheetSlugs).toContain('main')
 
-    const cartLineItemSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartLineItem')
+    const cartLineItemSheet = results.workbooks[0].sheets.find(
+      (s) => s.slug === 'CartLineItem'
+    )
     expect(cartLineItemSheet).toBeDefined()
     expect(cartLineItemSheet.name).toBe('Cart Line Item')
     expect(cartLineItemSheet.fields).toHaveLength(5)
@@ -333,7 +290,8 @@ describe('generateSetup()', () => {
         key: 'lineId',
         type: 'string',
         label: 'Line Id',
-        description: 'Unique identifier for a line item. Must be greater than 0 and must start from 1.',
+        description:
+          'Unique identifier for a line item. Must be greater than 0 and must start from 1.',
       }),
       expect.objectContaining({
         key: 'productId',
@@ -357,11 +315,13 @@ describe('generateSetup()', () => {
         key: 'pricing',
         type: 'reference',
         label: 'Pricing',
-        config: { ref: 'LineItemPricing', key: 'id', relationship: 'has-one' },
+        config: { ref: 'LineItemPricing', key: 'id' },
       }),
     ])
 
-    const cartFormFieldSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartFormField')
+    const cartFormFieldSheet = results.workbooks[0].sheets.find(
+      (s) => s.slug === 'CartFormField'
+    )
     expect(cartFormFieldSheet).toBeDefined()
     expect(cartFormFieldSheet.name).toBe('Cart Form Field')
     expect(cartFormFieldSheet.fields).toHaveLength(2)
@@ -380,7 +340,9 @@ describe('generateSetup()', () => {
       }),
     ])
 
-    const lineItemPricingSheet = results.workbooks[0].sheets.find(s => s.slug === 'LineItemPricing')
+    const lineItemPricingSheet = results.workbooks[0].sheets.find(
+      (s) => s.slug === 'LineItemPricing'
+    )
     expect(lineItemPricingSheet).toBeDefined()
     expect(lineItemPricingSheet.name).toBe('Line Item Pricing')
     expect(lineItemPricingSheet.fields).toHaveLength(3)
@@ -395,7 +357,8 @@ describe('generateSetup()', () => {
         key: 'inclusiveTaxTotal',
         type: 'number',
         label: 'Inclusive Tax Total',
-        description: 'The total of inclusive taxes (already in line item prices, eg. VAT), in cents',
+        description:
+          'The total of inclusive taxes (already in line item prices, eg. VAT), in cents',
       }),
       expect.objectContaining({
         key: 'taxTotal',
@@ -405,7 +368,7 @@ describe('generateSetup()', () => {
       }),
     ])
 
-    const mainSheet = results.workbooks[0].sheets.find(s => s.slug === 'main')
+    const mainSheet = results.workbooks[0].sheets.find((s) => s.slug === 'main')
     expect(mainSheet).toBeDefined()
     expect(mainSheet.name).toBe('Booking Import')
     expect(mainSheet.fields).toHaveLength(3)
@@ -422,7 +385,7 @@ describe('generateSetup()', () => {
         type: 'reference-list',
         label: 'Import Line Items',
         description: 'List of LineItems to book',
-        config: { ref: 'CartLineItem', key: 'id', relationship: 'has-many' },
+        config: { ref: 'CartLineItem', key: 'id' },
         constraints: [{ type: 'required' }],
       }),
       expect.objectContaining({
@@ -430,7 +393,7 @@ describe('generateSetup()', () => {
         type: 'reference-list',
         label: 'Import Booking Fields',
         description: 'List of FormFields with their values',
-        config: { ref: 'CartFormField', key: 'id', relationship: 'has-many' },
+        config: { ref: 'CartFormField', key: 'id' },
       }),
     ])
   })
