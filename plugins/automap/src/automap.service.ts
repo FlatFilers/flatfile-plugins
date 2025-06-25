@@ -238,7 +238,7 @@ export class AutomapService {
         logWarn('@flatfile/plugin-automap', 'At least one field must be mapped')
 
         if (!this.isNil(this.options.onFailure)) {
-          this.options.onFailure(event)
+          await this.options.onFailure(event)
         }
         return
       }
@@ -257,7 +257,7 @@ export class AutomapService {
               }
 
               if (!this.isNil(this.options.onFailure)) {
-                this.options.onFailure(event)
+                await this.options.onFailure(event)
               }
             }
             break
@@ -273,7 +273,7 @@ export class AutomapService {
               }
 
               if (!this.isNil(this.options.onFailure)) {
-                this.options.onFailure(event)
+                await this.options.onFailure(event)
               }
             }
             break
