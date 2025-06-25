@@ -105,7 +105,7 @@ describe('generateSetup()', () => {
     expect(results).toMatchObject(expectedResult)
   })
 
-  it('should handle hierarchical JSON Schema with arrays of objects', async () => {
+  it('should create multiple linked sheets for hierarchical JSON Schema', async () => {
     const hierarchicalSchema = {
       $id: 'https://example.com/booking',
       type: 'object',
@@ -156,22 +156,34 @@ describe('generateSetup()', () => {
       ],
     })
 
-    expect(results.workbooks[0].sheets[0].fields).toEqual(
+    expect(results.workbooks[0].sheets).toHaveLength(2)
+    
+    const cartLineItemSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartLineItem')
+    expect(cartLineItemSheet).toBeDefined()
+    expect(cartLineItemSheet.name).toBe('Cart Line Item')
+    expect(cartLineItemSheet.fields).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          key: 'import_originalBookingId',
-          type: 'string',
-          description: 'The original booking identifier',
-        }),
-        expect.objectContaining({
-          key: 'import_lineItems_lineId',
+          key: 'lineId',
           type: 'string',
           description: 'Unique identifier for a line item',
         }),
         expect.objectContaining({
-          key: 'import_lineItems_productId',
+          key: 'productId',
           type: 'number',
           description: 'Unique identifier of a Product',
+        }),
+      ])
+    )
+
+    const mainSheet = results.workbooks[0].sheets.find(s => s.slug === 'main')
+    expect(mainSheet).toBeDefined()
+    expect(mainSheet.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'import_lineItems',
+          type: 'reference-list',
+          config: { ref: 'CartLineItem', key: 'id', relationship: 'has-many' },
         }),
       ])
     )
@@ -295,17 +307,81 @@ describe('generateSetup()', () => {
 
     const fields = results.workbooks[0].sheets[0].fields
 
-    expect(fields.length).toBeGreaterThan(1)
-    expect(fields.some((f) => f.key === 'import_originalBookingId')).toBe(true)
-    expect(fields.some((f) => f.key === 'import_lineItems_lineId')).toBe(true)
-    expect(fields.some((f) => f.key === 'import_lineItems_productId')).toBe(
-      true
+    expect(results.workbooks[0].sheets).toHaveLength(4)
+    
+    const sheetSlugs = results.workbooks[0].sheets.map(s => s.slug)
+    expect(sheetSlugs).toContain('CartLineItem')
+    expect(sheetSlugs).toContain('CartFormField')
+    expect(sheetSlugs).toContain('LineItemPricing')
+    expect(sheetSlugs).toContain('main')
+
+    const cartLineItemSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartLineItem')
+    expect(cartLineItemSheet.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'pricing',
+          type: 'reference',
+          config: { ref: 'LineItemPricing', key: 'id', relationship: 'has-one' },
+        }),
+      ])
     )
-    expect(fields.some((f) => f.key === 'import_bookingFields_fieldId')).toBe(
-      true
+
+    const mainSheet = results.workbooks[0].sheets.find(s => s.slug === 'main')
+    expect(mainSheet.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'import_lineItems',
+          type: 'reference-list',
+          config: { ref: 'CartLineItem', key: 'id', relationship: 'has-many' },
+        }),
+        expect.objectContaining({
+          key: 'import_bookingFields',
+          type: 'reference-list',
+          config: { ref: 'CartFormField', key: 'id', relationship: 'has-many' },
+        }),
+      ])
     )
-    expect(
-      fields.some((f) => f.key === 'import_lineItems_pricing_subTotal')
-    ).toBe(true)
+  })
+
+  it('should maintain backward compatibility with flat schemas', async () => {
+    const flatSchema = {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description: 'Person name',
+        },
+        age: {
+          type: 'integer',
+          description: 'Person age',
+        },
+      },
+      required: ['name'],
+    }
+
+    const results = await generateSetup({
+      workbooks: [
+        {
+          name: 'Flat Schema Workbook',
+          sheets: [{ source: flatSchema }],
+        },
+      ],
+    })
+
+    expect(results.workbooks[0].sheets).toHaveLength(1)
+    expect(results.workbooks[0].sheets[0].fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'name',
+          type: 'string',
+          description: 'Person name',
+        }),
+        expect.objectContaining({
+          key: 'age',
+          type: 'number',
+          description: 'Person age',
+        }),
+      ])
+    )
   })
 })
