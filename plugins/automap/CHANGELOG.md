@@ -1,5 +1,11 @@
 # @flatfile/plugin-automap
 
+## 0.8.2
+
+### Patch Changes
+
+- f74c2b1: Add support for async onFailure callbacks in automap plugin
+
 ## 0.8.1
 
 ### Patch Changes
