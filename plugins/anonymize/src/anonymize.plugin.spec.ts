@@ -215,4 +215,89 @@ describe('anonymize plugin', () => {
       'Failed to anonymize email: Test error'
     )
   })
+
+  it('should use custom hashLength when provided', async () => {
+    const { bulkRecordHook } = await import('@flatfile/plugin-record-hook')
+    const plugin = anonymize({
+      sheet: 'test-sheet',
+      field: 'email',
+      hashLength: 8,
+    })
+
+    plugin(mockListener)
+
+    const callback = vi.mocked(bulkRecordHook).mock.calls[0][1]
+    mockRecord.get = vi.fn().mockReturnValue('test@example.com')
+
+    await callback([mockRecord], {} as any)
+
+    const setCall = vi.mocked(mockRecord.set).mock.calls[0]
+    expect(setCall[1]).toMatch(/^[a-f0-9]{8}@[a-f0-9]{8}\.com$/)
+  })
+
+  it('should validate hashLength bounds', async () => {
+    const { bulkRecordHook } = await import('@flatfile/plugin-record-hook')
+
+    const plugin1 = anonymize({
+      sheet: 'test-sheet',
+      field: 'email',
+      hashLength: 0,
+    })
+
+    plugin1(mockListener)
+
+    const callback1 = vi.mocked(bulkRecordHook).mock.calls[0][1]
+    const mockRecord1 = {
+      ...mockRecord,
+      get: vi.fn().mockReturnValue('test@example.com'),
+      set: vi.fn(),
+      addError: vi.fn(),
+    } as any
+
+    await callback1([mockRecord1], {} as any)
+
+    const result1 = vi.mocked(mockRecord1.set).mock.calls[0][1]
+    expect(result1.split('@')[0]).toHaveLength(1)
+
+    const plugin2 = anonymize({
+      sheet: 'test-sheet',
+      field: 'email',
+      hashLength: 50,
+    })
+
+    plugin2(mockListener)
+
+    const callback2 = vi.mocked(bulkRecordHook).mock.calls[1][1]
+    const mockRecord2 = {
+      ...mockRecord,
+      get: vi.fn().mockReturnValue('test@example.com'),
+      set: vi.fn(),
+      addError: vi.fn(),
+    } as any
+
+    await callback2([mockRecord2], {} as any)
+
+    const result2 = vi.mocked(mockRecord2.set).mock.calls[0][1]
+    expect(result2.split('@')[0]).toHaveLength(32)
+  })
+
+  it('should work with hashLength and preserveDomain together', async () => {
+    const { bulkRecordHook } = await import('@flatfile/plugin-record-hook')
+    const plugin = anonymize({
+      sheet: 'test-sheet',
+      field: 'email',
+      hashLength: 12,
+      preserveDomain: true,
+    })
+
+    plugin(mockListener)
+
+    const callback = vi.mocked(bulkRecordHook).mock.calls[0][1]
+    mockRecord.get = vi.fn().mockReturnValue('test@company.com')
+
+    await callback([mockRecord], {} as any)
+
+    const setCall = vi.mocked(mockRecord.set).mock.calls[0]
+    expect(setCall[1]).toMatch(/^[a-f0-9]{12}@company\.com$/)
+  })
 })

@@ -10,6 +10,7 @@ export interface AnonymizeOptions {
   salt?: string
   preserveDomain?: boolean
   debug?: boolean
+  hashLength?: number
   chunkSize?: number
   parallel?: number
 }
@@ -21,6 +22,7 @@ export function anonymize(options: AnonymizeOptions) {
     salt = '',
     preserveDomain = false,
     debug = false,
+    hashLength = 32,
     ...bulkOptions
   } = options
 
@@ -68,7 +70,8 @@ export function anonymize(options: AnonymizeOptions) {
               const anonymizedValue = anonymizeEmail(
                 email,
                 salt,
-                preserveDomain
+                preserveDomain,
+                hashLength
               )
               record.set(field, anonymizedValue)
               processedCount++
@@ -119,13 +122,19 @@ function isValidEmail(email: string): boolean {
 function anonymizeEmail(
   email: string,
   salt: string,
-  preserveDomain: boolean
+  preserveDomain: boolean,
+  hashLength: number = 32
 ): string {
   const [localPart, domain] = email.split('@')
 
   const hashInput = salt ? `${localPart}${salt}` : localPart
 
-  const hash = createHash('md5').update(hashInput).digest('hex')
+  const validHashLength = Math.max(1, Math.min(32, hashLength))
+
+  const hash = createHash('md5')
+    .update(hashInput)
+    .digest('hex')
+    .substring(0, validHashLength)
 
   if (preserveDomain && domain) {
     return `${hash}@${domain}`

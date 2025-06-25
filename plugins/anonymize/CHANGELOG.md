@@ -1,5 +1,13 @@
 # @flatfile/plugin-anonymize
 
+## 1.1.0
+
+### Minor Changes
+
+- Add `hashLength` option to control hash truncation (1-32 characters)
+- Automatic validation and clamping of hashLength values
+- Enhanced test coverage for hashLength functionality
+
 ## 1.0.0
 
 ### Major Changes

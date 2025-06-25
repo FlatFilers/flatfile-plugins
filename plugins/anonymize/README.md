@@ -43,6 +43,7 @@ listener.use(anonymize({
   salt: 'my-secret-salt',
   preserveDomain: true,
   debug: true,
+  hashLength: 16,
   chunkSize: 1000,
   parallel: 5
 }))
@@ -57,6 +58,7 @@ listener.use(anonymize({
 | `salt` | `string` | `''` | Optional salt for enhanced security |
 | `preserveDomain` | `boolean` | `false` | Keep original domain, only hash local part |
 | `debug` | `boolean` | `false` | Enable detailed logging |
+| `hashLength` | `number` | `32` | Length of hash to use (1-32 characters) |
 | `chunkSize` | `number` | `undefined` | Number of records to process per batch |
 | `parallel` | `number` | `undefined` | Number of parallel processing threads |
 
@@ -101,7 +103,21 @@ listener.use(anonymize({
 }))
 ```
 
-### Example 4: Debug Mode
+### Example 4: Custom Hash Length
+
+```javascript
+// Use shorter hash for less storage or different anonymization level
+// Input: user@example.com
+// Output: 5d41402a@8b1a9953.com (8 character hash)
+
+listener.use(anonymize({
+  sheet: 'contacts',
+  field: 'email',
+  hashLength: 8
+}))
+```
+
+### Example 5: Debug Mode
 
 ```javascript
 // Enable debug logging to see processing details
@@ -128,9 +144,10 @@ listener.use(anonymize({
 - **Processing errors**: Adds error to record with descriptive message
 
 ### Hash Generation
-- **Without salt**: `MD5(localPart)@MD5(domain).com`
-- **With salt**: `MD5(localPart + salt)@MD5(domain + salt).com`
-- **Preserve domain**: `MD5(localPart + salt)@originalDomain`
+- **Without salt**: `MD5(localPart)[0:hashLength]@MD5(domain)[0:8].com`
+- **With salt**: `MD5(localPart + salt)[0:hashLength]@MD5(domain + salt)[0:8].com`
+- **Preserve domain**: `MD5(localPart + salt)[0:hashLength]@originalDomain`
+- **Hash length**: Configurable from 1-32 characters (default: 32)
 
 ## Security Considerations
 

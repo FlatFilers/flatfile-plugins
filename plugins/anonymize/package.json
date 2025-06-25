@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-anonymize",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/anonymize",
   "description": "A plugin for anonymizing email addresses by converting them to MD5 hashes in Flatfile.",
   "registryMetadata": {
