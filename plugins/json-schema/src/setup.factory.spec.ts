@@ -117,18 +117,18 @@ describe('generateSetup()', () => {
             properties: {
               originalBookingId: {
                 type: 'string',
-                description: 'The original booking identifier'
+                description: 'The original booking identifier',
               },
               lineItems: {
                 type: 'array',
                 items: {
-                  $ref: '#/$defs/CartLineItem'
-                }
-              }
+                  $ref: '#/$defs/CartLineItem',
+                },
+              },
             },
-            required: ['originalBookingId']
-          }
-        }
+            required: ['originalBookingId'],
+          },
+        },
       },
       $defs: {
         CartLineItem: {
@@ -136,22 +136,24 @@ describe('generateSetup()', () => {
           properties: {
             lineId: {
               type: 'string',
-              description: 'Unique identifier for a line item'
+              description: 'Unique identifier for a line item',
             },
             productId: {
               type: 'integer',
-              description: 'Unique identifier of a Product'
-            }
-          }
-        }
-      }
+              description: 'Unique identifier of a Product',
+            },
+          },
+        },
+      },
     }
 
     const results = await generateSetup({
-      workbooks: [{
-        name: 'Hierarchical Schema Workbook',
-        sheets: [{ source: hierarchicalSchema }]
-      }]
+      workbooks: [
+        {
+          name: 'Hierarchical Schema Workbook',
+          sheets: [{ source: hierarchicalSchema }],
+        },
+      ],
     })
 
     expect(results.workbooks[0].sheets[0].fields).toEqual(
@@ -159,141 +161,151 @@ describe('generateSetup()', () => {
         expect.objectContaining({
           key: 'import_originalBookingId',
           type: 'string',
-          description: 'The original booking identifier'
+          description: 'The original booking identifier',
         }),
         expect.objectContaining({
           key: 'import_lineItems_lineId',
           type: 'string',
-          description: 'Unique identifier for a line item'
+          description: 'Unique identifier for a line item',
         }),
         expect.objectContaining({
           key: 'import_lineItems_productId',
           type: 'number',
-          description: 'Unique identifier of a Product'
-        })
+          description: 'Unique identifier of a Product',
+        }),
       ])
     )
   })
 
   it('should handle the booking-import.schema.json correctly', async () => {
     const bookingSchema = {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "$id": "https://apiv4.checkfront.com/booking-import.schema.json",
-      "title": "Booking Import",
-      "description": "A booking import schema",
-      "type": "object",
-      "properties": {
-        "import": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "originalBookingId": {
-                "description": "The original booking identifier",
-                "type": "string"
+      $schema: 'https://json-schema.org/draft/2020-12/schema',
+      $id: 'https://apiv4.checkfront.com/booking-import.schema.json',
+      title: 'Booking Import',
+      description: 'A booking import schema',
+      type: 'object',
+      properties: {
+        import: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              originalBookingId: {
+                description: 'The original booking identifier',
+                type: 'string',
               },
-              "lineItems": {
-                "description": "List of LineItems to book",
-                "type": "array",
-                "items": {
-                  "$ref": "#/$defs/CartLineItem"
-                }
+              lineItems: {
+                description: 'List of LineItems to book',
+                type: 'array',
+                items: {
+                  $ref: '#/$defs/CartLineItem',
+                },
               },
-              "bookingFields": {
-                "description": "List of FormFields with their values",
-                "type": "array",
-                "items": {
-                  "$ref": "#/$defs/CartFormField"
-                }
-              }
+              bookingFields: {
+                description: 'List of FormFields with their values',
+                type: 'array',
+                items: {
+                  $ref: '#/$defs/CartFormField',
+                },
+              },
             },
-            "required": ["originalBookingId", "lineItems"]
-          }
-        }
+            required: ['originalBookingId', 'lineItems'],
+          },
+        },
       },
-      "$defs": {
-        "CartLineItem": {
-          "type": "object",
-          "properties": {
-            "lineId": {
-              "description": "Unique identifier for a line item. Must be greater than 0 and must start from 1.",
-              "type": "string",
-              "example": "1.1"
+      $defs: {
+        CartLineItem: {
+          type: 'object',
+          properties: {
+            lineId: {
+              description:
+                'Unique identifier for a line item. Must be greater than 0 and must start from 1.',
+              type: 'string',
+              example: '1.1',
             },
-            "productId": {
-              "description": "Unique identifier of a Product",
-              "type": "integer",
-              "example": 204
+            productId: {
+              description: 'Unique identifier of a Product',
+              type: 'integer',
+              example: 204,
             },
-            "start": {
-              "description": "The date and time when the line item begins.",
-              "type": "string",
-              "format": "date-time",
-              "example": "2021-05-06T13:00:00"
+            start: {
+              description: 'The date and time when the line item begins.',
+              type: 'string',
+              format: 'date-time',
+              example: '2021-05-06T13:00:00',
             },
-            "end": {
-              "description": "The date and time when the line item ends.",
-              "type": "string",
-              "format": "date-time",
-              "example": "2021-05-06T14:00:00"
+            end: {
+              description: 'The date and time when the line item ends.',
+              type: 'string',
+              format: 'date-time',
+              example: '2021-05-06T14:00:00',
             },
-            "pricing": {
-              "$ref": "#/$defs/LineItemPricing"
-            }
-          }
+            pricing: {
+              $ref: '#/$defs/LineItemPricing',
+            },
+          },
         },
-        "CartFormField": {
-          "type": "object",
-          "properties": {
-            "fieldId": {
-              "description": "The form field's identifier",
-              "type": "string",
-              "example": "customer_name"
+        CartFormField: {
+          type: 'object',
+          properties: {
+            fieldId: {
+              description: "The form field's identifier",
+              type: 'string',
+              example: 'customer_name',
             },
-            "value": {
-              "description": "The value entered for the field",
-              "type": "string",
-              "example": "Jane Smith"
-            }
-          }
+            value: {
+              description: 'The value entered for the field',
+              type: 'string',
+              example: 'Jane Smith',
+            },
+          },
         },
-        "LineItemPricing": {
-          "type": "object",
-          "properties": {
-            "subTotal": {
-              "description": "The line item total cost, in cents",
-              "type": "integer",
-              "example": 6000
+        LineItemPricing: {
+          type: 'object',
+          properties: {
+            subTotal: {
+              description: 'The line item total cost, in cents',
+              type: 'integer',
+              example: 6000,
             },
-            "inclusiveTaxTotal": {
-              "description": "The total of inclusive taxes (already in line item prices, eg. VAT), in cents",
-              "type": "integer",
-              "example": 300
+            inclusiveTaxTotal: {
+              description:
+                'The total of inclusive taxes (already in line item prices, eg. VAT), in cents',
+              type: 'integer',
+              example: 300,
             },
-            "taxTotal": {
-              "description": "The total of additive taxes, in cents",
-              "type": "integer",
-              "example": 720
-            }
-          }
-        }
-      }
+            taxTotal: {
+              description: 'The total of additive taxes, in cents',
+              type: 'integer',
+              example: 720,
+            },
+          },
+        },
+      },
     }
 
     const results = await generateSetup({
-      workbooks: [{
-        name: 'Booking Import Workbook',
-        sheets: [{ source: bookingSchema }]
-      }]
+      workbooks: [
+        {
+          name: 'Booking Import Workbook',
+          sheets: [{ source: bookingSchema }],
+        },
+      ],
     })
 
     const fields = results.workbooks[0].sheets[0].fields
-    
+
     expect(fields.length).toBeGreaterThan(1)
-    expect(fields.some(f => f.key === 'import_originalBookingId')).toBe(true)
-    expect(fields.some(f => f.key === 'import_lineItems_lineId')).toBe(true)
-    expect(fields.some(f => f.key === 'import_lineItems_productId')).toBe(true)
-    expect(fields.some(f => f.key === 'import_bookingFields_fieldId')).toBe(true)
-    expect(fields.some(f => f.key === 'import_lineItems_pricing_subTotal')).toBe(true)
+    expect(fields.some((f) => f.key === 'import_originalBookingId')).toBe(true)
+    expect(fields.some((f) => f.key === 'import_lineItems_lineId')).toBe(true)
+    expect(fields.some((f) => f.key === 'import_lineItems_productId')).toBe(
+      true
+    )
+    expect(fields.some((f) => f.key === 'import_bookingFields_fieldId')).toBe(
+      true
+    )
+    expect(
+      fields.some((f) => f.key === 'import_lineItems_pricing_subTotal')
+    ).toBe(true)
   })
 })

@@ -134,7 +134,13 @@ export async function getPropertyType(
   }
 
   if (property.type === 'array') {
-    return await handleArrayType(schema, property, parentKey, isRequired, origin)
+    return await handleArrayType(
+      schema,
+      property,
+      parentKey,
+      isRequired,
+      origin
+    )
   }
 
   const fieldTypes: Record<string, Flatfile.Property> = {
@@ -211,26 +217,30 @@ async function handleArrayType(
   origin: string
 ): Promise<Flatfile.Property[]> {
   if (!property.items) {
-    return [{
-      key: parentKey,
-      type: 'string-list',
-      label: parentKey,
-      ...(property?.description && { description: property.description }),
-      ...(isRequired && { constraints: [{ type: 'required' }] }),
-    }]
+    return [
+      {
+        key: parentKey,
+        type: 'string-list',
+        label: parentKey,
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+      },
+    ]
   }
 
   if (property.items.type && property.items.type !== 'object') {
-    return [{
-      key: parentKey,
-      type: 'string-list',
-      label: parentKey,
-      ...(property?.description && { description: property.description }),
-      ...(isRequired && { constraints: [{ type: 'required' }] }),
-    }]
+    return [
+      {
+        key: parentKey,
+        type: 'string-list',
+        label: parentKey,
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+      },
+    ]
   }
 
-  const itemSchema = property.items.$ref 
+  const itemSchema = property.items.$ref
     ? await resolveReference(schema, property.items.$ref, origin)
     : property.items
 
@@ -238,7 +248,7 @@ async function handleArrayType(
     const itemFields = await Promise.all(
       Object.keys(itemSchema.properties).map(async (key) => {
         return await getPropertyType(
-          itemSchema,
+          schema,
           itemSchema.properties[key],
           `${parentKey}_${key}`,
           (itemSchema.required && itemSchema.required.includes(key)) || false,
@@ -249,13 +259,15 @@ async function handleArrayType(
     return itemFields.flat()
   }
 
-  return [{
-    key: parentKey,
-    type: 'string-list',
-    label: parentKey,
-    ...(property?.description && { description: property.description }),
-    ...(isRequired && { constraints: [{ type: 'required' }] }),
-  }]
+  return [
+    {
+      key: parentKey,
+      type: 'string-list',
+      label: parentKey,
+      ...(property?.description && { description: property.description }),
+      ...(isRequired && { constraints: [{ type: 'required' }] }),
+    },
+  ]
 }
 
 export async function fetchExternalReference(url: string): Promise<any> {
