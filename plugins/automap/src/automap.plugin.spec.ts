@@ -10,11 +10,11 @@ describe('automap plugin', () => {
       jobId: 'test-job-id',
       spaceId: 'test-space-id',
       environmentId: 'test-env-id',
-      accountId: 'test-account-id'
+      accountId: 'test-account-id',
     },
     payload: {},
     createdAt: new Date().toISOString(),
-    domain: Flatfile.Domain.Space
+    domain: Flatfile.Domain.Space,
   }
 
   describe('onFailure callback', () => {
@@ -23,7 +23,7 @@ describe('automap plugin', () => {
 
       const plugin = automap({
         accuracy: 'confident',
-        onFailure: mockOnFailure
+        onFailure: mockOnFailure,
       })
 
       expect(plugin).toBeDefined()
@@ -35,7 +35,7 @@ describe('automap plugin', () => {
 
       const plugin = automap({
         accuracy: 'confident',
-        onFailure: mockOnFailure
+        onFailure: mockOnFailure,
       })
 
       expect(plugin).toBeDefined()
@@ -47,7 +47,7 @@ describe('automap plugin', () => {
 
       const plugin = automap({
         accuracy: 'confident',
-        onFailure: mockOnFailure
+        onFailure: mockOnFailure,
       })
 
       expect(plugin).toBeDefined()
@@ -66,12 +66,12 @@ describe('automap plugin', () => {
 
       const syncPlugin = automap({
         accuracy: 'confident',
-        onFailure: syncCallback
+        onFailure: syncCallback,
       })
 
       const asyncPlugin = automap({
         accuracy: 'confident',
-        onFailure: asyncCallback
+        onFailure: asyncCallback,
       })
 
       expect(syncPlugin).toBeDefined()
@@ -82,7 +82,7 @@ describe('automap plugin', () => {
   describe('plugin configuration', () => {
     it('should create plugin with required accuracy parameter', () => {
       const plugin = automap({
-        accuracy: 'confident'
+        accuracy: 'confident',
       })
 
       expect(plugin).toBeDefined()
@@ -97,7 +97,7 @@ describe('automap plugin', () => {
         defaultTargetSheet: 'test-sheet',
         matchFilename: /test\.csv$/,
         onFailure: mockOnFailure,
-        targetWorkbook: 'test-workbook'
+        targetWorkbook: 'test-workbook',
       })
 
       expect(plugin).toBeDefined()
