@@ -29,9 +29,9 @@ The `defaultTargetSheet` parameter takes the exact sheet slug or a callback func
 The `matchFilename` parameter takes a regular expression to match specific files to perform automapping on.
 
 
-#### `onFailure` - `(event: FlatfileEvent) => void`
+#### `onFailure` - `(event: FlatfileEvent) => void | Promise<void>`
 
-The `onFailure` parameter takes a callback function to be executed when plugin bails.
+The `onFailure` parameter takes a callback function to be executed when plugin bails. The callback can be synchronous or asynchronous.
 
 
 #### `targetWorkbook` - `string`
@@ -74,7 +74,7 @@ listener.use(
     accuracy: "confident",
     defaultTargetSheet: "Contact",
     matchFilename: /test.csv$/g,
-    onFailure: (event: FlatfileEvent) => {
+    onFailure: async (event: FlatfileEvent) => {
       // send an SMS, an email, post to an endpoint, etc.
       console.error(
         `Please visit https://spaces.flatfile.com/space/${event.context.spaceId}/files?mode=import to manually import file.`
