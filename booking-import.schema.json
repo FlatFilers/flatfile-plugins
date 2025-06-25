@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://apiv4.checkfront.com/booking-import.schema.json",
+  "title": "Booking Import",
+  "description": "A booking import schema",
+  "type": "object",
+  "properties": {
+    "import": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "originalBookingId": {
+            "description": "The original booking identifier",
+            "type": "string"
+          },
+          "lineItems": {
+            "description": "List of LineItems to book",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/CartLineItem"
+            }
+          },
+          "bookingFields": {
+            "description": "List of FormFields with their values",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/CartFormField"
+            }
+          }
+        },
+        "required": ["originalBookingId", "lineItems"]
+      }
+    }
+  },
+
+  "$defs": {
+    "CartLineItem": {
+      "type": "object",
+      "properties": {
+        "lineId": {
+          "description": "Unique identifier for a line item. Must be greater than 0 and must start from 1.",
+          "type": "string",
+          "example": "1.1"
+        },
+        "productId": {
+          "description": "Unique identifier of a Product",
+          "type": "integer",
+          "example": 204
+        },
+        "start": {
+          "description": "The date and time when the line item begins.",
+          "type": "string",
+          "format": "date-time",
+          "example": "2021-05-06T13:00:00"
+        },
+        "end": {
+          "description": "The date and time when the line item ends.",
+          "type": "string",
+          "format": "date-time",
+          "example": "2021-05-06T14:00:00"
+        },
+        "pricing": {
+          "$ref": "#/$defs/LineItemPricing"
+        },
+        "upsells": {
+          "description": "List of available upsell Products",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LineItemUpsell"
+          }
+        },
+        "guestTypes": {
+          "$ref": "#/$defs/LineItemGuestTypes"
+        }
+      }
+    },
+    "CartFormField": {
+      "type": "object",
+      "properties": {
+        "fieldId": {
+          "description": "The form field's identifier",
+          "type": "string",
+          "example": "customer_name"
+        },
+        "value": {
+          "description": "The value entered for the field",
+          "type": "string",
+          "example": "Jane Smith"
+        }
+      }
+    },
+    "LineItemPricing": {
+      "type": "object",
+      "properties": {
+        "subTotal": {
+          "description": "The line item total cost, in cents",
+          "type": "integer",
+          "example": 6000
+        },
+        "inclusiveTaxTotal": {
+          "description": "The total of inclusive taxes (already in line item prices, eg. VAT), in cents",
+          "type": "integer",
+          "example": 300
+        },
+        "taxTotal": {
+          "description": "The total of additive taxes, in cents",
+          "type": "integer",
+          "example": 720
+        },
+        "discount": {
+          "description": "The discount applied to the lineItem",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "The name of the discount",
+              "type": "string",
+              "example": "10%off"
+            },
+            "amount": {
+              "description": "The amount of the discount",
+              "type": "number",
+              "format": "float",
+              "example": "12.5"
+            },
+            "adjustmentType": {
+              "description": "The type of adjustment that the discount makes",
+              "type": "string",
+              "enum": [
+                "fixed",
+                "percent"
+              ],
+              "example": "percent"
+            },
+            "discountType": {
+              "description": "The type of discount being applied, either per-booking or per-product",
+              "type": "string",
+              "example": "booking"
+            }
+          }
+        }
+      }
+    },
+    "LineItemUpsell": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "description": "Unique identifier of upsell Product",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the upsell Product",
+          "type": "string",
+          "example": "High-Flying Zipline Tour"
+        }
+      }
+    },
+    "LineItemGuestTypes": {
+      "description": "Guest Type quantities to book. This dictionary's keys match guestType.id's, its values should be the integer number to book.",
+      "type": "object",
+      "properties": {
+        "adult": {
+          "type": "integer",
+          "example": 2
+        },
+        "child": {
+          "type": "integer",
+          "example": 1
+        },
+        "senior": {
+          "type": "integer",
+          "example": 0
+        }
+      }
+    }
+  }
+}

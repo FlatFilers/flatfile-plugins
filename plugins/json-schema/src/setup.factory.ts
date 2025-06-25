@@ -133,15 +133,15 @@ export async function getPropertyType(
     return propertyFields.flat()
   }
 
+  if (property.type === 'array') {
+    return await handleArrayType(schema, property, parentKey, isRequired, origin)
+  }
+
   const fieldTypes: Record<string, Flatfile.Property> = {
     string: { key: parentKey, type: 'string' },
     number: { key: parentKey, type: 'number' },
     integer: { key: parentKey, type: 'number' },
     boolean: { key: parentKey, type: 'boolean' },
-    array: {
-      key: parentKey,
-      type: 'string-list',
-    },
     enum: {
       key: parentKey,
       type: 'enum-list',
@@ -201,6 +201,61 @@ export function resolveLocalReference(schema: any, ref: string): any {
 
   if (!resolved) throw new Error(`Cannot resolve reference: ${ref}`)
   return resolved
+}
+
+async function handleArrayType(
+  schema: any,
+  property: any,
+  parentKey: string,
+  isRequired: boolean,
+  origin: string
+): Promise<Flatfile.Property[]> {
+  if (!property.items) {
+    return [{
+      key: parentKey,
+      type: 'string-list',
+      label: parentKey,
+      ...(property?.description && { description: property.description }),
+      ...(isRequired && { constraints: [{ type: 'required' }] }),
+    }]
+  }
+
+  if (property.items.type && property.items.type !== 'object') {
+    return [{
+      key: parentKey,
+      type: 'string-list',
+      label: parentKey,
+      ...(property?.description && { description: property.description }),
+      ...(isRequired && { constraints: [{ type: 'required' }] }),
+    }]
+  }
+
+  const itemSchema = property.items.$ref 
+    ? await resolveReference(schema, property.items.$ref, origin)
+    : property.items
+
+  if (itemSchema.type === 'object' && itemSchema.properties) {
+    const itemFields = await Promise.all(
+      Object.keys(itemSchema.properties).map(async (key) => {
+        return await getPropertyType(
+          itemSchema,
+          itemSchema.properties[key],
+          `${parentKey}_${key}`,
+          (itemSchema.required && itemSchema.required.includes(key)) || false,
+          origin
+        )
+      })
+    )
+    return itemFields.flat()
+  }
+
+  return [{
+    key: parentKey,
+    type: 'string-list',
+    label: parentKey,
+    ...(property?.description && { description: property.description }),
+    ...(isRequired && { constraints: [{ type: 'required' }] }),
+  }]
 }
 
 export async function fetchExternalReference(url: string): Promise<any> {
