@@ -4,7 +4,7 @@ import type { FlatfileEvent } from '@flatfile/listener'
 import { automap } from './automap.plugin'
 
 describe('automap plugin', () => {
-  const mockEvent: FlatfileEvent = {
+  const mockEvent = {
     topic: Flatfile.EventTopic.JobUpdated,
     context: {
       jobId: 'test-job-id',
@@ -13,9 +13,9 @@ describe('automap plugin', () => {
       accountId: 'test-account-id',
     },
     payload: {},
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
     domain: Flatfile.Domain.Space,
-  }
+  } as FlatfileEvent
 
   describe('onFailure callback', () => {
     it('should call synchronous onFailure callback with correct event', () => {
@@ -98,6 +98,34 @@ describe('automap plugin', () => {
         matchFilename: /test\.csv$/,
         onFailure: mockOnFailure,
         targetWorkbook: 'test-workbook',
+      })
+
+      expect(plugin).toBeDefined()
+    })
+
+    it('should create plugin with requiredFieldsOnly parameter', () => {
+      const plugin = automap({
+        accuracy: 'confident',
+        requiredFieldsOnly: true,
+      })
+
+      expect(plugin).toBeDefined()
+    })
+
+    it('should create plugin with includeUnmappedAsCustom parameter', () => {
+      const plugin = automap({
+        accuracy: 'exact',
+        includeUnmappedAsCustom: true,
+      })
+
+      expect(plugin).toBeDefined()
+    })
+
+    it('should create plugin with both new parameters', () => {
+      const plugin = automap({
+        accuracy: 'confident',
+        requiredFieldsOnly: true,
+        includeUnmappedAsCustom: true,
       })
 
       expect(plugin).toBeDefined()
