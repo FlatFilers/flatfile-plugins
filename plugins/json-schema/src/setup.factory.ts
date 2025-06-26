@@ -123,11 +123,21 @@ export async function getPropertyType(
     )
   }
 
+  if (property.type === 'array') {
+    return await handleArrayType(
+      schema,
+      property,
+      parentKey,
+      isRequired,
+      origin
+    )
+  }
+
   if (property.type === 'object' && property.properties) {
     const propertyFields = await Promise.all(
       Object.keys(property.properties).map(async (key) => {
         return await getPropertyType(
-          property,
+          schema,
           property.properties[key],
           parentKey ? `${parentKey}_${key}` : key,
           (property.required && property.required.includes(key)) || false,
@@ -143,6 +153,10 @@ export async function getPropertyType(
     number: { key: parentKey, type: 'number' },
     integer: { key: parentKey, type: 'number' },
     boolean: { key: parentKey, type: 'boolean' },
+    array: {
+      key: parentKey,
+      type: 'string-list',
+    },
     enum: {
       key: parentKey,
       type: 'enum-list',
@@ -218,7 +232,8 @@ async function generateHierarchicalSheets(
       sheets.push({
         name: capitalCase(defName),
         slug: defName,
-        description: (defSchema as any).description || `${capitalCase(defName)} data`,
+        description:
+          (defSchema as any).description || `${capitalCase(defName)} data`,
         fields,
         ...partialSheetConfig,
       })
@@ -328,6 +343,7 @@ async function getPropertyTypeForSheet(
     number: { key: parentKey, type: 'number' },
     integer: { key: parentKey, type: 'number' },
     boolean: { key: parentKey, type: 'boolean' },
+    array: { key: parentKey, type: 'string-list' },
     enum: {
       key: parentKey,
       type: 'enum-list',
@@ -438,6 +454,67 @@ function getOrigin(url?: string): string {
   } catch (error) {
     return ''
   }
+}
+
+async function handleArrayType(
+  schema: any,
+  property: any,
+  parentKey: string,
+  isRequired: boolean,
+  origin: string
+): Promise<Flatfile.Property[]> {
+  if (!property.items) {
+    return [
+      {
+        key: parentKey,
+        type: 'string-list',
+        label: parentKey,
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+      },
+    ]
+  }
+
+  if (property.items.type && property.items.type !== 'object') {
+    return [
+      {
+        key: parentKey,
+        type: 'string-list',
+        label: parentKey,
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+      },
+    ]
+  }
+
+  const itemSchema = property.items.$ref
+    ? await resolveReference(schema, property.items.$ref, origin)
+    : property.items
+
+  if (itemSchema.type === 'object' && itemSchema.properties) {
+    const itemFields = await Promise.all(
+      Object.keys(itemSchema.properties).map(async (key) => {
+        return await getPropertyType(
+          schema,
+          itemSchema.properties[key],
+          `${parentKey}_${key}`,
+          (itemSchema.required && itemSchema.required.includes(key)) || false,
+          origin
+        )
+      })
+    )
+    return itemFields.flat()
+  }
+
+  return [
+    {
+      key: parentKey,
+      type: 'string-list',
+      label: parentKey,
+      ...(property?.description && { description: property.description }),
+      ...(isRequired && { constraints: [{ type: 'required' }] }),
+    },
+  ]
 }
 
 export async function fetchExternalReference(url: string): Promise<any> {
