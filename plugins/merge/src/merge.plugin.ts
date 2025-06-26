@@ -43,23 +43,25 @@ export const merge = async (
     },
   } = await api.sheets.get(sheetId)
 
-  const mergeKeys = opts.keys?.length ? opts.keys : fields.map(f => f.key)
-  
+  const mergeKeys = opts.keys?.length ? opts.keys : fields.map((f) => f.key)
+
   for (const key of mergeKeys) {
-    const field = fields.find(f => f.key === key)
+    const field = fields.find((f) => f.key === key)
     if (!field) {
       throw new Error(`Field "${key}" not found`)
     }
   }
 
-  const nonKeyFields = fields.filter(f => !mergeKeys.includes(f.key))
+  const nonKeyFields = fields.filter((f) => !mergeKeys.includes(f.key))
   for (const field of nonKeyFields) {
-    const treatment = opts.treatments?.[field.key] || { type: opts.defaultTreatment || 'overwrite' }
+    const treatment = opts.treatments?.[field.key] || {
+      type: opts.defaultTreatment || 'overwrite',
+    }
     if (treatment.type === 'list') {
       const validListTypes = ['string-list', 'enum-list', 'reference-list']
       if (!validListTypes.includes(field.type)) {
-        return { 
-          info: `Cannot use list treatment for field "${field.key}" of type "${field.type}". Field must be one of: ${validListTypes.join(', ')}` 
+        return {
+          info: `Cannot use list treatment for field "${field.key}" of type "${field.type}". Field must be one of: ${validListTypes.join(', ')}`,
         }
       }
     }
@@ -77,9 +79,9 @@ export const merge = async (
     ) => {
       for (const record of records) {
         const compositeKey = mergeKeys
-          .map(key => String(record.values[key]?.value || ''))
+          .map((key) => String(record.values[key]?.value || ''))
           .join('|')
-        
+
         if (!recordGroups.has(compositeKey)) {
           recordGroups.set(compositeKey, [])
         }
@@ -101,7 +103,12 @@ export const merge = async (
 
   for (const [compositeKey, groupRecords] of recordGroups) {
     if (groupRecords.length > 1) {
-      const mergedRecord = mergeRecordGroup(groupRecords, mergeKeys, nonKeyFields, opts)
+      const mergedRecord = mergeRecordGroup(
+        groupRecords,
+        mergeKeys,
+        nonKeyFields,
+        opts
+      )
       mergedRecords.push(mergedRecord)
     } else {
       mergedRecords.push(groupRecords[0])
@@ -112,13 +119,22 @@ export const merge = async (
     await tick(progress, `Merged ${groupCount} of ${totalGroups} record groups`)
   }
 
-  await updateAllRecords(sheetId, mergedRecords, async (progress, part, totalParts) => {
-    await tick(99 + progress, `Updating records: part ${part} of ${totalParts}`)
-  })
+  await updateAllRecords(
+    sheetId,
+    mergedRecords,
+    async (progress, part, totalParts) => {
+      await tick(
+        99 + progress,
+        `Updating records: part ${part} of ${totalParts}`
+      )
+    }
+  )
 
-  const mergedGroupCount = Array.from(recordGroups.values()).filter(group => group.length > 1).length
-  return { 
-    info: `Successfully merged ${mergedGroupCount} groups of records. Total records after merge: ${mergedRecords.length}` 
+  const mergedGroupCount = Array.from(recordGroups.values()).filter(
+    (group) => group.length > 1
+  ).length
+  return {
+    info: `Successfully merged ${mergedGroupCount} groups of records. Total records after merge: ${mergedRecords.length}`,
   }
 }
 
@@ -132,19 +148,21 @@ function mergeRecordGroup(
   const mergedValues = { ...baseRecord.values }
 
   for (const field of nonKeyFields) {
-    const treatment = opts.treatments?.[field.key] || { type: opts.defaultTreatment || 'overwrite' }
-    
+    const treatment = opts.treatments?.[field.key] || {
+      type: opts.defaultTreatment || 'overwrite',
+    }
+
     if (treatment.type === 'list') {
       const allValues = records
-        .map(r => r.values[field.key]?.value)
-        .filter(v => v != null && v !== '')
-      
+        .map((r) => r.values[field.key]?.value)
+        .filter((v) => v != null && v !== '')
+
       mergedValues[field.key] = {
-        value: allValues.length > 0 ? allValues : null
+        value: allValues.length > 0 ? allValues : null,
       } as any
     } else {
       const heuristic = treatment.heuristic || opts.overwriteHeuristic || 'last'
-      
+
       if (heuristic === 'first') {
         for (const record of records) {
           const value = record.values[field.key]?.value
@@ -170,6 +188,6 @@ function mergeRecordGroup(
 
   return {
     ...baseRecord,
-    values: mergedValues
+    values: mergedValues,
   }
 }
