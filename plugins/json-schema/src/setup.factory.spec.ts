@@ -430,16 +430,207 @@ describe('setup.factory', () => {
       expect.objectContaining({
         key: 'name',
         type: 'string',
-        label: 'Name',
+        label: 'name',
         description: 'Person name',
         constraints: [{ type: 'required' }],
       }),
       expect.objectContaining({
         key: 'age',
         type: 'number',
-        label: 'Age',
+        label: 'age',
         description: 'Person age',
       }),
     ])
+  })
+
+  it('should validate CartLineItem sheet structure and fields', async () => {
+    const hierarchicalSchema = {
+      $id: 'https://example.com/booking',
+      type: 'object',
+      properties: {
+        import: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              lineItems: {
+                type: 'array',
+                items: { $ref: '#/$defs/CartLineItem' }
+              }
+            }
+          }
+        }
+      },
+      $defs: {
+        CartLineItem: {
+          type: 'object',
+          properties: {
+            lineId: { type: 'string', description: 'Unique identifier for a line item' },
+            productId: { type: 'integer', description: 'Unique identifier of a Product' },
+            pricing: { $ref: '#/$defs/LineItemPricing' }
+          },
+          required: ['lineId']
+        },
+        LineItemPricing: {
+          type: 'object',
+          properties: {
+            subTotal: { type: 'number', description: 'The line item total cost, in cents' }
+          }
+        }
+      }
+    }
+
+    const results = await generateSetup({
+      workbooks: [{
+        name: 'Test Workbook',
+        sheets: [{ source: hierarchicalSchema }]
+      }]
+    })
+
+    const cartLineItemSheet = results.workbooks[0].sheets.find(s => s.slug === 'CartLineItem')
+    expect(cartLineItemSheet).toBeDefined()
+    expect(cartLineItemSheet.name).toBe('Cart Line Item')
+    expect(cartLineItemSheet.fields).toHaveLength(3)
+    
+    expect(cartLineItemSheet.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'lineId',
+          type: 'string',
+          label: 'Line Id',
+          description: 'Unique identifier for a line item',
+          constraints: [{ type: 'required' }]
+        }),
+        expect.objectContaining({
+          key: 'productId',
+          type: 'number',
+          label: 'Product Id',
+          description: 'Unique identifier of a Product'
+        }),
+        expect.objectContaining({
+          key: 'pricing',
+          type: 'reference',
+          label: 'Pricing',
+          config: { ref: 'LineItemPricing', key: 'id' }
+        })
+      ])
+    )
+  })
+
+  it('should validate LineItemPricing sheet structure and fields', async () => {
+    const hierarchicalSchema = {
+      $id: 'https://example.com/booking',
+      type: 'object',
+      properties: {
+        import: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              lineItems: {
+                type: 'array',
+                items: { $ref: '#/$defs/CartLineItem' }
+              }
+            }
+          }
+        }
+      },
+      $defs: {
+        CartLineItem: {
+          type: 'object',
+          properties: {
+            lineId: { type: 'string', description: 'Unique identifier for a line item' },
+            productId: { type: 'integer', description: 'Unique identifier of a Product' },
+            pricing: { $ref: '#/$defs/LineItemPricing' }
+          },
+          required: ['lineId']
+        },
+        LineItemPricing: {
+          type: 'object',
+          properties: {
+            subTotal: { type: 'number', description: 'The line item total cost, in cents' }
+          }
+        }
+      }
+    }
+
+    const results = await generateSetup({
+      workbooks: [{
+        name: 'Test Workbook',
+        sheets: [{ source: hierarchicalSchema }]
+      }]
+    })
+
+    const pricingSheet = results.workbooks[0].sheets.find(s => s.slug === 'LineItemPricing')
+    expect(pricingSheet).toBeDefined()
+    expect(pricingSheet.name).toBe('Line Item Pricing')
+    expect(pricingSheet.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'subTotal',
+          type: 'number',
+          label: 'Sub Total',
+          description: 'The line item total cost, in cents'
+        })
+      ])
+    )
+  })
+
+  it('should validate Main sheet with proper reference-list fields', async () => {
+    const hierarchicalSchema = {
+      $id: 'https://example.com/booking',
+      type: 'object',
+      properties: {
+        import: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              lineItems: {
+                type: 'array',
+                items: { $ref: '#/$defs/CartLineItem' }
+              }
+            }
+          }
+        }
+      },
+      $defs: {
+        CartLineItem: {
+          type: 'object',
+          properties: {
+            lineId: { type: 'string', description: 'Unique identifier for a line item' },
+            productId: { type: 'integer', description: 'Unique identifier of a Product' },
+            pricing: { $ref: '#/$defs/LineItemPricing' }
+          },
+          required: ['lineId']
+        },
+        LineItemPricing: {
+          type: 'object',
+          properties: {
+            subTotal: { type: 'number', description: 'The line item total cost, in cents' }
+          }
+        }
+      }
+    }
+
+    const results = await generateSetup({
+      workbooks: [{
+        name: 'Test Workbook',
+        sheets: [{ source: hierarchicalSchema }]
+      }]
+    })
+
+    const mainSheet = results.workbooks[0].sheets.find(s => s.slug === 'main')
+    expect(mainSheet).toBeDefined()
+    expect(mainSheet.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: 'import_lineItems',
+          type: 'reference-list',
+          label: 'Import Line Items',
+          config: { ref: 'CartLineItem', key: 'id' }
+        })
+      ])
+    )
   })
 })
