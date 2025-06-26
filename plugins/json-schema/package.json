@@ -63,6 +63,7 @@
   "license": "ISC",
   "dependencies": {
     "@flatfile/plugin-space-configure": "^0.10.0",
+    "change-case": "^5.4.4",
     "cross-fetch": "^4.0.0"
   },
   "peerDependencies": {

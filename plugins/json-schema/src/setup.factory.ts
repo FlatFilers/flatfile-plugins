@@ -1,6 +1,7 @@
 import type { Flatfile } from '@flatfile/api'
 import type { Setup } from '@flatfile/plugin-space-configure'
 import fetch from 'cross-fetch'
+import { capitalCase } from 'change-case'
 
 export type JsonSetupFactory = {
   workbooks: PartialWorkbookConfig[]
@@ -26,20 +27,24 @@ export async function generateSetup(
       const sheets = await Promise.all(
         workbook.sheets.map(async (partialSheetConfig: PartialSheetConfig) => {
           const model = await getModel(partialSheetConfig.source)
-          const fields = await generateFields(model)
 
-          return {
-            name: partialSheetConfig?.name || model.title,
-            ...(model?.description && { description: model.description }),
-            fields,
-            ...partialSheetConfig,
+          if (model.$defs && Object.keys(model.$defs).length > 0) {
+            return await generateHierarchicalSheets(model, partialSheetConfig)
+          } else {
+            const fields = await generateFields(model)
+            return {
+              name: partialSheetConfig?.name || model.title,
+              ...(model?.description && { description: model.description }),
+              fields,
+              ...partialSheetConfig,
+            }
           }
         })
       )
 
       return {
         ...workbook,
-        sheets,
+        sheets: sheets.flat(),
       }
     })
   )
@@ -118,11 +123,21 @@ export async function getPropertyType(
     )
   }
 
+  if (property.type === 'array') {
+    return await handleArrayType(
+      schema,
+      property,
+      parentKey,
+      isRequired,
+      origin
+    )
+  }
+
   if (property.type === 'object' && property.properties) {
     const propertyFields = await Promise.all(
       Object.keys(property.properties).map(async (key) => {
         return await getPropertyType(
-          property,
+          schema,
           property.properties[key],
           parentKey ? `${parentKey}_${key}` : key,
           (property.required && property.required.includes(key)) || false,
@@ -201,6 +216,305 @@ export function resolveLocalReference(schema: any, ref: string): any {
 
   if (!resolved) throw new Error(`Cannot resolve reference: ${ref}`)
   return resolved
+}
+
+async function generateHierarchicalSheets(
+  schema: any,
+  partialSheetConfig: PartialSheetConfig
+): Promise<Flatfile.SheetConfig[]> {
+  const sheets: Flatfile.SheetConfig[] = []
+  const origin = getOrigin(schema.$id)
+
+  for (const [defName, defSchema] of Object.entries(schema.$defs || {})) {
+    if ((defSchema as any).type === 'object' && (defSchema as any).properties) {
+      const fields = await generateFieldsForSheet(schema, defSchema, origin)
+
+      sheets.push({
+        name: capitalCase(defName),
+        slug: defName,
+        description:
+          (defSchema as any).description || `${capitalCase(defName)} data`,
+        fields,
+        ...partialSheetConfig,
+      })
+    }
+  }
+
+  if (schema.properties && Object.keys(schema.properties).length > 0) {
+    const fields = await generateFieldsForSheet(schema, schema, origin)
+
+    sheets.unshift({
+      name: partialSheetConfig?.name || schema.title || 'Main',
+      slug: 'main',
+      description: schema.description || 'Main data sheet',
+      fields,
+      ...partialSheetConfig,
+    })
+  }
+
+  return sheets
+}
+
+async function generateFieldsForSheet(
+  rootSchema: any,
+  schema: any,
+  origin: string
+): Promise<Flatfile.Property[]> {
+  if (!schema || !schema.properties) return []
+
+  const fields = await Promise.all(
+    Object.keys(schema.properties).map(async (key) => {
+      return await getPropertyTypeForSheet(
+        rootSchema,
+        schema.properties[key],
+        key,
+        (schema.required && schema.required.includes(key)) || false,
+        origin
+      )
+    })
+  )
+  return fields.flat().filter(Boolean)
+}
+
+async function getPropertyTypeForSheet(
+  rootSchema: any,
+  property: any,
+  parentKey = '',
+  isRequired = false,
+  origin: string
+): Promise<Flatfile.Property[]> {
+  if (property.$ref) {
+    const refPath = property.$ref
+    if (refPath.startsWith('#/$defs/')) {
+      const defName = refPath.replace('#/$defs/', '')
+      return [
+        {
+          key: parentKey,
+          type: 'reference',
+          label: capitalCase(parentKey),
+          ...(property?.description && { description: property.description }),
+          ...(isRequired && { constraints: [{ type: 'required' }] }),
+          config: { ref: defName, key: 'id' },
+        },
+      ]
+    } else {
+      const resolvedProperty = await resolveReference(
+        rootSchema,
+        refPath,
+        origin
+      )
+      return await getPropertyTypeForSheet(
+        rootSchema,
+        resolvedProperty,
+        parentKey,
+        isRequired,
+        origin
+      )
+    }
+  }
+
+  if (property.type === 'array') {
+    return await handleArrayTypeForSheet(
+      rootSchema,
+      property,
+      parentKey,
+      isRequired,
+      origin
+    )
+  }
+
+  if (property.type === 'object' && property.properties) {
+    const propertyFields = await Promise.all(
+      Object.keys(property.properties).map(async (key) => {
+        return await getPropertyTypeForSheet(
+          rootSchema,
+          property.properties[key],
+          parentKey ? `${parentKey}_${key}` : key,
+          (property.required && property.required.includes(key)) || false,
+          origin
+        )
+      })
+    )
+    return propertyFields.flat()
+  }
+
+  const fieldTypes: Record<string, Flatfile.Property> = {
+    string: { key: parentKey, type: 'string' },
+    number: { key: parentKey, type: 'number' },
+    integer: { key: parentKey, type: 'number' },
+    boolean: { key: parentKey, type: 'boolean' },
+    array: { key: parentKey, type: 'string-list' },
+    enum: {
+      key: parentKey,
+      type: 'enum-list',
+      config: property?.enum
+        ? {
+            options: property.enum.map((value: any) => ({
+              value,
+              label: String(value),
+            })),
+          }
+        : {
+            options: [],
+          },
+    },
+  }
+
+  if (!fieldTypes[property.type]) return []
+
+  const fieldConfig: Flatfile.Property = {
+    label: capitalCase(parentKey),
+    ...(property?.description && { description: property.description }),
+    ...(isRequired && { constraints: [{ type: 'required' }] }),
+    ...fieldTypes[property.type],
+  }
+
+  return [fieldConfig]
+}
+
+async function handleArrayTypeForSheet(
+  rootSchema: any,
+  property: any,
+  parentKey: string,
+  isRequired: boolean,
+  origin: string
+): Promise<Flatfile.Property[]> {
+  if (!property.items) {
+    return [
+      {
+        key: parentKey,
+        type: 'string-list',
+        label: capitalCase(parentKey),
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+      },
+    ]
+  }
+
+  if (property.items.$ref && property.items.$ref.startsWith('#/$defs/')) {
+    const defName = property.items.$ref.replace('#/$defs/', '')
+    return [
+      {
+        key: parentKey,
+        type: 'reference-list',
+        label: capitalCase(parentKey),
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+        config: { ref: defName, key: 'id' },
+      },
+    ]
+  }
+
+  if (property.items.type && property.items.type !== 'object') {
+    return [
+      {
+        key: parentKey,
+        type: 'string-list',
+        label: capitalCase(parentKey),
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+      },
+    ]
+  }
+
+  const itemSchema = property.items.$ref
+    ? await resolveReference(rootSchema, property.items.$ref, origin)
+    : property.items
+
+  if (itemSchema.type === 'object' && itemSchema.properties) {
+    const itemFields = await Promise.all(
+      Object.keys(itemSchema.properties).map(async (key) => {
+        return await getPropertyTypeForSheet(
+          rootSchema,
+          itemSchema.properties[key],
+          `${parentKey}_${key}`,
+          (itemSchema.required && itemSchema.required.includes(key)) || false,
+          origin
+        )
+      })
+    )
+    return itemFields.flat()
+  }
+
+  return [
+    {
+      key: parentKey,
+      type: 'string-list',
+      label: capitalCase(parentKey),
+      ...(property?.description && { description: property.description }),
+      ...(isRequired && { constraints: [{ type: 'required' }] }),
+    },
+  ]
+}
+
+function getOrigin(url?: string): string {
+  if (!url) return ''
+  try {
+    return new URL(url).origin
+  } catch (error) {
+    return ''
+  }
+}
+
+async function handleArrayType(
+  schema: any,
+  property: any,
+  parentKey: string,
+  isRequired: boolean,
+  origin: string
+): Promise<Flatfile.Property[]> {
+  if (!property.items) {
+    return [
+      {
+        key: parentKey,
+        type: 'string-list',
+        label: parentKey,
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+      },
+    ]
+  }
+
+  if (property.items.type && property.items.type !== 'object') {
+    return [
+      {
+        key: parentKey,
+        type: 'string-list',
+        label: parentKey,
+        ...(property?.description && { description: property.description }),
+        ...(isRequired && { constraints: [{ type: 'required' }] }),
+      },
+    ]
+  }
+
+  const itemSchema = property.items.$ref
+    ? await resolveReference(schema, property.items.$ref, origin)
+    : property.items
+
+  if (itemSchema.type === 'object' && itemSchema.properties) {
+    const itemFields = await Promise.all(
+      Object.keys(itemSchema.properties).map(async (key) => {
+        return await getPropertyType(
+          schema,
+          itemSchema.properties[key],
+          `${parentKey}_${key}`,
+          (itemSchema.required && itemSchema.required.includes(key)) || false,
+          origin
+        )
+      })
+    )
+    return itemFields.flat()
+  }
+
+  return [
+    {
+      key: parentKey,
+      type: 'string-list',
+      label: parentKey,
+      ...(property?.description && { description: property.description }),
+      ...(isRequired && { constraints: [{ type: 'required' }] }),
+    },
+  ]
 }
 
 export async function fetchExternalReference(url: string): Promise<any> {
