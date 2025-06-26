@@ -244,9 +244,40 @@ export class AutomapService {
       }
 
       try {
+        const destinationSheetId = (
+          job.data.config as Flatfile.MappingProgramJobConfig
+        ).destinationSheetId
+
+        let modifiedPlan = plan as Flatfile.JobExecutionPlan
+
+        if (this.options.includeUnmappedAsCustom) {
+          try {
+            modifiedPlan = await this.handleUnmappedAsCustom(
+              modifiedPlan,
+              destinationSheetId
+            )
+          } catch (error) {
+            if (this.options.debug) {
+              logError(
+                '@flatfile/plugin-automap',
+                `Custom column creation failed: ${error}`
+              )
+            }
+            if (!this.isNil(this.options.onFailure)) {
+              await this.options.onFailure(event)
+            }
+            return
+          }
+        }
+
         switch (this.options.accuracy) {
           case 'confident':
-            if (this.verifyConfidentMatchingStrategy(plan)) {
+            if (
+              await this.verifyConfidentMatchingStrategy(
+                modifiedPlan,
+                destinationSheetId
+              )
+            ) {
               await api.jobs.execute(jobId)
             } else {
               if (this.options.debug) {
@@ -262,7 +293,12 @@ export class AutomapService {
             }
             break
           case 'exact':
-            if (this.verifyAbsoluteMatchingStrategy(plan)) {
+            if (
+              await this.verifyAbsoluteMatchingStrategy(
+                modifiedPlan,
+                destinationSheetId
+              )
+            ) {
               await api.jobs.execute(jobId)
             } else {
               if (this.options.debug) {
@@ -357,25 +393,67 @@ export class AutomapService {
     }
   }
 
-  private verifyAbsoluteMatchingStrategy(
-    plan: Flatfile.JobExecutionPlan
-  ): boolean {
+  private async verifyAbsoluteMatchingStrategy(
+    plan: Flatfile.JobExecutionPlan,
+    destinationSheetId?: string
+  ): Promise<boolean> {
+    if (!this.options.requiredFieldsOnly) {
+      return (
+        plan.fieldMapping?.every(
+          (edge) => edge.metadata?.certainty === Flatfile.Certainty.Absolute
+        ) ?? false
+      )
+    }
+
+    if (!destinationSheetId) return false
+
+    const targetSheet = await this.getTargetSheet(destinationSheetId)
+    const requiredFields = this.getRequiredFields(targetSheet)
+
+    const mappedRequiredFields =
+      plan.fieldMapping?.filter((edge) =>
+        requiredFields.has(edge.destinationField.key)
+      ) ?? []
+
     return (
-      plan.fieldMapping?.every(
+      mappedRequiredFields.length === requiredFields.size &&
+      mappedRequiredFields.every(
         (edge) => edge.metadata?.certainty === Flatfile.Certainty.Absolute
-      ) ?? false
+      )
     )
   }
 
-  private verifyConfidentMatchingStrategy(
-    plan: Flatfile.JobExecutionPlan
-  ): boolean {
+  private async verifyConfidentMatchingStrategy(
+    plan: Flatfile.JobExecutionPlan,
+    destinationSheetId?: string
+  ): Promise<boolean> {
+    if (!this.options.requiredFieldsOnly) {
+      return (
+        plan.fieldMapping?.every(
+          (edge) =>
+            edge.metadata?.certainty === Flatfile.Certainty.Strong ||
+            edge.metadata?.certainty === Flatfile.Certainty.Absolute
+        ) ?? false
+      )
+    }
+
+    if (!destinationSheetId) return false
+
+    const targetSheet = await this.getTargetSheet(destinationSheetId)
+    const requiredFields = this.getRequiredFields(targetSheet)
+
+    const mappedRequiredFields =
+      plan.fieldMapping?.filter((edge) =>
+        requiredFields.has(edge.destinationField.key)
+      ) ?? []
+
     return (
-      plan.fieldMapping?.every(
+      mappedRequiredFields.length === requiredFields.size &&
+      mappedRequiredFields.every(
         (edge) =>
           edge.metadata?.certainty === Flatfile.Certainty.Strong ||
           edge.metadata?.certainty === Flatfile.Certainty.Absolute
-      ) ?? false
+      )
     )
   }
 
@@ -384,6 +462,75 @@ export class AutomapService {
     fileName: string
   ): Promise<Flatfile.FileResponse> {
     return api.files.update(fileId, { name: fileName })
+  }
+
+  private async getTargetSheet(
+    destinationSheetId: string
+  ): Promise<Flatfile.Sheet> {
+    const { data: sheet } = await api.sheets.get(destinationSheetId)
+    return sheet
+  }
+
+  private getRequiredFields(sheet: Flatfile.Sheet): Set<string> {
+    const requiredFields = new Set<string>()
+    sheet.config.fields.forEach((field) => {
+      const isRequired = field.constraints?.some(
+        (constraint) => constraint.type === 'required'
+      )
+      if (isRequired) {
+        requiredFields.add(field.key)
+      }
+    })
+    return requiredFields
+  }
+
+  private async handleUnmappedAsCustom(
+    plan: Flatfile.JobExecutionPlan,
+    destinationSheetId: string
+  ): Promise<Flatfile.JobExecutionPlan> {
+    if (
+      !this.options.includeUnmappedAsCustom ||
+      !plan.unmappedSourceFields?.length
+    ) {
+      return plan
+    }
+
+    const targetSheet = await this.getTargetSheet(destinationSheetId)
+
+    if (!targetSheet.config.allowAdditionalFields) {
+      if (this.options.debug) {
+        logWarn(
+          '@flatfile/plugin-automap',
+          'Target sheet does not allow additional fields, cannot create custom columns'
+        )
+      }
+      throw new Error(
+        'Target sheet does not allow additional fields for custom columns'
+      )
+    }
+
+    const customFieldMappings: Flatfile.Edge[] = plan.unmappedSourceFields.map(
+      (sourceField) => ({
+        sourceField: sourceField.sourceField,
+        destinationField: {
+          key: sourceField.sourceField.key,
+          type: sourceField.sourceField.type,
+          label: sourceField.sourceField.label || sourceField.sourceField.key,
+          description: `Custom field mapped from source: ${sourceField.sourceField.key}`,
+        } as Flatfile.Property,
+        metadata: {
+          certainty: Flatfile.Certainty.Absolute,
+          confidence: 1,
+          source: 'custom',
+        },
+      })
+    )
+
+    return {
+      ...plan,
+      fieldMapping: [...(plan.fieldMapping || []), ...customFieldMappings],
+      unmappedSourceFields: [],
+    }
   }
 
   private isNil(value: any): value is null | undefined {

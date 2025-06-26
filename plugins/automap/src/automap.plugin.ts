@@ -23,6 +23,8 @@ export function automap(options: AutomapOptions) {
  * @property {RegExp} matchFilename - a regular expression to match specific files to perform automapping on.
  * @property {Function} onFailure - callback to be executed when plugin bails. Can be sync or async.
  * @property {string} targetWorkbook - specify destination Workbook id or name.
+ * @property {boolean} requiredFieldsOnly - when true, confidence determination only considers required fields in target sheet.
+ * @property {boolean} includeUnmappedAsCustom - when true, create custom columns for unmapped source fields (requires allowAdditionalFields).
  */
 export interface AutomapOptions {
   readonly accuracy: 'confident' | 'exact'
@@ -34,4 +36,6 @@ export interface AutomapOptions {
   readonly onFailure?: (event: FlatfileEvent) => void | Promise<void>
   readonly targetWorkbook?: string
   readonly disableFileNameUpdate?: boolean
+  readonly requiredFieldsOnly?: boolean
+  readonly includeUnmappedAsCustom?: boolean
 }
