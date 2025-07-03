@@ -142,9 +142,9 @@ describe('automap() e2e', () => {
       const skipSpace = await setupSpace()
       skipSpaceId = skipSpace.id
       await setupSimpleWorkbook(skipSpaceId, ['name', 'email', 'notes'])
-      
+
       await api.spaces.update(skipSpaceId, {
-        metadata: { skipAutomap: true }
+        metadata: { skipAutomap: true },
       })
     })
 
@@ -179,8 +179,8 @@ describe('automap() e2e', () => {
     })
 
     it('should skip automap when space has skipAutomap metadata', async () => {
-      await new Promise(resolve => setTimeout(resolve, 5000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+
       expect(mockFn).not.toHaveBeenCalled()
     }, 30_000)
   })
