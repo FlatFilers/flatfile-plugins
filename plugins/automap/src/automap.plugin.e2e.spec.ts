@@ -133,4 +133,55 @@ describe('automap() e2e', () => {
       expect(mockFn).toHaveBeenCalled()
     }, 90_000)
   })
+
+  describe('space metadata skip functionality', () => {
+    let skipSpaceId: string
+    const mockFn = vi.fn()
+
+    beforeAll(async () => {
+      const skipSpace = await setupSpace()
+      skipSpaceId = skipSpace.id
+      await setupSimpleWorkbook(skipSpaceId, ['name', 'email', 'notes'])
+      
+      await api.spaces.update(skipSpaceId, {
+        metadata: { skipAutomap: true }
+      })
+    })
+
+    afterAll(async () => {
+      await api.spaces.delete(skipSpaceId)
+    })
+
+    beforeEach(async () => {
+      const stream = fs.createReadStream(path.join(__dirname, '../test.csv'))
+
+      await api.files.upload(stream, {
+        spaceId: skipSpaceId,
+        environmentId: getEnvironmentId(),
+      })
+
+      listener.use(
+        automap({
+          accuracy: 'confident',
+          matchFilename: /test.csv$/g,
+          defaultTargetSheet: 'test',
+          debug: true,
+        })
+      )
+
+      listener.on(
+        Flatfile.EventTopic.JobCompleted,
+        { job: 'workbook:map' },
+        (event) => {
+          mockFn(event.context.jobId)
+        }
+      )
+    })
+
+    it('should skip automap when space has skipAutomap metadata', async () => {
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      
+      expect(mockFn).not.toHaveBeenCalled()
+    }, 30_000)
+  })
 })
