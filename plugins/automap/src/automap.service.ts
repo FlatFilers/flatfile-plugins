@@ -41,6 +41,17 @@ export class AutomapService {
     try {
       const file = await this.getFileById(fileId)
 
+      const { data: space } = await api.spaces.get(spaceId)
+      if (space.metadata?.skipAutomap === true) {
+        if (this.options.debug) {
+          logInfo(
+            '@flatfile/plugin-automap',
+            `Skipping automap for file "${file.name}" due to space skipAutomap metadata`
+          )
+        }
+        return
+      }
+
       if (!this.isFileNameMatch(file)) {
         return
       } else if (!this.options.disableFileNameUpdate) {
