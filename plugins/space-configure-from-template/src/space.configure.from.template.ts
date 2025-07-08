@@ -86,7 +86,7 @@ export function configureSpaceFromTemplate(
             primaryWorkbookId:
               workbookIds && workbookIds.length > 0 ? workbookIds[0] : '',
             settings: spaceTemplate.settings || {},
-            metadata: spaceTemplate.metadata,
+            metadata: spaceTemplate.metadata || {},
             actions: spaceTemplate.actions || [],
             access: spaceTemplate.access || [],
             labels: spaceTemplate.labels,
