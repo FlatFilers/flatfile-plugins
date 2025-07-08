@@ -67,7 +67,7 @@ export function configureSpaceFromTemplate(
               })),
               actions: workbook.actions,
               settings: workbook.settings,
-              metadata: workbook.metadata ?? {},
+              metadata: workbook.metadata,
               treatments: workbook.treatments,
             }))
 
