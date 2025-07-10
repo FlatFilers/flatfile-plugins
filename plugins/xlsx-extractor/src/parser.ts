@@ -32,26 +32,21 @@ type ParseBufferOptions = Omit<
 }
 type ProcessedSheet = [PropertyKey, SheetCapture]
 
-export async function parseBuffer(
-  buffer: Buffer,
-  options?: ParseBufferOptions
-): Promise<WorkbookCapture> {
-  let workbook: XLSX.WorkBook
+/**
+ * Shared workbook parsing logic to avoid duplicate parsing
+ */
+function parseWorkbook(buffer: Buffer, options?: ParseBufferOptions): XLSX.WorkBook {
   try {
-    workbook = XLSX.read(buffer, {
+    // Try normal parsing first (most common case)
+    return XLSX.read(buffer, {
       type: 'buffer',
       cellDates: true,
       dense: true,
       dateNF: options?.dateNF || undefined,
-      // SheetJS intends the 'WTF' option to be used for development purposes only.
-      // We use it here to specifically capture the ERR_STRING_TOO_LONG error.
-      WTF: true,
     })
   } catch (e) {
-    // catch the error if the file is too large to parse, and throw a more helpful error.
-    // ref: https://docs.sheetjs.com/docs/miscellany/errors/#invalid-string-length-or-err_string_too_long
-    // i.e. 'Cannot create a string longer than 0x1fffffe8 characters'
-    if (e.code === 'ERR_STRING_TOO_LONG') {
+    // If we get a string too long error, provide a helpful message
+    if (e.message?.includes('string longer than') || e.code === 'ERR_STRING_TOO_LONG') {
       if (options?.debug) {
         console.log(
           'File is too large to parse. Try converting this file to CSV.'
@@ -59,15 +54,37 @@ export async function parseBuffer(
       }
       throw new Error('plugins.extraction.fileTooLarge')
     }
-
-    // Try reading the file again without the 'WTF' option.
-    workbook = XLSX.read(buffer, {
-      type: 'buffer',
-      cellDates: true,
-      dense: true,
-      dateNF: options?.dateNF || undefined,
-    })
+    
+    // For other errors, try with WTF option to get better error details
+    try {
+      return XLSX.read(buffer, {
+        type: 'buffer',
+        cellDates: true,
+        dense: true,
+        dateNF: options?.dateNF || undefined,
+        WTF: true,
+      })
+    } catch (wtfError) {
+      // If WTF parsing also fails, check for the specific error again
+      if (wtfError.code === 'ERR_STRING_TOO_LONG') {
+        if (options?.debug) {
+          console.log(
+            'File is too large to parse. Try converting this file to CSV.'
+          )
+        }
+        throw new Error('plugins.extraction.fileTooLarge')
+      }
+      // Re-throw the original error if it's not the string length issue
+      throw e
+    }
   }
+}
+
+export async function parseBuffer(
+  buffer: Buffer,
+  options?: ParseBufferOptions
+): Promise<WorkbookCapture> {
+  const workbook = parseWorkbook(buffer, options)
 
   // Process merged cells if options are provided
   if (options?.mergedCellOptions) {
@@ -294,32 +311,7 @@ export async function parseBufferStreaming(
   buffer: Buffer,
   options?: ParseBufferOptions
 ): Promise<StreamingParseResult> {
-  let workbook: XLSX.WorkBook
-  try {
-    workbook = XLSX.read(buffer, {
-      type: 'buffer',
-      cellDates: true,
-      dense: true,
-      dateNF: options?.dateNF || undefined,
-      WTF: true,
-    })
-  } catch (e) {
-    if (e.code === 'ERR_STRING_TOO_LONG') {
-      if (options?.debug) {
-        console.log(
-          'File is too large to parse. Try converting this file to CSV.'
-        )
-      }
-      throw new Error('plugins.extraction.fileTooLarge')
-    }
-
-    workbook = XLSX.read(buffer, {
-      type: 'buffer',
-      cellDates: true,
-      dense: true,
-      dateNF: options?.dateNF || undefined,
-    })
-  }
+  const workbook = parseWorkbook(buffer, options)
 
   // Process merged cells if options are provided
   if (options?.mergedCellOptions) {
