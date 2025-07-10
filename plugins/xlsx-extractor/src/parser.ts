@@ -35,7 +35,6 @@ export async function parseBuffer(
       WTF: true,
     })
   } catch (e) {
-    console.log('Error parsing file', e)
     // catch the error if the file is too large to parse, and throw a more helpful error.
     // ref: https://docs.sheetjs.com/docs/miscellany/errors/#invalid-string-length-or-err_string_too_long
     // i.e. 'Cannot create a string longer than 0x1fffffe8 characters'
@@ -56,7 +55,6 @@ export async function parseBuffer(
       dateNF: options?.dateNF || undefined,
     })
   }
-  console.log('Workbook')
 
   // Process merged cells if options are provided
   if (options?.mergedCellOptions) {
