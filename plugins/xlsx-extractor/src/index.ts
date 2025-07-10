@@ -47,7 +47,7 @@ export const ExcelExtractor = (options?: ExcelExtractorOptions) => {
   return Extractor(
     /\.(xlsx?|xlsm|xlsb|xltx?|xltm)$/i,
     'excel',
-    parseBufferStreaming,
+    parseBuffer,
     options
   )
 }

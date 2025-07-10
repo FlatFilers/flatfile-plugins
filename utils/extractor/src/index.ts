@@ -11,27 +11,7 @@ const api = new FlatfileClient()
 
 const WORKBOOK_CREATION_DELAY = 3_000
 
-// Streaming parser interface for v2 API
-export interface StreamingSheetCapture {
-  headers: string[]
-  descriptions?: Record<string, null | string> | null
-  data: AsyncIterable<Flatfile.RecordData>
-  metadata?: { rowHeaders: number[] }
-}
 
-export type StreamingWorkbookCapture = Record<string, StreamingSheetCapture>
-
-export interface StreamingParseResult {
-  workbook: StreamingWorkbookCapture
-  isStreaming: true
-}
-
-export interface StandardParseResult {
-  workbook: WorkbookCapture
-  isStreaming: false
-}
-
-export type ParseResult = StreamingParseResult | StandardParseResult
 
 export const Extractor = (
   fileExt: string | RegExp,
@@ -39,11 +19,7 @@ export const Extractor = (
   parseBuffer: (
     buffer: Buffer,
     options: any
-  ) =>
-    | WorkbookCapture
-    | Promise<WorkbookCapture>
-    | ParseResult
-    | Promise<ParseResult>,
+  ) => WorkbookCapture | Promise<WorkbookCapture>,
   options?: Record<string, any>
 ) => {
   return (listener: FlatfileListener) => {
@@ -130,34 +106,11 @@ export const Extractor = (
             getHeaders,
           })
 
-          // Handle both streaming and non-streaming results
-          let workbook: Flatfile.Workbook
-          let isStreaming = false
-          let capture: WorkbookCapture
-          let streamingCapture: StreamingWorkbookCapture
-
-          if (
-            parseResult &&
-            typeof parseResult === 'object' &&
-            'isStreaming' in parseResult
-          ) {
-            const typedResult = parseResult as ParseResult
-            isStreaming = typedResult.isStreaming
-            if (isStreaming) {
-              streamingCapture = (typedResult as StreamingParseResult).workbook
-              // Convert streaming capture to standard capture for workbook creation
-              capture =
-                await convertStreamingToStandardCapture(streamingCapture)
-            } else {
-              capture = (typedResult as StandardParseResult).workbook
-            }
-          } else {
-            // Legacy parser result
-            capture = parseResult as WorkbookCapture
-          }
+          // Always expect standard WorkbookCapture from parsers
+          const capture = parseResult as WorkbookCapture
 
           await tick(5, 'plugins.extraction.createWorkbook')
-          workbook = await createWorkbook(
+          const workbook = await createWorkbook(
             event.context.environmentId,
             file,
             capture,
@@ -180,57 +133,35 @@ export const Extractor = (
             setTimeout(resolve, WORKBOOK_CREATION_DELAY)
           })
 
-          // Use streaming or standard record creation based on parse result
-          if (isStreaming && streamingCapture) {
-            for (const sheet of workbook.sheets) {
-              if (!streamingCapture[sheet.name]) {
-                continue
-              }
+          // Try v2 streaming API first, fall back to v1 if needed
+          for (const sheet of workbook.sheets) {
+            if (!capture[sheet.name]) {
+              continue
+            }
 
-              // Create an async generator that normalizes streaming records
-              async function* normalizeStreamingRecords() {
-                for await (const record of streamingCapture[sheet.name].data) {
-                  yield normalizeRecordKeys(record)
-                }
-              }
-
-              try {
-                await createRecordsV2Streaming(
-                  sheet.id,
-                  normalizeStreamingRecords(),
-                  async (_progress, part, totalParts) => {
-                    await tick(
-                      Math.min(99, Math.round(10 + 90 * (part / totalParts))),
-                      'plugins.extraction.addingRecords'
-                    )
-                  }
-                )
-              } catch (error) {
-                if (debug) {
-                  console.log(
-                    'V2 streaming failed, falling back to v1 API:',
-                    error
-                  )
-                }
-                // Fall back to standard approach using collected data
-                await createAllRecords(
-                  sheet.id,
-                  capture[sheet.name].data.map(normalizeRecordKeys),
-                  async (_progress, part, totalParts) => {
-                    await tick(
-                      Math.min(99, Math.round(10 + 90 * (part / totalParts))),
-                      'plugins.extraction.addingRecords'
-                    )
-                  }
-                )
+            // Create an async generator that streams records from the in-memory data
+            async function* streamRecords() {
+              for (const record of capture[sheet.name].data) {
+                yield normalizeRecordKeys(record)
               }
             }
-          } else {
-            // Standard non-streaming approach
-            for (const sheet of workbook.sheets) {
-              if (!capture[sheet.name]) {
-                continue
+
+            try {
+              await createRecordsV2Streaming(
+                sheet.id,
+                streamRecords(),
+                async (_progress, part, totalParts) => {
+                  await tick(
+                    Math.min(99, Math.round(10 + 90 * (part / totalParts))),
+                    'plugins.extraction.addingRecords'
+                  )
+                }
+              )
+            } catch (error) {
+              if (debug) {
+                console.log('V2 streaming failed, falling back to v1 API:', error)
               }
+              // Fall back to standard v1 approach
               await createAllRecords(
                 sheet.id,
                 capture[sheet.name].data.map(normalizeRecordKeys),
@@ -380,30 +311,7 @@ async function updateSheetMetadata(
   )
 }
 
-async function convertStreamingToStandardCapture(
-  streamingCapture: StreamingWorkbookCapture
-): Promise<WorkbookCapture> {
-  const capture: WorkbookCapture = {}
 
-  for (const [sheetName, streamingSheet] of Object.entries(streamingCapture)) {
-    const data: Flatfile.RecordData[] = []
-
-    // Collect all data from the stream for workbook creation
-    // We need the headers and metadata for creating the workbook structure
-    for await (const record of streamingSheet.data) {
-      data.push(record)
-    }
-
-    capture[sheetName] = {
-      headers: streamingSheet.headers,
-      descriptions: streamingSheet.descriptions,
-      data,
-      metadata: streamingSheet.metadata,
-    }
-  }
-
-  return capture
-}
 /**
  * Generic structure for capturing a workbook
  */

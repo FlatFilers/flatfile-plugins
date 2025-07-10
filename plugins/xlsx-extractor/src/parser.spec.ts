@@ -1,4 +1,4 @@
-import { WorkbookCapture, StreamingParseResult } from '@flatfile/util-extractor'
+import { WorkbookCapture } from '@flatfile/util-extractor'
 import * as fs from 'fs'
 import * as path from 'path'
 import { beforeAll, describe, expect, test } from 'vitest'
@@ -260,6 +260,7 @@ describe('parser', () => {
     })
   })
 
+<<<<<<< HEAD
   describe('raw option with object values', () => {
     test('handles Date objects and other non-string types when raw: true', async () => {
       const XLSX = require('xlsx')
