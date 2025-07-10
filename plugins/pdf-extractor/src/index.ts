@@ -25,7 +25,6 @@ export const pdfExtractorPlugin = (opts: PluginOptions) => {
         return
       }
 
-
       const jobs = await api.jobs.create({
         type: Flatfile.JobType.File,
         operation: `extract-plugin-pdf-conversion`,
@@ -35,14 +34,21 @@ export const pdfExtractorPlugin = (opts: PluginOptions) => {
       await api.jobs.execute(jobs.data.id)
     })
 
-    listener.on('job:ready', { operation: `extract-plugin-pdf-conversion` }, async (event) => {
-      const { fileId, jobId } = event.context
-      await api.jobs.ack(jobId, { progress: 1, info: 'Starting PDF conversion' })
-      const { data: file } = await api.files.get(fileId)
-      if (file.mode === 'export') {
-        return
+    listener.on(
+      'job:ready',
+      { operation: `extract-plugin-pdf-conversion` },
+      async (event) => {
+        const { fileId, jobId } = event.context
+        await api.jobs.ack(jobId, {
+          progress: 1,
+          info: 'Starting PDF conversion',
+        })
+        const { data: file } = await api.files.get(fileId)
+        if (file.mode === 'export') {
+          return
+        }
+        getFileBuffer(event).then((buffer) => run(event, file, buffer, opts))
       }
-      getFileBuffer(event).then((buffer) => run(event, file, buffer, opts))
-    })
+    )
   }
 }
