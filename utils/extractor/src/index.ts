@@ -10,8 +10,6 @@ const api = new FlatfileClient()
 
 const WORKBOOK_CREATION_DELAY = 3_000
 
-
-
 export const Extractor = (
   fileExt: string | RegExp,
   extractorType: string,
@@ -141,7 +139,10 @@ export const Extractor = (
               )
             } catch (error) {
               if (debug) {
-                console.log('V2 streaming failed, falling back to v1 API:', error)
+                console.log(
+                  'V2 streaming failed, falling back to v1 API:',
+                  error
+                )
               }
               // Fall back to standard v1 approach
               await createAllRecords(
@@ -308,7 +309,6 @@ async function updateSheetMetadata(
     })
   )
 }
-
 
 /**
  * Generic structure for capturing a workbook

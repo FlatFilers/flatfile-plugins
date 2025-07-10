@@ -253,5 +253,3 @@ async function convertSheet({
     metadata,
   }
 }
-
-
