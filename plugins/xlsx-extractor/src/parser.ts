@@ -35,7 +35,10 @@ type ProcessedSheet = [PropertyKey, SheetCapture]
 /**
  * Shared workbook parsing logic to avoid duplicate parsing
  */
-function parseWorkbook(buffer: Buffer, options?: ParseBufferOptions): XLSX.WorkBook {
+function parseWorkbook(
+  buffer: Buffer,
+  options?: ParseBufferOptions
+): XLSX.WorkBook {
   try {
     // Try normal parsing first (most common case)
     return XLSX.read(buffer, {
@@ -46,7 +49,10 @@ function parseWorkbook(buffer: Buffer, options?: ParseBufferOptions): XLSX.WorkB
     })
   } catch (e) {
     // If we get a string too long error, provide a helpful message
-    if (e.message?.includes('string longer than') || e.code === 'ERR_STRING_TOO_LONG') {
+    if (
+      e.message?.includes('string longer than') ||
+      e.code === 'ERR_STRING_TOO_LONG'
+    ) {
       if (options?.debug) {
         console.log(
           'File is too large to parse. Try converting this file to CSV.'
@@ -54,7 +60,7 @@ function parseWorkbook(buffer: Buffer, options?: ParseBufferOptions): XLSX.WorkB
       }
       throw new Error('plugins.extraction.fileTooLarge')
     }
-    
+
     // For other errors, try with WTF option to get better error details
     try {
       return XLSX.read(buffer, {
