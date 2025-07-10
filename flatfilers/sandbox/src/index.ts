@@ -27,7 +27,7 @@ export default async function (listener: FlatfileListener) {
     )
   )
   listener.use(ExcelExtractor({ debug: true }))
-  // listener.use(pdfExtractorPlugin({apiKey: "", format: 'csv'}))
+  listener.use(pdfExtractorPlugin({apiKey: "41n1hhmchjps"}))
   listener.use(viewMappedPlugin({ keepRequiredFields: true }))
   listener.use(exportWorkbookPlugin({ excludeMessages: false }))
   listener.use(

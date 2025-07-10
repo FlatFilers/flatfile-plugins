@@ -63,7 +63,6 @@ export const run = async (
         '@flatfile/plugin-pdf-extractor',
         `Failed to convert PDF to ${cleanFormat.toUpperCase()}`
       )
-      console.log(response)
       await api.jobs.fail(jobId, {
         info: `Failed to convert PDF to ${cleanFormat.toUpperCase()}`,
       })
