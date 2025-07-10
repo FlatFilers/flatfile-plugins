@@ -32,11 +32,13 @@ const plugin = ExcelExtractor({
 
 The plugin automatically:
 1. **Single-pass parsing**: Efficiently parses Excel files only once (no duplicate parsing)
-2. **Streaming records**: Streams records as they're processed from Excel files  
+2. **Memory-efficient writes**: Streams records to Flatfile's v2 API instead of batching  
 3. **v2 API**: Uses the v2 `writeRawStreaming` API when available
 4. **Format conversion**: Converts records from v1 format (`{field: {value: "data"}}`) to v2 format (`{field: "data"}`)
 5. **Auto-fields**: Adds special v2 fields like `__s` (sheet ID) automatically
 6. **Graceful fallback**: Falls back to v1 API if v2 streaming fails
+
+**Note**: The memory efficiency comes from streaming records to the API, not from streaming the Excel parsing itself (Excel files are still fully parsed into memory due to SheetJS limitations).
 
 ## API Requirements
 

@@ -271,8 +271,10 @@ export async function createRecordsV2Streaming(
     // Call tick with final progress
     await tick?.(1, 1, 1).catch(console.log)
   } catch (error) {
-    console.error('Error creating records with v2 streaming:', error)
-    throw error
+    // Add more context to help with debugging
+    const errorMessage = `V2 streaming failed: ${error?.message || error}`
+    console.error(errorMessage)
+    throw new Error(errorMessage)
   }
 }
 

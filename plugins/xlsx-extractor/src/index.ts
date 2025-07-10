@@ -1,6 +1,6 @@
 import { Extractor } from '@flatfile/util-extractor'
 import { GetHeadersOptions } from './header.detection'
-import { parseBuffer, parseBufferStreaming } from './parser'
+import { parseBuffer } from './parser'
 
 /**
  * Plugin config options.
@@ -47,7 +47,7 @@ export const ExcelExtractor = (options?: ExcelExtractorOptions) => {
   return Extractor(
     /\.(xlsx?|xlsm|xlsb|xltx?|xltm)$/i,
     'excel',
-    parseBufferStreaming,
+    parseBuffer,
     options
   )
 }
