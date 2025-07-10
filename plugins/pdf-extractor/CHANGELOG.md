@@ -1,5 +1,11 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.6.0
+
+### Minor Changes
+
+- 9cc05bb: Added Jobs for better feedback
+
 ## 0.5.0
 
 ### Minor Changes
