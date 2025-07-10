@@ -5,6 +5,14 @@ import { asyncLimitSeries } from './async.helpers'
 
 const api = new FlatfileClient()
 
+// Type for v2 JSONL record format
+export type JsonlRecord = {
+  __k?: string // Record ID
+  __s?: string // Sheet ID  
+  __d?: boolean // Delete flag
+  [key: string]: any // Field values
+}
+
 const DEFAULT_PAGE_SIZE = 10_000
 
 export async function getRecordsRaw(
@@ -201,6 +209,95 @@ export async function createAllRecords(
     )
     return createRecords(sheetId, records.slice(index * DEFAULT_PAGE_SIZE, end))
   })
+}
+
+/**
+ * Converts v1 RecordData format to v2 JSONL format
+ */
+export function convertToJsonlFormat(
+  records: Flatfile.RecordData[],
+  sheetId: string
+): JsonlRecord[] {
+  return records.map(record => {
+    const jsonlRecord: JsonlRecord = { __s: sheetId }
+    
+    // Convert v1 format {field: {value: "data"}} to v2 format {field: "data"}
+    Object.entries(record).forEach(([key, valueObj]) => {
+      if (valueObj && typeof valueObj === 'object' && 'value' in valueObj) {
+        jsonlRecord[key] = valueObj.value
+      } else {
+        jsonlRecord[key] = valueObj
+      }
+    })
+    
+    return jsonlRecord
+  })
+}
+
+/**
+ * Creates records using v2 streaming API
+ */
+export async function createRecordsV2Streaming(
+  sheetId: string,
+  recordsStream: AsyncIterable<Flatfile.RecordData>,
+  tick?: TickHelper
+): Promise<void> {
+  let recordCount = 0
+  
+  // Create an async generator that converts records to JSONL format
+  async function* convertRecordsStream(): AsyncGenerator<JsonlRecord> {
+    for await (const record of recordsStream) {
+      recordCount++
+      yield convertToJsonlFormat([record], sheetId)[0]
+    }
+  }
+  
+  // Check if v2 API is available
+  if (!api.records?.v2?.writeRawStreaming) {
+    throw new Error('V2 records API not available - requires @flatfile/api v1.18.0+')
+  }
+  
+  try {
+    const result = await api.records.v2.writeRawStreaming(
+      convertRecordsStream(),
+      {
+        sheetId,
+        truncate: false
+      }
+    )
+    
+    // Call tick with final progress
+    await tick?.(1, 1, 1).catch(console.log)
+    
+  } catch (error) {
+    console.error('Error creating records with v2 streaming:', error)
+    throw error
+  }
+}
+
+/**
+ * Creates records using v2 streaming API from an array (backwards compatible)
+ */
+export async function createAllRecordsV2(
+  sheetId: string,
+  records: Flatfile.RecordData[],
+  tick?: TickHelper
+): Promise<void> {
+  const jsonlRecords = convertToJsonlFormat(records, sheetId)
+  
+  try {
+    await api.records.v2.writeRaw(jsonlRecords, {
+      sheetId,
+      truncate: false
+    })
+    
+    // Call tick with final progress
+    await tick?.(1, 1, 1).catch(console.log)
+    
+  } catch (error) {
+    console.error('Error creating records with v2 API:', error)
+    throw error
+  }
 }
 
 export type TickHelper = (

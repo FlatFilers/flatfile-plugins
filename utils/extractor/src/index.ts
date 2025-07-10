@@ -2,6 +2,7 @@ import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
 import {
   createAllRecords,
+  createRecordsV2Streaming,
   slugify,
   normalizeSheetConfig,
 } from '@flatfile/util-common'
@@ -10,13 +11,39 @@ const api = new FlatfileClient()
 
 const WORKBOOK_CREATION_DELAY = 3_000
 
+// Streaming parser interface for v2 API
+export interface StreamingSheetCapture {
+  headers: string[]
+  descriptions?: Record<string, null | string> | null
+  data: AsyncIterable<Flatfile.RecordData>
+  metadata?: { rowHeaders: number[] }
+}
+
+export type StreamingWorkbookCapture = Record<string, StreamingSheetCapture>
+
+export interface StreamingParseResult {
+  workbook: StreamingWorkbookCapture
+  isStreaming: true
+}
+
+export interface StandardParseResult {
+  workbook: WorkbookCapture
+  isStreaming: false
+}
+
+export type ParseResult = StreamingParseResult | StandardParseResult
+
 export const Extractor = (
   fileExt: string | RegExp,
   extractorType: string,
   parseBuffer: (
     buffer: Buffer,
     options: any
-  ) => WorkbookCapture | Promise<WorkbookCapture>,
+  ) =>
+    | WorkbookCapture
+    | Promise<WorkbookCapture>
+    | ParseResult
+    | Promise<ParseResult>,
   options?: Record<string, any>
 ) => {
   return (listener: FlatfileListener) => {
@@ -95,7 +122,7 @@ export const Extractor = (
           }
 
           await tick(3, 'plugins.extraction.parseSheets')
-          const capture = await parseBuffer(buffer, {
+          const parseResult = await parseBuffer(buffer, {
             ...options,
             fileId,
             fileExt: file.ext,
@@ -103,8 +130,34 @@ export const Extractor = (
             getHeaders,
           })
 
+          // Handle both streaming and non-streaming results
+          let workbook: Flatfile.Workbook
+          let isStreaming = false
+          let capture: WorkbookCapture
+          let streamingCapture: StreamingWorkbookCapture
+
+          if (
+            parseResult &&
+            typeof parseResult === 'object' &&
+            'isStreaming' in parseResult
+          ) {
+            const typedResult = parseResult as ParseResult
+            isStreaming = typedResult.isStreaming
+            if (isStreaming) {
+              streamingCapture = (typedResult as StreamingParseResult).workbook
+              // Convert streaming capture to standard capture for workbook creation
+              capture =
+                await convertStreamingToStandardCapture(streamingCapture)
+            } else {
+              capture = (typedResult as StandardParseResult).workbook
+            }
+          } else {
+            // Legacy parser result
+            capture = parseResult as WorkbookCapture
+          }
+
           await tick(5, 'plugins.extraction.createWorkbook')
-          const workbook = await createWorkbook(
+          workbook = await createWorkbook(
             event.context.environmentId,
             file,
             capture,
@@ -127,20 +180,68 @@ export const Extractor = (
             setTimeout(resolve, WORKBOOK_CREATION_DELAY)
           })
 
-          for (const sheet of workbook.sheets) {
-            if (!capture[sheet.name]) {
-              continue
-            }
-            await createAllRecords(
-              sheet.id,
-              capture[sheet.name].data.map(normalizeRecordKeys),
-              async (_progress, part, totalParts) => {
-                await tick(
-                  Math.min(99, Math.round(10 + 90 * (part / totalParts))),
-                  'plugins.extraction.addingRecords'
+          // Use streaming or standard record creation based on parse result
+          if (isStreaming && streamingCapture) {
+            for (const sheet of workbook.sheets) {
+              if (!streamingCapture[sheet.name]) {
+                continue
+              }
+
+              // Create an async generator that normalizes streaming records
+              async function* normalizeStreamingRecords() {
+                for await (const record of streamingCapture[sheet.name].data) {
+                  yield normalizeRecordKeys(record)
+                }
+              }
+
+              try {
+                await createRecordsV2Streaming(
+                  sheet.id,
+                  normalizeStreamingRecords(),
+                  async (_progress, part, totalParts) => {
+                    await tick(
+                      Math.min(99, Math.round(10 + 90 * (part / totalParts))),
+                      'plugins.extraction.addingRecords'
+                    )
+                  }
+                )
+              } catch (error) {
+                if (debug) {
+                  console.log(
+                    'V2 streaming failed, falling back to v1 API:',
+                    error
+                  )
+                }
+                // Fall back to standard approach using collected data
+                await createAllRecords(
+                  sheet.id,
+                  capture[sheet.name].data.map(normalizeRecordKeys),
+                  async (_progress, part, totalParts) => {
+                    await tick(
+                      Math.min(99, Math.round(10 + 90 * (part / totalParts))),
+                      'plugins.extraction.addingRecords'
+                    )
+                  }
                 )
               }
-            )
+            }
+          } else {
+            // Standard non-streaming approach
+            for (const sheet of workbook.sheets) {
+              if (!capture[sheet.name]) {
+                continue
+              }
+              await createAllRecords(
+                sheet.id,
+                capture[sheet.name].data.map(normalizeRecordKeys),
+                async (_progress, part, totalParts) => {
+                  await tick(
+                    Math.min(99, Math.round(10 + 90 * (part / totalParts))),
+                    'plugins.extraction.addingRecords'
+                  )
+                }
+              )
+            }
           }
 
           // After all records are added, update the sheet metadata
@@ -277,6 +378,31 @@ async function updateSheetMetadata(
       })
     })
   )
+}
+
+async function convertStreamingToStandardCapture(
+  streamingCapture: StreamingWorkbookCapture
+): Promise<WorkbookCapture> {
+  const capture: WorkbookCapture = {}
+
+  for (const [sheetName, streamingSheet] of Object.entries(streamingCapture)) {
+    const data: Flatfile.RecordData[] = []
+
+    // Collect all data from the stream for workbook creation
+    // We need the headers and metadata for creating the workbook structure
+    for await (const record of streamingSheet.data) {
+      data.push(record)
+    }
+
+    capture[sheetName] = {
+      headers: streamingSheet.headers,
+      descriptions: streamingSheet.descriptions,
+      data,
+      metadata: streamingSheet.metadata,
+    }
+  }
+
+  return capture
 }
 /**
  * Generic structure for capturing a workbook

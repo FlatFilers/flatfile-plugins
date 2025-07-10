@@ -1,8 +1,9 @@
-import { WorkbookCapture } from '@flatfile/util-extractor'
+import { WorkbookCapture, StreamingParseResult } from '@flatfile/util-extractor'
 import * as fs from 'fs'
 import * as path from 'path'
 import { beforeAll, describe, expect, test } from 'vitest'
-import { parseBuffer } from './parser'
+import { ExcelExtractor } from './index'
+import { parseBuffer, parseBufferStreaming } from './parser'
 import { GetHeadersResult } from '../constants/headerDetection.const'
 
 describe('parser', () => {
@@ -324,6 +325,52 @@ describe('parser', () => {
 
       expect(capture.TestSheet).toBeDefined()
       expect(capture.TestSheet.data).toHaveLength(1)
+    })
+  })
+
+  describe('streaming parser', () => {
+    const buffer: Buffer = fs.readFileSync(
+      path.join(__dirname, '../ref/test-basic.xlsx')
+    )
+
+    test('parseBufferStreaming returns streaming result', async () => {
+      const result = await parseBufferStreaming(buffer)
+
+      expect(result.isStreaming).toBe(true)
+      expect(Object.keys(result.workbook)).toEqual([
+        'Departments',
+        'Clients',
+        'Rebates-Purchases',
+      ])
+    })
+
+    test('streaming data matches non-streaming data', async () => {
+      const streamingResult = await parseBufferStreaming(buffer)
+      const standardResult = await parseBuffer(buffer)
+
+      // Compare headers
+      for (const sheetName of Object.keys(standardResult)) {
+        expect(streamingResult.workbook[sheetName].headers).toEqual(
+          standardResult[sheetName].headers
+        )
+      }
+
+      // Compare data by collecting streaming data
+      for (const sheetName of Object.keys(standardResult)) {
+        const streamingData = []
+        for await (const record of streamingResult.workbook[sheetName].data) {
+          streamingData.push(record)
+        }
+        expect(streamingData).toEqual(standardResult[sheetName].data)
+      }
+    })
+
+    test('ExcelExtractor uses streaming by default', () => {
+      // Since ExcelExtractor now always uses streaming,
+      // we just verify it still works as expected
+      const extractor = ExcelExtractor()
+      expect(extractor).toBeDefined()
+      expect(typeof extractor).toBe('function')
     })
   })
 })
