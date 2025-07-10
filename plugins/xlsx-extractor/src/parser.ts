@@ -1,4 +1,9 @@
-import type { SheetCapture, WorkbookCapture, StreamingWorkbookCapture, StreamingParseResult } from '@flatfile/util-extractor'
+import type {
+  SheetCapture,
+  WorkbookCapture,
+  StreamingWorkbookCapture,
+  StreamingParseResult,
+} from '@flatfile/util-extractor'
 import { mapKeys, mapValues } from 'remeda'
 import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
@@ -22,7 +27,10 @@ type ProcessedSheet = [PropertyKey, SheetCapture]
 /**
  * Shared workbook parsing logic to avoid duplicate parsing
  */
-function parseWorkbook(buffer: Buffer, options?: ParseBufferOptions): XLSX.WorkBook {
+function parseWorkbook(
+  buffer: Buffer,
+  options?: ParseBufferOptions
+): XLSX.WorkBook {
   try {
     // Try normal parsing first (most common case)
     return XLSX.read(buffer, {
@@ -33,7 +41,10 @@ function parseWorkbook(buffer: Buffer, options?: ParseBufferOptions): XLSX.WorkB
     })
   } catch (e) {
     // If we get a string too long error, provide a helpful message
-    if (e.message?.includes('string longer than') || e.code === 'ERR_STRING_TOO_LONG') {
+    if (
+      e.message?.includes('string longer than') ||
+      e.code === 'ERR_STRING_TOO_LONG'
+    ) {
       if (options?.debug) {
         console.log(
           'File is too large to parse. Try converting this file to CSV.'
@@ -41,7 +52,7 @@ function parseWorkbook(buffer: Buffer, options?: ParseBufferOptions): XLSX.WorkB
       }
       throw new Error('plugins.extraction.fileTooLarge')
     }
-    
+
     // For other errors, try with WTF option to get better error details
     try {
       return XLSX.read(buffer, {
@@ -267,7 +278,7 @@ export async function parseBufferStreaming(
 
   // Process each sheet as streaming
   const streamingCapture: StreamingWorkbookCapture = {}
-  
+
   for (const sheetName of workbook.SheetNames) {
     const sheet = workbook.Sheets[sheetName]
     const streamingSheet = await convertSheetToStreaming({
@@ -284,15 +295,15 @@ export async function parseBufferStreaming(
       cascadeRowValues: options?.cascadeRowValues,
       cascadeHeaderValues: options?.cascadeHeaderValues,
     })
-    
+
     if (streamingSheet) {
       streamingCapture[sheetName] = streamingSheet
     }
   }
-  
+
   return {
     workbook: streamingCapture,
-    isStreaming: true
+    isStreaming: true,
   }
 }
 
@@ -310,7 +321,9 @@ async function convertSheetToStreaming({
   debug,
   cascadeRowValues: shouldCascadeRowValues,
   cascadeHeaderValues: shouldCascadeHeaderValues,
-}: ConvertSheetArgs): Promise<import('@flatfile/util-extractor').StreamingSheetCapture | undefined> {
+}: ConvertSheetArgs): Promise<
+  import('@flatfile/util-extractor').StreamingSheetCapture | undefined
+> {
   const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
     defval: null,

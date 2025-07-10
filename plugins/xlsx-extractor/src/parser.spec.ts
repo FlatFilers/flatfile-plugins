@@ -153,10 +153,10 @@ describe('parser', () => {
     const buffer: Buffer = fs.readFileSync(
       path.join(__dirname, '../ref/test-basic.xlsx')
     )
-    
+
     test('parseBufferStreaming returns streaming result', async () => {
       const result = await parseBufferStreaming(buffer)
-      
+
       expect(result.isStreaming).toBe(true)
       expect(Object.keys(result.workbook)).toEqual([
         'Departments',
@@ -168,14 +168,14 @@ describe('parser', () => {
     test('streaming data matches non-streaming data', async () => {
       const streamingResult = await parseBufferStreaming(buffer)
       const standardResult = await parseBuffer(buffer)
-      
+
       // Compare headers
       for (const sheetName of Object.keys(standardResult)) {
         expect(streamingResult.workbook[sheetName].headers).toEqual(
           standardResult[sheetName].headers
         )
       }
-      
+
       // Compare data by collecting streaming data
       for (const sheetName of Object.keys(standardResult)) {
         const streamingData = []
@@ -187,7 +187,7 @@ describe('parser', () => {
     })
 
     test('ExcelExtractor uses streaming by default', () => {
-      // Since ExcelExtractor now always uses streaming, 
+      // Since ExcelExtractor now always uses streaming,
       // we just verify it still works as expected
       const extractor = ExcelExtractor()
       expect(extractor).toBeDefined()

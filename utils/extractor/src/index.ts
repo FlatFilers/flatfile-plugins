@@ -1,6 +1,10 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
-import { createAllRecords, createRecordsV2Streaming, slugify } from '@flatfile/util-common'
+import {
+  createAllRecords,
+  createRecordsV2Streaming,
+  slugify,
+} from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
 const api = new FlatfileClient()
 
@@ -34,7 +38,11 @@ export const Extractor = (
   parseBuffer: (
     buffer: Buffer,
     options: any
-  ) => WorkbookCapture | Promise<WorkbookCapture> | ParseResult | Promise<ParseResult>,
+  ) =>
+    | WorkbookCapture
+    | Promise<WorkbookCapture>
+    | ParseResult
+    | Promise<ParseResult>,
   options?: Record<string, any>
 ) => {
   return (listener: FlatfileListener) => {
@@ -110,13 +118,18 @@ export const Extractor = (
           let capture: WorkbookCapture
           let streamingCapture: StreamingWorkbookCapture
 
-          if (parseResult && typeof parseResult === 'object' && 'isStreaming' in parseResult) {
+          if (
+            parseResult &&
+            typeof parseResult === 'object' &&
+            'isStreaming' in parseResult
+          ) {
             const typedResult = parseResult as ParseResult
             isStreaming = typedResult.isStreaming
             if (isStreaming) {
               streamingCapture = (typedResult as StreamingParseResult).workbook
               // Convert streaming capture to standard capture for workbook creation
-              capture = await convertStreamingToStandardCapture(streamingCapture)
+              capture =
+                await convertStreamingToStandardCapture(streamingCapture)
             } else {
               capture = (typedResult as StandardParseResult).workbook
             }
@@ -155,14 +168,14 @@ export const Extractor = (
               if (!streamingCapture[sheet.name]) {
                 continue
               }
-              
+
               // Create an async generator that normalizes streaming records
               async function* normalizeStreamingRecords() {
                 for await (const record of streamingCapture[sheet.name].data) {
                   yield normalizeRecordKeys(record)
                 }
               }
-              
+
               try {
                 await createRecordsV2Streaming(
                   sheet.id,
@@ -176,7 +189,10 @@ export const Extractor = (
                 )
               } catch (error) {
                 if (debug) {
-                  console.log('V2 streaming failed, falling back to v1 API:', error)
+                  console.log(
+                    'V2 streaming failed, falling back to v1 API:',
+                    error
+                  )
                 }
                 // Fall back to standard approach using collected data
                 await createAllRecords(
@@ -366,24 +382,24 @@ async function convertStreamingToStandardCapture(
   streamingCapture: StreamingWorkbookCapture
 ): Promise<WorkbookCapture> {
   const capture: WorkbookCapture = {}
-  
+
   for (const [sheetName, streamingSheet] of Object.entries(streamingCapture)) {
     const data: Flatfile.RecordData[] = []
-    
+
     // Collect all data from the stream for workbook creation
     // We need the headers and metadata for creating the workbook structure
     for await (const record of streamingSheet.data) {
       data.push(record)
     }
-    
+
     capture[sheetName] = {
       headers: streamingSheet.headers,
       descriptions: streamingSheet.descriptions,
       data,
-      metadata: streamingSheet.metadata
+      metadata: streamingSheet.metadata,
     }
   }
-  
+
   return capture
 }
 /**
