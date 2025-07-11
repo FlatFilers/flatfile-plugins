@@ -26,7 +26,7 @@ export default async function (listener: FlatfileListener) {
       { debug: true }
     )
   )
-  listener.use(ExcelExtractor({ debug: true }))
+  listener.use(ExcelExtractor({ debug: true, headerDetectionOptions: { algorithm: 'aiDetection' } }))
   listener.use(pdfExtractorPlugin({ apiKey: '' }))
   listener.use(viewMappedPlugin({ keepRequiredFields: true }))
   listener.use(exportWorkbookPlugin({ excludeMessages: false }))

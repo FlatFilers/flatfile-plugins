@@ -137,7 +137,8 @@ async function convertSheet({
   rowsToSearch,
   getHeaders,
 }: ConvertSheetArgs): Promise<SheetCapture | undefined> {
-  const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
+  // Step 1: Extract raw data from Excel sheet
+  const rawRows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
     defval: null,
     rawNumbers,
@@ -145,110 +146,134 @@ async function convertSheet({
     blankrows: headerSelectionEnabled || !skipEmptyLines,
   })
 
-  if (rows.length === 0) {
+  if (rawRows.length === 0) {
     return
   }
 
-  const excelHeaders = Object.keys(rows[0])
+  // Extract Excel column letters (A, B, C, etc.)
+  const excelColumnLetters = Object.keys(rawRows[0])
+  
+  // Convert to array of arrays for easier processing
+  let dataRows = rawRows.map((row) => Object.values(row))
 
-  // Convert rows to an array of arrays
-  let rowsAsArrays = rows.map((row) => Object.values(row))
-
-  // remove **trailing** empty rows
+  // Remove trailing empty rows
   while (
-    rowsAsArrays.length > 0 &&
-    rowsAsArrays[rowsAsArrays.length - 1].every(isNullOrWhitespace)
+    dataRows.length > 0 &&
+    dataRows[dataRows.length - 1].every(isNullOrWhitespace)
   ) {
-    rowsAsArrays.pop()
+    dataRows.pop()
   }
 
-  // return if there are no rows
-  if (!rowsAsArrays || rowsAsArrays.length === 0) {
+  if (dataRows.length === 0) {
     if (debug) {
-      console.log(`No rows found in '${sheetName}'`)
+      console.log(`No data rows found in '${sheetName}'`)
     }
     return
   }
 
-  // Apply cascadeHeaderValues if enabled
-  let headerRows = [...rowsAsArrays.slice(0, rowsToSearch)]
+  // Step 2: Prepare data for header detection
+  let headerCandidateRows = [...dataRows.slice(0, rowsToSearch)]
+  
+  // Apply header cascading if enabled
   if (shouldCascadeHeaderValues) {
-    headerRows = cascadeHeaderValues(headerRows)
+    headerCandidateRows = cascadeHeaderValues(headerCandidateRows)
     if (debug) {
       console.log(`Applied cascadeHeaderValues to '${sheetName}'`)
     }
   }
 
-  const nullToStrings = headerRows.map((row) =>
+  // Convert nulls to empty strings for header detection
+  const headerDetectionData = headerCandidateRows.map((row) =>
     row.map((cell) => (cell === null ? '' : cell))
   )
-  const { skip, header } = await getHeaders(
+
+  // Step 3: Detect headers
+  const { headerRow: rowsToSkip, header: detectedHeaderRow } = await getHeaders(
     headerDetectionOptions,
-    nullToStrings
+    headerDetectionData
   )
 
   if (debug) {
-    console.log('@debug skip', skip)
-    console.log('@debug header', header)
+    console.log(`@debug Detected ${rowsToSkip} rows to skip`)
+    console.log(`@debug Detected header row:`, detectedHeaderRow)
   }
 
-  const slicedHeader = trimTrailingEmptyCells(header)
+  // Remove trailing empty cells from detected header
+  const cleanedDetectedHeader = trimTrailingEmptyCells(detectedHeaderRow)
 
   if (debug) {
-    console.log('@debug Detected header:', slicedHeader)
+    console.log(`@debug Cleaned detected header:`, cleanedDetectedHeader)
   }
 
-  if (!headerSelectionEnabled) rowsAsArrays.splice(0, skip)
+  // Step 4: Process data rows based on header selection mode
+  let finalDataRows = dataRows
+  
+  if (!headerSelectionEnabled) {
+    // In normal mode, remove the header rows from data
+    finalDataRows = dataRows.slice(rowsToSkip)
+  }
 
-  // return if there are no rows
-  if (rowsAsArrays.length === 0) {
+  if (finalDataRows.length === 0) {
     if (debug) {
-      console.log(`@debug No rows found in '${sheetName}'`)
+      console.log(`@debug No data rows remaining after header processing in '${sheetName}'`)
     }
     return
   }
 
-  // Apply cascadeRowValues if enabled
+  // Apply row value cascading if enabled
   if (shouldCascadeRowValues) {
-    rowsAsArrays = cascadeRowValues(rowsAsArrays)
+    finalDataRows = cascadeRowValues(finalDataRows)
     if (debug) {
       console.log(`@debug Applied cascadeRowValues to '${sheetName}'`)
     }
   }
 
-  const columnHeaders = headerSelectionEnabled
-    ? excelHeaders.slice(0, slicedHeader.length)
-    : slicedHeader
-  const headers = prependNonUniqueHeaderColumns(columnHeaders)
+  // Step 5: Determine final headers
+  let finalHeaders: string[]
+  
+  if (headerSelectionEnabled) {
+    // In header selection mode, use Excel column letters but limit to detected header length
+    finalHeaders = excelColumnLetters.slice(0, cleanedDetectedHeader.length)
+  } else {
+    // In normal mode, use the detected header values
+    finalHeaders = cleanedDetectedHeader
+  }
 
-  if (headers.length === 0) {
+  // Handle duplicate headers by appending numbers
+  const uniqueHeaders = prependNonUniqueHeaderColumns(finalHeaders)
+  if(debug) {
+    console.log('@debug uniqueHeaders', uniqueHeaders)
+  }
+
+  if (uniqueHeaders.length === 0) {
     if (debug) {
       console.log(`@debug No headers found in '${sheetName}'`)
     }
     return
   }
 
-  // Convert rows to Flatfile Record format
-  const data = rowsAsArrays.map((row) =>
+  // Step 6: Convert data to Flatfile format
+  const flatfileData = finalDataRows.map((row) =>
     row.reduce((acc, value, index) => {
-      const header = headers[index]
-      if (header) {
-        acc[header] = { value }
+      const headerName = uniqueHeaders[index]
+      if (headerName) {
+        acc[headerName] = { value }
       }
       return acc
     }, {})
   )
 
-  let metadata: { rowHeaders: number[] } | undefined = undefined
+  // Step 7: Build metadata if needed
+  let sheetMetadata: { rowHeaders: number[] } | undefined = undefined
   if (headerSelectionEnabled) {
-    metadata = {
-      rowHeaders: [skip],
+    sheetMetadata = {
+      rowHeaders: [rowsToSkip],
     }
   }
 
   return {
-    headers,
-    data,
-    metadata,
+    headers: uniqueHeaders,
+    data: flatfileData,
+    metadata: sheetMetadata,
   }
 }

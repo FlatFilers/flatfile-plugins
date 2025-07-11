@@ -41,6 +41,6 @@ export type GetHeadersOptions =
 
 export interface GetHeadersResult {
   header: string[]
-  skip: number
+  headerRow: number
   letters: string[]
 }
