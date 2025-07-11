@@ -11,9 +11,12 @@ describe('parser', () => {
       path.join(__dirname, '../ref/test-basic.xlsx')
     )
     let capture: WorkbookCapture
-    
+
     // Mock getHeaders function that returns different headers based on sheet content
-    const mockGetHeaders = async (options: any, data: string[][]): Promise<GetHeadersResult> => {
+    const mockGetHeaders = async (
+      options: any,
+      data: string[][]
+    ): Promise<GetHeadersResult> => {
       // Check the first row of data to determine which sheet this is
       const firstRow = data[0] || []
       const secondRow = data[1] || []
@@ -23,30 +26,84 @@ describe('parser', () => {
         return {
           header: ['Code', 'Details', 'BranchName', 'Tenant'],
           headerRow: 1,
-          letters: ['A', 'B', 'C', 'D']
+          letters: ['A', 'B', 'C', 'D'],
         }
       }
-      
+
       // Rebates-Purchases sheet detection (has many repeated headers)
       if (secondRow[0].includes('Name*') && secondRow[2].includes('Rebates')) {
         return {
-          header: ['Name', 'Group', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases', 'Rebates', 'Purchases'],
+          header: [
+            'Name',
+            'Group',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+            'Rebates',
+            'Purchases',
+          ],
           headerRow: 2,
-          letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+          letters: [
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
+          ],
         }
       }
-      
+
       // Clients sheet or default
       return {
         header: firstRow.filter(Boolean), // Use the first row as headers, filtering out empty values
         headerRow: 1,
-        letters: firstRow.map((_, index) => String.fromCharCode(65 + index))
+        letters: firstRow.map((_, index) => String.fromCharCode(65 + index)),
       }
     }
-    
+
     beforeAll(async () => {
       capture = await parseBuffer(buffer, {
-        getHeaders: mockGetHeaders
+        getHeaders: mockGetHeaders,
       })
     })
     test('Excel to WorkbookCapture', async () => {
@@ -135,17 +192,16 @@ describe('parser', () => {
       path.join(__dirname, '../ref/test-empty-rows.xlsx')
     )
     let capture: WorkbookCapture
-  
-    
+
     test('skips empty lines', async () => {
       const mockGetHeaders = async (): Promise<GetHeadersResult> => ({
         header: ['header1', 'header2', 'header3'],
         headerRow: 2, // Assuming headers are in the first row
-        letters: ['A', 'B', 'C']
+        letters: ['A', 'B', 'C'],
       })
-      const capture = await parseBuffer(buffer, { 
+      const capture = await parseBuffer(buffer, {
         skipEmptyLines: true,
-        getHeaders: mockGetHeaders
+        getHeaders: mockGetHeaders,
       })
       const data = capture['Sheet1'].data
       expect(data.length).toEqual(3)
@@ -168,15 +224,15 @@ describe('parser', () => {
       ])
     })
     test("doesn't skip empty lines", async () => {
-       // Mock getHeaders function for test-empty-rows.xlsx
+      // Mock getHeaders function for test-empty-rows.xlsx
       const mockGetHeaders = async (): Promise<GetHeadersResult> => ({
         header: ['header1', 'header2', 'header3'],
         headerRow: 3, // Assuming headers are in the first row
-        letters: ['A', 'B', 'C']
+        letters: ['A', 'B', 'C'],
       })
-      const capture = await parseBuffer(buffer, { 
+      const capture = await parseBuffer(buffer, {
         skipEmptyLines: false,
-        getHeaders: mockGetHeaders
+        getHeaders: mockGetHeaders,
       })
       const data = capture['Sheet1'].data
       expect(data.length).toEqual(6)

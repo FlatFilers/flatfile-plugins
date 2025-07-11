@@ -152,7 +152,7 @@ async function convertSheet({
 
   // Extract Excel column letters (A, B, C, etc.)
   const excelColumnLetters = Object.keys(rawRows[0])
-  
+
   // Convert to array of arrays for easier processing
   let dataRows = rawRows.map((row) => Object.values(row))
 
@@ -173,7 +173,7 @@ async function convertSheet({
 
   // Step 2: Prepare data for header detection
   let headerCandidateRows = [...dataRows.slice(0, rowsToSearch)]
-  
+
   // Apply header cascading if enabled
   if (shouldCascadeHeaderValues) {
     headerCandidateRows = cascadeHeaderValues(headerCandidateRows)
@@ -207,7 +207,7 @@ async function convertSheet({
 
   // Step 4: Process data rows based on header selection mode
   let finalDataRows = dataRows
-  
+
   if (!headerSelectionEnabled) {
     // In normal mode, remove the header rows from data
     finalDataRows = dataRows.slice(rowsToSkip)
@@ -215,7 +215,9 @@ async function convertSheet({
 
   if (finalDataRows.length === 0) {
     if (debug) {
-      console.log(`@debug No data rows remaining after header processing in '${sheetName}'`)
+      console.log(
+        `@debug No data rows remaining after header processing in '${sheetName}'`
+      )
     }
     return
   }
@@ -230,7 +232,7 @@ async function convertSheet({
 
   // Step 5: Determine final headers
   let finalHeaders: string[]
-  
+
   if (headerSelectionEnabled) {
     // In header selection mode, use Excel column letters but limit to detected header length
     finalHeaders = excelColumnLetters.slice(0, cleanedDetectedHeader.length)
@@ -241,7 +243,7 @@ async function convertSheet({
 
   // Handle duplicate headers by appending numbers
   const uniqueHeaders = prependNonUniqueHeaderColumns(finalHeaders)
-  if(debug) {
+  if (debug) {
     console.log('@debug uniqueHeaders', uniqueHeaders)
   }
 
