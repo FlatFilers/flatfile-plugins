@@ -147,8 +147,6 @@ async function convertSheet({
 
   const excelHeaders = Object.keys(rows[0])
 
-  console.log('excelHeaders', excelHeaders)
-
   // Convert rows to an array of arrays
   let rowsAsArrays = rows.map((row) => Object.values(row))
 
@@ -159,8 +157,6 @@ async function convertSheet({
   ) {
     rowsAsArrays.pop()
   }
-
-  console.log('rowsAsArrays', rowsAsArrays)
 
   // return if there are no rows
   if (!rowsAsArrays || rowsAsArrays.length === 0) {

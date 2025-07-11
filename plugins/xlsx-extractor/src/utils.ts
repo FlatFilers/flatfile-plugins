@@ -93,7 +93,6 @@ export const isLikelyHeaderRow = (row: any[]): boolean => {
 
 /**
  * Cascades values across the header rows until a blank column, new value, or end of dataset
- * Only evaluates the first 5 rows maximum
  * @param headerRows Array of potential header rows to process
  * @returns Processed header rows with cascaded values
  */
