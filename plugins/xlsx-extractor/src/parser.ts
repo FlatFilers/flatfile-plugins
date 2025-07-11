@@ -1,9 +1,6 @@
 import type { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
-import { mapKeys, mapValues } from 'remeda'
-import { Readable } from 'stream'
 import * as XLSX from 'xlsx'
 import type { ExcelExtractorOptions } from '.'
-import { type GetHeadersOptions, Headerizer } from './header.detection'
 import { processMergedCells } from './merged-cells'
 import {
   cascadeHeaderValues,
@@ -12,11 +9,16 @@ import {
   prependNonUniqueHeaderColumns,
   trimTrailingEmptyCells,
 } from './utils'
+import { GetHeadersOptions, GetHeadersResult, ROWS_TO_SEARCH_FOR_HEADER } from '../constants/headerDetection.const'
+
 
 type ParseBufferOptions = Omit<
   ExcelExtractorOptions,
   'chunkSize' | 'parallel'
-> & { readonly headerSelectionEnabled?: boolean }
+> & { readonly headerSelectionEnabled?: boolean, 
+  getHeaders: (options: any, data: string[][]) => Promise<GetHeadersResult>,
+  rowsToSearch?: number
+}
 type ProcessedSheet = [PropertyKey, SheetCapture]
 
 export async function parseBuffer(
@@ -80,7 +82,9 @@ export async function parseBuffer(
         skipEmptyLines: options?.skipEmptyLines ?? false,
         debug: options?.debug,
         cascadeRowValues: options?.cascadeRowValues,
+        rowsToSearch: options?.rowsToSearch ?? ROWS_TO_SEARCH_FOR_HEADER,
         cascadeHeaderValues: options?.cascadeHeaderValues,
+        getHeaders: options?.getHeaders,
       })
       return [sheetName, sheetCapture] as ProcessedSheet
     })
@@ -106,6 +110,8 @@ type ConvertSheetArgs = {
   debug?: boolean
   cascadeRowValues?: boolean
   cascadeHeaderValues?: boolean
+  rowsToSearch?: number
+  getHeaders: (options: any, data: string[][]) => Promise<GetHeadersResult>
 }
 
 /**
@@ -124,6 +130,8 @@ async function convertSheet({
   debug,
   cascadeRowValues: shouldCascadeRowValues,
   cascadeHeaderValues: shouldCascadeHeaderValues,
+  rowsToSearch,
+  getHeaders,
 }: ConvertSheetArgs): Promise<SheetCapture | undefined> {
   const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, {
     header: 'A',
@@ -139,6 +147,8 @@ async function convertSheet({
 
   const excelHeaders = Object.keys(rows[0])
 
+  console.log('excelHeaders', excelHeaders)
+
   // Convert rows to an array of arrays
   let rowsAsArrays = rows.map((row) => Object.values(row))
 
@@ -150,6 +160,8 @@ async function convertSheet({
     rowsAsArrays.pop()
   }
 
+  console.log('rowsAsArrays', rowsAsArrays)
+
   // return if there are no rows
   if (!rowsAsArrays || rowsAsArrays.length === 0) {
     if (debug) {
@@ -159,7 +171,7 @@ async function convertSheet({
   }
 
   // Apply cascadeHeaderValues if enabled
-  let headerRows = [...rowsAsArrays]
+  let headerRows = [...rowsAsArrays.slice(0, rowsToSearch)]
   if (shouldCascadeHeaderValues) {
     headerRows = cascadeHeaderValues(headerRows)
     if (debug) {
@@ -167,9 +179,13 @@ async function convertSheet({
     }
   }
 
-  const headerizer = Headerizer.create(headerDetectionOptions)
-  const headerStream = Readable.from(headerRows)
-  const { skip, header } = await headerizer.getHeaders(headerStream)
+  const nullToStrings = headerRows.map((row) => row.map((cell) => cell === null ? '' : cell))
+  const { skip, header } = await getHeaders(headerDetectionOptions, nullToStrings)
+  if(debug) {
+    console.log('skip', skip)
+    console.log('header', header)
+  }
+
   const slicedHeader = trimTrailingEmptyCells(header)
 
   if (debug) {

@@ -1,6 +1,6 @@
 import { Extractor } from '@flatfile/util-extractor'
-import { GetHeadersOptions } from './header.detection'
 import { parseBuffer } from './parser'
+import { GetHeadersOptions } from '../constants/headerDetection.const'
 
 /**
  * Plugin config options.
