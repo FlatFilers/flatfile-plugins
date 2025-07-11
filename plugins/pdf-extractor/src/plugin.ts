@@ -71,47 +71,35 @@ export const run = async (
 
     const data = await response.text()
     await tick(50, 'Writing file to disk')
-    fs.writeFile(fileName, data, async (err: unknown) => {
-      if (err) {
-        if (opts.debug) {
-          logError(
-            '@flatfile/plugin-pdf-extractor',
-            'Error writing file to disk'
-          )
-        }
-        await api.jobs.fail(jobId, {
-          info: `Failed writing file to disk`,
-        })
-        return
-      }
 
-      try {
-        const reader = fs.createReadStream(fileName)
-        await tick(90, 'Uploading file to Flatfile')
-        await api.files.upload(reader, {
-          spaceId,
-          environmentId,
-          mode: 'import',
-        })
+    // Use await instead of callback
+    await fs.writeFile(fileName, data)
 
-        reader.close()
-      } catch (uploadError: unknown) {
-        await api.jobs.fail(jobId, {
-          info: `Failed to upload ${cleanFormat.toUpperCase()} file`,
-        })
-        if (opts.debug) {
-          logError(
-            '@flatfile/plugin-pdf-extractor',
-            `Failed to upload ${cleanFormat.toUpperCase()} file`
-          )
-        }
-
+    try {
+      const reader = fs.createReadStream(fileName)
+      await tick(90, 'Uploading file to Flatfile')
+      await api.files.upload(reader, {
+        spaceId,
+        environmentId,
+        mode: 'import',
+      })
+      reader.close()
+    } catch (uploadError: unknown) {
+      await api.jobs.fail(jobId, {
+        info: `Failed to upload ${cleanFormat.toUpperCase()} file`,
+      })
+      if (opts.debug) {
         logError(
           '@flatfile/plugin-pdf-extractor',
-          JSON.stringify(uploadError, null, 2)
+          `Failed to upload ${cleanFormat.toUpperCase()} file`
         )
       }
-    })
+      logError(
+        '@flatfile/plugin-pdf-extractor',
+        JSON.stringify(uploadError, null, 2)
+      )
+      return // Prevents marking job as complete after failure
+    }
   } catch (convertError: unknown) {
     await api.jobs.fail(jobId, {
       info: JSON.stringify(convertError, null, 2),
@@ -120,7 +108,9 @@ export const run = async (
       '@flatfile/plugin-pdf-extractor',
       JSON.stringify(convertError, null, 2)
     )
+    return // Prevents marking job as complete after failure
   }
+
   await tick(99)
   if (opts.debug) {
     logInfo('@flatfile/plugin-pdf-extractor', 'Done')
