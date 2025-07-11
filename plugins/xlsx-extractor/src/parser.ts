@@ -177,15 +177,16 @@ async function convertSheet({
 
   const nullToStrings = headerRows.map((row) => row.map((cell) => cell === null ? '' : cell))
   const { skip, header } = await getHeaders(headerDetectionOptions, nullToStrings)
+
   if(debug) {
-    console.log('skip', skip)
-    console.log('header', header)
+    console.log('@debug skip', skip)
+    console.log('@debug header', header)
   }
 
   const slicedHeader = trimTrailingEmptyCells(header)
 
   if (debug) {
-    console.log('Detected header:', slicedHeader)
+    console.log('@debug Detected header:', slicedHeader)
   }
 
   if (!headerSelectionEnabled) rowsAsArrays.splice(0, skip)
@@ -193,7 +194,7 @@ async function convertSheet({
   // return if there are no rows
   if (rowsAsArrays.length === 0) {
     if (debug) {
-      console.log(`No rows found in '${sheetName}'`)
+      console.log(`@debug No rows found in '${sheetName}'`)
     }
     return
   }
@@ -202,7 +203,7 @@ async function convertSheet({
   if (shouldCascadeRowValues) {
     rowsAsArrays = cascadeRowValues(rowsAsArrays)
     if (debug) {
-      console.log(`Applied cascadeRowValues to '${sheetName}'`)
+      console.log(`@debug Applied cascadeRowValues to '${sheetName}'`)
     }
   }
 
@@ -213,7 +214,7 @@ async function convertSheet({
 
   if (headers.length === 0) {
     if (debug) {
-      console.log(`No headers found in '${sheetName}'`)
+      console.log(`@debug No headers found in '${sheetName}'`)
     }
     return
   }
