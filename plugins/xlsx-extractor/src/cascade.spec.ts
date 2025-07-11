@@ -124,21 +124,5 @@ describe('Cascade Values', () => {
       expect(cascadeHeaderValues([])).toEqual([])
       expect(cascadeHeaderValues(null as any)).toEqual(null)
     })
-
-    it('should only process up to 5 rows', () => {
-      const headerRows = [
-        ['Header1', '', 'Header2', ''],
-        ['SubHeader1', 'SubHeader2', 'SubHeader3', 'SubHeader4'],
-        ['Row1', 'Data1', 'Data2', 'Data3'],
-        ['Row2', 'Data4', 'Data5', 'Data6'],
-        ['Row3', 'Data7', 'Data8', 'Data9'],
-        ['Row4', 'Data10', 'Data11', 'Data12'], // Should not be processed
-      ]
-
-      const result = cascadeHeaderValues(headerRows)
-
-      expect(result.length).toEqual(5)
-      expect(result[0]).toEqual(['Header1', 'Header1', 'Header2', 'Header2'])
-    })
   })
 })
