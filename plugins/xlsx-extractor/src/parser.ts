@@ -9,14 +9,18 @@ import {
   prependNonUniqueHeaderColumns,
   trimTrailingEmptyCells,
 } from './utils'
-import { GetHeadersOptions, GetHeadersResult, ROWS_TO_SEARCH_FOR_HEADER } from '../constants/headerDetection.const'
-
+import {
+  GetHeadersOptions,
+  GetHeadersResult,
+  ROWS_TO_SEARCH_FOR_HEADER,
+} from '../constants/headerDetection.const'
 
 type ParseBufferOptions = Omit<
   ExcelExtractorOptions,
   'chunkSize' | 'parallel'
-> & { readonly headerSelectionEnabled?: boolean, 
-  getHeaders: (options: any, data: string[][]) => Promise<GetHeadersResult>,
+> & {
+  readonly headerSelectionEnabled?: boolean
+  getHeaders: (options: any, data: string[][]) => Promise<GetHeadersResult>
   rowsToSearch?: number
 }
 type ProcessedSheet = [PropertyKey, SheetCapture]
@@ -175,10 +179,15 @@ async function convertSheet({
     }
   }
 
-  const nullToStrings = headerRows.map((row) => row.map((cell) => cell === null ? '' : cell))
-  const { skip, header } = await getHeaders(headerDetectionOptions, nullToStrings)
+  const nullToStrings = headerRows.map((row) =>
+    row.map((cell) => (cell === null ? '' : cell))
+  )
+  const { skip, header } = await getHeaders(
+    headerDetectionOptions,
+    nullToStrings
+  )
 
-  if(debug) {
+  if (debug) {
     console.log('@debug skip', skip)
     console.log('@debug header', header)
   }

@@ -77,10 +77,10 @@ export const Extractor = (
           // inject the getHeaders function into the options
           const getHeaders = async (options: any, data: string[][]) => {
             try {
-            const { data: headers } = await api.files.detectHeader({
-              options: {
-                ...options,
-              },
+              const { data: headers } = await api.files.detectHeader({
+                options: {
+                  ...options,
+                },
                 data,
               })
               return headers

@@ -96,9 +96,7 @@ export const isLikelyHeaderRow = (row: any[]): boolean => {
  * @param headerRows Array of potential header rows to process
  * @returns Processed header rows with cascaded values
  */
-export const cascadeHeaderValues = (
-  headerRows: any[][],
-): any[][] => {
+export const cascadeHeaderValues = (headerRows: any[][]): any[][] => {
   if (!headerRows || headerRows.length === 0) return headerRows
 
   // Only process up to 5 rows maximum
