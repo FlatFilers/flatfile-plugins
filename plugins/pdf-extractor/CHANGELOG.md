@@ -1,5 +1,11 @@
 # @flatfile/plugin-pdf-extractor
 
+## 0.7.0
+
+### Minor Changes
+
+- f4fb978: Fixed upload race condition
+
 ## 0.6.0
 
 ### Minor Changes
