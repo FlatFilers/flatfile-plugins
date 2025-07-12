@@ -1,6 +1,10 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
-import { createAllRecords, slugify } from '@flatfile/util-common'
+import {
+  createAllRecords,
+  createRecordsV2Streaming,
+  slugify,
+} from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
 const api = new FlatfileClient()
 
@@ -75,12 +79,15 @@ export const Extractor = (
           const buffer = await getFileBuffer(event)
 
           await tick(3, 'plugins.extraction.parseSheets')
-          const capture = await parseBuffer(buffer, {
+          const parseResult = await parseBuffer(buffer, {
             ...options,
             fileId,
             fileExt: file.ext,
             headerSelectionEnabled,
           })
+
+          // Always expect standard WorkbookCapture from parsers
+          const capture = parseResult as WorkbookCapture
 
           await tick(5, 'plugins.extraction.createWorkbook')
           const workbook = await createWorkbook(
@@ -106,20 +113,49 @@ export const Extractor = (
             setTimeout(resolve, WORKBOOK_CREATION_DELAY)
           })
 
+          // Try v2 streaming API first, fall back to v1 if needed
           for (const sheet of workbook.sheets) {
             if (!capture[sheet.name]) {
               continue
             }
-            await createAllRecords(
-              sheet.id,
-              capture[sheet.name].data.map(normalizeRecordKeys),
-              async (_progress, part, totalParts) => {
-                await tick(
-                  Math.min(99, Math.round(10 + 90 * (part / totalParts))),
-                  'plugins.extraction.addingRecords'
+
+            // Create an async generator that streams records from the in-memory data
+            async function* streamRecords() {
+              for (const record of capture[sheet.name].data) {
+                yield normalizeRecordKeys(record)
+              }
+            }
+
+            try {
+              await createRecordsV2Streaming(
+                sheet.id,
+                streamRecords(),
+                async (_progress, part, totalParts) => {
+                  await tick(
+                    Math.min(99, Math.round(10 + 90 * (part / totalParts))),
+                    'plugins.extraction.addingRecords'
+                  )
+                }
+              )
+            } catch (error) {
+              if (debug) {
+                console.log(
+                  'V2 streaming failed, falling back to v1 API:',
+                  error
                 )
               }
-            )
+              // Fall back to standard v1 approach
+              await createAllRecords(
+                sheet.id,
+                capture[sheet.name].data.map(normalizeRecordKeys),
+                async (_progress, part, totalParts) => {
+                  await tick(
+                    Math.min(99, Math.round(10 + 90 * (part / totalParts))),
+                    'plugins.extraction.addingRecords'
+                  )
+                }
+              )
+            }
           }
 
           // After all records are added, update the sheet metadata
@@ -273,6 +309,7 @@ async function updateSheetMetadata(
     })
   )
 }
+
 /**
  * Generic structure for capturing a workbook
  */
