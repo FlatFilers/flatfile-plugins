@@ -74,12 +74,29 @@ export const Extractor = (
 
           const buffer = await getFileBuffer(event)
 
+          // inject the getHeaders function into the options
+          const getHeaders = async (options: any, data: string[][]) => {
+            try {
+              const { data: headers } = await api.files.detectHeader({
+                options: {
+                  ...options,
+                },
+                data,
+              })
+              return headers
+            } catch (e) {
+              console.dir(e, { depth: null })
+              return { skip: 0, header: [] }
+            }
+          }
+
           await tick(3, 'plugins.extraction.parseSheets')
           const capture = await parseBuffer(buffer, {
             ...options,
             fileId,
             fileExt: file.ext,
             headerSelectionEnabled,
+            getHeaders,
           })
 
           await tick(5, 'plugins.extraction.createWorkbook')
