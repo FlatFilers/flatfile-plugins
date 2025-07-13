@@ -2,6 +2,7 @@ import { WorkbookCapture } from '@flatfile/util-extractor'
 import * as fs from 'fs'
 import * as path from 'path'
 import { beforeAll, describe, expect, test } from 'vitest'
+import { ExcelExtractor } from './index'
 import { parseBuffer } from './parser'
 import { GetHeadersResult } from '../constants/headerDetection.const'
 
@@ -256,6 +257,14 @@ describe('parser', () => {
           header3: { value: 'column9' },
         },
       ])
+    })
+  })
+
+  describe('v2 streaming integration', () => {
+    test('ExcelExtractor returns a listener plugin', () => {
+      const extractor = ExcelExtractor()
+      expect(extractor).toBeDefined()
+      expect(typeof extractor).toBe('function')
     })
   })
 })
