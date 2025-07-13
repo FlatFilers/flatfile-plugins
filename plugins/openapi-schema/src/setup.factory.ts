@@ -55,30 +55,25 @@ export async function generateSetup(
         const data = await response.json()
         const schemas: ApiSchemas = data.components.schemas
 
-        const sheets: Flatfile.SheetConfig[] = (
-          await Promise.all(
-            workbook.sheets.map(async (sheet) => {
-              const modelName = sheet.model
-              delete sheet.model
-              const schema = schemas[modelName]
-              if (!schema) {
-                console.error(`Schema not found for table name ${sheet.slug}`)
-                return
-              }
-              const fields: Flatfile.Property[] = await generateFields(
-                schema,
-                schemas
-              )
+        const sheets: Flatfile.SheetConfig[] = workbook.sheets
+          .map((sheet) => {
+            const modelName = sheet.model
+            delete sheet.model
+            const schema = schemas[modelName]
+            if (!schema) {
+              console.error(`Schema not found for table name ${sheet.slug}`)
+              return
+            }
+            const fields: Flatfile.Property[] = generateFields(schema, schemas)
 
-              return {
-                name: modelName,
-                slug: modelName,
-                ...sheet,
-                fields,
-              } as Flatfile.SheetConfig
-            })
-          )
-        ).filter(Boolean)
+            return {
+              name: modelName,
+              slug: modelName,
+              ...sheet,
+              fields,
+            } as Flatfile.SheetConfig
+          })
+          .filter(Boolean)
 
         return {
           name: data.info.title,
@@ -94,37 +89,32 @@ export async function generateSetup(
   }
 }
 
-export async function generateFields(
-  data: any,
-  origin: any
-): Promise<Flatfile.Property[]> {
+export function generateFields(data: any, origin: any): Flatfile.Property[] {
   if (!data || !data.properties) return []
 
-  const fields = await Promise.all(
-    Object.keys(data.properties).map((key) =>
-      getPropertyType(
-        data,
-        data.properties[key],
-        key,
-        (data.required && data.required.includes(key)) || false,
-        origin
-      )
+  const fields = Object.keys(data.properties).map((key) =>
+    getPropertyType(
+      data,
+      data.properties[key],
+      key,
+      (data.required && data.required.includes(key)) || false,
+      origin
     )
   )
   return fields.flat().filter(Boolean)
 }
 
-export async function getPropertyType(
+export function getPropertyType(
   schema: any,
   property: any,
   parentKey = '',
   isRequired = false,
   origin: string
-): Promise<Flatfile.Property[]> {
+): Flatfile.Property[] {
   if (property.$ref) {
     return getPropertyType(
       schema,
-      await resolveReference(origin, property.$ref),
+      resolveReference(origin, property.$ref),
       parentKey,
       false,
       origin
@@ -132,19 +122,17 @@ export async function getPropertyType(
   }
 
   if (property.type === 'object' && property.properties) {
-    return (
-      await Promise.all(
-        Object.keys(property.properties).map(async (key) => {
-          return getPropertyType(
-            property,
-            property.properties[key],
-            parentKey ? `${parentKey}_${key}` : key,
-            (property.required && property.required.includes(key)) || false,
-            origin
-          )
-        })
-      )
-    ).flat()
+    return Object.keys(property.properties)
+      .map((key) => {
+        return getPropertyType(
+          property,
+          property.properties[key],
+          parentKey ? `${parentKey}_${key}` : key,
+          (property.required && property.required.includes(key)) || false,
+          origin
+        )
+      })
+      .flat()
   }
 
   if (property.allOf) {
@@ -152,7 +140,7 @@ export async function getPropertyType(
     let combinedProperty = {}
     for (const prop of property.allOf) {
       if (prop.$ref) {
-        const resolved = await resolveReference(origin, prop.$ref)
+        const resolved = resolveReference(origin, prop.$ref)
         combinedProperty = { ...combinedProperty, ...resolved }
       } else {
         combinedProperty = { ...combinedProperty, ...prop }
@@ -221,7 +209,7 @@ export async function getPropertyType(
   return fieldTypes[fieldConfig.type] ? [fieldConfig] : []
 }
 
-export async function resolveReference(schema: any, ref: string): Promise<any> {
+export function resolveReference(schema: any, ref: string): any {
   const segments = ref.split('/')
   const modelName = segments[segments.length - 1]
 
