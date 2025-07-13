@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.0.5
+
+### Patch Changes
+
+- aab6964: Added AI Header Detection using header detection api endpoint in excel extractor
+- Updated dependencies [aab6964]
+  - @flatfile/util-extractor@2.7.1
+
 ## 4.0.4
 
 ### Patch Changes

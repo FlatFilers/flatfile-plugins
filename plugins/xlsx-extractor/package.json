@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-xlsx-extractor",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/xlsx-extractor",
   "description": "A plugin for parsing xlsx files in Flatfile.",
   "registryMetadata": {
@@ -53,7 +53,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-extractor": "^2.7.0",
+    "@flatfile/util-extractor": "^2.7.1",
     "remeda": "^1.14.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
