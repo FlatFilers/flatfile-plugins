@@ -281,4 +281,65 @@ describe('SpaceReconfigure plugin e2e tests', () => {
 
     callbackListener.reset()
   })
+
+  it('should delete workbooks that are not in the new configuration', async () => {
+    // First ensure we have multiple workbooks
+    const setupWithMultipleWorkbooks: SetupFactory = {
+      workbooks: [
+        {
+          name: 'Workbook A',
+          sheets: [contactsSheet],
+        },
+        {
+          name: 'Workbook B',
+          sheets: [companiesSheet],
+        },
+      ],
+    }
+
+    const multipleWorkbooksListener = new TestListener()
+    multipleWorkbooksListener.mount(driver)
+    multipleWorkbooksListener.use(reconfigureSpace(setupWithMultipleWorkbooks))
+
+    await multipleWorkbooksListener.waitFor('job:ready', 1, 'space:reconfigure')
+
+    // Verify we have 2 workbooks
+    let workbooksList = await api.workbooks.list({ spaceId })
+    expect(workbooksList.data.length).toBeGreaterThanOrEqual(2)
+
+    // Now reconfigure with only one workbook
+    const setupWithOneWorkbook: SetupFactory = {
+      workbooks: [
+        {
+          name: 'Workbook A', // Keep this one
+          sheets: [updatedContactsSheet],
+        },
+        // Workbook B should be deleted
+      ],
+    }
+
+    const deletionListener = new TestListener()
+    deletionListener.mount(driver)
+    deletionListener.use(reconfigureSpace(setupWithOneWorkbook))
+
+    await deletionListener.waitFor('job:ready', 1, 'space:reconfigure')
+
+    // Verify only one workbook remains
+    workbooksList = await api.workbooks.list({ spaceId })
+    const remainingWorkbooks = workbooksList.data
+
+    expect(remainingWorkbooks.length).toBeLessThan(2)
+    
+    // Verify the correct workbook remains
+    const workbookA = remainingWorkbooks.find(wb => wb.name === 'Workbook A')
+    expect(workbookA).toBeDefined()
+    expect(workbookA!.sheets![0].name).toBe('Contacts')
+
+    // Verify the other workbook is gone
+    const workbookB = remainingWorkbooks.find(wb => wb.name === 'Workbook B')
+    expect(workbookB).toBeUndefined()
+
+    multipleWorkbooksListener.reset()
+    deletionListener.reset()
+  })
 })

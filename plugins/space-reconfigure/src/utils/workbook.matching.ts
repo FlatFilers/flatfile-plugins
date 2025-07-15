@@ -17,6 +17,7 @@ export function matchWorkbooks(
 ): {
   matches: WorkbookMatch[]
   unmatchedConfigs: { config: Partial<Flatfile.CreateWorkbookConfig>; index: number }[]
+  workbooksToDelete: Flatfile.Workbook[]
 } {
   const matches: WorkbookMatch[] = []
   const unmatchedConfigs: { config: Partial<Flatfile.CreateWorkbookConfig>; index: number }[] = []
@@ -39,5 +40,8 @@ export function matchWorkbooks(
     }
   })
 
-  return { matches, unmatchedConfigs }
+  // Any existing workbooks that weren't matched should be deleted
+  const workbooksToDelete = existingWorkbooks.filter(wb => !usedWorkbooks.has(wb.id))
+
+  return { matches, unmatchedConfigs, workbooksToDelete }
 }

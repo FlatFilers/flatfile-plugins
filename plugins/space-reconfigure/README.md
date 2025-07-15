@@ -35,10 +35,17 @@ The `callback` parameter receives three arguments: `event`, `workbookIds`, and a
 ## How It Works
 
 1. **Fetch Existing Workbooks**: Retrieves all workbooks currently in the space
-2. **Match Workbooks**: Matches provided workbook configurations to existing workbooks by name or slug
-3. **Update Existing**: Updates matched workbooks with new configurations
-4. **Create New**: Creates new workbooks for unmatched configurations
-5. **Update Space**: Updates space settings and maintains workbook order if configured
+2. **Match Workbooks**: Matches provided workbook configurations to existing workbooks by name
+3. **Update Existing**: Updates matched workbooks with new configurations (sheets are replaced)
+4. **Delete Removed**: Deletes workbooks that are no longer in the configuration
+5. **Create New**: Creates new workbooks for unmatched configurations
+6. **Update Space**: Updates space settings and maintains workbook order if configured
+
+## Important Notes
+
+- **Workbook Deletion**: Any existing workbooks not present in the new configuration will be **permanently deleted**
+- **Sheet Replacement**: When a workbook is updated, all sheets are replaced with the new configuration
+- **Name-Based Matching**: Workbooks are matched by their `name` field - ensure consistent naming for updates
 
 
 ## Usage

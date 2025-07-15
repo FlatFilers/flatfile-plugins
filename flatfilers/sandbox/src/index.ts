@@ -3,6 +3,8 @@ import { configureSpace } from '@flatfile/plugin-space-configure'
 import { type Flatfile, FlatfileClient } from '@flatfile/api'
 import '@flatfile/http-logger/init'
 import { bulkRecordHook, FlatfileRecord } from '@flatfile/plugin-record-hook'
+import { reconfigureSpace } from '../../../plugins/space-reconfigure/src'
+import { contacts } from './sheets/contacts'
 
 const api = new FlatfileClient()
 
@@ -21976,98 +21978,79 @@ const sheets = [
 ] as Flatfile.SheetConfig[]
 
 export default async function (listener: FlatfileListener) {
-  listener.on('**', async (event) => {
-    console.log('got an event', event)
-  })
-  // async function updateWorkbookSheets(
-  //   jobId: string,
-  //   workbookId: string,
-  //   sheets: Flatfile.SheetConfig[]
-  // ): Promise<Flatfile.Workbook> {
-  //   try {
-  //     const workbook: Flatfile.WorkbookUpdate = {
-  //       sheets,
-  //     }
-  //     const response = await api.workbooks.update(workbookId, workbook, {
-  //       maxRetries: 3,
-  //     })
-  //     return response.data
-  //   } catch (error) {
-  //     await api.jobs.fail(jobId, {
-  //       info: 'Unable to update workbook sheets',
-  //     })
-  //     const e = error as Error
-  //     console.error(`Unable to update workbook  sheets, ${e.message}`)
-  //     throw new Error(`Unable to reproduce worknook ${workbookId} sheets`, {
-  //       cause: e,
-  //     })
-  //   }
-  // }
-  // listener.on(
-  //   'job:ready',
-  //   { job: 'workbook:updateWorkbookSheets' },
-  //   async (event) => {
-  //     const { workbookId, jobId } = event.context
-  //     await api.jobs.ack(jobId, {
-  //       info: 'starting sheet update job',
-  //       progress: 2,
-  //     })
-  //     await updateWorkbookSheets(jobId, workbookId, sheets)
-  //     await api.jobs.complete(jobId, {
-  //       outcome: {
-  //         message: 'Sheet update job completed',
-  //       },
-  //     })
-  //   }
-  // )
-  // listener.use(
-  //   bulkRecordHook(
-  //     'bulk-upload-material',
-  //     async (records: FlatfileRecord[], event: FlatfileEvent) => {
-  //       // TODO: Add your logic here
-  //       records.map((record) => {
-  //         record.set('name', 'John')
-  //       })
-  //       return records
-  //     },
-  //     { debug: true }
-  //   )
-  // )
-  // listener.namespace(
-  //   ['space:getting-started'],
-  //   configureSpace({
-  //     workbooks: [
-  //       {
-  //         name: 'Example',
-  //         sheets: [
-  //           {
-  //             name: 'Bulk Upload - Material',
-  //             slug: 'bulk-upload-material',
-  //             fields: [
-  //               {
-  //                 key: 'name',
-  //                 type: 'string',
-  //                 label: 'Material Name',
-  //                 description: 'Name of material or material blend.',
-  //                 constraints: [
-  //                   {
-  //                     type: 'required',
-  //                   },
-  //                 ],
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //         actions: [
-  //           {
-  //             operation: 'updateWorkbookSheets',
-  //             mode: 'foreground',
-  //             label: 'Update Workbook Sheets',
-  //             primary: true,
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   })
-  // )
+  listener.namespace(
+    ['space:getting-started'],
+    reconfigureSpace({
+      workbooks: [
+        {
+          name: 'Example',
+          sheets: [
+            {
+              name: 'Bulk Upload - Material',
+              slug: 'bulk-upload-material',
+              fields: [
+                {
+                  key: 'name',
+                  type: 'string',
+                  label: 'Material Name',
+                  description: 'Name of material or material blend.',
+                  constraints: [
+                    {
+                      type: 'required',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          actions: [
+            {
+              operation: 'reconfigure',
+              mode: 'foreground',
+              label: 'Reconfigure Space',
+              primary: true,
+            },
+          ],
+        },
+      ],
+    })
+  )
+  
+  listener.namespace(
+    ['space:getting-started'],
+    configureSpace({
+      workbooks: [
+        {
+          name: 'Example',
+          sheets: [
+            {
+              name: 'Bulk Upload - Material',
+              slug: 'bulk-upload-material',
+              fields: [
+                {
+                  key: 'name',
+                  type: 'string',
+                  label: 'Material Name',
+                  description: 'Name of material or material blend.',
+                  constraints: [
+                    {
+                      type: 'required',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          actions: [
+            {
+              operation: 'reconfigure',
+              mode: 'foreground',
+              label: 'Reconfigure Space',
+              primary: true,
+            },
+          ],
+        },
+      ],
+    })
+  )
 }

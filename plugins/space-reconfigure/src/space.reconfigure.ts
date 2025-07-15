@@ -35,7 +35,7 @@ export function reconfigureSpace(
 ) {
   return function (listener: FlatfileListener) {
     listener.use(
-      jobHandler('space:reconfigure', async (event, tick) => {
+      jobHandler('workbook:reconfigure', async (event, tick) => {
         const { spaceId, environmentId } = event.context
         const setup =
           typeof setupFactory === 'function'
@@ -53,17 +53,20 @@ export function reconfigureSpace(
         await tick(20, 'Matching workbooks to configuration')
 
         // Match workbook configurations to existing workbooks
-        const { matches, unmatchedConfigs } = matchWorkbooks(
+        const { matches, unmatchedConfigs, workbooksToDelete } = matchWorkbooks(
           existingWorkbooks,
           setup.workbooks
         )
 
         await tick(30, 'Updating existing workbooks')
 
-        // Update existing workbooks
+        // Update existing workbooks (this replaces all sheets with new configuration)
         const updatedWorkbookIds = await Promise.all(
           matches.map(async ({ existingWorkbook, configIndex }) => {
             const workbookConfig = setup.workbooks[configIndex]
+            
+            // Update the workbook with new configuration
+            // Note: This will replace all sheets with the new configuration
             await api.workbooks.update(existingWorkbook.id, {
               environmentId,
               ...workbookConfig,
@@ -72,7 +75,14 @@ export function reconfigureSpace(
           })
         )
 
-        await tick(40, 'Creating new workbooks')
+        await tick(40, 'Deleting removed workbooks')
+
+        // Delete workbooks that are no longer in the configuration
+        for (const workbookToDelete of workbooksToDelete) {
+          await api.workbooks.delete(workbookToDelete.id)
+        }
+
+        await tick(45, 'Creating new workbooks')
 
         // Create new workbooks for unmatched configurations
         const newWorkbookIds = await Promise.all(
