@@ -28,24 +28,31 @@ The `callback` parameter receives three arguments: `event`, `workbookIds`, and a
 - `api.workbooks.list`
 - `api.workbooks.update`
 - `api.workbooks.create`
-- `api.spaces.update`
+- `api.workbooks.delete`
+- `api.documents.list`
+- `api.documents.update`
 - `api.documents.create`
+- `api.documents.delete`
+- `api.spaces.update`
 
 
 ## How It Works
 
-1. **Fetch Existing Workbooks**: Retrieves all workbooks currently in the space
-2. **Match Workbooks**: Matches provided workbook configurations to existing workbooks by name
-3. **Update Existing**: Updates matched workbooks with new configurations (sheets are replaced)
-4. **Delete Removed**: Deletes workbooks that are no longer in the configuration
-5. **Create New**: Creates new workbooks for unmatched configurations
+1. **Fetch Existing Resources**: Retrieves all workbooks and documents currently in the space
+2. **Match Resources**: Matches provided configurations to existing resources by name/title
+3. **Update Existing**: Updates matched resources with new configurations
+4. **Delete Removed**: Deletes resources that are no longer in the configuration
+5. **Create New**: Creates new resources for unmatched configurations
 6. **Update Space**: Updates space settings and maintains workbook order if configured
 
 ## Important Notes
 
+- **Complete CRUD Operations**: The plugin performs full Create, Read, Update, and Delete operations
 - **Workbook Deletion**: Any existing workbooks not present in the new configuration will be **permanently deleted**
+- **Document Deletion**: Any existing documents not present in the new configuration will be **permanently deleted**
 - **Sheet Replacement**: When a workbook is updated, all sheets are replaced with the new configuration
-- **Name-Based Matching**: Workbooks are matched by their `name` field - ensure consistent naming for updates
+- **Name-Based Matching**: Workbooks are matched by `name` field, documents by `title` field
+- **Source of Truth**: The setupFactory configuration is the authoritative source - the space will match it exactly
 
 
 ## Usage
@@ -135,6 +142,37 @@ listener.use(
 );
 ```
 
+
+#### `listener.js` with document CRUD
+
+```js listener.js
+listener.use(
+  reconfigureSpace({
+    workbooks: [
+      {
+        name: 'Updated Workbook',
+        sheets: [/* updated sheets */],
+      },
+    ],
+    documents: [
+      {
+        title: 'Welcome Guide', // Will update existing document with same title
+        body: '<h1>Welcome to our UPDATED platform</h1><p>New content</p>',
+      },
+      {
+        title: 'New User Manual', // Will create new document
+        body: '<h1>User Manual</h1><p>Step-by-step guide</p>',
+      },
+      // Any existing documents not listed here will be deleted
+    ],
+    space: {
+      metadata: {
+        theme: { primaryColor: 'green' },
+      },
+    },
+  })
+);
+```
 
 ## Full Example
 

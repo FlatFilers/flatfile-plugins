@@ -342,4 +342,149 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     multipleWorkbooksListener.reset()
     deletionListener.reset()
   })
+
+  it('should handle document CRUD operations', async () => {
+    // First, create some initial documents
+    const initialDocumentsSetup: SetupFactory = {
+      workbooks: [
+        {
+          name: 'Document Test Workbook',
+          sheets: [contactsSheet],
+        },
+      ],
+      documents: [
+        {
+          title: 'Welcome Document',
+          body: '<h1>Welcome to our platform</h1>',
+        },
+        {
+          title: 'API Guide',
+          body: '<h1>API Documentation</h1>',
+        },
+      ],
+    }
+
+    const initialDocumentsListener = new TestListener()
+    initialDocumentsListener.mount(driver)
+    initialDocumentsListener.use(reconfigureSpace(initialDocumentsSetup))
+
+    await initialDocumentsListener.waitFor('job:ready', 1, 'space:reconfigure')
+
+    // Verify initial documents were created
+    let documentsList = await api.documents.list(spaceId)
+    expect(documentsList.data.length).toBeGreaterThanOrEqual(2)
+
+    const welcomeDoc = documentsList.data.find(doc => doc.title === 'Welcome Document')
+    const apiDoc = documentsList.data.find(doc => doc.title === 'API Guide')
+    expect(welcomeDoc).toBeDefined()
+    expect(apiDoc).toBeDefined()
+
+    // Now reconfigure with updated, deleted, and new documents
+    const updatedDocumentsSetup: SetupFactory = {
+      workbooks: [
+        {
+          name: 'Document Test Workbook',
+          sheets: [contactsSheet],
+        },
+      ],
+      documents: [
+        {
+          title: 'Welcome Document', // Update this one
+          body: '<h1>Welcome to our UPDATED platform</h1><p>New content added</p>',
+        },
+        // API Guide should be deleted (not in new config)
+        {
+          title: 'New User Manual', // Create this new one
+          body: '<h1>User Manual</h1><p>Step-by-step guide</p>',
+        },
+      ],
+    }
+
+    const updatedDocumentsListener = new TestListener()
+    updatedDocumentsListener.mount(driver)
+    updatedDocumentsListener.use(reconfigureSpace(updatedDocumentsSetup))
+
+    await updatedDocumentsListener.waitFor('job:ready', 1, 'space:reconfigure')
+
+    // Verify document CRUD operations
+    documentsList = await api.documents.list(spaceId)
+    const finalDocuments = documentsList.data
+
+    // Should have 2 documents (1 updated, 1 new)
+    expect(finalDocuments).toHaveLength(2)
+
+    // Check updated document
+    const updatedWelcomeDoc = finalDocuments.find(doc => doc.title === 'Welcome Document')
+    expect(updatedWelcomeDoc).toBeDefined()
+    expect(updatedWelcomeDoc!.body).toContain('UPDATED platform')
+    expect(updatedWelcomeDoc!.body).toContain('New content added')
+
+    // Check new document
+    const newManualDoc = finalDocuments.find(doc => doc.title === 'New User Manual')
+    expect(newManualDoc).toBeDefined()
+    expect(newManualDoc!.body).toContain('User Manual')
+
+    // Check deleted document
+    const deletedApiDoc = finalDocuments.find(doc => doc.title === 'API Guide')
+    expect(deletedApiDoc).toBeUndefined()
+
+    initialDocumentsListener.reset()
+    updatedDocumentsListener.reset()
+  })
+
+  it('should delete all documents when none in configuration', async () => {
+    // First, create some documents
+    const setupWithDocuments: SetupFactory = {
+      workbooks: [
+        {
+          name: 'Test Workbook',
+          sheets: [contactsSheet],
+        },
+      ],
+      documents: [
+        {
+          title: 'Document 1',
+          body: '<h1>Document 1</h1>',
+        },
+        {
+          title: 'Document 2',
+          body: '<h1>Document 2</h1>',
+        },
+      ],
+    }
+
+    const withDocumentsListener = new TestListener()
+    withDocumentsListener.mount(driver)
+    withDocumentsListener.use(reconfigureSpace(setupWithDocuments))
+
+    await withDocumentsListener.waitFor('job:ready', 1, 'space:reconfigure')
+
+    // Verify documents exist
+    let documentsList = await api.documents.list(spaceId)
+    expect(documentsList.data.length).toBeGreaterThanOrEqual(2)
+
+    // Now reconfigure with NO documents
+    const setupWithoutDocuments: SetupFactory = {
+      workbooks: [
+        {
+          name: 'Test Workbook',
+          sheets: [contactsSheet],
+        },
+      ],
+      // No documents property - should delete all existing documents
+    }
+
+    const withoutDocumentsListener = new TestListener()
+    withoutDocumentsListener.mount(driver)
+    withoutDocumentsListener.use(reconfigureSpace(setupWithoutDocuments))
+
+    await withoutDocumentsListener.waitFor('job:ready', 1, 'space:reconfigure')
+
+    // Verify all documents were deleted
+    documentsList = await api.documents.list(spaceId)
+    expect(documentsList.data).toHaveLength(0)
+
+    withDocumentsListener.reset()
+    withoutDocumentsListener.reset()
+  })
 })

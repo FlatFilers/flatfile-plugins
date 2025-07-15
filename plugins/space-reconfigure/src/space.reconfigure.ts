@@ -3,6 +3,7 @@ import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { type TickFunction, jobHandler } from '@flatfile/plugin-job-handler'
 import { matchWorkbooks } from './utils/workbook.matching'
+import { matchDocuments } from './utils/document.matching'
 
 const api = new FlatfileClient()
 
@@ -123,12 +124,42 @@ export function reconfigureSpace(
           ...setup.space,
         })
 
-        await tick(70, 'Updating documents')
+        await tick(70, 'Managing documents')
 
-        // Handle documents
+        // Handle documents with full CRUD operations
         if (setup.documents) {
-          for (const document of setup.documents) {
-            await api.documents.create(spaceId, document)
+          // Fetch existing documents
+          const existingDocumentsResponse = await api.documents.list(spaceId)
+          const existingDocuments = existingDocumentsResponse.data
+
+          // Match documents to configuration
+          const { matches: documentMatches, unmatchedConfigs: newDocuments, documentsToDelete } = matchDocuments(
+            existingDocuments,
+            setup.documents
+          )
+
+          // Update existing documents
+          for (const { existingDocument, configIndex } of documentMatches) {
+            const documentConfig = setup.documents[configIndex]
+            await api.documents.update(spaceId, existingDocument.id, documentConfig)
+          }
+
+          // Delete documents not in configuration
+          for (const documentToDelete of documentsToDelete) {
+            await api.documents.delete(spaceId, documentToDelete.id)
+          }
+
+          // Create new documents
+          for (const { config: newDocumentConfig } of newDocuments) {
+            await api.documents.create(spaceId, newDocumentConfig)
+          }
+        } else {
+          // If no documents in setup, delete all existing documents
+          const existingDocumentsResponse = await api.documents.list(spaceId)
+          const existingDocuments = existingDocumentsResponse.data
+
+          for (const documentToDelete of existingDocuments) {
+            await api.documents.delete(spaceId, documentToDelete.id)
           }
         }
 
