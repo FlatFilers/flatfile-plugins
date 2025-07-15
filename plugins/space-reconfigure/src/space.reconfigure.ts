@@ -1,9 +1,9 @@
 import type { Flatfile } from '@flatfile/api'
 import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import { type TickFunction, jobHandler } from '@flatfile/plugin-job-handler'
-import { matchWorkbooks } from './utils/workbook.matching'
+import { jobHandler, type TickFunction } from '@flatfile/plugin-job-handler'
 import { matchDocuments } from './utils/document.matching'
+import { matchWorkbooks } from './utils/workbook.matching'
 
 const api = new FlatfileClient()
 
@@ -34,7 +34,7 @@ export function reconfigureSpace(
     tick: TickFunction
   ) => any | Promise<any>
 ) {
-  return function (listener: FlatfileListener) {
+  return (listener: FlatfileListener) => {
     listener.use(
       jobHandler('space:reconfigure', async (event, tick) => {
         const { spaceId, environmentId } = event.context
@@ -66,12 +66,29 @@ export function reconfigureSpace(
           matches.map(async ({ existingWorkbook, configIndex }) => {
             const workbookConfig = setup.workbooks[configIndex]
 
+            // Get existing sheets in the workbook
+            const existingSheetsResponse = await api.sheets.list({
+              workbookId: existingWorkbook.id,
+            })
+            const existingSheets = existingSheetsResponse.data
+
             // Update the workbook with new configuration
             // Note: This will replace all sheets with the new configuration
             await api.workbooks.update(existingWorkbook.id, {
               environmentId,
               ...workbookConfig,
             })
+
+            // Delete sheets that are no longer in the configuration
+            const newSheetSlugs = new Set(
+              workbookConfig?.sheets?.map((sheet) => sheet.slug) || []
+            )
+            for (const existingSheet of existingSheets) {
+              if (!newSheetSlugs.has(existingSheet.config.slug)) {
+                await api.sheets.delete(existingSheet.id)
+              }
+            }
+
             return existingWorkbook.id
           })
         )
@@ -144,11 +161,13 @@ export function reconfigureSpace(
           // Update existing documents
           for (const { existingDocument, configIndex } of documentMatches) {
             const documentConfig = setup.documents[configIndex]
-            await api.documents.update(
-              spaceId,
-              existingDocument.id,
-              documentConfig
-            )
+            if (documentConfig) {
+              await api.documents.update(
+                spaceId,
+                existingDocument.id,
+                documentConfig
+              )
+            }
           }
 
           // Delete documents not in configuration
