@@ -65,7 +65,7 @@ export function reconfigureSpace(
         const updatedWorkbookIds = await Promise.all(
           matches.map(async ({ existingWorkbook, configIndex }) => {
             const workbookConfig = setup.workbooks[configIndex]
-            
+
             // Update the workbook with new configuration
             // Note: This will replace all sheets with the new configuration
             await api.workbooks.update(existingWorkbook.id, {
@@ -120,7 +120,9 @@ export function reconfigureSpace(
         await api.spaces.update(spaceId, {
           environmentId: environmentId,
           primaryWorkbookId:
-            allWorkbookIds && allWorkbookIds.length > 0 ? allWorkbookIds[0] : '',
+            allWorkbookIds && allWorkbookIds.length > 0
+              ? allWorkbookIds[0]
+              : '',
           ...setup.space,
         })
 
@@ -133,15 +135,20 @@ export function reconfigureSpace(
           const existingDocuments = existingDocumentsResponse.data
 
           // Match documents to configuration
-          const { matches: documentMatches, unmatchedConfigs: newDocuments, documentsToDelete } = matchDocuments(
-            existingDocuments,
-            setup.documents
-          )
+          const {
+            matches: documentMatches,
+            unmatchedConfigs: newDocuments,
+            documentsToDelete,
+          } = matchDocuments(existingDocuments, setup.documents)
 
           // Update existing documents
           for (const { existingDocument, configIndex } of documentMatches) {
             const documentConfig = setup.documents[configIndex]
-            await api.documents.update(spaceId, existingDocument.id, documentConfig)
+            await api.documents.update(
+              spaceId,
+              existingDocument.id,
+              documentConfig
+            )
           }
 
           // Delete documents not in configuration

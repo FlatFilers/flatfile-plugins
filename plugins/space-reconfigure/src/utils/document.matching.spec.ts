@@ -174,9 +174,11 @@ describe('document matching utility', () => {
     expect(unmatchedConfigs).toHaveLength(1)
     expect(documentsToDelete).toHaveLength(2) // Both existing documents should be deleted
 
-    expect(unmatchedConfigs[0].config.title).toBe('Completely Different Document')
-    expect(documentsToDelete.map(d => d.title)).toContain('Welcome Guide')
-    expect(documentsToDelete.map(d => d.title)).toContain('API Documentation')
+    expect(unmatchedConfigs[0].config.title).toBe(
+      'Completely Different Document'
+    )
+    expect(documentsToDelete.map((d) => d.title)).toContain('Welcome Guide')
+    expect(documentsToDelete.map((d) => d.title)).toContain('API Documentation')
   })
 
   it('should handle case-sensitive title matching', () => {

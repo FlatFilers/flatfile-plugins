@@ -20,19 +20,20 @@ export function matchDocuments(
   documentsToDelete: Flatfile.Document[]
 } {
   const matches: DocumentMatch[] = []
-  const unmatchedConfigs: { config: Flatfile.DocumentConfig; index: number }[] = []
+  const unmatchedConfigs: { config: Flatfile.DocumentConfig; index: number }[] =
+    []
   const usedDocuments = new Set<string>()
 
   documentConfigs.forEach((config, configIndex) => {
     // Try to match by title first
     let matchedDocument = existingDocuments.find(
-      doc => doc.title === config.title && !usedDocuments.has(doc.id)
+      (doc) => doc.title === config.title && !usedDocuments.has(doc.id)
     )
 
     if (matchedDocument) {
       matches.push({
         existingDocument: matchedDocument,
-        configIndex
+        configIndex,
       })
       usedDocuments.add(matchedDocument.id)
     } else {
@@ -41,7 +42,9 @@ export function matchDocuments(
   })
 
   // Any existing documents that weren't matched should be deleted
-  const documentsToDelete = existingDocuments.filter(doc => !usedDocuments.has(doc.id))
+  const documentsToDelete = existingDocuments.filter(
+    (doc) => !usedDocuments.has(doc.id)
+  )
 
   return { matches, unmatchedConfigs, documentsToDelete }
 }

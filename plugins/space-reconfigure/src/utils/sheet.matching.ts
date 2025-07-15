@@ -26,20 +26,20 @@ export function matchSheets(
   sheetConfigs.forEach((config, configIndex) => {
     // Try to match by name first
     let matchedSheet = existingSheets.find(
-      sheet => sheet.name === config.name && !usedSheets.has(sheet.id)
+      (sheet) => sheet.name === config.name && !usedSheets.has(sheet.id)
     )
 
     // If no name match, try to match by slug if available
     if (!matchedSheet && config.slug) {
       matchedSheet = existingSheets.find(
-        sheet => sheet.slug === config.slug && !usedSheets.has(sheet.id)
+        (sheet) => sheet.slug === config.slug && !usedSheets.has(sheet.id)
       )
     }
 
     if (matchedSheet) {
       matches.push({
         existingSheet: matchedSheet,
-        configIndex
+        configIndex,
       })
       usedSheets.add(matchedSheet.id)
     } else {
@@ -48,7 +48,9 @@ export function matchSheets(
   })
 
   // Any existing sheets that weren't matched should be deleted
-  const sheetsToDelete = existingSheets.filter(sheet => !usedSheets.has(sheet.id))
+  const sheetsToDelete = existingSheets.filter(
+    (sheet) => !usedSheets.has(sheet.id)
+  )
 
   return { matches, unmatchedConfigs, sheetsToDelete }
 }

@@ -82,9 +82,7 @@ describe('workbook matching utility', () => {
   })
 
   it('should handle empty existing workbooks', () => {
-    const workbookConfigs = [
-      { name: 'New Workbook', labels: ['new'] },
-    ]
+    const workbookConfigs = [{ name: 'New Workbook', labels: ['new'] }]
 
     const { matches, unmatchedConfigs, workbooksToDelete } = matchWorkbooks(
       [],
@@ -155,8 +153,14 @@ describe('workbook matching utility', () => {
     expect(unmatchedConfigs).toHaveLength(1)
     expect(workbooksToDelete).toHaveLength(2) // Both existing workbooks should be deleted
 
-    expect(unmatchedConfigs[0].config.name).toBe('Completely Different Workbook')
-    expect(workbooksToDelete.map(wb => wb.name)).toContain('Contacts Workbook')
-    expect(workbooksToDelete.map(wb => wb.name)).toContain('Companies Workbook')
+    expect(unmatchedConfigs[0].config.name).toBe(
+      'Completely Different Workbook'
+    )
+    expect(workbooksToDelete.map((wb) => wb.name)).toContain(
+      'Contacts Workbook'
+    )
+    expect(workbooksToDelete.map((wb) => wb.name)).toContain(
+      'Companies Workbook'
+    )
   })
 })

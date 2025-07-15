@@ -18,7 +18,11 @@ import {
 import type { SetupFactory } from '.'
 import { configureSpace } from '@flatfile/plugin-space-configure'
 import { reconfigureSpace } from '.'
-import { contactsSheet, updatedContactsSheet, companiesSheet } from '../ref/test-sheets'
+import {
+  contactsSheet,
+  updatedContactsSheet,
+  companiesSheet,
+} from '../ref/test-sheets'
 
 const api = new FlatfileClient()
 
@@ -142,13 +146,15 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     expect(workbooks).toHaveLength(2)
 
     // Find the updated workbook
-    const updatedWorkbook = workbooks.find(wb => wb.name === 'Test Workbook')
+    const updatedWorkbook = workbooks.find((wb) => wb.name === 'Test Workbook')
     expect(updatedWorkbook).toBeDefined()
     expect(updatedWorkbook!.labels).toContain('updated')
     expect(updatedWorkbook!.sheets![0].config.fields).toHaveLength(4) // firstName, lastName, email, phone
 
     // Find the new workbook
-    const newWorkbook = workbooks.find(wb => wb.name === 'New Companies Workbook')
+    const newWorkbook = workbooks.find(
+      (wb) => wb.name === 'New Companies Workbook'
+    )
     expect(newWorkbook).toBeDefined()
     expect(newWorkbook!.labels).toContain('new')
     expect(newWorkbook!.sheets![0].name).toBe('Companies')
@@ -158,8 +164,12 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     expect(space.data.metadata?.theme?.root?.primaryColor).toBe('blue')
 
     // Check workbook order is maintained
-    expect(space.data.settings?.sidebarConfig?.workbookSidebarOrder).toBeDefined()
-    expect(space.data.settings?.sidebarConfig?.workbookSidebarOrder).toHaveLength(2)
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toBeDefined()
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toHaveLength(2)
 
     expect(mockReconfigureFn).toHaveBeenCalled()
   })
@@ -200,7 +210,7 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     // Should still have 2 workbooks (1 updated, 1 unchanged)
     expect(workbooks).toHaveLength(2)
 
-    const matchedWorkbook = workbooks.find(wb => wb.name === 'Test Workbook')
+    const matchedWorkbook = workbooks.find((wb) => wb.name === 'Test Workbook')
     expect(matchedWorkbook).toBeDefined()
     expect(matchedWorkbook!.labels).toContain('matched-by-name')
     expect(matchedWorkbook!.sheets![0].name).toBe('Updated Contacts')
@@ -243,7 +253,9 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     // Should have 3 workbooks now
     expect(workbooks).toHaveLength(3)
 
-    const newWorkbook = workbooks.find(wb => wb.name === 'Completely New Workbook')
+    const newWorkbook = workbooks.find(
+      (wb) => wb.name === 'Completely New Workbook'
+    )
     expect(newWorkbook).toBeDefined()
     expect(newWorkbook!.labels).toContain('brand-new')
     expect(newWorkbook!.sheets![0].name).toBe('New Sheet')
@@ -271,7 +283,7 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     expect(callbackMock).toHaveBeenCalled()
     expect(callbackMock).toHaveBeenCalledWith(
       expect.any(Object), // event
-      expect.any(Array),  // workbookIds
+      expect.any(Array), // workbookIds
       expect.any(Function) // tick
     )
 
@@ -329,14 +341,14 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     const remainingWorkbooks = workbooksList.data
 
     expect(remainingWorkbooks.length).toBeLessThan(2)
-    
+
     // Verify the correct workbook remains
-    const workbookA = remainingWorkbooks.find(wb => wb.name === 'Workbook A')
+    const workbookA = remainingWorkbooks.find((wb) => wb.name === 'Workbook A')
     expect(workbookA).toBeDefined()
     expect(workbookA!.sheets![0].name).toBe('Contacts')
 
     // Verify the other workbook is gone
-    const workbookB = remainingWorkbooks.find(wb => wb.name === 'Workbook B')
+    const workbookB = remainingWorkbooks.find((wb) => wb.name === 'Workbook B')
     expect(workbookB).toBeUndefined()
 
     multipleWorkbooksListener.reset()
@@ -374,8 +386,10 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     let documentsList = await api.documents.list(spaceId)
     expect(documentsList.data.length).toBeGreaterThanOrEqual(2)
 
-    const welcomeDoc = documentsList.data.find(doc => doc.title === 'Welcome Document')
-    const apiDoc = documentsList.data.find(doc => doc.title === 'API Guide')
+    const welcomeDoc = documentsList.data.find(
+      (doc) => doc.title === 'Welcome Document'
+    )
+    const apiDoc = documentsList.data.find((doc) => doc.title === 'API Guide')
     expect(welcomeDoc).toBeDefined()
     expect(apiDoc).toBeDefined()
 
@@ -414,18 +428,24 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     expect(finalDocuments).toHaveLength(2)
 
     // Check updated document
-    const updatedWelcomeDoc = finalDocuments.find(doc => doc.title === 'Welcome Document')
+    const updatedWelcomeDoc = finalDocuments.find(
+      (doc) => doc.title === 'Welcome Document'
+    )
     expect(updatedWelcomeDoc).toBeDefined()
     expect(updatedWelcomeDoc!.body).toContain('UPDATED platform')
     expect(updatedWelcomeDoc!.body).toContain('New content added')
 
     // Check new document
-    const newManualDoc = finalDocuments.find(doc => doc.title === 'New User Manual')
+    const newManualDoc = finalDocuments.find(
+      (doc) => doc.title === 'New User Manual'
+    )
     expect(newManualDoc).toBeDefined()
     expect(newManualDoc!.body).toContain('User Manual')
 
     // Check deleted document
-    const deletedApiDoc = finalDocuments.find(doc => doc.title === 'API Guide')
+    const deletedApiDoc = finalDocuments.find(
+      (doc) => doc.title === 'API Guide'
+    )
     expect(deletedApiDoc).toBeUndefined()
 
     initialDocumentsListener.reset()
@@ -518,8 +538,12 @@ describe('SpaceReconfigure plugin e2e tests', () => {
 
     // Verify workbook order is set
     let space = await api.spaces.get(spaceId)
-    expect(space.data.settings?.sidebarConfig?.workbookSidebarOrder).toBeDefined()
-    expect(space.data.settings?.sidebarConfig?.workbookSidebarOrder).toHaveLength(3)
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toBeDefined()
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toHaveLength(3)
 
     // Now reconfigure with fewer workbooks, maintaining order
     const setupWithFewerWorkbooks: SetupFactory = {
@@ -547,7 +571,8 @@ describe('SpaceReconfigure plugin e2e tests', () => {
 
     // Verify workbook order is updated correctly
     space = await api.spaces.get(spaceId)
-    const workbookOrder = space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    const workbookOrder =
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
     expect(workbookOrder).toBeDefined()
     expect(workbookOrder).toHaveLength(2)
 
@@ -555,9 +580,9 @@ describe('SpaceReconfigure plugin e2e tests', () => {
     const workbooksList = await api.workbooks.list({ spaceId })
     const workbooks = workbooksList.data
     expect(workbooks).toHaveLength(2)
-    expect(workbooks.find(wb => wb.name === 'Workbook A')).toBeDefined()
-    expect(workbooks.find(wb => wb.name === 'Workbook C')).toBeDefined()
-    expect(workbooks.find(wb => wb.name === 'Workbook B')).toBeUndefined()
+    expect(workbooks.find((wb) => wb.name === 'Workbook A')).toBeDefined()
+    expect(workbooks.find((wb) => wb.name === 'Workbook C')).toBeDefined()
+    expect(workbooks.find((wb) => wb.name === 'Workbook B')).toBeUndefined()
 
     orderedWorkbooksListener.reset()
     fewerWorkbooksListener.reset()
@@ -602,9 +627,15 @@ describe('SpaceReconfigure plugin e2e tests', () => {
 
     const initialComprehensiveListener = new TestListener()
     initialComprehensiveListener.mount(driver)
-    initialComprehensiveListener.use(reconfigureSpace(initialComprehensiveSetup))
+    initialComprehensiveListener.use(
+      reconfigureSpace(initialComprehensiveSetup)
+    )
 
-    await initialComprehensiveListener.waitFor('job:ready', 1, 'space:reconfigure')
+    await initialComprehensiveListener.waitFor(
+      'job:ready',
+      1,
+      'space:reconfigure'
+    )
 
     // Verify initial state
     let workbooksList = await api.workbooks.list({ spaceId })
@@ -666,20 +697,26 @@ describe('SpaceReconfigure plugin e2e tests', () => {
 
     // Check workbooks
     expect(workbooksList.data).toHaveLength(2)
-    const workbook1 = workbooksList.data.find(wb => wb.name === 'Initial Workbook 1')
-    const workbook3 = workbooksList.data.find(wb => wb.name === 'New Workbook 3')
-    const workbook2 = workbooksList.data.find(wb => wb.name === 'Initial Workbook 2')
-    
+    const workbook1 = workbooksList.data.find(
+      (wb) => wb.name === 'Initial Workbook 1'
+    )
+    const workbook3 = workbooksList.data.find(
+      (wb) => wb.name === 'New Workbook 3'
+    )
+    const workbook2 = workbooksList.data.find(
+      (wb) => wb.name === 'Initial Workbook 2'
+    )
+
     expect(workbook1).toBeDefined()
     expect(workbook3).toBeDefined()
     expect(workbook2).toBeUndefined()
 
     // Check documents
     expect(documentsList.data).toHaveLength(2)
-    const doc1 = documentsList.data.find(doc => doc.title === 'Initial Doc 1')
-    const doc3 = documentsList.data.find(doc => doc.title === 'New Doc 3')
-    const doc2 = documentsList.data.find(doc => doc.title === 'Initial Doc 2')
-    
+    const doc1 = documentsList.data.find((doc) => doc.title === 'Initial Doc 1')
+    const doc3 = documentsList.data.find((doc) => doc.title === 'New Doc 3')
+    const doc2 = documentsList.data.find((doc) => doc.title === 'Initial Doc 2')
+
     expect(doc1).toBeDefined()
     expect(doc1!.body).toContain('Updated Document 1')
     expect(doc3).toBeDefined()
@@ -687,7 +724,9 @@ describe('SpaceReconfigure plugin e2e tests', () => {
 
     // Check space settings
     expect(space.data.metadata?.theme?.root?.primaryColor).toBe('green')
-    expect(space.data.settings?.sidebarConfig?.workbookSidebarOrder).toHaveLength(2)
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toHaveLength(2)
 
     initialComprehensiveListener.reset()
     newComprehensiveListener.reset()

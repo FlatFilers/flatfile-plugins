@@ -81,9 +81,7 @@ describe('sheet matching utility', () => {
       {
         name: 'Updated Contacts', // Different name
         slug: 'contacts', // Same slug
-        fields: [
-          { key: 'name', type: 'string', label: 'Name' },
-        ],
+        fields: [{ key: 'name', type: 'string', label: 'Name' }],
       },
     ]
 
@@ -107,16 +105,12 @@ describe('sheet matching utility', () => {
       {
         name: 'Contacts',
         slug: 'contacts',
-        fields: [
-          { key: 'name', type: 'string', label: 'Name' },
-        ],
+        fields: [{ key: 'name', type: 'string', label: 'Name' }],
       },
       {
         name: 'New Analytics Sheet',
         slug: 'analytics',
-        fields: [
-          { key: 'metric', type: 'string', label: 'Metric' },
-        ],
+        fields: [{ key: 'metric', type: 'string', label: 'Metric' }],
       },
     ]
 
@@ -166,16 +160,12 @@ describe('sheet matching utility', () => {
       {
         name: 'Contacts',
         slug: 'contacts',
-        fields: [
-          { key: 'name', type: 'string', label: 'Name' },
-        ],
+        fields: [{ key: 'name', type: 'string', label: 'Name' }],
       },
       {
         name: 'Contacts', // Same name, should not match
         slug: 'contacts-2',
-        fields: [
-          { key: 'name', type: 'string', label: 'Name' },
-        ],
+        fields: [{ key: 'name', type: 'string', label: 'Name' }],
       },
     ]
 
@@ -200,9 +190,7 @@ describe('sheet matching utility', () => {
       {
         name: 'Completely Different Sheet',
         slug: 'different',
-        fields: [
-          { key: 'data', type: 'string', label: 'Data' },
-        ],
+        fields: [{ key: 'data', type: 'string', label: 'Data' }],
       },
     ]
 
@@ -216,7 +204,7 @@ describe('sheet matching utility', () => {
     expect(sheetsToDelete).toHaveLength(2) // Both existing sheets should be deleted
 
     expect(unmatchedConfigs[0].config.name).toBe('Completely Different Sheet')
-    expect(sheetsToDelete.map(s => s.name)).toContain('Contacts')
-    expect(sheetsToDelete.map(s => s.name)).toContain('Companies')
+    expect(sheetsToDelete.map((s) => s.name)).toContain('Contacts')
+    expect(sheetsToDelete.map((s) => s.name)).toContain('Companies')
   })
 })

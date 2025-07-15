@@ -5,14 +5,7 @@ import {
   setupSpace,
   TestListener,
 } from '@flatfile/utils-testing'
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { SetupFactory } from '.'
 import { reconfigureSpace } from '.'
 

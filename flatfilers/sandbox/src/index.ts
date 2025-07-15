@@ -22015,7 +22015,7 @@ export default async function (listener: FlatfileListener) {
       ],
     })
   )
-  
+
   listener.namespace(
     ['space:getting-started'],
     configureSpace({
