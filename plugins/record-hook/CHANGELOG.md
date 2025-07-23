@@ -1,5 +1,11 @@
 # @flatfile/plugin-record-hook
 
+## 2.0.3
+
+### Patch Changes
+
+- 64dbb24: Documentation update
+
 ## 2.0.2
 
 ### Patch Changes
