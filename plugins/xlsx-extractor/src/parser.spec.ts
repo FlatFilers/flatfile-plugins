@@ -263,17 +263,20 @@ describe('parser', () => {
     test('handles Date objects and other non-string types when raw: true', async () => {
       const XLSX = require('xlsx')
       const wb = XLSX.utils.book_new()
-      
+
       const ws = XLSX.utils.aoa_to_sheet([
         [new Date('2024-01-01'), true, 'Text Header'],
-        ['Text Value', 42, false]
+        ['Text Value', 42, false],
       ])
-      
+
       XLSX.utils.book_append_sheet(wb, ws, 'TestSheet')
       const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
 
-      const mockGetHeaders = async (options: any, data: string[][]): Promise<GetHeadersResult> => {
-        expect(data[0].every(cell => typeof cell === 'string')).toBe(true)
+      const mockGetHeaders = async (
+        options: any,
+        data: string[][]
+      ): Promise<GetHeadersResult> => {
+        expect(data[0].every((cell) => typeof cell === 'string')).toBe(true)
         return {
           header: ['Date', 'Boolean', 'Text'],
           headerRow: 1,
@@ -294,16 +297,19 @@ describe('parser', () => {
     test('works normally when raw: false (default)', async () => {
       const XLSX = require('xlsx')
       const wb = XLSX.utils.book_new()
-      
+
       const ws = XLSX.utils.aoa_to_sheet([
         [new Date('2024-01-01'), true, 'Text Header'],
-        ['Text Value', 42, false]
+        ['Text Value', 42, false],
       ])
-      
+
       XLSX.utils.book_append_sheet(wb, ws, 'TestSheet')
       const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
 
-      const mockGetHeaders = async (options: any, data: string[][]): Promise<GetHeadersResult> => {
+      const mockGetHeaders = async (
+        options: any,
+        data: string[][]
+      ): Promise<GetHeadersResult> => {
         return {
           header: data[0] || [],
           headerRow: 1,
