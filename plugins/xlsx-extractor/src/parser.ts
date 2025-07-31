@@ -184,7 +184,7 @@ async function convertSheet({
 
   // Convert nulls to empty strings for header detection
   const headerDetectionData = headerCandidateRows.map((row) =>
-    row.map((cell) => (cell === null ? '' : cell))
+    row.map((cell) => (cell === null ? '' : String(cell)))
   )
 
   // Step 3: Detect headers
