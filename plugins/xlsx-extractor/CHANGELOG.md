@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.0.6
+
+### Patch Changes
+
+- 0cd752f: Fixes raw:true config type error
+
 ## 4.0.5
 
 ### Patch Changes
