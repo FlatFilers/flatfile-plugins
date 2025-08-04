@@ -9,13 +9,10 @@ Persistent key-value storage
 
 ## Parameters
 
-The kv-store plugin requires environment variables to be configured:
+The kv-store plugin has environment variables to be configured:
 
-#### `FLATFILE_KV_URL` - `string` - **required**
+#### `FLATFILE_KV_URL` - `string` - **only required when running `flatfile develop`**
 The URL endpoint for the Flatfile KV service.
-
-#### `FLATFILE_API_KEY` - `string` - **required**
-Your Flatfile API key for authentication.
 
 ## Usage
 
@@ -146,15 +143,6 @@ if (session && session.expiresAt > Date.now()) {
 // Manage preferences
 await kv.list.append("user:456:tags", ["important", "urgent"]);
 const tags = await kv.get("user:456:tags") as string[];
-```
-
-## Environment Setup
-
-Make sure to set the required environment variables:
-
-```bash
-export FLATFILE_KV_URL="https://your-kv-service-url"
-export FLATFILE_API_KEY="your-api-key"
 ```
 
 ## Error Handling
