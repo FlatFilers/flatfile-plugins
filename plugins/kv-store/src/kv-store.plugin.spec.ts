@@ -10,7 +10,7 @@ describe('kv-store plugin', () => {
     // Set up environment variables
     process.env.FLATFILE_KV_URL = 'https://test-kv-url.com'
     process.env.FLATFILE_API_KEY = 'test-api-key'
-    
+
     // Clear all mocks
     mockFetch.mockClear()
   })
@@ -24,14 +24,18 @@ describe('kv-store plugin', () => {
   describe('environment validation', () => {
     it('should throw error when FLATFILE_KV_URL is not set', async () => {
       delete process.env.FLATFILE_KV_URL
-      
-      await expect(kv.set('test-key', 'test-value')).rejects.toThrow('FLATFILE_KV_URL is not set')
+
+      await expect(kv.set('test-key', 'test-value')).rejects.toThrow(
+        'FLATFILE_KV_URL is not set'
+      )
     })
 
     it('should throw error when FLATFILE_API_KEY is not set', async () => {
       delete process.env.FLATFILE_API_KEY
-      
-      await expect(kv.set('test-key', 'test-value')).rejects.toThrow('FLATFILE_API_KEY is not set')
+
+      await expect(kv.set('test-key', 'test-value')).rejects.toThrow(
+        'FLATFILE_API_KEY is not set'
+      )
     })
   })
 
@@ -39,10 +43,12 @@ describe('kv-store plugin', () => {
     it('should successfully set a value', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
-      await expect(kv.set('test-key', { name: 'John' })).resolves.toBeUndefined()
+      await expect(
+        kv.set('test-key', { name: 'John' })
+      ).resolves.toBeUndefined()
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://test-kv-url.com/key/test-key',
@@ -51,8 +57,8 @@ describe('kv-store plugin', () => {
           body: JSON.stringify({ value: JSON.stringify({ name: 'John' }) }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -68,7 +74,7 @@ describe('kv-store plugin', () => {
     it('should handle non-ok response during set', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        text: vi.fn().mockResolvedValue('Server error')
+        text: vi.fn().mockResolvedValue('Server error'),
       })
 
       await expect(kv.set('test-key', 'test-value')).rejects.toThrow(
@@ -82,7 +88,11 @@ describe('kv-store plugin', () => {
       const mockData = { name: 'John', age: 30 }
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify(mockData) }))
+        text: vi
+          .fn()
+          .mockResolvedValue(
+            JSON.stringify({ data: JSON.stringify(mockData) })
+          ),
       })
 
       const result = await kv.get('test-key')
@@ -94,8 +104,8 @@ describe('kv-store plugin', () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -103,7 +113,7 @@ describe('kv-store plugin', () => {
     it('should return null when key does not exist (404)', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 404
+        status: 404,
       })
 
       const result = await kv.get('non-existent-key')
@@ -114,7 +124,7 @@ describe('kv-store plugin', () => {
     it('should return null when data is null or undefined', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: null }))
+        text: vi.fn().mockResolvedValue(JSON.stringify({ data: null })),
       })
 
       const result = await kv.get('test-key')
@@ -134,7 +144,7 @@ describe('kv-store plugin', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
-        text: vi.fn().mockResolvedValue('Internal server error')
+        text: vi.fn().mockResolvedValue('Internal server error'),
       })
 
       await expect(kv.get('test-key')).rejects.toThrow(
@@ -145,7 +155,9 @@ describe('kv-store plugin', () => {
     it('should handle invalid JSON in response data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: 'invalid-json{' }))
+        text: vi
+          .fn()
+          .mockResolvedValue(JSON.stringify({ data: 'invalid-json{' })),
       })
 
       await expect(kv.get('test-key')).rejects.toThrow(
@@ -158,7 +170,7 @@ describe('kv-store plugin', () => {
     it('should successfully clear a value', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       await expect(kv.clear('test-key')).resolves.toBeUndefined()
@@ -170,8 +182,8 @@ describe('kv-store plugin', () => {
           body: JSON.stringify({ value: JSON.stringify(null) }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -190,27 +202,28 @@ describe('kv-store plugin', () => {
       // First call for get (returns null)
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 404
+        status: 404,
       })
-      
+
       // Second call for set
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       await kv.list.append('test-key', ['item1', 'item2'])
 
       expect(mockFetch).toHaveBeenCalledTimes(2)
-      expect(mockFetch).toHaveBeenNthCalledWith(2,
+      expect(mockFetch).toHaveBeenNthCalledWith(
+        2,
         'https://test-kv-url.com/key/test-key',
         {
           method: 'POST',
           body: JSON.stringify({ value: JSON.stringify(['item1', 'item2']) }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -219,26 +232,33 @@ describe('kv-store plugin', () => {
       // First call for get
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify(['existing']) }))
+        text: vi
+          .fn()
+          .mockResolvedValue(
+            JSON.stringify({ data: JSON.stringify(['existing']) })
+          ),
       })
-      
+
       // Second call for set
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       await kv.list.append('test-key', ['new1', 'new2'])
 
-      expect(mockFetch).toHaveBeenNthCalledWith(2,
+      expect(mockFetch).toHaveBeenNthCalledWith(
+        2,
         'https://test-kv-url.com/key/test-key',
         {
           method: 'POST',
-          body: JSON.stringify({ value: JSON.stringify(['existing', 'new1', 'new2']) }),
+          body: JSON.stringify({
+            value: JSON.stringify(['existing', 'new1', 'new2']),
+          }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -247,26 +267,33 @@ describe('kv-store plugin', () => {
       // First call for get
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify(['existing', 'duplicate']) }))
+        text: vi
+          .fn()
+          .mockResolvedValue(
+            JSON.stringify({ data: JSON.stringify(['existing', 'duplicate']) })
+          ),
       })
-      
+
       // Second call for set
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       await kv.list.append('test-key', ['duplicate', 'new'], { unique: true })
 
-      expect(mockFetch).toHaveBeenNthCalledWith(2,
+      expect(mockFetch).toHaveBeenNthCalledWith(
+        2,
         'https://test-kv-url.com/key/test-key',
         {
           method: 'POST',
-          body: JSON.stringify({ value: JSON.stringify(['existing', 'duplicate', 'new']) }),
+          body: JSON.stringify({
+            value: JSON.stringify(['existing', 'duplicate', 'new']),
+          }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -275,10 +302,16 @@ describe('kv-store plugin', () => {
       // First call for get
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify(['existing', 'duplicate']) }))
+        text: vi
+          .fn()
+          .mockResolvedValue(
+            JSON.stringify({ data: JSON.stringify(['existing', 'duplicate']) })
+          ),
       })
 
-      await kv.list.append('test-key', ['existing', 'duplicate'], { unique: true })
+      await kv.list.append('test-key', ['existing', 'duplicate'], {
+        unique: true,
+      })
 
       expect(mockFetch).toHaveBeenCalledTimes(1) // Only get call, no set call
     })
@@ -287,26 +320,33 @@ describe('kv-store plugin', () => {
       // First call for get
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify('single-value') }))
+        text: vi
+          .fn()
+          .mockResolvedValue(
+            JSON.stringify({ data: JSON.stringify('single-value') })
+          ),
       })
-      
+
       // Second call for set
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       await kv.list.append('test-key', ['new1', 'new2'])
 
-      expect(mockFetch).toHaveBeenNthCalledWith(2,
+      expect(mockFetch).toHaveBeenNthCalledWith(
+        2,
         'https://test-kv-url.com/key/test-key',
         {
           method: 'POST',
-          body: JSON.stringify({ value: JSON.stringify(['single-value', 'new1', 'new2']) }),
+          body: JSON.stringify({
+            value: JSON.stringify(['single-value', 'new1', 'new2']),
+          }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -325,26 +365,31 @@ describe('kv-store plugin', () => {
       // First call for get
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify(['item1', 'item2', 'item3']) }))
+        text: vi.fn().mockResolvedValue(
+          JSON.stringify({
+            data: JSON.stringify(['item1', 'item2', 'item3']),
+          })
+        ),
       })
-      
+
       // Second call for set
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       await kv.list.delete('test-key', ['item2'])
 
-      expect(mockFetch).toHaveBeenNthCalledWith(2,
+      expect(mockFetch).toHaveBeenNthCalledWith(
+        2,
         'https://test-kv-url.com/key/test-key',
         {
           method: 'POST',
           body: JSON.stringify({ value: JSON.stringify(['item1', 'item3']) }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -352,17 +397,23 @@ describe('kv-store plugin', () => {
     it('should handle non-existing key during delete', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 404
+        status: 404,
       })
 
-      await expect(kv.list.delete('test-key', ['item'])).resolves.toBeUndefined()
+      await expect(
+        kv.list.delete('test-key', ['item'])
+      ).resolves.toBeUndefined()
       expect(mockFetch).toHaveBeenCalledTimes(1) // Only get call
     })
 
     it('should throw error when trying to delete from non-array', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify('not-an-array') }))
+        text: vi
+          .fn()
+          .mockResolvedValue(
+            JSON.stringify({ data: JSON.stringify('not-an-array') })
+          ),
       })
 
       await expect(kv.list.delete('test-key', ['item'])).rejects.toThrow(
@@ -384,27 +435,32 @@ describe('kv-store plugin', () => {
       // First call for get
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify(['item1', 'item2', 'item3']) }))
+        text: vi.fn().mockResolvedValue(
+          JSON.stringify({
+            data: JSON.stringify(['item1', 'item2', 'item3']),
+          })
+        ),
       })
-      
+
       // Second call for set
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       const result = await kv.list.pop('test-key')
 
       expect(result).toBe('item3')
-      expect(mockFetch).toHaveBeenNthCalledWith(2,
+      expect(mockFetch).toHaveBeenNthCalledWith(
+        2,
         'https://test-kv-url.com/key/test-key',
         {
           method: 'POST',
           body: JSON.stringify({ value: JSON.stringify(['item1', 'item2']) }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -412,7 +468,7 @@ describe('kv-store plugin', () => {
     it('should return null when key does not exist', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 404
+        status: 404,
       })
 
       const result = await kv.list.pop('test-key')
@@ -424,7 +480,11 @@ describe('kv-store plugin', () => {
     it('should throw error when trying to pop from non-array', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify('not-an-array') }))
+        text: vi
+          .fn()
+          .mockResolvedValue(
+            JSON.stringify({ data: JSON.stringify('not-an-array') })
+          ),
       })
 
       await expect(kv.list.pop('test-key')).rejects.toThrow(
@@ -446,27 +506,32 @@ describe('kv-store plugin', () => {
       // First call for get
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify(['item1', 'item2', 'item3']) }))
+        text: vi.fn().mockResolvedValue(
+          JSON.stringify({
+            data: JSON.stringify(['item1', 'item2', 'item3']),
+          })
+        ),
       })
-      
+
       // Second call for set
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       const result = await kv.list.shift('test-key')
 
       expect(result).toBe('item1')
-      expect(mockFetch).toHaveBeenNthCalledWith(2,
+      expect(mockFetch).toHaveBeenNthCalledWith(
+        2,
         'https://test-kv-url.com/key/test-key',
         {
           method: 'POST',
           body: JSON.stringify({ value: JSON.stringify(['item2', 'item3']) }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
@@ -474,7 +539,7 @@ describe('kv-store plugin', () => {
     it('should return null when key does not exist', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 404
+        status: 404,
       })
 
       const result = await kv.list.shift('test-key')
@@ -486,7 +551,11 @@ describe('kv-store plugin', () => {
     it('should throw error when trying to shift from non-array', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify('not-an-array') }))
+        text: vi
+          .fn()
+          .mockResolvedValue(
+            JSON.stringify({ data: JSON.stringify('not-an-array') })
+          ),
       })
 
       await expect(kv.list.shift('test-key')).rejects.toThrow(
@@ -508,12 +577,14 @@ describe('kv-store plugin', () => {
       // Test pop on empty array
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: JSON.stringify([]) }))
+        text: vi
+          .fn()
+          .mockResolvedValue(JSON.stringify({ data: JSON.stringify([]) })),
       })
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       const result = await kv.list.pop('test-key')
@@ -526,12 +597,12 @@ describe('kv-store plugin', () => {
         nested: { data: [1, 2, 3] },
         array: ['a', 'b', 'c'],
         nullValue: null,
-        boolValue: true
+        boolValue: true,
       }
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        text: vi.fn().mockResolvedValue('success')
+        text: vi.fn().mockResolvedValue('success'),
       })
 
       await kv.set('complex-key', complexObject)
@@ -543,8 +614,8 @@ describe('kv-store plugin', () => {
           body: JSON.stringify({ value: JSON.stringify(complexObject) }),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'test-api-key'
-          }
+            Authorization: 'test-api-key',
+          },
         }
       )
     })
