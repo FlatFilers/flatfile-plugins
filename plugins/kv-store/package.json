@@ -1,0 +1,82 @@
+{
+  "name": "@flatfile/plugin-kv-store",
+  "version": "0.0.0",
+  "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/kv-store",
+  "description": "A plugin for storing data in a persistentkey-value store.",
+  "registryMetadata": {
+    "category": "kv-store"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">= 18"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "exports": {
+    ".": {
+      "node": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": {
+        "types": {
+          "import": "./dist/index.d.ts",
+          "require": "./dist/index.d.cts"
+        },
+        "import": "./dist/index.browser.js",
+        "require": "./dist/index.browser.cjs"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "umd": "./dist/index.umd.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup && rollup -c",
+    "build:watch": "tsup --watch && rollup -c --watch",
+    "build:prod": "NODE_ENV=production tsup && rollup -c",
+    "checks": "tsc --noEmit && attw --pack . && publint .",
+    "lint": "tsc --noEmit",
+    "test": "vitest run --mode defaults src/*.spec.ts --passWithNoTests",
+    "test:unit": "vitest run --mode defaults src/*.spec.ts --passWithNoTests --exclude src/*.e2e.spec.ts",
+    "test:e2e": "vitest run --mode defaults src/*.e2e.spec.ts --passWithNoTests --no-file-parallelism"
+  },
+  "keywords": [
+    "flatfile-plugins",
+    "category-transform",
+    "featured"
+  ],
+  "author": "Matt McCoy",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlatFilers/flatfile-plugins.git",
+    "directory": "plugins/kv-store"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@flatfile/util-common": "^1.6.0"
+  },
+  "peerDependencies": {
+    "@flatfile/api": "^1.9.19",
+    "@flatfile/hooks": "^1.6.0",
+    "@flatfile/listener": "^1.1.0"
+  },
+  "devDependencies": {
+    "@flatfile/bundler-config-tsup": "^0.2.0",
+    "@flatfile/config-vitest": "^0.0.0"
+  }
+}
