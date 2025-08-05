@@ -1,5 +1,5 @@
 ---
-'@flatfile/plugin-kv-store': major
+'@flatfile/util-kv-store': major
 ---
 
-kv-store plugin
+kv-store utilty

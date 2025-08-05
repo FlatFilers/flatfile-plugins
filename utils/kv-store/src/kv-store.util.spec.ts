@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { kv } from './kv-store.plugin'
+import { kv } from './kv-store.util'
 
 // Mock fetch globally
 const mockFetch = vi.fn()
 global.fetch = mockFetch
 
-describe('kv-store plugin', () => {
+describe('kv-store util', () => {
   beforeEach(() => {
     // Set up environment variables
     process.env.FLATFILE_KV_URL = 'https://test-kv-url.com'
