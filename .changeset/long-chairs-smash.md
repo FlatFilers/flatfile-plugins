@@ -2,4 +2,4 @@
 '@flatfile/util-kv-store': major
 ---
 
-kv-store utilty
+kv-store utility

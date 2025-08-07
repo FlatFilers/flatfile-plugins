@@ -9,7 +9,7 @@ Persistent key-value storage
 
 ## Parameters
 
-The kv-store utilty has environment variables to be configured:
+The kv-store utility has environment variables to be configured:
 
 #### `FLATFILE_KV_URL` - `string` - **only required when running `flatfile develop`**
 The URL endpoint for the Flatfile KV service.
@@ -51,7 +51,7 @@ await kv.clear("user:123");
 
 ### Array Operations
 
-The utilty includes specialized methods for working with array values:
+The utility includes specialized methods for working with array values:
 
 #### Append to an array
 
@@ -83,7 +83,7 @@ const firstItem = await kv.list.shift("tags");
 
 ## Example Usage
 
-This example demonstrates how to use the kv-store utilty for managing user sessions and preferences:
+This example demonstrates how to use the kv-store utility for managing user sessions and preferences:
 
 ### JavaScript
 
@@ -147,7 +147,7 @@ const tags = await kv.get("user:456:tags") as string[];
 
 ## Error Handling
 
-The utilty provides detailed error messages for common scenarios:
+The utility provides detailed error messages for common scenarios:
 
 - Missing environment variables
 - Network connectivity issues
