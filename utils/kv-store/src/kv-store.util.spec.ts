@@ -321,13 +321,11 @@ describe('kv-store util', () => {
       mockFetch.mockResolvedValueOnce(
         createMockResponse({
           ok: true,
-          text: vi
-            .fn()
-            .mockResolvedValue(
-              JSON.stringify({
-                data: JSON.stringify(['existing', 'duplicate']),
-              })
-            ),
+          text: vi.fn().mockResolvedValue(
+            JSON.stringify({
+              data: JSON.stringify(['existing', 'duplicate']),
+            })
+          ),
         })
       )
 
@@ -362,13 +360,11 @@ describe('kv-store util', () => {
       mockFetch.mockResolvedValueOnce(
         createMockResponse({
           ok: true,
-          text: vi
-            .fn()
-            .mockResolvedValue(
-              JSON.stringify({
-                data: JSON.stringify(['existing', 'duplicate']),
-              })
-            ),
+          text: vi.fn().mockResolvedValue(
+            JSON.stringify({
+              data: JSON.stringify(['existing', 'duplicate']),
+            })
+          ),
         })
       )
 
