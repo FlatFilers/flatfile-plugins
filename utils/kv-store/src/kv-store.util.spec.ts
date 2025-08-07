@@ -1,11 +1,40 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { kv } from './kv-store.plugin'
 
-// Mock fetch globally
-const mockFetch = vi.fn()
-global.fetch = mockFetch
+// Mock cross-fetch
+vi.mock('cross-fetch', () => ({ default: vi.fn() }))
 
-describe('kv-store plugin', () => {
+import { kv } from './kv-store.util'
+import fetch from 'cross-fetch'
+
+// Get the mocked fetch function
+const mockFetch = vi.mocked(fetch)
+
+// Helper function to create mock response
+const createMockResponse = (responseOptions: {
+  ok: boolean
+  status?: number
+  text?: () => Promise<string>
+}): Response => {
+  return {
+    ok: responseOptions.ok,
+    status: responseOptions.status || (responseOptions.ok ? 200 : 500),
+    text: responseOptions.text || vi.fn().mockResolvedValue(''),
+    statusText: responseOptions.ok ? 'OK' : 'Error',
+    headers: new Headers(),
+    redirected: false,
+    type: 'basic',
+    url: '',
+    body: null,
+    bodyUsed: false,
+    clone: vi.fn(),
+    arrayBuffer: vi.fn(),
+    blob: vi.fn(),
+    formData: vi.fn(),
+    json: vi.fn(),
+  } as unknown as Response
+}
+
+describe('kv-store util', () => {
   beforeEach(() => {
     // Set up environment variables
     process.env.FLATFILE_KV_URL = 'https://test-kv-url.com'
@@ -41,10 +70,12 @@ describe('kv-store plugin', () => {
 
   describe('set method', () => {
     it('should successfully set a value', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       await expect(
         kv.set('test-key', { name: 'John' })
@@ -72,10 +103,12 @@ describe('kv-store plugin', () => {
     })
 
     it('should handle non-ok response during set', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        text: vi.fn().mockResolvedValue('Server error'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: false,
+          text: vi.fn().mockResolvedValue('Server error'),
+        })
+      )
 
       await expect(kv.set('test-key', 'test-value')).rejects.toThrow(
         "KV Store: Failed to set value 'test-value' to key 'test-key'. Error: Error: Server error"
@@ -86,14 +119,16 @@ describe('kv-store plugin', () => {
   describe('get method', () => {
     it('should successfully get a value', async () => {
       const mockData = { name: 'John', age: 30 }
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({ data: JSON.stringify(mockData) })
-          ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi
+            .fn()
+            .mockResolvedValue(
+              JSON.stringify({ data: JSON.stringify(mockData) })
+            ),
+        })
+      )
 
       const result = await kv.get('test-key')
 
@@ -111,10 +146,12 @@ describe('kv-store plugin', () => {
     })
 
     it('should return null when key does not exist (404)', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: false,
+          status: 404,
+        })
+      )
 
       const result = await kv.get('non-existent-key')
 
@@ -122,10 +159,12 @@ describe('kv-store plugin', () => {
     })
 
     it('should return null when data is null or undefined', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue(JSON.stringify({ data: null })),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue(JSON.stringify({ data: null })),
+        })
+      )
 
       const result = await kv.get('test-key')
 
@@ -141,11 +180,13 @@ describe('kv-store plugin', () => {
     })
 
     it('should handle non-404 error response during get', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        text: vi.fn().mockResolvedValue('Internal server error'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: false,
+          status: 500,
+          text: vi.fn().mockResolvedValue('Internal server error'),
+        })
+      )
 
       await expect(kv.get('test-key')).rejects.toThrow(
         "KV Store: Failed to get value for key 'test-key'. Error: Error: Internal server error"
@@ -153,12 +194,14 @@ describe('kv-store plugin', () => {
     })
 
     it('should handle invalid JSON in response data', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(JSON.stringify({ data: 'invalid-json{' })),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi
+            .fn()
+            .mockResolvedValue(JSON.stringify({ data: 'invalid-json{' })),
+        })
+      )
 
       await expect(kv.get('test-key')).rejects.toThrow(
         "KV Store: Failed to parse value 'invalid-json{' for key 'test-key'"
@@ -168,10 +211,12 @@ describe('kv-store plugin', () => {
 
   describe('clear method', () => {
     it('should successfully clear a value', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       await expect(kv.clear('test-key')).resolves.toBeUndefined()
 
@@ -200,16 +245,20 @@ describe('kv-store plugin', () => {
   describe('list.append method', () => {
     it('should append to non-existing key', async () => {
       // First call for get (returns null)
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: false,
+          status: 404,
+        })
+      )
 
       // Second call for set
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       await kv.list.append('test-key', ['item1', 'item2'])
 
@@ -230,20 +279,24 @@ describe('kv-store plugin', () => {
 
     it('should append to existing array', async () => {
       // First call for get
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({ data: JSON.stringify(['existing']) })
-          ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi
+            .fn()
+            .mockResolvedValue(
+              JSON.stringify({ data: JSON.stringify(['existing']) })
+            ),
+        })
+      )
 
       // Second call for set
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       await kv.list.append('test-key', ['new1', 'new2'])
 
@@ -265,20 +318,24 @@ describe('kv-store plugin', () => {
 
     it('should append to existing array with unique constraint', async () => {
       // First call for get
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({ data: JSON.stringify(['existing', 'duplicate']) })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue(
+            JSON.stringify({
+              data: JSON.stringify(['existing', 'duplicate']),
+            })
           ),
-      })
+        })
+      )
 
       // Second call for set
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       await kv.list.append('test-key', ['duplicate', 'new'], { unique: true })
 
@@ -300,14 +357,16 @@ describe('kv-store plugin', () => {
 
     it('should not append when all values are duplicates with unique constraint', async () => {
       // First call for get
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({ data: JSON.stringify(['existing', 'duplicate']) })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue(
+            JSON.stringify({
+              data: JSON.stringify(['existing', 'duplicate']),
+            })
           ),
-      })
+        })
+      )
 
       await kv.list.append('test-key', ['existing', 'duplicate'], {
         unique: true,
@@ -318,20 +377,24 @@ describe('kv-store plugin', () => {
 
     it('should convert non-array value to array', async () => {
       // First call for get
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({ data: JSON.stringify('single-value') })
-          ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi
+            .fn()
+            .mockResolvedValue(
+              JSON.stringify({ data: JSON.stringify('single-value') })
+            ),
+        })
+      )
 
       // Second call for set
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       await kv.list.append('test-key', ['new1', 'new2'])
 
@@ -363,20 +426,24 @@ describe('kv-store plugin', () => {
   describe('list.delete method', () => {
     it('should delete values from array', async () => {
       // First call for get
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue(
-          JSON.stringify({
-            data: JSON.stringify(['item1', 'item2', 'item3']),
-          })
-        ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue(
+            JSON.stringify({
+              data: JSON.stringify(['item1', 'item2', 'item3']),
+            })
+          ),
+        })
+      )
 
       // Second call for set
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       await kv.list.delete('test-key', ['item2'])
 
@@ -395,10 +462,12 @@ describe('kv-store plugin', () => {
     })
 
     it('should handle non-existing key during delete', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: false,
+          status: 404,
+        })
+      )
 
       await expect(
         kv.list.delete('test-key', ['item'])
@@ -407,14 +476,16 @@ describe('kv-store plugin', () => {
     })
 
     it('should throw error when trying to delete from non-array', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({ data: JSON.stringify('not-an-array') })
-          ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi
+            .fn()
+            .mockResolvedValue(
+              JSON.stringify({ data: JSON.stringify('not-an-array') })
+            ),
+        })
+      )
 
       await expect(kv.list.delete('test-key', ['item'])).rejects.toThrow(
         "KV Store: Failed to delete values 'item' from key 'test-key'. Error: Error: Value is not an array"
@@ -433,20 +504,24 @@ describe('kv-store plugin', () => {
   describe('list.pop method', () => {
     it('should pop last item from array', async () => {
       // First call for get
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue(
-          JSON.stringify({
-            data: JSON.stringify(['item1', 'item2', 'item3']),
-          })
-        ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue(
+            JSON.stringify({
+              data: JSON.stringify(['item1', 'item2', 'item3']),
+            })
+          ),
+        })
+      )
 
       // Second call for set
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       const result = await kv.list.pop('test-key')
 
@@ -466,10 +541,12 @@ describe('kv-store plugin', () => {
     })
 
     it('should return null when key does not exist', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: false,
+          status: 404,
+        })
+      )
 
       const result = await kv.list.pop('test-key')
 
@@ -478,14 +555,16 @@ describe('kv-store plugin', () => {
     })
 
     it('should throw error when trying to pop from non-array', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({ data: JSON.stringify('not-an-array') })
-          ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi
+            .fn()
+            .mockResolvedValue(
+              JSON.stringify({ data: JSON.stringify('not-an-array') })
+            ),
+        })
+      )
 
       await expect(kv.list.pop('test-key')).rejects.toThrow(
         "KV Store: Failed to pop from key 'test-key'. Error: Error: Value is not an array"
@@ -504,20 +583,24 @@ describe('kv-store plugin', () => {
   describe('list.shift method', () => {
     it('should shift first item from array', async () => {
       // First call for get
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue(
-          JSON.stringify({
-            data: JSON.stringify(['item1', 'item2', 'item3']),
-          })
-        ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue(
+            JSON.stringify({
+              data: JSON.stringify(['item1', 'item2', 'item3']),
+            })
+          ),
+        })
+      )
 
       // Second call for set
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       const result = await kv.list.shift('test-key')
 
@@ -537,10 +620,12 @@ describe('kv-store plugin', () => {
     })
 
     it('should return null when key does not exist', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: false,
+          status: 404,
+        })
+      )
 
       const result = await kv.list.shift('test-key')
 
@@ -549,14 +634,16 @@ describe('kv-store plugin', () => {
     })
 
     it('should throw error when trying to shift from non-array', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({ data: JSON.stringify('not-an-array') })
-          ),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi
+            .fn()
+            .mockResolvedValue(
+              JSON.stringify({ data: JSON.stringify('not-an-array') })
+            ),
+        })
+      )
 
       await expect(kv.list.shift('test-key')).rejects.toThrow(
         "KV Store: Failed to shift from key 'test-key'. Error: Error: Value is not an array"
@@ -575,17 +662,21 @@ describe('kv-store plugin', () => {
   describe('edge cases', () => {
     it('should handle empty array operations', async () => {
       // Test pop on empty array
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(JSON.stringify({ data: JSON.stringify([]) })),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi
+            .fn()
+            .mockResolvedValue(JSON.stringify({ data: JSON.stringify([]) })),
+        })
+      )
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       const result = await kv.list.pop('test-key')
 
@@ -600,10 +691,12 @@ describe('kv-store plugin', () => {
         boolValue: true,
       }
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('success'),
-      })
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse({
+          ok: true,
+          text: vi.fn().mockResolvedValue('success'),
+        })
+      )
 
       await kv.set('complex-key', complexObject)
 

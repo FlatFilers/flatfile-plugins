@@ -1,6 +1,6 @@
 <!-- START_INFOCARD -->
 
-The `@flatfile/plugin-kv-store` plugin provides a JavaScript interface to interact with Flatfile's key-value storage service. It supports basic operations like `set`, `get`, and `clear`, as well as advanced array operations including `append`, `delete`, `pop`, and `shift` with unique value filtering capabilities.
+The `@flatfile/util-kv-store` utility provides a JavaScript interface to interact with Flatfile's key-value storage service. It supports basic operations like `set`, `get`, and `clear`, as well as advanced array operations including `append`, `delete`, `pop`, and `shift` with unique value filtering capabilities.
 
 **Storage Type:**
 Persistent key-value storage
@@ -9,7 +9,7 @@ Persistent key-value storage
 
 ## Parameters
 
-The kv-store plugin has environment variables to be configured:
+The kv-store utility has environment variables to be configured:
 
 #### `FLATFILE_KV_URL` - `string` - **only required when running `flatfile develop`**
 The URL endpoint for the Flatfile KV service.
@@ -17,13 +17,13 @@ The URL endpoint for the Flatfile KV service.
 ## Usage
 
 ```bash install
-npm i @flatfile/plugin-kv-store
+npm i @flatfile/util-kv-store
 ```
 
 ### Import
 
 ```js
-import { kv } from "@flatfile/plugin-kv-store";
+import { kv } from "@flatfile/util-kv-store";
 ```
 
 The `kv` object provides methods for interacting with the key-value store.
@@ -51,7 +51,7 @@ await kv.clear("user:123");
 
 ### Array Operations
 
-The plugin includes specialized methods for working with array values:
+The utility includes specialized methods for working with array values:
 
 #### Append to an array
 
@@ -83,12 +83,12 @@ const firstItem = await kv.list.shift("tags");
 
 ## Example Usage
 
-This example demonstrates how to use the kv-store plugin for managing user sessions and preferences:
+This example demonstrates how to use the kv-store utility for managing user sessions and preferences:
 
 ### JavaScript
 
 ```js
-import { kv } from "@flatfile/plugin-kv-store";
+import { kv } from "@flatfile/util-kv-store";
 
 // Store user session data
 await kv.set("session:abc123", {
@@ -117,7 +117,7 @@ const latestPref = await kv.list.pop("user:456:preferences");
 ### TypeScript
 
 ```ts
-import { kv } from "@flatfile/plugin-kv-store";
+import { kv } from "@flatfile/util-kv-store";
 
 interface UserSession {
   userId: string;
@@ -147,7 +147,7 @@ const tags = await kv.get("user:456:tags") as string[];
 
 ## Error Handling
 
-The plugin provides detailed error messages for common scenarios:
+The utility provides detailed error messages for common scenarios:
 
 - Missing environment variables
 - Network connectivity issues

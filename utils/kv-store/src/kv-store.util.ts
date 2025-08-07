@@ -1,3 +1,5 @@
+import fetch from 'cross-fetch'
+
 const checkEnv = () => {
   if (!process.env.FLATFILE_KV_URL) {
     throw new Error('FLATFILE_KV_URL is not set')
@@ -89,7 +91,7 @@ export const kv = {
       } = { unique: false }
     ): Promise<void> => {
       try {
-        // Retreive the current value
+        // Retrieve the current value
         const currentValue = await kv.get(key)
 
         if (!currentValue) {
@@ -125,7 +127,7 @@ export const kv = {
     },
     delete: async (key: string, values: any[]): Promise<void> => {
       try {
-        // Retreive the current value
+        // Retrieve the current value
         const currentValue = await kv.get(key)
 
         if (!currentValue) {
@@ -151,7 +153,7 @@ export const kv = {
     },
     pop: async (key: string): Promise<any> => {
       try {
-        // Retreive the current value
+        // Retrieve the current value
         const currentValue = await kv.get(key)
 
         if (!currentValue) {
@@ -176,7 +178,7 @@ export const kv = {
     },
     shift: async (key: string): Promise<any> => {
       try {
-        // Retreive the current value
+        // Retrieve the current value
         const currentValue = await kv.get(key)
 
         if (!currentValue) {
