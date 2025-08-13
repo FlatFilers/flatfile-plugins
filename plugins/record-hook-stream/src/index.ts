@@ -16,13 +16,15 @@ export const recordHookStream = (
   return (listener: FlatfileListener) => {
     listener.on('commit:created', { sheetSlug }, (event: FlatfileEvent) =>
       recordReadWriteStream(callback, event, options)
-        .then(
-          (results: { totalProcessed: number; totalTimeSeconds: string }) => {
-            console.log(
-              `[${event.src.id}] Processed ${results.totalProcessed} records in ${results.totalTimeSeconds} seconds (r/s: ${Math.ceil(results.totalProcessed / parseFloat(results.totalTimeSeconds))})`
-            )
+        .then((results) => {
+          const typedResults = results as {
+            totalProcessed: number
+            totalTimeSeconds: string
           }
-        )
+          console.log(
+            `[${event.src.id}] Processed ${typedResults.totalProcessed} records in ${typedResults.totalTimeSeconds} seconds (r/s: ${Math.ceil(typedResults.totalProcessed / parseFloat(typedResults.totalTimeSeconds))})`
+          )
+        })
         .catch((error) => {
           console.error('Processing failed:', error)
           throw error

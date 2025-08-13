@@ -20,7 +20,9 @@ export async function recordReadWriteStream(
     debug = false,
   } = options
 
-  const processedRecordIds = new Set<string>()
+  // Use a simple counter instead of storing all IDs to prevent memory issues
+  // This avoids unbounded memory growth when processing millions of records
+  let processedRecordCount = 0
   const startTime = Date.now()
   let pendingBatches = 0
 
@@ -31,12 +33,8 @@ export async function recordReadWriteStream(
       const chunk = records.slice(i, i + CHUNK_SIZE)
       const items = chunk.map((record) => new Item(record))
 
-      // Process all records in chunk at once
-      chunk.forEach((record) => {
-        if (!processedRecordIds.has(record.__k)) {
-          processedRecordIds.add(record.__k)
-        }
-      })
+      // Simply count the processed records
+      processedRecordCount += chunk.length
 
       const transformedItems = await callback(items, event)
       const chunkResults = transformedItems.map((item) => item.changeset())
@@ -108,16 +106,16 @@ export async function recordReadWriteStream(
       const now = Date.now()
       if (now - lastProgressLog >= PROGRESS_INTERVAL) {
         const timeElapsed = (now - lastProgressLog) / 1000
-        const recordsSinceLastLog = processedRecordIds.size - lastRecordCount
+        const recordsSinceLastLog = processedRecordCount - lastRecordCount
         const currentRecordsPerSecond = recordsSinceLastLog / timeElapsed
         const overallRecordsPerSecond =
-          processedRecordIds.size / ((now - startTime) / 1000)
+          processedRecordCount / ((now - startTime) / 1000)
 
         // Only log if we've processed new records or have pending batches
         if (recordsSinceLastLog > 0 || pendingBatches > 0) {
           debug &&
             console.log(
-              `Progress: ${processedRecordIds.size} records processed ` +
+              `Progress: ${processedRecordCount} records processed ` +
                 `(current: ${recordsSinceLastLog > 0 ? Math.round(currentRecordsPerSecond) : 'waiting'} r/s, ` +
                 `avg: ${Math.round(overallRecordsPerSecond)} r/s)` +
                 `${pendingBatches > 0 ? ` - ${pendingBatches} batches pending` : ''}`
@@ -125,7 +123,7 @@ export async function recordReadWriteStream(
         }
 
         lastProgressLog = now
-        lastRecordCount = processedRecordIds.size
+        lastRecordCount = processedRecordCount
       }
     }
 
@@ -193,7 +191,7 @@ export async function recordReadWriteStream(
           const endTime = Date.now()
           const totalTimeSeconds = (endTime - startTime) / 1000
           resolve({
-            totalProcessed: processedRecordIds.size,
+            totalProcessed: processedRecordCount,
             totalTimeSeconds: totalTimeSeconds.toFixed(2),
           })
         } catch (error) {
