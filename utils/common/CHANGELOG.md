@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.7.1
+
+### Patch Changes
+
+- 814f962: Added normalize-sheet-config util
+
 ## 1.7.0
 
 ### Minor Changes
