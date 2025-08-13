@@ -101,7 +101,7 @@ export function normalizeKey(key: string | number): string | number {
  * Normalizes the field keys in a Flatfile SheetConfig using snake_case convention.
  * Creates a new SheetConfig with normalized field keys while preserving all other properties.
  * If normalized keys create duplicates, adds _1, _2, etc. to make them unique.
- * 
+ *
  * @param sheetConfig - The Flatfile SheetConfig to normalize
  * @param options - Configuration options for the normalization
  * @param options.output - 'validate' returns conflict info, 'transform' (default) returns normalized SheetConfig
@@ -109,39 +109,39 @@ export function normalizeKey(key: string | number): string | number {
  */
 
 export function normalizeSheetConfig(
-  sheetConfig: Flatfile.SheetConfig, 
+  sheetConfig: Flatfile.SheetConfig,
   options: NormalizeSheetConfigOptions & { output: 'validate' }
 ): ValidationResult
 export function normalizeSheetConfig(
-  sheetConfig: Flatfile.SheetConfig, 
+  sheetConfig: Flatfile.SheetConfig,
   options?: NormalizeSheetConfigOptions & { output?: 'transform' }
 ): Flatfile.SheetConfig
 
 export function normalizeSheetConfig(
-  sheetConfig: Flatfile.SheetConfig, 
+  sheetConfig: Flatfile.SheetConfig,
   options: NormalizeSheetConfigOptions = {}
 ): Flatfile.SheetConfig | ValidationResult {
   const { output = 'transform' } = options
   const usedKeys = new Set<string>()
   const conflicts: KeyConflict[] = []
-  
+
   const normalizedFields = sheetConfig.fields.map((field) => {
     const originalKey = field.key
     const normalizedKey = normalizeKey(field.key) as string
     let finalKey = normalizedKey
     let counter = 1
-    
+
     // Track if this key had conflicts
     const hadConflict = usedKeys.has(finalKey)
-    
+
     // If the normalized key is already used, append _1, _2, etc.
     while (usedKeys.has(finalKey)) {
       finalKey = `${normalizedKey}_${counter}`
       counter++
     }
-    
+
     usedKeys.add(finalKey)
-    
+
     // Record conflicts for validation mode
     if (hadConflict || originalKey !== normalizedKey) {
       let message = ''
@@ -152,17 +152,17 @@ export function normalizeSheetConfig(
       } else if (originalKey !== normalizedKey) {
         message = `Key "${originalKey}" was normalized to "${normalizedKey}"`
       }
-      
+
       if (message) {
         conflicts.push({
           originalKey,
           normalizedKey,
           finalKey,
-          message
+          message,
         })
       }
     }
-    
+
     return {
       ...field,
       key: finalKey,
@@ -172,7 +172,7 @@ export function normalizeSheetConfig(
   if (output === 'validate') {
     return {
       conflicts,
-      hasConflicts: conflicts.length > 0
+      hasConflicts: conflicts.length > 0,
     }
   }
 

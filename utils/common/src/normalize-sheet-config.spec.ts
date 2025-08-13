@@ -99,23 +99,25 @@ describe('normalizeSheetConfig', () => {
   describe('transform mode (default)', () => {
     it('should normalize field keys while preserving other properties', () => {
       const result = normalizeSheetConfig(mockSheetConfig)
-      
+
       expect(result.name).toBe('Test Sheet')
       expect(result.slug).toBe('test-sheet')
       expect(result.fields).toHaveLength(4)
-      
+
       expect(result.fields[0].key).toBe('first_name')
       expect(result.fields[0].type).toBe('string')
       expect(result.fields[0].label).toBe('First Name')
-      
+
       expect(result.fields[1].key).toBe('last_name')
       expect(result.fields[2].key).toBe('email_address')
       expect(result.fields[3].key).toBe('phone_number')
     })
 
     it('should work with explicit transform mode', () => {
-      const result = normalizeSheetConfig(mockSheetConfig, { output: 'transform' })
-      
+      const result = normalizeSheetConfig(mockSheetConfig, {
+        output: 'transform',
+      })
+
       expect(result.fields[0].key).toBe('first_name')
       expect(result.fields[1].key).toBe('last_name')
     })
@@ -133,7 +135,7 @@ describe('normalizeSheetConfig', () => {
       }
 
       const result = normalizeSheetConfig(configWithDuplicates)
-      
+
       expect(result.fields[0].key).toBe('first_name')
       expect(result.fields[1].key).toBe('first_name_1')
       expect(result.fields[2].key).toBe('first_name_2')
@@ -145,16 +147,14 @@ describe('normalizeSheetConfig', () => {
         name: 'Test Sheet',
         slug: 'test-sheet',
         allowAdditionalFields: true,
-        fields: [
-          { key: 'firstName', type: 'string', label: 'First Name' },
-        ],
+        fields: [{ key: 'firstName', type: 'string', label: 'First Name' }],
         actions: [
           { operation: 'test', mode: 'foreground', label: 'Test Action' },
         ],
       }
 
       const result = normalizeSheetConfig(configWithExtras)
-      
+
       expect(result.allowAdditionalFields).toBe(true)
       expect(result.actions).toEqual([
         { operation: 'test', mode: 'foreground', label: 'Test Action' },
@@ -173,7 +173,7 @@ describe('normalizeSheetConfig', () => {
       }
 
       const result = normalizeSheetConfig(configWithSpecialChars)
-      
+
       expect(result.fields[0].key).toBe('price_percent')
       expect(result.fields[1].key).toBe('total_dollar')
       expect(result.fields[2].key).toBe('http_status')
@@ -182,8 +182,10 @@ describe('normalizeSheetConfig', () => {
 
   describe('validate mode', () => {
     it('should return validation results without modifying config', () => {
-      const result = normalizeSheetConfig(mockSheetConfig, { output: 'validate' })
-      
+      const result = normalizeSheetConfig(mockSheetConfig, {
+        output: 'validate',
+      })
+
       expect(result).toHaveProperty('conflicts')
       expect(result).toHaveProperty('hasConflicts')
       expect(Array.isArray(result.conflicts)).toBe(true)
@@ -191,23 +193,25 @@ describe('normalizeSheetConfig', () => {
     })
 
     it('should detect normalization changes', () => {
-      const result = normalizeSheetConfig(mockSheetConfig, { output: 'validate' })
-      
+      const result = normalizeSheetConfig(mockSheetConfig, {
+        output: 'validate',
+      })
+
       expect(result.hasConflicts).toBe(true)
       expect(result.conflicts).toHaveLength(4)
-      
+
       expect(result.conflicts[0]).toEqual({
         originalKey: 'firstName',
         normalizedKey: 'first_name',
         finalKey: 'first_name',
-        message: 'Key "firstName" was normalized to "first_name"'
+        message: 'Key "firstName" was normalized to "first_name"',
       })
-      
+
       expect(result.conflicts[1]).toEqual({
         originalKey: 'lastName',
         normalizedKey: 'last_name',
         finalKey: 'last_name',
-        message: 'Key "lastName" was normalized to "last_name"'
+        message: 'Key "lastName" was normalized to "last_name"',
       })
     })
 
@@ -222,30 +226,34 @@ describe('normalizeSheetConfig', () => {
         ],
       }
 
-      const result = normalizeSheetConfig(configWithDuplicates, { output: 'validate' })
-      
+      const result = normalizeSheetConfig(configWithDuplicates, {
+        output: 'validate',
+      })
+
       expect(result.hasConflicts).toBe(true)
       expect(result.conflicts).toHaveLength(3)
-      
+
       expect(result.conflicts[0]).toEqual({
         originalKey: 'firstName',
         normalizedKey: 'first_name',
         finalKey: 'first_name',
-        message: 'Key "firstName" was normalized to "first_name"'
+        message: 'Key "firstName" was normalized to "first_name"',
       })
-      
+
       expect(result.conflicts[1]).toEqual({
         originalKey: 'first_name',
         normalizedKey: 'first_name',
         finalKey: 'first_name_1',
-        message: 'Key "first_name" conflicted with existing key, renamed to "first_name_1"'
+        message:
+          'Key "first_name" conflicted with existing key, renamed to "first_name_1"',
       })
-      
+
       expect(result.conflicts[2]).toEqual({
         originalKey: 'FirstName',
         normalizedKey: 'first_name',
         finalKey: 'first_name_2',
-        message: 'Key "FirstName" was normalized to "first_name" but conflicted with existing key, renamed to "first_name_2"'
+        message:
+          'Key "FirstName" was normalized to "first_name" but conflicted with existing key, renamed to "first_name_2"',
       })
     })
 
@@ -260,8 +268,10 @@ describe('normalizeSheetConfig', () => {
         ],
       }
 
-      const result = normalizeSheetConfig(normalizedConfig, { output: 'validate' })
-      
+      const result = normalizeSheetConfig(normalizedConfig, {
+        output: 'validate',
+      })
+
       expect(result.hasConflicts).toBe(false)
       expect(result.conflicts).toHaveLength(0)
     })
@@ -274,7 +284,7 @@ describe('normalizeSheetConfig', () => {
       }
 
       const result = normalizeSheetConfig(emptyConfig, { output: 'validate' })
-      
+
       expect(result.hasConflicts).toBe(false)
       expect(result.conflicts).toHaveLength(0)
     })
