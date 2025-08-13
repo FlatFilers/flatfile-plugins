@@ -1,9 +1,6 @@
 <!-- START_INFOCARD -->
 
-The `@flatfile/plugin-record-hook` plugin offers a convenient way to execute
-custom logic on individual data records within Flatfile. By setting up an event
-listener for the `commit:created` event, this plugin seamlessly integrates with
-the data processing flow.
+The `@flatfile/plugin-record-hook-stream` plugin provides a high-performance streaming interface for processing large datasets in Flatfile. It uses adaptive batch processing and concurrent execution to efficiently handle millions of records without memory issues. This plugin is ideal for processing large files where standard record hooks might encounter performance or memory limitations.
 
 **Event Type:**
 `listener.on('commit:created')`
@@ -17,119 +14,94 @@ the data processing flow.
 The `sheetSlug` parameter is the slug of the sheet you want to listen to.
 
 #### `callback` - `function`
-The `callback` parameter takes a function that will be run on the record or records.
+The `callback` parameter takes a function that will be run on batches of records. The function receives an array of `Item` objects and must return an array of `Item` objects.
 
-#### `options.chunkSize` - `number` - `default: 10_000` - (optional)
-The `chunkSize` parameter allows you to specify the quantity of records to process in each chunk.
+#### `options.includeMessages` - `boolean` - `default: false` - (optional)
+When true, includes existing messages on records when streaming data.
 
-#### `options.parallel` - `number` - `default: 1` - (optional)
-The `parallel` parameter allows you to specify the number of chunks to process in parallel.
+#### `options.includeMetadata` - `boolean` - `default: false` - (optional)
+When true, includes record metadata in the stream.
 
 #### `options.debug` - `boolean` - `default: false` - (optional)
-The `debug` parameter allows you to turn on debug logging.
+The `debug` parameter enables detailed logging of processing progress, batch metrics, and performance statistics.
 
 
 
 ## Usage
 
 ```bash install
-npm i @flatfile/plugin-record-hook @flatfile/hooks
+npm i @flatfile/plugin-record-hook-stream
 ```
 
 ### Import
 
 
-#### bulkRecordHook
-
-```js bulkRecordHook
-import { FlatfileRecord, bulkRecordHook } from "@flatfile/plugin-record-hook";
-import { FlatfileEvent, FlatfileListener } from "@flatfile/listener";
-```
-
-#### recordHook
-
-```js recordHook
-import { FlatfileRecord, recordHook } from "@flatfile/plugin-record-hook";
+```js
+import { recordHookStream } from "@flatfile/plugin-record-hook-stream";
 import { FlatfileEvent, FlatfileListener } from "@flatfile/listener";
 ```
 
 
 
-Pass `bulkRecordHook` or `recordHook` to a Flatfile data listener and provide a function to run when data is added or updated.
+Pass `recordHookStream` to a Flatfile data listener and provide a function to run when data is added or updated.
 
 
 ### Listen for data changes
 
-Set up a listener to configure Flatfile and respond to data Events. Then use this plugin to set up a hook that responds to data changes.
+Set up a listener to configure Flatfile and respond to data Events. Then use this plugin to set up a streaming hook that responds to data changes.
 
 
 #### JavaScript
 
-**bulkRecordHook.js**
-
-```js bulkRecordHook js
-import { bulkRecordHook } from "@flatfile/plugin-record-hook";
+```js
+import { recordHookStream } from "@flatfile/plugin-record-hook-stream";
 
 export default async function (listener) {
   listener.use(
-    bulkRecordHook("my-sheet", (records) => {
-      return records.map((r) => {
-        //do your work here
-        return r;
+    recordHookStream("my-sheet", (items) => {
+      return items.map((item) => {
+        // Access record data
+        const email = item.get("email");
+        
+        // Validate and add errors
+        if (!email) {
+          item.err("email", "Email is required");
+        }
+        
+        // Modify values
+        item.set("processed", true);
+        
+        return item;
       });
     })
   );
 }
 ```
 
-**recordHook.js**
-
-```js recordHook js
-import { recordHook } from "@flatfile/plugin-record-hook";
-
-export default async function (listener) {
-  listener.use(
-    recordHook("my-sheet", (record) => {
-      //do your work here
-      return record;
-    })
-  );
-}
-```
 
 #### TypeScript
 
-**bulkRecordHook.ts**
-
-```js bulkRecordHook ts
-import { FlatfileRecord } from "@flatfile/hooks";
-import { bulkRecordHook } from "@flatfile/plugin-record-hook";
-import { FlatfileListener } from "@flatfile/listener";
+```typescript
+import { recordHookStream } from "@flatfile/plugin-record-hook-stream";
+import { FlatfileListener, FlatfileEvent } from "@flatfile/listener";
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    bulkRecordHook("my-sheet", (records: FlatfileRecord[]) => {
-      return records.map((r) => {
-        //do your work here
-        return r;
+    recordHookStream("my-sheet", (items, event: FlatfileEvent) => {
+      return items.map((item) => {
+        // Access record data with type safety
+        const email = item.get("email") as string;
+        
+        // Validate and add errors
+        if (!email) {
+          item.err("email", "Email is required");
+        }
+        
+        // Modify values
+        item.set("processed", true);
+        
+        return item;
       });
-    })
-  );
-}
-```
-
-**recordHook.ts**
-
-```js recordHook ts
-import { FlatfileRecord } from "@flatfile/hooks";
-import { recordHook } from "@flatfile/plugin-record-hook";
-import { FlatfileListener } from "@flatfile/listener";
-
-export default async function (listener: FlatfileListener) {
-  listener.use(
-    recordHook("my-sheet", (record: FlatfileRecord) => {
-      //do your work here
-      return record;
     })
   );
 }
@@ -139,25 +111,30 @@ export default async function (listener: FlatfileListener) {
 
 ### Additional Options
 
-`bulkRecordHook` can accept additional properties. Props will be passed along to the transformer.
+`recordHookStream` can accept additional options to control streaming behavior and performance.
 
 
 #### JavaScript
 
-**bulkRecordHook.js**
-
-```js bulkRecordHook js
-import { bulkRecordHook } from "@flatfile/plugin-record-hook";
+```js
+import { recordHookStream } from "@flatfile/plugin-record-hook-stream";
 
 export default async function (listener) {
   listener.use(
-    bulkRecordHook("my-sheet", (records) => {
-      return records.map((r) => {
-        //do your work here
-        return r;
-      });
-    }),
-    { chunkSize: 100, parallel: 2 }
+    recordHookStream(
+      "my-sheet",
+      (items) => {
+        return items.map((item) => {
+          // Process each item
+          return item;
+        });
+      },
+      { 
+        includeMessages: true,
+        includeMetadata: false,
+        debug: true 
+      }
+    )
   );
 }
 ```
@@ -165,24 +142,25 @@ export default async function (listener) {
 
 #### TypeScript
 
-**bulkRecordHook.ts**
-
-```js bulkRecordHook ts
-import { FlatfileRecord } from "@flatfile/hooks";
-import { bulkRecordHook } from "@flatfile/plugin-record-hook";
-import { FlatfileListener } from "@flatfile/listener";
+```typescript
+import { recordHookStream } from "@flatfile/plugin-record-hook-stream";
+import { FlatfileListener, FlatfileEvent } from "@flatfile/listener";
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    bulkRecordHook(
+    recordHookStream(
       "my-sheet",
-      (records: FlatfileRecord[]) => {
-        return records.map((r) => {
-          //do your work here
-          return r;
+      (items, event: FlatfileEvent) => {
+        return items.map((item) => {
+          // Process each item
+          return item;
         });
       },
-      { chunkSize: 100, parallel: 2 }
+      { 
+        includeMessages: true,
+        includeMetadata: false,
+        debug: true 
+      }
     )
   );
 }
@@ -190,78 +168,109 @@ export default async function (listener: FlatfileListener) {
 
 
 
-#### Flexible Options
+## Streaming Benefits
 
-#### `chunkSize` *number* *default: 10_000* (optional)
-Define how many records you want to process in each batch. This allows you to balance efficiency and resource utilization based on your specific use case.
+The streaming architecture provides several advantages over traditional record hooks:
 
-#### `parallel` *number* *default: 1* (optional)
-Choose whether the records should be processed in parallel. This enables you to optimize the execution time when dealing with large datasets.
+### Performance Optimization
+- **Adaptive batch sizing**: Automatically adjusts batch size (100-500 records) based on processing speed
+- **Concurrent processing**: Processes up to 15 batches simultaneously for maximum throughput
+- **Memory efficiency**: Uses a simple counter instead of storing record IDs, preventing memory issues with large datasets
+- **Chunk processing**: Processes records in chunks of 50 to prevent memory spikes
+
+### Reliability Features
+- **Automatic retry logic**: Implements exponential backoff for rate limiting and network errors
+- **Progress tracking**: Real-time metrics showing records/second processing speed
+- **Error handling**: Robust error handling with configurable retry behavior
+
+### When to Use Stream Processing
+
+Use `recordHookStream` when:
+- Processing files with more than 10,000 records
+- Dealing with memory constraints on large datasets
+- Needing real-time progress updates during processing
+- Requiring high throughput for data transformations
+
+Use standard `recordHook` when:
+- Processing small datasets (< 10,000 records)
+- Needing simple, synchronous processing
+- Working with records that require complex inter-record logic
+
+
+## Item API Reference
+
+The `Item` class provides methods for working with record data:
+
+### Data Access Methods
+- `get(key: string)`: Get a field value
+- `set(key: string, value: any)`: Set a field value
+- `has(key: string)`: Check if a field has a value
+- `isEmpty(key: string)`: Check if a field is empty
+
+### Validation Methods
+- `err(key: string, message: string)`: Add an error message
+- `warn(key: string, message: string)`: Add a warning message
+- `info(key: string, message: string)`: Add an info message
+
+### Type Conversion Methods
+- `str(key: string)`: Get field as nullable string
+- `defStr(key: string)`: Get field as string (never null)
+- `bool(key: string)`: Get field as boolean
+- `date(key: string)`: Get field as Date
+
+### Utility Methods
+- `delete()`: Mark record for deletion
+- `isDeleted()`: Check if record is marked for deletion
+- `isDirty(key?: string)`: Check if record or field has changes
+- `keys()`: Get all field keys
 
 
 ## Example Usage
 
-This example sets up a record hook using `listener.use` to modify records in the "my-sheet" sheet.
-
-When a record is processed by the hook, it checks if an email address is missing, empty, or invalid, and if so, it logs corresponding error messages and adds them to a form validation context (if the r object is related to form validation). This helps ensure that only valid email addresses are accepted in the application.
-
-In the `bulkRecordHook` example, it passes a `chunkSize` of 100 and asks the hooks to run 2 at a time via the `parallel` property.
+This example demonstrates a complete implementation with email validation, data transformation, and error handling:
 
 
 ### JavaScript
 
-**bulkRecordHook.js**
-
-```js bulkRecordHook js
-import { bulkRecordHook } from "@flatfile/plugin-record-hook";
+```js
+import { recordHookStream } from "@flatfile/plugin-record-hook-stream";
 
 export default async function (listener) {
   listener.use(
-    bulkRecordHook(
-      "my-sheet",
-      (records) => {
-        return records.map((r) => {
-          const email = r.get("email") as string;
+    recordHookStream(
+      "contacts",
+      (items) => {
+        return items.map((item) => {
+          // Email validation
+          const email = item.get("email");
           if (!email) {
-            console.log("Email is required");
-            r.addError("email", "Email is required");
+            item.err("email", "Email is required");
+          } else {
+            const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!validEmailAddress.test(email)) {
+              item.err("email", "Invalid email address");
+            }
           }
-          const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (email !== null && !validEmailAddress.test(email)) {
-            console.log("Invalid email address");
-            r.addError("email", "Invalid email address");
+          
+          // Data transformation
+          const firstName = item.str("firstName");
+          const lastName = item.str("lastName");
+          if (firstName && lastName) {
+            item.set("fullName", `${firstName} ${lastName}`);
           }
-          return r;
+          
+          // Conditional logic
+          if (item.bool("isVIP")) {
+            item.set("priority", "high");
+          }
+          
+          // Add processing timestamp
+          item.set("processedAt", new Date().toISOString());
+          
+          return item;
         });
       },
-      { chunkSize: 100, parallel: 2 }
-    )
-  );
-}
-```
-
-**recordHook.js**
-
-```js recordHook js
-import { recordHook } from "@flatfile/plugin-record-hook";
-
-export default async function (listener) {
-  listener.use(
-    recordHook(
-      "my-sheet",
-      (record) => {
-        const email = record.get("email") as string;
-        if (!email) {
-          console.log("Email is required");
-          record.addError("email", "Email is required");
-        }
-        const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email !== null && !validEmailAddress.test(email)) {
-          console.log("Invalid email address");
-          record.addError("email", "Invalid email address");
-        }
-        return record;
-      }
+      { debug: true }
     )
   );
 }
@@ -270,62 +279,56 @@ export default async function (listener) {
 
 ### TypeScript
 
-**bulkRecordHook.ts**
+```typescript
+import { recordHookStream } from "@flatfile/plugin-record-hook-stream";
+import { FlatfileListener, FlatfileEvent } from "@flatfile/listener";
 
-```js bulkRecordHook ts
-import { FlatfileRecord } from "@flatfile/hooks";
-import { bulkRecordHook } from "@flatfile/plugin-record-hook";
-import { FlatfileListener } from "@flatfile/listener";
+interface ContactRecord {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+  isVIP?: boolean;
+  priority?: string;
+  processedAt?: string;
+}
 
 export default async function (listener: FlatfileListener) {
   listener.use(
-    bulkRecordHook(
+    recordHookStream(
       "contacts",
-      (records: FlatfileRecord[]) => {
-        return records.map((r) => {
-          const email = r.get("email") as string;
+      (items, event: FlatfileEvent) => {
+        return items.map((item) => {
+          // Email validation with type safety
+          const email = item.get("email") as string | undefined;
           if (!email) {
-            console.log("Email is required");
-            r.addError("email", "Email is required");
+            item.err("email", "Email is required");
+          } else {
+            const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!validEmailAddress.test(email)) {
+              item.err("email", "Invalid email address");
+            }
           }
-          const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (email !== null && !validEmailAddress.test(email)) {
-            console.log("Invalid email address");
-            r.addError("email", "Invalid email address");
+          
+          // Data transformation
+          const firstName = item.str("firstName");
+          const lastName = item.str("lastName");
+          if (firstName && lastName) {
+            item.set("fullName", `${firstName} ${lastName}`);
           }
-          return r;
+          
+          // Conditional logic
+          if (item.bool("isVIP")) {
+            item.set("priority", "high");
+          }
+          
+          // Add processing timestamp
+          item.set("processedAt", new Date().toISOString());
+          
+          return item;
         });
       },
-      { chunkSize: 100, parallel: 2 }
-    )
-  );
-}
-```
-
-**recordHook.ts**
-
-```js recordHook ts
-import { FlatfileRecord } from "@flatfile/hooks";
-import { recordHook } from "@flatfile/plugin-record-hook";
-import { FlatfileListener } from "@flatfile/listener";
-
-export default async function (listener: FlatfileListener) {
-  listener.use(
-    recordHook(
-      "contacts",
-      (record: FlatfileRecord) => {
-        const email = record.get("email") as string;
-        if (!email) {
-          console.log("Email is required");
-          record.addError("email", "Email is required");
-        }
-        const validEmailAddress = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email !== null && !validEmailAddress.test(email)) {
-          console.log("Invalid email address");
-          record.addError("email", "Invalid email address");
-        }
-        return record;
-      }
+      { debug: true }
     )
   );
 }
