@@ -255,7 +255,7 @@ export function keysToFields({
       key = String(key)
     }
     key = key.trim()
-    
+
     return {
       key,
       label: key,
