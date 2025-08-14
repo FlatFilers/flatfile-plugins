@@ -1,6 +1,10 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileListener } from '@flatfile/listener'
-import { createAllRecords, slugify } from '@flatfile/util-common'
+import {
+  createAllRecords,
+  slugify,
+  normalizeSheetConfig,
+} from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
 const api = new FlatfileClient()
 
@@ -215,12 +219,13 @@ function getSheetConfig(
   { headers, descriptions }: SheetCapture,
   sourceEditorEnabled: boolean
 ): Flatfile.SheetConfig {
-  return {
+  // normalizeSheetConfig the keys to ensure they are unique and valid
+  return normalizeSheetConfig({
     name,
     slug: slugify(name),
     fields: keysToFields({ keys: headers, descriptions }),
     allowAdditionalFields: sourceEditorEnabled,
-  }
+  })
 }
 
 function normalizeKey(key: string): string {
@@ -244,37 +249,20 @@ export function keysToFields({
   keys: string[]
   descriptions?: Record<string, string>
 }): Flatfile.Property[] {
-  let index = 0
-  const countOfKeys: Record<
-    string,
-    { count: number; index: number; metadata?: { fieldRef: string } }
-  > = keys.reduce((acc, key) => {
+  return keys.map((key) => {
     if (!key) key = ''
     if (typeof key !== 'string') {
       key = String(key)
     }
     key = key.trim()
-    if (key === '') {
-      key = 'empty'
-    }
-    if (acc[key]) {
-      const incrementKey = `${key}_${acc[key].count}`
-      acc[incrementKey] = { count: 1, index }
-      acc[key].count++
-    } else {
-      acc[key] = { count: 1, index }
-    }
-    index++
-    return acc
-  }, {})
-  return Object.entries(countOfKeys)
-    .sort((a, b) => a[1].index - b[1].index)
-    .map(([key, _]) => ({
-      key: normalizeKey(key),
+    
+    return {
+      key,
       label: key,
       description: descriptions?.[key] || '',
       type: 'string',
-    }))
+    }
+  })
 }
 
 async function updateSheetMetadata(

@@ -58,12 +58,12 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@flatfile/util-common": "^1.6.0",
+    "@flatfile/util-common": "^1.7.1",
     "@flatfile/util-file-buffer": "^0.6.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.18.0",
-    "@flatfile/listener": "^1.1.0"
+    "@flatfile/api": "^1.22.0",
+    "@flatfile/listener": "^1.1.2"
   },
   "devDependencies": {
     "@flatfile/bundler-config-tsup": "^0.2.0",
