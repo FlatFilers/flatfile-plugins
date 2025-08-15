@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.7.2
+
+### Patch Changes
+
+- 07e53c1: Updated Util-extractor to use the normalizeSheetConfig() common util
+
 ## 2.7.1
 
 ### Patch Changes
