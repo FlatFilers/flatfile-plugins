@@ -1,5 +1,11 @@
 # @flatfile/plugin-json-extractor
 
+## 0.11.1
+
+### Patch Changes
+
+- c526fdc: Updates util-extractor min version for extractor plugins
+
 ## 0.11.0
 
 ### Minor Changes

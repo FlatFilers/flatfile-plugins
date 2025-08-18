@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.0.7
+
+### Patch Changes
+
+- c526fdc: Updates util-extractor min version for extractor plugins
+
 ## 4.0.6
 
 ### Patch Changes
