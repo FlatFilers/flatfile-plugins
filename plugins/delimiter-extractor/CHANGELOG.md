@@ -1,5 +1,11 @@
 # @flatfile/plugin-delimiter-extractor
 
+## 2.5.2
+
+### Patch Changes
+
+- c526fdc: Updates util-extractor min version for extractor plugins
+
 ## 2.5.1
 
 ### Patch Changes
