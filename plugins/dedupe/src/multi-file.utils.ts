@@ -306,14 +306,12 @@ export function createProviderTrustMatcher(
     throw new Error('ProviderTrust matcher requires a configuration object')
   }
 
-  const {
-    externalIdField,
-    npiField,
-    ssnField,
-  } = config
+  const { externalIdField, npiField, ssnField } = config
 
   if (!externalIdField || !npiField || !ssnField) {
-    throw new Error('ProviderTrust matcher requires externalIdField, npiField, and ssnField to be specified')
+    throw new Error(
+      'ProviderTrust matcher requires externalIdField, npiField, and ssnField to be specified'
+    )
   }
 
   return createConditionalMatcher({

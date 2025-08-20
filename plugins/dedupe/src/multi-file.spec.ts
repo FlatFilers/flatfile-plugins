@@ -316,11 +316,20 @@ describe('multi-file.utils', () => {
   describe('createProviderTrustMatcher', () => {
     it('should match records with same external_id', () => {
       const matcher = createProviderTrustMatcher({
-      externalIdField: 'external_id',
-      npiField: 'npi',
-      ssnField: 'ssn',
-      coreFields: ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
-    })
+        externalIdField: 'external_id',
+        npiField: 'npi',
+        ssnField: 'ssn',
+        coreFields: [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ],
+      })
 
       const record1 = createMockRecord('1', {
         external_id: 'EXT123',
@@ -338,11 +347,20 @@ describe('multi-file.utils', () => {
 
     it('should match records with same NPI and non-conflicting SSN', () => {
       const matcher = createProviderTrustMatcher({
-      externalIdField: 'external_id',
-      npiField: 'npi',
-      ssnField: 'ssn',
-      coreFields: ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
-    })
+        externalIdField: 'external_id',
+        npiField: 'npi',
+        ssnField: 'ssn',
+        coreFields: [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ],
+      })
 
       const record1 = createMockRecord('1', {
         external_id: 'EXT123',
@@ -360,11 +378,20 @@ describe('multi-file.utils', () => {
 
     it('should match records with same SSN and non-conflicting NPI', () => {
       const matcher = createProviderTrustMatcher({
-      externalIdField: 'external_id',
-      npiField: 'npi',
-      ssnField: 'ssn',
-      coreFields: ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
-    })
+        externalIdField: 'external_id',
+        npiField: 'npi',
+        ssnField: 'ssn',
+        coreFields: [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ],
+      })
 
       const record1 = createMockRecord('1', {
         external_id: 'EXT123',
@@ -382,11 +409,20 @@ describe('multi-file.utils', () => {
 
     it('should not match records with conflicting SSN when NPI matches', () => {
       const matcher = createProviderTrustMatcher({
-      externalIdField: 'external_id',
-      npiField: 'npi',
-      ssnField: 'ssn',
-      coreFields: ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
-    })
+        externalIdField: 'external_id',
+        npiField: 'npi',
+        ssnField: 'ssn',
+        coreFields: [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ],
+      })
 
       const record1 = createMockRecord('1', {
         external_id: 'EXT123',
@@ -404,11 +440,20 @@ describe('multi-file.utils', () => {
 
     it('should not match records with no matching criteria', () => {
       const matcher = createProviderTrustMatcher({
-      externalIdField: 'external_id',
-      npiField: 'npi',
-      ssnField: 'ssn',
-      coreFields: ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
-    })
+        externalIdField: 'external_id',
+        npiField: 'npi',
+        ssnField: 'ssn',
+        coreFields: [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ],
+      })
 
       const record1 = createMockRecord('1', {
         external_id: 'EXT123',
@@ -428,11 +473,20 @@ describe('multi-file.utils', () => {
   describe('createProviderTrustMerger', () => {
     it('should merge records prioritizing populated values from higher priority sources', () => {
       const merger = createProviderTrustMerger({
-      externalIdField: 'external_id',
-      npiField: 'npi',
-      ssnField: 'ssn',
-      coreFields: ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
-    })
+        externalIdField: 'external_id',
+        npiField: 'npi',
+        ssnField: 'ssn',
+        coreFields: [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ],
+      })
 
       const record1 = createMockRecord(
         '1',
@@ -468,11 +522,20 @@ describe('multi-file.utils', () => {
 
     it('should handle single record', () => {
       const merger = createProviderTrustMerger({
-      externalIdField: 'external_id',
-      npiField: 'npi',
-      ssnField: 'ssn',
-      coreFields: ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
-    })
+        externalIdField: 'external_id',
+        npiField: 'npi',
+        ssnField: 'ssn',
+        coreFields: [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ],
+      })
       const record = createMockRecord('1', { external_id: 'EXT123' })
 
       const result = merger([record])
@@ -481,11 +544,20 @@ describe('multi-file.utils', () => {
 
     it('should throw error for empty array', () => {
       const merger = createProviderTrustMerger({
-      externalIdField: 'external_id',
-      npiField: 'npi',
-      ssnField: 'ssn',
-      coreFields: ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
-    })
+        externalIdField: 'external_id',
+        npiField: 'npi',
+        ssnField: 'ssn',
+        coreFields: [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ],
+      })
       expect(() => merger([])).toThrow('Cannot merge empty record array')
     })
   })
