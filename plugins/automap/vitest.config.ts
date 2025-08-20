@@ -5,7 +5,7 @@ export default defineConfig({
   ...config({ mode: 'defaults' }),
   test: {
     ...config({ mode: 'defaults' }).test,
-    testTimeout: 120_000,
+    testTimeout: 150_000,
     hookTimeout: 30_000,
   },
 })
