@@ -101,9 +101,6 @@ export class AutomapService {
             }
 
             try {
-              console.log(
-                `[AUTOMAP DEBUG] Creating job for source: ${source}, target: ${target}, destinationSheetId: ${destinationSheetId}`
-              )
               const { data: job } = await api.jobs.create({
                 type: 'workbook',
                 operation: 'map',
@@ -120,9 +117,6 @@ export class AutomapService {
                 },
               })
 
-              console.log(
-                `[AUTOMAP DEBUG] Job created successfully: ${job.id}, status: ${job.status}`
-              )
               return job
             } catch (_jobError: unknown) {
               logError(
@@ -201,16 +195,9 @@ export class AutomapService {
   private async handleMappingPlanUpdated(event: FlatfileEvent): Promise<void> {
     const { jobId } = event.context
 
-    console.log(
-      `[AUTOMAP DEBUG] handleMappingPlanUpdated called for job: ${jobId}`
-    )
     const job = await api.jobs.get(jobId)
-    console.log(
-      `[AUTOMAP DEBUG] Job status: ${job.data.status}, isAutomap: ${job.data.input?.isAutomap}`
-    )
 
     if (!job.data.input?.isAutomap) {
-      console.log(`[AUTOMAP DEBUG] Not an automap job: ${jobId}`)
       if (this.options.debug) {
         logInfo('@flatfile/plugin-automap', `Not an automap job: ${jobId}`)
       }
@@ -219,9 +206,6 @@ export class AutomapService {
 
     // Plan generation is async, so we need to wait for the job to be in the planning state
     if (job.data.status !== Flatfile.JobStatus.Planning) {
-      console.log(
-        `[AUTOMAP DEBUG] Job not in planning state: ${jobId}, status: ${job.data.status}`
-      )
       if (this.options.debug) {
         logInfo(
           '@flatfile/plugin-automap',
@@ -260,26 +244,11 @@ export class AutomapService {
       }
 
       try {
-        console.log(
-          `[AUTOMAP DEBUG] Starting job execution with accuracy: ${this.options.accuracy}`
-        )
         switch (this.options.accuracy) {
           case 'confident':
-            console.log(
-              `[AUTOMAP DEBUG] Verifying confident matching strategy for job: ${jobId}`
-            )
             if (this.verifyConfidentMatchingStrategy(plan)) {
-              console.log(
-                `[AUTOMAP DEBUG] Confident strategy verified, executing job: ${jobId}`
-              )
               await api.jobs.execute(jobId)
-              console.log(
-                `[AUTOMAP DEBUG] Job execution completed for: ${jobId}`
-              )
             } else {
-              console.log(
-                `[AUTOMAP DEBUG] Confident strategy failed, skipping execution for job: ${jobId}`
-              )
               if (this.options.debug) {
                 logWarn(
                   '@flatfile/plugin-automap',
@@ -293,21 +262,9 @@ export class AutomapService {
             }
             break
           case 'exact':
-            console.log(
-              `[AUTOMAP DEBUG] Verifying absolute matching strategy for job: ${jobId}`
-            )
             if (this.verifyAbsoluteMatchingStrategy(plan)) {
-              console.log(
-                `[AUTOMAP DEBUG] Absolute strategy verified, executing job: ${jobId}`
-              )
               await api.jobs.execute(jobId)
-              console.log(
-                `[AUTOMAP DEBUG] Job execution completed for: ${jobId}`
-              )
             } else {
-              console.log(
-                `[AUTOMAP DEBUG] Absolute strategy failed, skipping execution for job: ${jobId}`
-              )
               if (this.options.debug) {
                 logWarn(
                   '@flatfile/plugin-automap',
@@ -322,10 +279,6 @@ export class AutomapService {
             break
         }
       } catch (_jobError: unknown) {
-        console.log(
-          `[AUTOMAP DEBUG] Job execution failed for: ${jobId}`,
-          _jobError
-        )
         logError(
           '@flatfile/plugin-automap',
           `Unable to execute job with id: ${jobId}`
@@ -386,30 +339,14 @@ export class AutomapService {
     const workbookResponse = await api.workbooks.get(file.workbookId!)
     const sheets = workbookResponse.data.sheets || []
     const { defaultTargetSheet } = this.options
-
-    console.log(
-      `[AUTOMAP DEBUG] getMappingJobs - file.name: ${file.name}, sheets.length: ${sheets.length}`
-    )
-    console.log(
-      `[AUTOMAP DEBUG] defaultTargetSheet type: ${typeof defaultTargetSheet}`
-    )
-
     const targetSheet =
       typeof defaultTargetSheet === 'function'
         ? await defaultTargetSheet(file.name)
         : defaultTargetSheet
 
-    console.log(`[AUTOMAP DEBUG] resolved targetSheet: ${targetSheet}`)
-
     if (sheets.length === 1 && !this.isNil(targetSheet)) {
-      console.log(
-        `[AUTOMAP DEBUG] Returning mapping: source=${sheets[0].id}, target=${targetSheet}`
-      )
       return [{ source: sheets[0].id, target: targetSheet }]
     } else {
-      console.log(
-        `[AUTOMAP DEBUG] No mapping created - sheets.length: ${sheets.length}, targetSheet: ${targetSheet}`
-      )
       if (this.options.debug) {
         logWarn(
           '@flatfile/plugin-automap',
