@@ -293,20 +293,24 @@ export function createPriorityMerger(
 }
 
 export interface ProviderTrustConfig {
-  externalIdField?: string
-  npiField?: string
-  ssnField?: string
-  coreFields?: string[]
+  externalIdField: string
+  npiField: string
+  ssnField: string
+  coreFields: string[]
 }
 
 export function createProviderTrustMatcher(
-  config: ProviderTrustConfig = {}
+  config: ProviderTrustConfig
 ): (record1: RecordWithSource, record2: RecordWithSource) => boolean {
   const {
-    externalIdField = 'external_id',
-    npiField = 'npi',
-    ssnField = 'ssn',
+    externalIdField,
+    npiField,
+    ssnField,
   } = config
+
+  if (!externalIdField || !npiField || !ssnField) {
+    throw new Error('ProviderTrust matcher requires externalIdField, npiField, and ssnField to be specified')
+  }
 
   return createConditionalMatcher({
     rules: [
@@ -326,23 +330,13 @@ export function createProviderTrustMatcher(
 }
 
 export function createProviderTrustMerger(
-  config: ProviderTrustConfig = {}
+  config: ProviderTrustConfig
 ): (records: RecordWithSource[]) => RecordWithSource {
-  const {
-    externalIdField = 'external_id',
-    npiField = 'npi',
-    ssnField = 'ssn',
-    coreFields = [
-      'external_id',
-      'type',
-      'first_name',
-      'middle_name',
-      'last_name',
-      'date_of_birth',
-      'ssn',
-      'npi',
-    ],
-  } = config
+  const { coreFields } = config
+
+  if (!coreFields || coreFields.length === 0) {
+    throw new Error('ProviderTrust merger requires coreFields to be specified')
+  }
 
   return createPriorityMerger({
     priorityFields: coreFields,
