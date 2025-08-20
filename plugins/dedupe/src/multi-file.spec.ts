@@ -1,330 +1,306 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import {
+  RecordWithSource,
   generateMergeKey,
   mergeRecordsWithPriority,
-  RecordWithSource,
   generateFilePriority,
+  createConditionalMatcher,
+  createPriorityMerger,
   createProviderTrustMatcher,
   createProviderTrustMerger,
 } from './multi-file.utils'
 
-describe('multi-file utils', () => {
-  describe('generateMergeKey', () => {
-    it('should generate key from record field value', () => {
-      const record: RecordWithSource = {
-        id: '1',
-        values: {
-          email: { value: 'test@example.com' },
-        },
-      }
+function createMockRecord(
+  id: string,
+  values: Record<string, any>,
+  sheetName: string = 'test',
+  priority: number = 0
+): RecordWithSource {
+  const recordValues: Record<string, { value: any }> = {}
+  for (const [key, value] of Object.entries(values)) {
+    recordValues[key] = { value }
+  }
 
+  return {
+    id,
+    values: recordValues,
+    _source: {
+      sheetId: `sheet_${sheetName}`,
+      sheetName,
+      priority,
+    },
+  }
+}
+
+describe('multi-file.utils', () => {
+  describe('generateMergeKey', () => {
+    it('should generate key from single field', () => {
+      const record = createMockRecord('1', { email: 'test@example.com' })
       const key = generateMergeKey(record, 'email')
       expect(key).toBe('test@example.com')
     })
 
-    it('should return undefined for missing field', () => {
-      const record: RecordWithSource = {
-        id: '1',
-        values: {},
-      }
-
-      const key = generateMergeKey(record, 'email')
-      expect(key).toBeUndefined()
-    })
-
-    it('should return undefined for null value', () => {
-      const record: RecordWithSource = {
-        id: '1',
-        values: {
-          email: { value: undefined },
-        },
-      }
-
-      const key = generateMergeKey(record, 'email')
-      expect(key).toBeUndefined()
-    })
-
     it('should generate composite key from multiple fields', () => {
-      const record: RecordWithSource = {
-        id: '1',
-        values: {
-          first_name: { value: 'John' },
-          last_name: { value: 'Doe' },
-          email: { value: 'john@example.com' },
-        },
-      }
-
+      const record = createMockRecord('1', { 
+        first_name: 'John', 
+        last_name: 'Doe',
+        email: 'john@example.com'
+      })
       const key = generateMergeKey(record, ['first_name', 'last_name'])
-      expect(key).toBe('John::Doe')
+      expect(key).toBe('John|Doe')
     })
 
-    it('should handle missing fields in composite key', () => {
-      const record: RecordWithSource = {
-        id: '1',
-        values: {
-          first_name: { value: 'John' },
-          email: { value: 'john@example.com' },
-        },
-      }
-
-      const key = generateMergeKey(record, ['first_name', 'last_name'])
-      expect(key).toBe('John::')
-    })
-  })
-
-  describe('mergeRecordsWithPriority', () => {
-    const createRecord = (
-      id: string,
-      email: string,
-      name: string,
-      priority: number,
-      sheetName: string
-    ): RecordWithSource => ({
-      id,
-      values: {
-        email: { value: email },
-        name: { value: name },
-      },
-      _source: {
-        sheetId: `sheet-${priority}`,
-        sheetName,
-        priority,
-      },
+    it('should return null for empty values', () => {
+      const record = createMockRecord('1', { email: '' })
+      const key = generateMergeKey(record, 'email')
+      expect(key).toBeNull()
     })
 
-    it('should keep highest priority record for delete strategy', () => {
-      const records: RecordWithSource[] = [
-        createRecord('1', 'test@example.com', 'First', 1, 'Sheet1'),
-        createRecord('2', 'test@example.com', 'Second', 3, 'Sheet2'),
-        createRecord('3', 'test@example.com', 'Third', 2, 'Sheet3'),
-      ]
-
-      const result = mergeRecordsWithPriority(records, 'delete')
-      expect(result.id).toBe('2')
-      expect(result.values.name.value).toBe('Second')
-    })
-
-    it('should merge records with priority for merge strategy', () => {
-      const records: RecordWithSource[] = [
-        createRecord('1', 'test@example.com', 'First', 1, 'Sheet1'),
-        createRecord('2', 'test@example.com', '', 3, 'Sheet2'),
-        createRecord('3', 'test@example.com', 'Third', 2, 'Sheet3'),
-      ]
-
-      records[1].values.phone = { value: '123-456-7890' }
-
-      const result = mergeRecordsWithPriority(records, 'merge')
-      expect(result.id).toBe('2')
-      expect(result.values.name.value).toBe('Third')
-      expect(result.values.phone.value).toBe('123-456-7890')
-    })
-
-    it('should union all values for union strategy', () => {
-      const records: RecordWithSource[] = [
-        createRecord('1', 'test@example.com', 'First', 1, 'Sheet1'),
-        createRecord('2', 'test@example.com', '', 3, 'Sheet2'),
-        createRecord('3', 'test@example.com', 'Third', 2, 'Sheet3'),
-      ]
-
-      records[1].values.phone = { value: '123-456-7890' }
-      records[2].values.address = { value: '123 Main St' }
-
-      const result = mergeRecordsWithPriority(records, 'union')
-      expect(result.id).toBe('2')
-      expect(result.values.name.value).toBe('Third')
-      expect(result.values.phone.value).toBe('123-456-7890')
-      expect(result.values.address.value).toBe('123 Main St')
-    })
-
-    it('should handle single record', () => {
-      const records: RecordWithSource[] = [
-        createRecord('1', 'test@example.com', 'Only', 1, 'Sheet1'),
-      ]
-
-      const result = mergeRecordsWithPriority(records, 'merge')
-      expect(result.id).toBe('1')
-      expect(result.values.name.value).toBe('Only')
+    it('should handle missing fields', () => {
+      const record = createMockRecord('1', { name: 'John' })
+      const key = generateMergeKey(record, 'email')
+      expect(key).toBeNull()
     })
   })
 
   describe('generateFilePriority', () => {
-    it('should return exact match priority', () => {
-      const priority = generateFilePriority('sheet1', { sheet1: 10 })
+    it('should return exact name match priority', () => {
+      const priority = generateFilePriority('primary-contacts', { 'primary-contacts': 10 }, [])
       expect(priority).toBe(10)
     })
 
     it('should return pattern match priority', () => {
-      const patterns = [
+      const priority = generateFilePriority('peoplesoft-data.csv', {}, [
         { pattern: 'peoplesoft', priority: 10 },
-        { pattern: 'mdstaff', priority: 5 },
-      ]
-
-      const priority1 = generateFilePriority('Peoplesoft_Data', {}, patterns)
-      expect(priority1).toBe(10)
-
-      const priority2 = generateFilePriority('MDStaff_Import', {}, patterns)
-      expect(priority2).toBe(5)
+        { pattern: 'mdstaff', priority: 5 }
+      ])
+      expect(priority).toBe(10)
     })
 
     it('should return 0 for no matches', () => {
-      const priority = generateFilePriority('unknown_sheet', {}, [])
+      const priority = generateFilePriority('unknown-file', {}, [])
       expect(priority).toBe(0)
     })
+  })
 
-    it('should prioritize exact match over pattern', () => {
-      const patterns = [{ pattern: 'test', priority: 5 }]
-      const priority = generateFilePriority(
-        'test_sheet',
-        { test_sheet: 10 },
-        patterns
-      )
-      expect(priority).toBe(10)
+  describe('mergeRecordsWithPriority', () => {
+    it('should merge records with delete strategy', () => {
+      const record1 = createMockRecord('1', { name: 'John', email: 'john@example.com' }, 'high', 10)
+      const record2 = createMockRecord('2', { name: 'Jane', email: 'jane@example.com' }, 'low', 5)
+      
+      const result = mergeRecordsWithPriority([record1, record2], 'delete')
+      expect(result.id).toBe('1')
+      expect(result.values.name.value).toBe('John')
+    })
+
+    it('should merge records with merge strategy', () => {
+      const record1 = createMockRecord('1', { name: 'John', email: '' }, 'high', 10)
+      const record2 = createMockRecord('2', { name: '', email: 'john@example.com' }, 'low', 5)
+      
+      const result = mergeRecordsWithPriority([record1, record2], 'merge')
+      expect(result.values.name.value).toBe('John')
+      expect(result.values.email.value).toBe('john@example.com')
+    })
+
+    it('should merge records with union strategy', () => {
+      const record1 = createMockRecord('1', { tags: 'urgent,important' }, 'high', 10)
+      const record2 = createMockRecord('2', { tags: 'follow-up,important' }, 'low', 5)
+      
+      const result = mergeRecordsWithPriority([record1, record2], 'union')
+      expect(result.values.tags.value).toBe('urgent; important; follow-up')
+    })
+  })
+
+  describe('createConditionalMatcher', () => {
+    it('should match records with primary field only rule', () => {
+      const matcher = createConditionalMatcher({
+        rules: [{ primaryField: 'customer_id' }]
+      })
+      
+      const record1 = createMockRecord('1', { customer_id: 'CUST123', email: 'john@example.com' })
+      const record2 = createMockRecord('2', { customer_id: 'CUST123', email: 'jane@example.com' })
+      
+      expect(matcher(record1, record2)).toBe(true)
+    })
+
+    it('should match records with primary and non-conflicting secondary field', () => {
+      const matcher = createConditionalMatcher({
+        rules: [{ primaryField: 'email', secondaryField: 'phone', requireBothPopulated: false }]
+      })
+      
+      const record1 = createMockRecord('1', { email: 'john@example.com', phone: '555-1234' })
+      const record2 = createMockRecord('2', { email: 'john@example.com', phone: '' })
+      
+      expect(matcher(record1, record2)).toBe(true)
+    })
+
+    it('should not match records with conflicting secondary field', () => {
+      const matcher = createConditionalMatcher({
+        rules: [{ primaryField: 'email', secondaryField: 'phone', requireBothPopulated: false }]
+      })
+      
+      const record1 = createMockRecord('1', { email: 'john@example.com', phone: '555-1234' })
+      const record2 = createMockRecord('2', { email: 'john@example.com', phone: '555-5678' })
+      
+      expect(matcher(record1, record2)).toBe(false)
+    })
+
+    it('should match with requireBothPopulated when both fields match', () => {
+      const matcher = createConditionalMatcher({
+        rules: [{ primaryField: 'ssn', secondaryField: 'last_name', requireBothPopulated: true }]
+      })
+      
+      const record1 = createMockRecord('1', { ssn: '123-45-6789', last_name: 'Smith' })
+      const record2 = createMockRecord('2', { ssn: '123-45-6789', last_name: 'Smith' })
+      
+      expect(matcher(record1, record2)).toBe(true)
+    })
+  })
+
+  describe('createPriorityMerger', () => {
+    it('should merge priority fields by taking first populated value from highest priority', () => {
+      const merger = createPriorityMerger({
+        priorityFields: ['customer_id', 'email', 'first_name']
+      })
+      
+      const record1 = createMockRecord('1', { 
+        customer_id: 'CUST123', 
+        email: '', 
+        first_name: 'John'
+      }, 'primary', 10)
+      
+      const record2 = createMockRecord('2', { 
+        customer_id: '', 
+        email: 'john@example.com', 
+        first_name: 'Johnny'
+      }, 'secondary', 5)
+      
+      const result = merger([record1, record2])
+      
+      expect(result.values.customer_id.value).toBe('CUST123')
+      expect(result.values.email.value).toBe('john@example.com')
+      expect(result.values.first_name.value).toBe('John')
+    })
+
+    it('should merge union fields by combining unique values', () => {
+      const merger = createPriorityMerger({
+        unionFields: ['tags', 'categories']
+      })
+      
+      const record1 = createMockRecord('1', { 
+        tags: 'urgent,important', 
+        categories: 'sales'
+      }, 'source1', 10)
+      
+      const record2 = createMockRecord('2', { 
+        tags: 'follow-up,important', 
+        categories: 'marketing'
+      }, 'source2', 5)
+      
+      const result = merger([record1, record2])
+      
+      expect(result.values.tags.value).toBe('urgent; important; follow-up')
+      expect(result.values.categories.value).toBe('sales; marketing')
+    })
+
+    it('should handle single record', () => {
+      const merger = createPriorityMerger()
+      const record = createMockRecord('1', { customer_id: 'CUST123' })
+      
+      const result = merger([record])
+      expect(result).toBe(record)
+    })
+
+    it('should throw error for empty array', () => {
+      const merger = createPriorityMerger()
+      expect(() => merger([])).toThrow('Cannot merge empty record array')
     })
   })
 
   describe('createProviderTrustMatcher', () => {
-    const matcher = createProviderTrustMatcher()
-
-    const createRecord = (
-      id: string,
-      externalId: string,
-      npi: string,
-      ssn: string
-    ): RecordWithSource => ({
-      id,
-      values: {
-        external_id: { value: externalId },
-        npi: { value: npi },
-        ssn: { value: ssn },
-      },
-    })
-
-    it('should match on same external ID', () => {
-      const record1 = createRecord('1', 'ext123', '', '')
-      const record2 = createRecord('2', 'ext123', 'npi456', 'ssn789')
-
+    it('should match records with same external_id', () => {
+      const matcher = createProviderTrustMatcher()
+      
+      const record1 = createMockRecord('1', { external_id: 'EXT123', npi: '1234567890', ssn: '123-45-6789' })
+      const record2 = createMockRecord('2', { external_id: 'EXT123', npi: '0987654321', ssn: '987-65-4321' })
+      
       expect(matcher(record1, record2)).toBe(true)
     })
 
-    it('should match on same NPI with compatible SSN', () => {
-      const record1 = createRecord('1', '', 'npi123', 'ssn456')
-      const record2 = createRecord('2', '', 'npi123', 'ssn456')
-
+    it('should match records with same NPI and non-conflicting SSN', () => {
+      const matcher = createProviderTrustMatcher()
+      
+      const record1 = createMockRecord('1', { external_id: 'EXT123', npi: '1234567890', ssn: '123-45-6789' })
+      const record2 = createMockRecord('2', { external_id: 'EXT456', npi: '1234567890', ssn: '' })
+      
       expect(matcher(record1, record2)).toBe(true)
     })
 
-    it('should match on same NPI with blank SSN', () => {
-      const record1 = createRecord('1', '', 'npi123', '')
-      const record2 = createRecord('2', '', 'npi123', 'ssn456')
-
+    it('should match records with same SSN and non-conflicting NPI', () => {
+      const matcher = createProviderTrustMatcher()
+      
+      const record1 = createMockRecord('1', { external_id: 'EXT123', npi: '', ssn: '123-45-6789' })
+      const record2 = createMockRecord('2', { external_id: 'EXT456', npi: '1234567890', ssn: '123-45-6789' })
+      
       expect(matcher(record1, record2)).toBe(true)
     })
 
-    it('should match on same SSN with compatible NPI', () => {
-      const record1 = createRecord('1', '', 'npi123', 'ssn456')
-      const record2 = createRecord('2', '', 'npi123', 'ssn456')
-
-      expect(matcher(record1, record2)).toBe(true)
-    })
-
-    it('should match on same SSN with blank NPI', () => {
-      const record1 = createRecord('1', '', '', 'ssn456')
-      const record2 = createRecord('2', '', 'npi123', 'ssn456')
-
-      expect(matcher(record1, record2)).toBe(true)
-    })
-
-    it('should not match on different NPI and SSN', () => {
-      const record1 = createRecord('1', '', 'npi123', 'ssn456')
-      const record2 = createRecord('2', '', 'npi789', 'ssn012')
-
+    it('should not match records with conflicting SSN when NPI matches', () => {
+      const matcher = createProviderTrustMatcher()
+      
+      const record1 = createMockRecord('1', { external_id: 'EXT123', npi: '1234567890', ssn: '123-45-6789' })
+      const record2 = createMockRecord('2', { external_id: 'EXT456', npi: '1234567890', ssn: '987-65-4321' })
+      
       expect(matcher(record1, record2)).toBe(false)
     })
 
-    it('should not match when NPI same but SSN different', () => {
-      const record1 = createRecord('1', '', 'npi123', 'ssn456')
-      const record2 = createRecord('2', '', 'npi123', 'ssn789')
-
+    it('should not match records with no matching criteria', () => {
+      const matcher = createProviderTrustMatcher()
+      
+      const record1 = createMockRecord('1', { external_id: 'EXT123', npi: '1234567890', ssn: '123-45-6789' })
+      const record2 = createMockRecord('2', { external_id: 'EXT456', npi: '0987654321', ssn: '987-65-4321' })
+      
       expect(matcher(record1, record2)).toBe(false)
     })
   })
 
   describe('createProviderTrustMerger', () => {
-    const merger = createProviderTrustMerger()
-
-    const createRecord = (
-      id: string,
-      externalId: string,
-      firstName: string,
-      npi: string,
-      priority: number,
-      sheetName: string
-    ): RecordWithSource => ({
-      id,
-      values: {
-        external_id: { value: externalId },
-        first_name: { value: firstName },
-        npi: { value: npi },
-        license_number: { value: `license_${id}` },
-      },
-      _source: {
-        sheetId: `sheet_${id}`,
-        sheetName,
-        priority,
-      },
+    it('should merge records prioritizing populated values from higher priority sources', () => {
+      const merger = createProviderTrustMerger()
+      
+      const record1 = createMockRecord('1', { 
+        external_id: 'EXT123', 
+        first_name: 'John', 
+        middle_name: '', 
+        npi: '1234567890' 
+      }, 'peoplesoft', 10)
+      
+      const record2 = createMockRecord('2', { 
+        external_id: '', 
+        first_name: 'John', 
+        middle_name: 'Michael', 
+        npi: '' 
+      }, 'mdstaff', 5)
+      
+      const result = merger([record1, record2])
+      
+      expect(result.values.external_id.value).toBe('EXT123')
+      expect(result.values.first_name.value).toBe('John')
+      expect(result.values.middle_name.value).toBe('Michael')
+      expect(result.values.npi.value).toBe('1234567890')
     })
 
-    it('should prioritize populated core fields from higher priority source', () => {
-      const record1 = createRecord('1', '', 'Gary', '', 5, 'MDStaff')
-      const record2 = createRecord(
-        '2',
-        'ext123',
-        'Gary',
-        '6863666149',
-        10,
-        'Peoplesoft'
-      )
-
-      const result = merger([record1, record2])
-
-      expect(result.id).toBe('2') // Higher priority record
-      expect(result.values.external_id.value).toBe('ext123') // From Peoplesoft
-      expect(result.values.first_name.value).toBe('Gary') // Same in both
-      expect(result.values.npi.value).toBe('6863666149') // From Peoplesoft
+    it('should handle single record', () => {
+      const merger = createProviderTrustMerger()
+      const record = createMockRecord('1', { external_id: 'EXT123' })
+      
+      const result = merger([record])
+      expect(result).toBe(record)
     })
 
-    it('should fill missing core fields from lower priority sources', () => {
-      const record1 = createRecord(
-        '1',
-        'ext123',
-        'Gary',
-        '6863666149',
-        5,
-        'MDStaff'
-      )
-      const record2 = createRecord('2', '', 'Gary', '', 10, 'Peoplesoft')
-
-      const result = merger([record1, record2])
-
-      expect(result.id).toBe('2') // Higher priority record
-      expect(result.values.external_id.value).toBe('ext123') // Filled from MDStaff
-      expect(result.values.npi.value).toBe('6863666149') // Filled from MDStaff
-    })
-
-    it('should merge non-core fields', () => {
-      const record1 = createRecord('1', 'ext123', 'Gary', '', 5, 'MDStaff')
-      const record2 = createRecord(
-        '2',
-        'ext123',
-        'Gary',
-        '6863666149',
-        10,
-        'Peoplesoft'
-      )
-
-      const result = merger([record1, record2])
-
-      expect(result.values.license_number.value).toBe('license_2') // From higher priority
+    it('should throw error for empty array', () => {
+      const merger = createProviderTrustMerger()
+      expect(() => merger([])).toThrow('Cannot merge empty record array')
     })
   })
 })

@@ -1,8 +1,9 @@
-import type { Flatfile } from '@flatfile/api'
+import { Flatfile } from '@flatfile/api'
 
 export interface RecordWithSource {
   id: string
   values: Record<string, Flatfile.CellValue>
+  metadata?: Record<string, any>
   _source?: {
     sheetId: string
     sheetName: string
@@ -10,99 +11,41 @@ export interface RecordWithSource {
   }
 }
 
-export function generateMergeKey(
-  record: RecordWithSource,
-  field: string | string[]
-): string | undefined {
-  if (Array.isArray(field)) {
-    const keyParts: string[] = []
-
-    for (const f of field) {
-      const value = record.values[f]?.value
-      if (value === undefined || value === null) {
-        keyParts.push('')
-      } else {
-        keyParts.push(value.toString())
-      }
+export function generateMergeKey(record: RecordWithSource, on: string | string[]): string | null {
+  if (Array.isArray(on)) {
+    const keyParts = on.map(field => {
+      const value = record.values[field]?.value
+      return value === null || value === undefined || value === '' ? '' : String(value).trim()
+    })
+    
+    if (keyParts.every(part => part === '')) {
+      return null
     }
-
-    if (keyParts.length === field.length) {
-      return keyParts.join('::')
-    }
+    
+    return keyParts.join('|')
   } else {
-    const value = record.values[field]?.value
-    if (value !== undefined && value !== null) {
-      return value.toString()
-    }
+    const value = record.values[on]?.value
+    return value === null || value === undefined || value === '' ? null : String(value).trim()
   }
-  return undefined
-}
-
-export function mergeRecordsWithPriority(
-  records: RecordWithSource[],
-  strategy: 'delete' | 'merge' | 'union'
-): RecordWithSource {
-  const sortedRecords = records.sort(
-    (a, b) => (b._source?.priority || 0) - (a._source?.priority || 0)
-  )
-
-  if (strategy === 'delete') {
-    return sortedRecords[0]
-  }
-
-  const baseRecord = { ...sortedRecords[0] }
-
-  if (strategy === 'union') {
-    for (let i = 1; i < sortedRecords.length; i++) {
-      const record = sortedRecords[i]
-      for (const [key, value] of Object.entries(record.values)) {
-        if (!baseRecord.values[key] || !baseRecord.values[key]?.value) {
-          baseRecord.values[key] = value
-        }
-      }
-    }
-  } else if (strategy === 'merge') {
-    for (let i = 1; i < sortedRecords.length; i++) {
-      const record = sortedRecords[i]
-      for (const [key, value] of Object.entries(record.values)) {
-        const hasBaseValue =
-          baseRecord.values[key]?.value !== undefined &&
-          baseRecord.values[key]?.value !== null &&
-          baseRecord.values[key]?.value !== ''
-        const hasSourceValue =
-          value?.value !== undefined &&
-          value?.value !== null &&
-          value?.value !== ''
-
-        if (!hasBaseValue && hasSourceValue) {
-          baseRecord.values[key] = value
-        }
-      }
-    }
-  }
-
-  return baseRecord
 }
 
 export function generateFilePriority(
   sheetName: string,
-  filePriorities?: Record<string, number>,
-  filePatternPriorities?: Array<{ pattern: RegExp | string; priority: number }>
+  filePriorities: Record<string, number>,
+  filePatternPriorities: Array<{ pattern: RegExp | string; priority: number }>
 ): number {
-  if (filePriorities && filePriorities[sheetName] !== undefined) {
+  if (filePriorities[sheetName] !== undefined) {
     return filePriorities[sheetName]
   }
 
-  if (filePatternPriorities) {
-    for (const { pattern, priority } of filePatternPriorities) {
-      if (pattern instanceof RegExp) {
-        if (pattern.test(sheetName)) {
-          return priority
-        }
-      } else if (typeof pattern === 'string') {
-        if (sheetName.toLowerCase().includes(pattern.toLowerCase())) {
-          return priority
-        }
+  for (const { pattern, priority } of filePatternPriorities) {
+    if (typeof pattern === 'string') {
+      if (sheetName.toLowerCase().includes(pattern.toLowerCase())) {
+        return priority
+      }
+    } else if (pattern instanceof RegExp) {
+      if (pattern.test(sheetName)) {
+        return priority
       }
     }
   }
@@ -110,50 +53,135 @@ export function generateFilePriority(
   return 0
 }
 
-export function checkRecordsMatch(
-  record1: RecordWithSource,
-  record2: RecordWithSource,
-  customMatcher?: (r1: RecordWithSource, r2: RecordWithSource) => boolean
-): boolean {
-  if (customMatcher) {
-    return customMatcher(record1, record2)
+export function mergeRecordsWithPriority(
+  records: RecordWithSource[],
+  strategy: 'delete' | 'merge' | 'union'
+): RecordWithSource {
+  if (records.length === 0) {
+    throw new Error('Cannot merge empty record array')
   }
 
-  return false
-}
+  if (records.length === 1) {
+    return records[0]
+  }
 
-export function createProviderTrustMatcher(): (
-  r1: RecordWithSource,
-  r2: RecordWithSource
-) => boolean {
-  return (record1: RecordWithSource, record2: RecordWithSource): boolean => {
-    const getValue = (record: RecordWithSource, field: string) => {
-      const value = record.values[field]?.value
-      return value !== undefined && value !== null && value !== ''
-        ? value.toString()
-        : null
-    }
+  const sortedRecords = [...records].sort((a, b) => 
+    (b._source?.priority || 0) - (a._source?.priority || 0)
+  )
 
-    const externalId1 = getValue(record1, 'external_id')
-    const externalId2 = getValue(record2, 'external_id')
-    const npi1 = getValue(record1, 'npi')
-    const npi2 = getValue(record2, 'npi')
-    const ssn1 = getValue(record1, 'ssn')
-    const ssn2 = getValue(record2, 'ssn')
+  const baseRecord = { ...sortedRecords[0] }
 
-    if (externalId1 && externalId2 && externalId1 === externalId2) {
-      return true
-    }
+  if (strategy === 'delete') {
+    return baseRecord
+  }
 
-    if (npi1 && npi2 && npi1 === npi2) {
-      if (!ssn1 || !ssn2 || ssn1 === ssn2) {
-        return true
+  if (strategy === 'merge') {
+    for (const field in baseRecord.values) {
+      let bestValue = baseRecord.values[field]?.value
+
+      if (bestValue === null || bestValue === undefined || bestValue === '') {
+        for (const record of sortedRecords.slice(1)) {
+          const value = record.values[field]?.value
+          if (value !== null && value !== undefined && value !== '') {
+            bestValue = value
+            break
+          }
+        }
+      }
+
+      if (bestValue !== null && bestValue !== undefined) {
+        baseRecord.values[field] = { value: bestValue }
       }
     }
 
-    if (ssn1 && ssn2 && ssn1 === ssn2) {
-      if (!npi1 || !npi2 || npi1 === npi2) {
+    return baseRecord
+  }
+
+  if (strategy === 'union') {
+    const unionValues: Record<string, Set<string>> = {}
+
+    for (const record of sortedRecords) {
+      for (const field in record.values) {
+        if (!unionValues[field]) {
+          unionValues[field] = new Set()
+        }
+
+        const value = record.values[field]?.value
+        if (value !== null && value !== undefined && value !== '') {
+          const stringValue = String(value)
+          const parts = stringValue.includes(',') ? stringValue.split(',').map(v => v.trim()) : [stringValue]
+          parts.forEach(part => {
+            if (part) {
+              unionValues[field].add(part)
+            }
+          })
+        }
+      }
+    }
+
+    for (const field in unionValues) {
+      const uniqueValues = Array.from(unionValues[field])
+      if (uniqueValues.length > 0) {
+        baseRecord.values[field] = {
+          value: uniqueValues.length === 1 ? uniqueValues[0] : uniqueValues.join('; ')
+        }
+      }
+    }
+
+    return baseRecord
+  }
+
+  return baseRecord
+}
+
+export interface ConditionalMatchingRule {
+  /** Primary field that must match exactly */
+  primaryField: string
+  /** Secondary field that must either match or be blank in one record */
+  secondaryField?: string
+  /** Whether this rule requires both fields to be populated */
+  requireBothPopulated?: boolean
+}
+
+export interface ConditionalMatchingConfig {
+  /** List of matching rules - if any rule matches, records are considered duplicates */
+  rules: ConditionalMatchingRule[]
+  /** Custom field value extractor function */
+  getValue?: (record: RecordWithSource, field: string) => string | null
+}
+
+export function createConditionalMatcher(config: ConditionalMatchingConfig): (record1: RecordWithSource, record2: RecordWithSource) => boolean {
+  const defaultGetValue = (record: RecordWithSource, field: string) => {
+    const value = record.values[field]?.value
+    return value === null || value === undefined || value === '' ? null : String(value).trim()
+  }
+
+  const getValue = config.getValue || defaultGetValue
+
+  return (record1: RecordWithSource, record2: RecordWithSource): boolean => {
+    for (const rule of config.rules) {
+      const primary1 = getValue(record1, rule.primaryField)
+      const primary2 = getValue(record2, rule.primaryField)
+
+      if (!primary1 || !primary2 || primary1 !== primary2) {
+        continue
+      }
+
+      if (!rule.secondaryField) {
         return true
+      }
+
+      const secondary1 = getValue(record1, rule.secondaryField)
+      const secondary2 = getValue(record2, rule.secondaryField)
+
+      if (rule.requireBothPopulated) {
+        if (secondary1 && secondary2 && secondary1 === secondary2) {
+          return true
+        }
+      } else {
+        if (!secondary1 || !secondary2 || secondary1 === secondary2) {
+          return true
+        }
       }
     }
 
@@ -161,71 +189,116 @@ export function createProviderTrustMatcher(): (
   }
 }
 
-export function createProviderTrustMerger(): (
-  records: RecordWithSource[]
-) => RecordWithSource {
+export interface PriorityMergeConfig {
+  /** Fields that should be merged with priority-based selection */
+  priorityFields?: string[]
+  /** Fields that should be merged by combining all unique values */
+  unionFields?: string[]
+  /** Custom field value extractor function */
+  getValue?: (record: RecordWithSource, field: string) => any
+  /** Custom field value setter function */
+  setValue?: (record: RecordWithSource, field: string, value: any) => void
+}
+
+export function createPriorityMerger(config: PriorityMergeConfig = {}): (records: RecordWithSource[]) => RecordWithSource {
+  const defaultGetValue = (record: RecordWithSource, field: string) => record.values[field]?.value
+  const defaultSetValue = (record: RecordWithSource, field: string, value: any) => {
+    record.values[field] = { value }
+  }
+
+  const getValue = config.getValue || defaultGetValue
+  const setValue = config.setValue || defaultSetValue
+  const priorityFields = config.priorityFields || []
+  const unionFields = config.unionFields || []
+
   return (records: RecordWithSource[]): RecordWithSource => {
+    if (records.length === 0) {
+      throw new Error('Cannot merge empty record array')
+    }
+
     if (records.length === 1) {
       return records[0]
     }
 
-    const sortedRecords = records.sort(
-      (a, b) => (b._source?.priority || 0) - (a._source?.priority || 0)
+    const sortedRecords = [...records].sort((a, b) => 
+      (b._source?.priority || 0) - (a._source?.priority || 0)
     )
-    const baseRecord = { ...sortedRecords[0] }
 
-    const coreFields = [
-      'external_id',
-      'type',
-      'first_name',
-      'middle_name',
-      'last_name',
-      'date_of_birth',
-      'ssn',
-      'npi',
-    ]
+    const mergedRecord = { ...sortedRecords[0] }
 
-    for (const field of coreFields) {
-      const baseValue = baseRecord.values[field]?.value
-      const hasBaseValue =
-        baseValue !== undefined && baseValue !== null && baseValue !== ''
+    for (const field of priorityFields) {
+      let bestValue = null
 
-      if (!hasBaseValue) {
-        for (const record of sortedRecords.slice(1)) {
-          const value = record.values[field]?.value
-          if (value !== undefined && value !== null && value !== '') {
-            baseRecord.values[field] = record.values[field]
-            break
-          }
+      for (const record of sortedRecords) {
+        const value = getValue(record, field)
+        if (value !== null && value !== undefined && value !== '') {
+          bestValue = value
+          break
         }
+      }
+
+      if (bestValue !== null) {
+        setValue(mergedRecord, field, bestValue)
       }
     }
 
-    const nonCoreFields = new Set<string>()
-    for (const record of records) {
-      for (const field of Object.keys(record.values)) {
-        if (!coreFields.includes(field)) {
-          nonCoreFields.add(field)
+    for (const field of unionFields) {
+      const uniqueValues = new Set<string>()
+
+      for (const record of sortedRecords) {
+        const value = getValue(record, field)
+        if (value !== null && value !== undefined && value !== '') {
+          const stringValue = String(value)
+          const parts = stringValue.includes(',') ? stringValue.split(',').map(v => v.trim()) : [stringValue]
+          parts.forEach(part => {
+            if (part) {
+              uniqueValues.add(part)
+            }
+          })
         }
+      }
+
+      if (uniqueValues.size > 0) {
+        setValue(mergedRecord, field, Array.from(uniqueValues).join('; '))
       }
     }
 
-    for (const field of nonCoreFields) {
-      const baseValue = baseRecord.values[field]?.value
-      const hasBaseValue =
-        baseValue !== undefined && baseValue !== null && baseValue !== ''
-
-      if (!hasBaseValue) {
-        for (const record of sortedRecords.slice(1)) {
-          const value = record.values[field]?.value
-          if (value !== undefined && value !== null && value !== '') {
-            baseRecord.values[field] = record.values[field]
-            break
-          }
-        }
-      }
-    }
-
-    return baseRecord
+    return mergedRecord
   }
+}
+
+export interface ProviderTrustConfig {
+  externalIdField?: string
+  npiField?: string
+  ssnField?: string
+  coreFields?: string[]
+}
+
+export function createProviderTrustMatcher(config: ProviderTrustConfig = {}): (record1: RecordWithSource, record2: RecordWithSource) => boolean {
+  const {
+    externalIdField = 'external_id',
+    npiField = 'npi', 
+    ssnField = 'ssn'
+  } = config
+
+  return createConditionalMatcher({
+    rules: [
+      { primaryField: externalIdField },
+      { primaryField: npiField, secondaryField: ssnField, requireBothPopulated: false },
+      { primaryField: ssnField, secondaryField: npiField, requireBothPopulated: false }
+    ]
+  })
+}
+
+export function createProviderTrustMerger(config: ProviderTrustConfig = {}): (records: RecordWithSource[]) => RecordWithSource {
+  const {
+    externalIdField = 'external_id',
+    npiField = 'npi',
+    ssnField = 'ssn',
+    coreFields = ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
+  } = config
+
+  return createPriorityMerger({
+    priorityFields: coreFields
+  })
 }
