@@ -302,6 +302,10 @@ export interface ProviderTrustConfig {
 export function createProviderTrustMatcher(
   config: ProviderTrustConfig
 ): (record1: RecordWithSource, record2: RecordWithSource) => boolean {
+  if (!config) {
+    throw new Error('ProviderTrust matcher requires a configuration object')
+  }
+
   const {
     externalIdField,
     npiField,
@@ -332,6 +336,10 @@ export function createProviderTrustMatcher(
 export function createProviderTrustMerger(
   config: ProviderTrustConfig
 ): (records: RecordWithSource[]) => RecordWithSource {
+  if (!config) {
+    throw new Error('ProviderTrust merger requires a configuration object')
+  }
+
   const { coreFields } = config
 
   if (!coreFields || coreFields.length === 0) {
