@@ -7,12 +7,27 @@ import { Flatfile } from '@flatfile/api'
  */
 export const keepFirst = (
   records: Flatfile.RecordsWithLinks,
-  key: string,
+  key: string | string[],
   uniques: Set<unknown>
 ): Array<string> => {
   try {
     return records.reduce((acc, record) => {
-      const { value } = record.values[key]
+      let value: unknown
+      
+      if (Array.isArray(key)) {
+        const keyParts: string[] = []
+        for (const k of key) {
+          const fieldValue = record.values[k]?.value
+          if (fieldValue === undefined || fieldValue === null) {
+            keyParts.push('')
+          } else {
+            keyParts.push(fieldValue.toString())
+          }
+        }
+        value = keyParts.join('::')
+      } else {
+        value = record.values[key]?.value
+      }
 
       if (uniques.has(value)) {
         // If the value has been seen, add the record's id to the accumulator

@@ -7,17 +7,40 @@ import { Flatfile } from '@flatfile/api'
  */
 export const keepLast = (
   records: Flatfile.RecordsWithLinks,
-  key: string,
+  key: string | string[],
   uniques: Set<unknown>
 ): Array<string> => {
   try {
     const seen = records.reduce(
       (acc, record) => {
-        if (record.values[key].value == null) {
-          return acc
+        let value: string
+        
+        if (Array.isArray(key)) {
+          const keyParts: string[] = []
+          let hasNullValue = false
+          
+          for (const k of key) {
+            const fieldValue = record.values[k]?.value
+            if (fieldValue == null) {
+              hasNullValue = true
+              keyParts.push('')
+            } else {
+              keyParts.push(fieldValue.toString())
+            }
+          }
+          
+          if (hasNullValue && keyParts.every(part => part === '')) {
+            return acc
+          }
+          
+          value = keyParts.join('::')
+        } else {
+          if (record.values[key].value == null) {
+            return acc
+          }
+          value = String(record.values[key].value)
         }
 
-        const value = String(record.values[key].value)
         uniques.add(value) // Add value to uniques set
 
         if (acc[value] == null) {
