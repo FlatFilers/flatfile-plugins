@@ -14,11 +14,11 @@ export const keepLast = (
     const seen = records.reduce(
       (acc, record) => {
         let value: string
-        
+
         if (Array.isArray(key)) {
           const keyParts: string[] = []
           let hasNullValue = false
-          
+
           for (const k of key) {
             const fieldValue = record.values[k]?.value
             if (fieldValue == null) {
@@ -28,11 +28,11 @@ export const keepLast = (
               keyParts.push(fieldValue.toString())
             }
           }
-          
-          if (hasNullValue && keyParts.every(part => part === '')) {
+
+          if (hasNullValue && keyParts.every((part) => part === '')) {
             return acc
           }
-          
+
           value = keyParts.join('::')
         } else {
           if (record.values[key].value == null) {

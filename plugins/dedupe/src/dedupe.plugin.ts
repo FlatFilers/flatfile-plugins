@@ -37,15 +37,23 @@ export interface PluginOptions {
     /** File priority mapping - higher numbers = higher priority */
     filePriorities?: Record<string, number>
     /** Filename pattern priorities - patterns matched against sheet names */
-    filePatternPriorities?: Array<{ pattern: RegExp | string; priority: number }>
+    filePatternPriorities?: Array<{
+      pattern: RegExp | string
+      priority: number
+    }>
     /** Include file attribution in merged records */
     includeAttribution?: boolean
     /** Merge strategy for multi-file deduplication */
     mergeStrategy?: 'delete' | 'merge' | 'union'
     /** Custom matching function for complex conditional logic */
-    customMatcher?: (record1: RecordWithSource, record2: RecordWithSource) => boolean
+    customMatcher?: (
+      record1: RecordWithSource,
+      record2: RecordWithSource
+    ) => boolean
     /** Custom merge function for advanced merging logic */
-    customMerger?: (records: RecordWithSource[]) => RecordWithSource | RecordWithSource[]
+    customMerger?: (
+      records: RecordWithSource[]
+    ) => RecordWithSource | RecordWithSource[]
   }
 }
 
@@ -150,11 +158,15 @@ async function dedupeMultiFile(
   const allRecords: RecordWithSource[] = []
   const filePriorities = opts.multiFile?.filePriorities || {}
   const filePatternPriorities = opts.multiFile?.filePatternPriorities || []
-  
+
   for (const sheet of sheets) {
     await tick(10, `Processing sheet: ${sheet.name}`)
-    
-    const priority = generateFilePriority(sheet.name, filePriorities, filePatternPriorities)
+
+    const priority = generateFilePriority(
+      sheet.name,
+      filePriorities,
+      filePatternPriorities
+    )
 
     await processRecords(sheet.id, async (records) => {
       for (const record of records) {
@@ -175,11 +187,11 @@ async function dedupeMultiFile(
 
   const groupedRecords = new Map<string, RecordWithSource[]>()
   const customMatcher = opts.multiFile?.customMatcher
-  
+
   if (customMatcher) {
     for (const record of allRecords) {
       let foundGroup = false
-      
+
       for (const [groupKey, group] of groupedRecords) {
         if (group.length > 0 && customMatcher(record, group[0])) {
           group.push(record)
@@ -187,7 +199,7 @@ async function dedupeMultiFile(
           break
         }
       }
-      
+
       if (!foundGroup) {
         const newKey = `group_${groupedRecords.size}`
         groupedRecords.set(newKey, [record])
@@ -197,7 +209,7 @@ async function dedupeMultiFile(
     for (const record of allRecords) {
       const key = generateMergeKey(record, opts.on)
       if (!key) continue
-      
+
       if (!groupedRecords.has(key)) {
         groupedRecords.set(key, [])
       }
@@ -230,24 +242,35 @@ async function dedupeMultiFile(
       }
 
       if (opts.multiFile?.includeAttribution) {
-        const sourceInfo = group.map(r => ({
+        const sourceInfo = group.map((r) => ({
           sheetName: r._source?.sheetName || 'unknown',
-          priority: r._source?.priority || 0
+          priority: r._source?.priority || 0,
         }))
 
         mergedRecord.values._sources = {
-          value: sourceInfo.map(s => `${s.sheetName}(${s.priority})`).join(', ')
+          value: sourceInfo
+            .map((s) => `${s.sheetName}(${s.priority})`)
+            .join(', '),
         }
 
-        const coreFields = ['external_id', 'type', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'ssn', 'npi']
+        const coreFields = [
+          'external_id',
+          'type',
+          'first_name',
+          'middle_name',
+          'last_name',
+          'date_of_birth',
+          'ssn',
+          'npi',
+        ]
         for (const field of coreFields) {
-          const sourceRecord = group.find(r => {
+          const sourceRecord = group.find((r) => {
             const value = r.values[field]?.value
             return value !== undefined && value !== null && value !== ''
           })
           if (sourceRecord) {
             mergedRecord.values[`${field}_source`] = {
-              value: sourceRecord._source?.sheetName || 'unknown'
+              value: sourceRecord._source?.sheetName || 'unknown',
             }
           }
         }

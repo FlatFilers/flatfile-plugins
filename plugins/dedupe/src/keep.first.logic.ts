@@ -13,7 +13,7 @@ export const keepFirst = (
   try {
     return records.reduce((acc, record) => {
       let value: unknown
-      
+
       if (Array.isArray(key)) {
         const keyParts: string[] = []
         for (const k of key) {
