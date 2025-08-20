@@ -10,9 +10,11 @@ import { PluginOptions, dedupe } from './dedupe.plugin'
  */
 export const dedupePlugin = (jobOperation: string, opts: PluginOptions) => {
   return (listener: FlatfileListener) => {
+    const jobType = opts.multiFile?.enabled ? 'workbook' : 'sheet'
+
     listener.use(
       jobHandler(
-        { operation: jobOperation },
+        { operation: jobOperation, type: jobType },
         async (event: FlatfileEvent, tick: TickFunction) => {
           await dedupe(event, tick, opts)
         }

@@ -33,6 +33,18 @@ The `custom` parameter accepts a custom dedupe function. This will override the 
 
 The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
 
+#### `opt.multiFile` - `object`
+
+The `multiFile` parameter enables advanced multi-file deduplication capabilities:
+
+- `enabled` - `boolean` - Enable multi-file deduplication across the entire workbook
+- `filePriorities` - `Record<string, number>` - Map of sheet names/IDs to priority values (higher = higher priority)
+- `includeAttribution` - `boolean` - Include source file information in merged records
+- `mergeStrategy` - `'delete' | 'merge' | 'union'` - Strategy for handling duplicate records:
+  - `delete`: Keep only the highest priority record
+  - `merge`: Merge records, filling in missing values from lower priority sources
+  - `union`: Combine all unique values from all sources (disjoint set union)
+
 
 ## API Calls
 
@@ -160,6 +172,41 @@ listener.use(
 
       return toDelete;
     },
+  })
+);
+
+// Multi-file deduplication with prioritization and file attribution
+// Must have a Workbook-level action specified with the operation name `dedupe-multi-file`
+listener.use(
+  dedupePlugin("dedupe-multi-file", {
+    on: "email",
+    multiFile: {
+      enabled: true,
+      filePriorities: {
+        "primary-contacts": 10,
+        "secondary-contacts": 5,
+        "imported-contacts": 1
+      },
+      includeAttribution: true,
+      mergeStrategy: "merge"
+    }
+  })
+);
+
+// Multi-file deduplication with disjoint set union (combine all unique values)
+listener.use(
+  dedupePlugin("dedupe-union", {
+    on: "customer_id",
+    multiFile: {
+      enabled: true,
+      filePriorities: {
+        "customer-master": 10,
+        "customer-details": 8,
+        "customer-preferences": 5
+      },
+      includeAttribution: true,
+      mergeStrategy: "union"
+    }
   })
 );
 ```
