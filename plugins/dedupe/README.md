@@ -33,6 +33,21 @@ The `custom` parameter accepts a custom dedupe function. This will override the 
 
 The `debug` parameter lets you toggle on/off helpful debugging messages for development purposes.
 
+#### `opt.multiFile` - `object`
+
+The `multiFile` parameter enables advanced multi-file deduplication capabilities:
+
+- `enabled` - `boolean` - Enable multi-file deduplication across the entire workbook
+- `filePriorities` - `Record<string, number>` - Map of sheet names/IDs to priority values (higher = higher priority)
+- `filePatternPriorities` - `Array<{ pattern: RegExp | string; priority: number }>` - Pattern-based priorities for filename matching
+- `includeAttribution` - `boolean` - Include source file information in merged records
+- `mergeStrategy` - `'delete' | 'merge' | 'union'` - Strategy for handling duplicate records:
+  - `delete`: Keep only the highest priority record
+  - `merge`: Merge records, filling in missing values from lower priority sources
+  - `union`: Combine all unique values from all sources (disjoint set union)
+- `customMatcher` - `function` - Custom function for complex conditional matching logic
+- `customMerger` - `function` - Custom function for advanced merging logic
+
 
 ## API Calls
 
@@ -160,6 +175,76 @@ listener.use(
 
       return toDelete;
     },
+  })
+);
+
+// Multi-file deduplication with prioritization and file attribution
+// Must have a Workbook-level action specified with the operation name `dedupe-multi-file`
+listener.use(
+  dedupePlugin("dedupe-multi-file", {
+    on: "email",
+    multiFile: {
+      enabled: true,
+      filePriorities: {
+        "primary-contacts": 10,
+        "secondary-contacts": 5,
+        "imported-contacts": 1
+      },
+      includeAttribution: true,
+      mergeStrategy: "merge"
+    }
+  })
+);
+
+// Multi-file deduplication with disjoint set union (combine all unique values)
+listener.use(
+  dedupePlugin("dedupe-union", {
+    on: "customer_id",
+    multiFile: {
+      enabled: true,
+      filePriorities: {
+        "customer-master": 10,
+        "customer-details": 8,
+        "customer-preferences": 5
+      },
+      includeAttribution: true,
+      mergeStrategy: "union"
+    }
+  })
+);
+
+// ProviderTrust-style complex matching with filename patterns
+import { createProviderTrustMatcher, createProviderTrustMerger } from '@flatfile/plugin-dedupe/multi-file.utils'
+
+listener.use(
+  dedupePlugin("dedupe-providertrust", {
+    multiFile: {
+      enabled: true,
+      filePatternPriorities: [
+        { pattern: "peoplesoft", priority: 10 },
+        { pattern: "mdstaff", priority: 5 }
+      ],
+      includeAttribution: true,
+      mergeStrategy: "merge",
+      customMatcher: createProviderTrustMatcher(),
+      customMerger: createProviderTrustMerger()
+    }
+  })
+);
+
+// Multi-field composite key matching
+listener.use(
+  dedupePlugin("dedupe-composite", {
+    on: ["first_name", "last_name", "date_of_birth"],
+    multiFile: {
+      enabled: true,
+      filePriorities: {
+        "primary-source": 10,
+        "secondary-source": 5
+      },
+      includeAttribution: true,
+      mergeStrategy: "merge"
+    }
   })
 );
 ```
