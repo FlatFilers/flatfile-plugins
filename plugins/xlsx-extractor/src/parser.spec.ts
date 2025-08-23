@@ -260,7 +260,6 @@ describe('parser', () => {
     })
   })
 
-<<<<<<< HEAD
   describe('raw option with object values', () => {
     test('handles Date objects and other non-string types when raw: true', async () => {
       const XLSX = require('xlsx')
