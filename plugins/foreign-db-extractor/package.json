@@ -1,6 +1,6 @@
 {
   "name": "@flatfile/plugin-foreign-db-extractor",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "url": "https://github.com/FlatFilers/flatfile-plugins/tree/main/plugins/foreign-db-extractor",
   "description": "A plugin for extracting MSSQL DBs from a .bak file.",
   "registryMetadata": {
