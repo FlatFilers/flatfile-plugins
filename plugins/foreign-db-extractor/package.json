@@ -58,12 +58,12 @@
   },
   "license": "ISC",
   "dependencies": {
-    "mssql": "^10.0.1",
-    "cross-fetch": "^4.0.0"
+    "mssql": "^11.0.1",
+    "cross-fetch": "^4.1.0"
   },
   "peerDependencies": {
-    "@flatfile/api": "^1.9.19",
-    "@flatfile/listener": "^1.1.0"
+    "@flatfile/api": "^1.22.0",
+    "@flatfile/listener": "^1.1.2"
   },
   "devDependencies": {
     "@flatfile/bundler-config-tsup": "^0.2.0",

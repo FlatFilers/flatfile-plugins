@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@flatfile/api": "^1.9.19",
+    "@flatfile/http-logger": "^1.0.4",
     "@flatfile/listener": "^1.1.0",
     "@flatfile/utils-debugger": "^0.0.6"
   },
