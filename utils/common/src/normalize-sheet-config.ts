@@ -26,24 +26,15 @@ export interface ValidationResult {
  * - Fully uppercase words stay as one chunk ("FIRSTNAME" => "firstname").
  * - Also, if the entire string is numeric, return it as a number.
  */
-export function normalizeKey(key: string | number): string | number {
+export function normalizeKey(key: string | number): string {
   if (key === null || key === undefined) {
     return ''
   }
-  // 1) If key is already a number, just return it.
-  //    e.g., normalizeKey(42) => 42
-  if (typeof key === 'number') {
-    return key
-  }
+  key = key.toString()
 
   // 2) If it's an empty string, return '' instead of "0"
   if (key.trim() === '') {
     return ''
-  }
-
-  // 3) If the entire string is numeric (like "123"), return as a number
-  if (!isNaN(Number(key))) {
-    return Number(key)
   }
 
   // We have some special characters to handle
