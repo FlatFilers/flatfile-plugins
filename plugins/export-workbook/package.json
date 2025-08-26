@@ -57,7 +57,6 @@
     "@flatfile/listener": "^1.1.0",
     "@flatfile/plugin-job-handler": "^0.8.1",
     "@flatfile/util-common": "^1.7.0",
-    "remeda": "^1.14.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {

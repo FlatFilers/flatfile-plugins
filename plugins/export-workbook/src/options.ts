@@ -1,4 +1,5 @@
 import type { Flatfile } from '@flatfile/api'
+import type { FlatfileEvent } from '@flatfile/listener'
 
 /**
  * A sheet address.
@@ -24,8 +25,9 @@ export interface ExportSheetOptions {
 
 export type ColumnNameTransformerCallback = (
   columnName: string,
-  sheetSlug: string
-) => string
+  sheetSlug: string,
+  event?: FlatfileEvent
+) => string | Promise<string>
 
 /**
  * Plugin config options.

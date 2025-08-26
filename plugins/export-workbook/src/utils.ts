@@ -1,5 +1,5 @@
-import type { ExportSheetOptions } from './options'
 import type { JSON2SheetOpts } from 'xlsx'
+import type { ExportSheetOptions } from './options'
 
 export function sanitize(fileName: string): string {
   // List of invalid characters that are commonly not allowed in file names
@@ -44,7 +44,7 @@ export function sanitizeExcelSheetName(name: string, index: number): string {
  * @param length - multiple of 26
  */
 export const genCyclicPattern = (length: number = 104): Array<string> => {
-  let alphaPattern: Array<string> = []
+  const alphaPattern: Array<string> = []
 
   for (let i = 0; i < length; i++) {
     let columnName = ''

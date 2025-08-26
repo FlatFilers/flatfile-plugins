@@ -1,19 +1,18 @@
+import * as fs from 'node:fs'
+import path from 'node:path'
 import type { Flatfile } from '@flatfile/api'
+import { FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import type { TickFunction } from '@flatfile/plugin-job-handler'
-
-import { FlatfileClient } from '@flatfile/api'
 import { logError, logInfo, processRecords } from '@flatfile/util-common'
-import * as fs from 'fs'
-import path from 'path'
-import * as R from 'remeda'
+
 import * as XLSX from 'xlsx'
+import type { PluginOptions } from './options'
 import {
   createXLSXSheetOptions,
   sanitize,
   sanitizeExcelSheetName,
 } from './utils'
-import type { PluginOptions } from './options'
 
 const api = new FlatfileClient()
 
@@ -41,12 +40,9 @@ export const exportRecords = async (
     const sanitizedName = sanitize(workbook.name)
 
     if (options.debug) {
-      const meta = R.pipe(
-        sheets,
-        R.reduce((acc, sheet) => {
-          return acc + `\n\t'${sheet.name}' (${sheet.id})`
-        }, '')
-      )
+      const meta = sheets.reduce((acc, sheet) => {
+        return acc + `\n\t'${sheet.name}' (${sheet.id})`
+      }, '')
 
       logInfo(PACKAGE_NAME, `Sheets found in Flatfile workbook: ${meta}`)
     }
@@ -62,29 +58,27 @@ export const exportRecords = async (
       }
 
       const columnNameTransformer = options.columnNameTransformer
-        ? (name: string) =>
-            options.columnNameTransformer(name, sheet.config.slug)
-        : (name: string) => name
+        ? async (name: string, event?: FlatfileEvent) =>
+            await options.columnNameTransformer(name, sheet.config.slug, event)
+        : async (name: string) => name
 
       try {
         let results = await processRecords<Record<string, any>[]>(
           sheet.id,
-          (records): Record<string, any>[] => {
-            return R.pipe(
-              records,
-              R.map(
-                ({
+          async (records): Promise<Record<string, any>[]> => {
+            const processedRecords = await Promise.all(
+              records.map(
+                async ({
                   id: recordId,
                   values: row,
                 }: {
                   id: string
                   values: any
                 }) => {
-                  const rowValue = R.pipe(
-                    Object.keys(row),
-                    R.reduce((acc, colName: string) => {
+                  const rowEntries = await Promise.all(
+                    Object.keys(row).map(async (colName: string) => {
                       if (options.excludeFields?.includes(colName)) {
-                        return acc
+                        return null
                       }
                       const formatCell = (cellValue: Flatfile.CellValue) => {
                         const { value, messages } = cellValue
@@ -95,7 +89,7 @@ export const exportRecords = async (
                         }
                         if (options.excludeMessages) {
                           cell.c = []
-                        } else if (R.length(messages) > 0) {
+                        } else if (messages.length > 0) {
                           cell.c = messages.map((m) => ({
                             a: 'Flatfile',
                             t: `[${m.type.toUpperCase()}]: ${m.message}`,
@@ -107,14 +101,18 @@ export const exportRecords = async (
                         return cell
                       }
 
-                      return {
-                        ...acc,
-                        [columnNameTransformer(colName)]: formatCell(
-                          row[colName]
-                        ),
-                      }
-                    }, {})
+                      const transformedColName = await columnNameTransformer(
+                        colName,
+                        event
+                      )
+                      return [transformedColName, formatCell(row[colName])]
+                    })
                   )
+
+                  const rowValue = Object.fromEntries(
+                    rowEntries.filter((entry) => entry !== null)
+                  )
+
                   return options?.includeRecordIds
                     ? {
                         recordId,
@@ -124,6 +122,7 @@ export const exportRecords = async (
                 }
               )
             )
+            return processedRecords
           },
           {
             filter: options.recordFilter,
@@ -136,16 +135,14 @@ export const exportRecords = async (
             c: [],
           }
 
-          results = [
-            [
-              Object.fromEntries(
-                sheet.config.fields.map((field) => [
-                  columnNameTransformer(field.key),
-                  emptyCell,
-                ])
-              ),
-            ],
-          ]
+          const emptyRowEntries = await Promise.all(
+            sheet.config.fields.map(async (field) => [
+              await columnNameTransformer(field.key, event),
+              emptyCell,
+            ])
+          )
+
+          results = [[Object.fromEntries(emptyRowEntries)]]
         }
         const rows = results.flat()
 
