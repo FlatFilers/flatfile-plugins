@@ -1,6 +1,6 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
-import sql from 'mssql'
+import type sql from 'mssql'
 import { pollDatabaseStatus } from './database.poll.status'
 import { restoreDatabase } from './database.restore'
 import type { DBUser } from './database.user'
@@ -60,6 +60,7 @@ export const foreignDBExtractor = () => {
             labels: ['file'],
             spaceId,
             environmentId,
+            storageStrategy: Flatfile.StorageStrategy.Foreigndb,
           })
 
           await api.files.update(fileId, {

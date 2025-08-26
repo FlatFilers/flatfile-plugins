@@ -1,4 +1,4 @@
-import { Flatfile } from '@flatfile/api'
+import type { Flatfile } from '@flatfile/api'
 import sql from 'mssql'
 
 export async function generateSheets(
@@ -21,8 +21,8 @@ export async function generateSheets(
 }
 
 async function getTablesAndColumns(connConfig: sql.config) {
-  let tables = {}
-  let conn
+  const tables = {}
+  let conn: sql.ConnectionPool
   try {
     conn = await sql.connect(connConfig)
     const query = `

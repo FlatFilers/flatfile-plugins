@@ -12,14 +12,14 @@ export async function pollDatabaseStatus(workbookId: string): Promise<void> {
   const maxAttempts = 36 // 3 minutes
   const retryDelay = 5_000
   let attempts = 0
-  let status
+  let status: string
   while (attempts < maxAttempts && !['SUCCESS', 'ERROR'].includes(status)) {
     try {
       const task = (await getDatabaseInfo(workbookId)) as Task
       status = task.status
       await new Promise((resolve) => setTimeout(resolve, retryDelay))
       attempts++
-    } catch (error) {}
+    } catch (_error) {}
   }
 
   if (!status || status === 'ERROR') {
@@ -69,7 +69,7 @@ type GetDatabaseResponse = {
       type: string
     }
   }
-  errors: any[]
+  errors: [{ key: string; message: string }]
 }
 
 type Task = {
