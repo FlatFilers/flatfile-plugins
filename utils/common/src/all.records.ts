@@ -1,4 +1,4 @@
-import { Flatfile, FlatfileClient } from '@flatfile/api'
+import { type Flatfile, FlatfileClient } from '@flatfile/api'
 import { CrossEnvConfig } from '@flatfile/cross-env-config'
 import fetch from 'cross-fetch'
 import { asyncLimitSeries } from './async.helpers'

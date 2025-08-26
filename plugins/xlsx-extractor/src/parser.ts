@@ -1,5 +1,10 @@
 import type { SheetCapture, WorkbookCapture } from '@flatfile/util-extractor'
 import * as XLSX from 'xlsx'
+import {
+  type GetHeadersOptions,
+  type GetHeadersResult,
+  ROWS_TO_SEARCH_FOR_HEADER,
+} from '../constants/headerDetection.const'
 import type { ExcelExtractorOptions } from '.'
 import { processMergedCells } from './merged-cells'
 import {
@@ -9,11 +14,6 @@ import {
   prependNonUniqueHeaderColumns,
   trimTrailingEmptyCells,
 } from './utils'
-import {
-  GetHeadersOptions,
-  GetHeadersResult,
-  ROWS_TO_SEARCH_FOR_HEADER,
-} from '../constants/headerDetection.const'
 
 type ParseBufferOptions = Omit<
   ExcelExtractorOptions,
@@ -154,7 +154,7 @@ async function convertSheet({
   const excelColumnLetters = Object.keys(rawRows[0])
 
   // Convert to array of arrays for easier processing
-  let dataRows = rawRows.map((row) => Object.values(row))
+  const dataRows = rawRows.map((row) => Object.values(row))
 
   // Remove trailing empty rows
   while (
@@ -266,7 +266,7 @@ async function convertSheet({
   )
 
   // Step 7: Build metadata if needed
-  let sheetMetadata: { rowHeaders: number[] } | undefined = undefined
+  let sheetMetadata: { rowHeaders: number[] } | undefined
   if (headerSelectionEnabled) {
     sheetMetadata = {
       rowHeaders: [rowsToSkip],
