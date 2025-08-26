@@ -1,5 +1,11 @@
 # @flatfile/plugin-foreign-db-extractor
 
+## 1.0.0
+
+### Major Changes
+
+- 972a90d: This release reflects changes made in platform
+
 ## 0.4.0
 
 ### Minor Changes
