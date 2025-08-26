@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.7.3
+
+### Patch Changes
+
+- f6490f9: Fix extractor key normalization
+- Updated dependencies [f6490f9]
+  - @flatfile/util-common@1.7.2
+
 ## 2.7.2
 
 ### Patch Changes

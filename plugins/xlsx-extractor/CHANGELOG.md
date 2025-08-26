@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.0.8
+
+### Patch Changes
+
+- f6490f9: Fix extractor key normalization
+- Updated dependencies [f6490f9]
+  - @flatfile/util-extractor@2.7.3
+
 ## 4.0.7
 
 ### Patch Changes
