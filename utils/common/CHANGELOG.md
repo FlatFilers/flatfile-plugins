@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.7.2
+
+### Patch Changes
+
+- f6490f9: Fix extractor key normalization
+
 ## 1.7.1
 
 ### Patch Changes
