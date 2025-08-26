@@ -1,40 +1,24 @@
 import type { FlatfileRecord } from '@flatfile/hooks'
 import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
+import { foreignDBExtractor } from '@flatfile/plugin-foreign-db-extractor'
 import { bulkRecordHook } from '@flatfile/plugin-record-hook'
-import {
-  configureSpace,
-  dataChecklist,
-  dataChecklistPlugin,
-} from '@flatfile/plugin-space-configure'
-import { viewMappedPlugin } from '@flatfile/plugin-view-mapped'
+import { configureSpace } from '@flatfile/plugin-space-configure'
 import { contacts } from './sheets/contacts'
-import { exportWorkbookPlugin } from '@flatfile/plugin-export-workbook'
-import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor'
-import { pdfExtractorPlugin } from '@flatfile/plugin-pdf-extractor'
+import '@flatfile/http-logger/init'
 
 export default async function (listener: FlatfileListener) {
+  listener.use(foreignDBExtractor())
   listener.use(
     bulkRecordHook(
       'contacts',
-      async (records: FlatfileRecord[], event: FlatfileEvent) => {
-        // TODO: Add your logic here
-        records.map((record) => {
+      async (records: FlatfileRecord[], _event: FlatfileEvent) => {
+        records.forEach((record) => {
           record.set('firstName', 'John')
         })
         return records
-      },
-      { debug: true }
+      }
     )
   )
-  listener.use(
-    ExcelExtractor({
-      debug: true,
-      headerDetectionOptions: { algorithm: 'aiDetection' },
-    })
-  )
-  listener.use(pdfExtractorPlugin({ apiKey: '' }))
-  listener.use(viewMappedPlugin({ keepRequiredFields: true }))
-  listener.use(exportWorkbookPlugin({ excludeMessages: false }))
   listener.use(
     configureSpace(
       {
