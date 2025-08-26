@@ -50,7 +50,7 @@ export async function pollForUser(workbookId: string): Promise<DBUser | Error> {
       if (user.username && user.password) {
         return user
       }
-    } catch (error) {}
+    } catch (_error) {}
 
     await new Promise((resolve) => setTimeout(resolve, retryDelay))
     attempts++
