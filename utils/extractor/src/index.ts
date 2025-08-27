@@ -104,8 +104,7 @@ export const Extractor = (
             headerSelectionEnabled,
             getHeaders,
           })
-          console.log('!!!!capture')
-          console.dir(capture, { depth: null })
+          
           await tick(5, 'plugins.extraction.createWorkbook')
           const workbook = await createWorkbook(
             event.context.environmentId,
@@ -113,8 +112,6 @@ export const Extractor = (
             capture,
             sourceEditorEnabled
           )
-          console.log('!!!!workbook')
-          console.dir(workbook, { depth: null })
 
           // Add workbook to file so if the extraction fails and the file is deleted, the workbook is also deleted
           // instead of being orphaned
@@ -231,8 +228,6 @@ function getSheetConfig(
     fields: keysToFields({ keys: headers, descriptions }),
     allowAdditionalFields: sourceEditorEnabled,
   })
-  console.log('!!!!sheetConfig')
-  console.dir(sheetConfig, { depth: null })
   return sheetConfig
 }
 
