@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 5.2.2
+
+### Patch Changes
+
+- f4c17c6: This release updates the column transformer logic to handle async cb
+
 ## 5.2.1
 
 ### Patch Changes
