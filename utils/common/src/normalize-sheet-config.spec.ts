@@ -3,10 +3,10 @@ import type { Flatfile } from '@flatfile/api'
 import { normalizeKey, normalizeSheetConfig } from './normalize-sheet-config'
 
 describe('normalizeKey', () => {
-  it('should return numbers as-is', () => {
-    expect(normalizeKey(42)).toBe(42)
-    expect(normalizeKey(0)).toBe(0)
-    expect(normalizeKey(-5)).toBe(-5)
+  it('should convert numbers to strings', () => {
+    expect(normalizeKey(42)).toBe('42')
+    expect(normalizeKey(0)).toBe('0')
+    expect(normalizeKey(-5)).toBe('-5')
   })
 
   it('should return empty string for null/undefined/empty', () => {
@@ -16,10 +16,10 @@ describe('normalizeKey', () => {
     expect(normalizeKey('   ')).toBe('')
   })
 
-  it('should convert numeric strings to numbers', () => {
-    expect(normalizeKey('123')).toBe(123)
-    expect(normalizeKey('0')).toBe(0)
-    expect(normalizeKey('-42')).toBe(-42)
+  it('should keep numeric strings as strings', () => {
+    expect(normalizeKey('123')).toBe('123')
+    expect(normalizeKey('0')).toBe('0')
+    expect(normalizeKey('-42')).toBe('-42')
   })
 
   it('should handle special characters', () => {
