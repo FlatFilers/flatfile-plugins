@@ -104,6 +104,7 @@ export const Extractor = (
             headerSelectionEnabled,
             getHeaders,
           })
+
           await tick(5, 'plugins.extraction.createWorkbook')
           const workbook = await createWorkbook(
             event.context.environmentId,
