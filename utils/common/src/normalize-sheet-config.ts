@@ -16,6 +16,8 @@ export interface ValidationResult {
   hasConflicts: boolean
 }
 
+const MAX_SHEET_FIELD_KEY_LENGTH = 225
+
 /**
  * Converts a string (in various formats) to snake_case.
  * - Consecutive uppercase letters remain a single chunk (e.g. "XYZ" => "xyz")
@@ -26,27 +28,19 @@ export interface ValidationResult {
  * - Fully uppercase words stay as one chunk ("FIRSTNAME" => "firstname").
  * - Also, if the entire string is numeric, return it as a number.
  */
-export function normalizeKey(key: string | number): string | number {
+export function normalizeKey(key: string | number): string {
   if (key === null || key === undefined) {
     return ''
   }
-  // 1) If key is already a number, just return it.
-  //    e.g., normalizeKey(42) => 42
-  if (typeof key === 'number') {
-    return key
-  }
+  // 1) Convert to string
+  key = String(key)
 
-  // 2) If it's an empty string, return '' instead of "0"
+  // 2) If it's an empty string, return ''
   if (key.trim() === '') {
     return ''
   }
 
-  // 3) If the entire string is numeric (like "123"), return as a number
-  if (!isNaN(Number(key))) {
-    return Number(key)
-  }
-
-  // We have some special characters to handle
+  // 3) We have some special characters to handle
   const specialReplacements: Record<string, string> = {
     '%': 'percent',
     $: 'dollar',
@@ -97,6 +91,26 @@ export function normalizeKey(key: string | number): string | number {
   return result
 }
 
+export function truncate(
+  key: string,
+  maxLength: number = MAX_SHEET_FIELD_KEY_LENGTH
+): string {
+  // Validate key is a string
+  if (typeof key !== 'string') {
+    throw new TypeError('The "key" parameter must be a string.')
+  }
+
+  // Validate maxLength is a positive integer
+  if (!Number.isInteger(maxLength) || maxLength <= 0) {
+    throw new RangeError(
+      'The "maxLength" parameter must be a positive integer.'
+    )
+  }
+
+  // Truncate if necessary
+  return key.length > maxLength ? key.substring(0, maxLength) : key
+}
+
 /**
  * Normalizes the field keys in a Flatfile SheetConfig using snake_case convention.
  * Creates a new SheetConfig with normalized field keys while preserving all other properties.
@@ -124,11 +138,13 @@ export function normalizeSheetConfig(
   const { output = 'transform' } = options
   const usedKeys = new Set<string>()
   const conflicts: KeyConflict[] = []
-
   const normalizedFields = sheetConfig.fields.map((field) => {
     const originalKey = field.key
-    const normalizedKey = normalizeKey(field.key) as string
-    let finalKey = normalizedKey
+    const normalizedKey = String(normalizeKey(field.key))
+    // truncate the key to 225 characters to give room for uniqueness suffixes
+    // Database indexed keys are limited to 255 characters
+    const truncatedKey = truncate(normalizedKey, MAX_SHEET_FIELD_KEY_LENGTH)
+    let finalKey = truncatedKey
     let counter = 1
 
     // Track if this key had conflicts
@@ -136,7 +152,7 @@ export function normalizeSheetConfig(
 
     // If the normalized key is already used, append _1, _2, etc.
     while (usedKeys.has(finalKey)) {
-      finalKey = `${normalizedKey}_${counter}`
+      finalKey = `${truncatedKey}_${counter}`
       counter++
     }
 
