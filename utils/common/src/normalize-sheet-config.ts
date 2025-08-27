@@ -91,7 +91,10 @@ export function normalizeKey(key: string | number): string {
   return result
 }
 
-export function truncate(key: string, maxLength: number = MAX_SHEET_FIELD_KEY_LENGTH): string {
+export function truncate(
+  key: string,
+  maxLength: number = MAX_SHEET_FIELD_KEY_LENGTH
+): string {
   // Validate key is a string
   if (typeof key !== 'string') {
     throw new TypeError('The "key" parameter must be a string.')
