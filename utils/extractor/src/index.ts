@@ -104,7 +104,6 @@ export const Extractor = (
             headerSelectionEnabled,
             getHeaders,
           })
-          
           await tick(5, 'plugins.extraction.createWorkbook')
           const workbook = await createWorkbook(
             event.context.environmentId,
@@ -222,13 +221,12 @@ function getSheetConfig(
   sourceEditorEnabled: boolean
 ): Flatfile.SheetConfig {
   // normalizeSheetConfig the keys to ensure they are unique and valid
-  const sheetConfig = normalizeSheetConfig({
+  return normalizeSheetConfig({
     name,
     slug: slugify(name),
     fields: keysToFields({ keys: headers, descriptions }),
     allowAdditionalFields: sourceEditorEnabled,
   })
-  return sheetConfig
 }
 
 function normalizeRecordKeys(record: Flatfile.RecordData): Flatfile.RecordData {
