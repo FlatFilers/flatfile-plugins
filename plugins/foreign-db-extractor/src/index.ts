@@ -81,7 +81,7 @@ export const foreignDBExtractor = () => {
           await pollDatabaseStatus(connectionConfig.database)
 
           // Step 2.5: Retrieve user credentials for the database
-          await tick(85, 'Retrieving database user credentials')
+          await tick(85, 'Configuring workbook')
           await configureWorkbook(workbook.id)
 
           // Step 2.7: Update file with workbookId
