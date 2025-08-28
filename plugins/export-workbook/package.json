@@ -60,9 +60,9 @@
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {
-    "@flatfile/plugin-job-handler": "^0.8.1",
-    "@flatfile/util-common": "^1.7.0",
     "@flatfile/bundler-config-tsup": "^0.2.0",
-    "@flatfile/config-vitest": "^0.0.0"
+    "@flatfile/config-vitest": "^0.0.0",
+    "@flatfile/plugin-job-handler": "^0.8.1",
+    "@flatfile/util-common": "^1.7.0"
   }
 }
