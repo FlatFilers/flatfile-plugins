@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 5.2.3
+
+### Patch Changes
+
+- e20bb15: This release fixes type requirements
+
 ## 5.2.2
 
 ### Patch Changes
