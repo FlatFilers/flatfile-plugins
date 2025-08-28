@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.7.3
+
+### Patch Changes
+
+- 0a6e0dd: Updated NormalizeKey to truncate large keys and increment duplications
+
 ## 1.7.2
 
 ### Patch Changes
