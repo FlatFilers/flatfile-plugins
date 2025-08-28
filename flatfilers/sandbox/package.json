@@ -11,18 +11,22 @@
     "dev:local": "dotenvx run --env-file=.env.local -- npm run dev",
     "dev:staging": "dotenvx run --env-file=.env.staging -- npm run dev",
     "dev:prod": "dotenvx run --env-file=.env.prod -- npm run dev",
+    "dev:ca": "dotenvx run --env-file=.env.ca -- npm run dev",
     "deploy": "flatfile deploy",
     "deploy:local": "dotenvx run --env-file=.env.local -- npm run deploy",
     "deploy:staging": "dotenvx run --env-file=.env.staging -- npm run deploy",
     "deploy:prod": "dotenvx run --env-file=.env.prod -- npm run deploy",
+    "deploy:ca": "dotenvx run --env-file=.env.ca -- npm run deploy",
     "list": "flatfile list",
     "list:local": "dotenvx run --env-file=.env.local -- npm run list",
     "list:staging": "dotenvx run --env-file=.env.staging -- npm run list",
     "list:prod": "dotenvx run --env-file=.env.prod -- npm run list",
+    "list:ca": "dotenvx run --env-file=.env.ca -- npm run list",
     "delete": "flatfile delete",
     "delete:local": "dotenvx run --env-file=.env.local -- npm run delete",
     "delete:staging": "dotenvx run --env-file=.env.staging -- npm run delete",
-    "delete:prod": "dotenvx run --env-file=.env.prod -- npm run delete"
+    "delete:prod": "dotenvx run --env-file=.env.prod -- npm run delete",
+    "delete:ca": "dotenvx run --env-file=.env.ca -- npm run delete"
   },
   "dependencies": {
     "@flatfile/api": "^1.9.19",

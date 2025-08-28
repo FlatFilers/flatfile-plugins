@@ -1,11 +1,9 @@
 import * as fs from 'node:fs'
 import path from 'node:path'
-import type { Flatfile } from '@flatfile/api'
-import { FlatfileClient } from '@flatfile/api'
+import { type Flatfile, FlatfileClient } from '@flatfile/api'
 import type { FlatfileEvent } from '@flatfile/listener'
 import type { TickFunction } from '@flatfile/plugin-job-handler'
 import { logError, logInfo, processRecords } from '@flatfile/util-common'
-
 import * as XLSX from 'xlsx'
 import type { PluginOptions } from './options'
 import {
@@ -29,7 +27,7 @@ export const exportRecords = async (
   event: FlatfileEvent,
   options: PluginOptions,
   tick: TickFunction
-): Promise<void | Flatfile.JobCompleteDetails> => {
+): Promise<Flatfile.JobCompleteDetails> => {
   const { environmentId, spaceId, workbookId } = event.context
 
   try {
@@ -69,64 +67,57 @@ export const exportRecords = async (
         : async (name: string) => name
 
       try {
-        let results = await processRecords<Record<string, any>[]>(
+        let results = await processRecords(
           sheet.id,
-          async (records): Promise<Record<string, any>[]> => {
+          async (records): Promise<Flatfile.RecordWithLinks[]> => {
             const processedRecords = await Promise.all(
-              records.map(
-                async ({
-                  id: recordId,
-                  values: row,
-                }: {
-                  id: string
-                  values: any
-                }) => {
-                  const rowEntries = await Promise.all(
-                    Object.keys(row).map(async (colName: string) => {
-                      if (options.excludeFields?.includes(colName)) {
-                        return null
+              records.map(async (record: Flatfile.RecordWithLinks) => {
+                const { id: recordId, values: row } = record
+                const rowEntries = await Promise.all(
+                  Object.keys(row).map(async (colName: string) => {
+                    if (options.excludeFields?.includes(colName)) {
+                      return null
+                    }
+                    const formatCell = (cellValue: Flatfile.CellValue) => {
+                      const { value, messages } = cellValue
+                      const cell: XLSX.CellObject = {
+                        t: 's',
+                        v: Array.isArray(value) ? value.join(', ') : value,
+                        c: [],
                       }
-                      const formatCell = (cellValue: Flatfile.CellValue) => {
-                        const { value, messages } = cellValue
-                        const cell: XLSX.CellObject = {
-                          t: 's',
-                          v: Array.isArray(value) ? value.join(', ') : value,
-                          c: [],
-                        }
-                        if (options.excludeMessages) {
-                          cell.c = []
-                        } else if (messages.length > 0) {
-                          cell.c = messages.map((m) => ({
-                            a: 'Flatfile',
-                            t: `[${m.type.toUpperCase()}]: ${m.message}`,
-                            T: true,
-                          }))
-                          cell.c.hidden = true
-                        }
-
-                        return cell
+                      if (options.excludeMessages) {
+                        cell.c = []
+                      } else if (messages.length > 0) {
+                        cell.c = messages.map((m) => ({
+                          a: 'Flatfile',
+                          t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                          T: true,
+                        }))
+                        cell.c.hidden = true
                       }
 
-                      const transformedColName = await columnNameTransformer(
-                        colName,
-                        event
-                      )
-                      return [transformedColName, formatCell(row[colName])]
-                    })
-                  )
+                      return cell
+                    }
 
-                  const rowValue = Object.fromEntries(
-                    rowEntries.filter((entry) => entry !== null)
-                  )
+                    const transformedColName = await columnNameTransformer(
+                      colName,
+                      event
+                    )
+                    return [transformedColName, formatCell(row[colName])]
+                  })
+                )
 
-                  return options?.includeRecordIds
-                    ? {
-                        recordId,
-                        ...rowValue,
-                      }
-                    : rowValue
-                }
-              )
+                const rowValue = Object.fromEntries(
+                  rowEntries.filter((entry) => entry !== null)
+                )
+
+                return options?.includeRecordIds
+                  ? {
+                      recordId,
+                      ...rowValue,
+                    }
+                  : rowValue
+              })
             )
             return processedRecords
           },
