@@ -59,7 +59,11 @@ export const exportRecords = async (
 
       const columnNameTransformer = options.columnNameTransformer
         ? async (name: string, event?: FlatfileEvent) => {
-            const result = await options.columnNameTransformer(name, sheet.config.slug, event)
+            const result = await options.columnNameTransformer(
+              name,
+              sheet.config.slug,
+              event
+            )
             return result ?? name
           }
         : async (name: string) => name
