@@ -1,5 +1,11 @@
 # @flatfile/plugin-foreign-db-extractor
 
+## 1.1.0
+
+### Minor Changes
+
+- d33b48b: This release reflects the foreign db refactor in platform
+
 ## 1.0.0
 
 ### Major Changes
