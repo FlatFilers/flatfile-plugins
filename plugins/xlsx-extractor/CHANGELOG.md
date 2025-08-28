@@ -1,5 +1,13 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.0.9
+
+### Patch Changes
+
+- 0a6e0dd: Updated NormalizeKey to truncate large keys and increment duplications
+- Updated dependencies [0a6e0dd]
+  - @flatfile/util-extractor@2.7.4
+
 ## 4.0.8
 
 ### Patch Changes

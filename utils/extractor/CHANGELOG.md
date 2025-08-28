@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.7.4
+
+### Patch Changes
+
+- 0a6e0dd: Updated NormalizeKey to truncate large keys and increment duplications
+- Updated dependencies [0a6e0dd]
+  - @flatfile/util-common@1.7.3
+
 ## 2.7.3
 
 ### Patch Changes
