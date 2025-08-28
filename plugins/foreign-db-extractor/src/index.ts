@@ -3,10 +3,8 @@ import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import type sql from 'mssql'
 import { pollDatabaseStatus } from './database.poll.status'
 import { restoreDatabase } from './database.restore'
-import type { DBUser } from './database.user'
-import { pollForUser } from './database.user'
 import { s3Upload } from './s3.upload'
-import { generateSheets } from './sheets.generator'
+import { configureWorkbook } from './workbook.configure'
 
 const api = new FlatfileClient()
 
@@ -83,29 +81,8 @@ export const foreignDBExtractor = () => {
           await pollDatabaseStatus(connectionConfig.database)
 
           // Step 2.5: Retrieve user credentials for the database
-          await tick(85, 'Retrieving database user credentials')
-          const user = (await pollForUser(connectionConfig.database)) as DBUser
-          connectionConfig.user = user.username
-          connectionConfig.password = user.password
-
-          // Step 2.6: Create a Workbook
-          // Get column names for all tables, loop through them and create Sheets for each table
-          await tick(90, 'Creating workbook')
-          const sheets = await generateSheets(connectionConfig)
-
-          // Sheets need to be added to the workbook before adding the connectionType to ensure the correct ephemeral
-          // driver is used
-          await api.workbooks.update(workbook.id, {
-            sheets,
-          })
-
-          // Update workbook with connection config
-          await api.workbooks.update(workbook.id, {
-            metadata: {
-              connectionType: 'FOREIGN_MSSQL',
-              connectionConfig,
-            },
-          })
+          await tick(85, 'Configuring workbook')
+          await configureWorkbook(workbook.id)
 
           // Step 2.7: Update file with workbookId
           await tick(95, 'Updating file')

@@ -4,8 +4,10 @@ import { contacts } from './sheets/contacts'
 import '@flatfile/http-logger/init'
 import api, { type Flatfile } from '@flatfile/api'
 import { exportWorkbookPlugin } from '@flatfile/plugin-export-workbook'
+import { foreignDBExtractor } from '@flatfile/plugin-foreign-db-extractor'
 
 export default async function (listener: FlatfileListener) {
+  listener.use(foreignDBExtractor())
   // Cache the sheets to avoid multiple API calls
   listener.on('job:ready', { job: 'workbook:downloadWorkbook' }, async (e) => {
     await e.cache.init('sheets-schema', async () => {
