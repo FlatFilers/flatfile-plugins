@@ -5,7 +5,7 @@ import { asyncLimitSeries } from './async.helpers'
 
 const api = new FlatfileClient()
 
-const DEFAULT_PAGE_SIZE = 10_000
+const DEFAULT_PAGE_SIZE = 5_000
 
 export async function getRecordsRaw(
   sheetId: string,
@@ -186,20 +186,22 @@ export async function updateAllRecords(
 export async function createAllRecords(
   sheetId: string,
   records: Flatfile.RecordData[],
-  tick?: TickHelper
+  tick?: TickHelper,
+  options?: {
+    pageSize?: number
+  }
 ): Promise<void> {
   const recordCount = records.length
-  const pageCount = Math.ceil(recordCount / DEFAULT_PAGE_SIZE)
+  const pageSize = options?.pageSize ?? DEFAULT_PAGE_SIZE
+  const pageCount = Math.ceil(recordCount / pageSize)
   await asyncLimitSeries(pageCount, async (index: number) => {
-    const start = index * DEFAULT_PAGE_SIZE
+    const start = index * pageSize
     const end =
-      start + DEFAULT_PAGE_SIZE <= records.length
-        ? start + DEFAULT_PAGE_SIZE
-        : records.length
+      start + pageSize <= records.length ? start + pageSize : records.length
     await tick?.((index + 1) / pageCount, index + 1, pageCount).catch(
       console.log
     )
-    return createRecords(sheetId, records.slice(index * DEFAULT_PAGE_SIZE, end))
+    return createRecords(sheetId, records.slice(index * pageSize, end))
   })
 }
 
