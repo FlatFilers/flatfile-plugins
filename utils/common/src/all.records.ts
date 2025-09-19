@@ -187,10 +187,12 @@ export async function createAllRecords(
   sheetId: string,
   records: Flatfile.RecordData[],
   tick?: TickHelper,
-  customRecordsPageSize?: number
+  options?: {
+    pageSize?: number
+  }
 ): Promise<void> {
   const recordCount = records.length
-  const pageSize = customRecordsPageSize ?? DEFAULT_PAGE_SIZE
+  const pageSize = options?.pageSize ?? DEFAULT_PAGE_SIZE
   const pageCount = Math.ceil(recordCount / pageSize)
   await asyncLimitSeries(pageCount, async (index: number) => {
     const start = index * pageSize

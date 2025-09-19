@@ -146,7 +146,9 @@ export const Extractor = (
                   'plugins.extraction.addingRecords'
                 )
               },
-              customRecordsPageSize?.metadata.pageSize
+              {
+                pageSize: customRecordsPageSize?.metadata?.pageSize,
+              }
             )
           }
 
