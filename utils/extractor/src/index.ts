@@ -78,6 +78,10 @@ export const Extractor = (
             (e) => e.key === 'sourceEditor'
           )
 
+          const customRecordsPageSize = entitlements.find(
+            (e) => e.key === 'customRecordsPageSize'
+          )
+
           const buffer = await getFileBuffer(event)
 
           // inject the getHeaders function into the options
@@ -141,7 +145,8 @@ export const Extractor = (
                   Math.min(99, Math.round(10 + 90 * (part / totalParts))),
                   'plugins.extraction.addingRecords'
                 )
-              }
+              },
+              customRecordsPageSize?.metadata.pageSize
             )
           }
 
