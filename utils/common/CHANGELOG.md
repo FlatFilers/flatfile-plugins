@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.7.4
+
+### Patch Changes
+
+- cfb779e: Decreased default pagesize. Added in customRecordsPageSize entitlement check
+
 ## 1.7.3
 
 ### Patch Changes
