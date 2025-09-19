@@ -197,9 +197,7 @@ export async function createAllRecords(
   await asyncLimitSeries(pageCount, async (index: number) => {
     const start = index * pageSize
     const end =
-      start + pageSize <= records.length
-        ? start + pageSize
-        : records.length
+      start + pageSize <= records.length ? start + pageSize : records.length
     await tick?.((index + 1) / pageCount, index + 1, pageCount).catch(
       console.log
     )
