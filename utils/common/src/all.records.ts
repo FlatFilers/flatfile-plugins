@@ -187,7 +187,7 @@ export async function createAllRecords(
   sheetId: string,
   records: Flatfile.RecordData[],
   tick?: TickHelper,
-  customRecordsPageSize: number = DEFAULT_PAGE_SIZE
+  customRecordsPageSize?: number
 ): Promise<void> {
   const recordCount = records.length
   const pageSize = customRecordsPageSize ?? DEFAULT_PAGE_SIZE
