@@ -1,5 +1,13 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.7.5
+
+### Patch Changes
+
+- cfb779e: Decreased default pagesize. Added in customRecordsPageSize entitlement check
+- Updated dependencies [cfb779e]
+  - @flatfile/util-common@1.7.4
+
 ## 2.7.4
 
 ### Patch Changes
