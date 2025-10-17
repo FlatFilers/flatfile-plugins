@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.1.1
+
+### Patch Changes
+
+- e0850b2: Update util-extractor
+
 ## 4.1.0
 
 ### Minor Changes
