@@ -88,6 +88,11 @@ export function normalizeKey(key: string | number): string {
   // 10) Trim, then replace any remaining spaces with underscores => snake_case
   result = result.trim().replace(/\s+/g, '_')
 
+  // 11) If the result is a number, convert it to a number then back to a string (converts 000 to 0 for example)
+  if (!isNaN(Number(result))) {
+    result = Number(result).toString()
+  }
+
   return result
 }
 
