@@ -83,7 +83,7 @@ describe('normalizeKey', () => {
     expect(normalizeKey('abc123')).toBe('abc123')
   })
 
-   it('should handle numbers casting', () => {
+  it('should handle numbers casting', () => {
     expect(normalizeKey('0')).toBe('0')
     expect(normalizeKey('000')).toBe('0')
     expect(normalizeKey('001')).toBe('1')
