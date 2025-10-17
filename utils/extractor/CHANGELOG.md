@@ -1,5 +1,11 @@
 # @flatfile/plugin-extractor-utils
 
+## 2.8.0
+
+### Minor Changes
+
+- 7c6e636: Update util-common
+
 ## 2.7.5
 
 ### Patch Changes
