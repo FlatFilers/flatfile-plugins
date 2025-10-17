@@ -82,6 +82,14 @@ describe('normalizeKey', () => {
     expect(normalizeKey('123abc')).toBe('123abc')
     expect(normalizeKey('abc123')).toBe('abc123')
   })
+
+   it('should handle numbers casting', () => {
+    expect(normalizeKey('0')).toBe('0')
+    expect(normalizeKey('000')).toBe('0')
+    expect(normalizeKey('001')).toBe('1')
+    expect(normalizeKey('00100')).toBe('100')
+    expect(normalizeKey('000000')).toBe('0')
+  })
 })
 
 describe('normalizeSheetConfig', () => {
