@@ -189,7 +189,7 @@ jobs:
           if [ "$E2E_PACKAGES" != "[]" ] && [ "$E2E_PACKAGES" != "" ]; then
             echo "$E2E_PACKAGES" | jq -r '.[]' | while read -r package; do
               echo "Running E2E tests for $package"
-              npm run test:e2e -- --filter=$package
+              npm run test:e2e -- --force --filter=$package
               if [ $? -ne 0 ]; then
                 echo "E2E tests failed for $package"
                 exit 1
