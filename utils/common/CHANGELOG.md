@@ -1,5 +1,11 @@
 # @flatfile/util-common
 
+## 1.8.0
+
+### Minor Changes
+
+- 9e779f0: Updated key normalization to properly cast numberical keys
+
 ## 1.7.4
 
 ### Patch Changes

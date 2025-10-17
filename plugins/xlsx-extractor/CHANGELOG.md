@@ -1,5 +1,11 @@
 # @flatfile/plugin-xlsx-extractor
 
+## 4.1.0
+
+### Minor Changes
+
+- 9e779f0: Updated key normalization to properly cast numberical keys
+
 ## 4.0.9
 
 ### Patch Changes
