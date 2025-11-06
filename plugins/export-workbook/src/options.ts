@@ -37,13 +37,13 @@ export type ColumnNameTransformerCallback = (
  * @property {string[]} excludeFields - list of field names to exclude from the exported data. This applies to all sheets.
  * @property {boolean} excludeMessages - exclude record messages from the exported data.
  * @property {Flatfile.Filter} recordFilter - filter to apply to the records before exporting.
- * @property {boolean} includeRecordIds - include record ids in the exported data.
+ * @property {boolean} includeRecordIds - include record ids in the exported data. When followBlueprintOrder is true, recordId appears as the first column. In non-blueprint mode, recordId position is unspecified (depends on object key order).
  * @property {boolean} autoDownload - auto download the file after exporting
  * @property {string} filename - filename to use for the exported file.
  * @property {boolean} debug - show helpful messages useful for debugging (use intended for development).
  * @property {Record<string, ExportSheetOptions>} sheetOptions - map of sheet slug to ExportSheetOptions.
  * @property {ColumnNameTransformerCallback} columnNameTransformer - callback to transform column names.
- * @property {boolean} followBlueprintOrder - if true, export columns in sheet.config.fields order instead of API values order. Handles duplicate labels by disambiguating with field keys.
+ * @property {boolean} followBlueprintOrder - if true, export columns in sheet.config.fields order instead of API values order. Handles duplicate labels by disambiguating with field keys. Additional fields not in blueprint are sorted by key and appended at the end.
  */
 export interface PluginOptions {
   readonly jobName?: string

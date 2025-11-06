@@ -84,6 +84,7 @@ export const exportRecords = async (
         let labelCounts: Map<string, number> | null = null
         let extrasKeyToUniqueLabel: Map<string, string> | null = null
         let extrasHeaderOrder: string[] | null = null
+        let blueprintKeysSet: Set<string> = new Set()
 
         if (options.followBlueprintOrder) {
           const blueprintKeys = sheet.config.fields
@@ -111,6 +112,8 @@ export const exportRecords = async (
             headerMapping.set(key, uniqueLabel)
             orderedHeaders.push(uniqueLabel)
           }
+
+          blueprintKeysSet = new Set(headerMapping.keys())
 
           if (options.includeRecordIds) {
             orderedHeaders.unshift('recordId')
@@ -177,10 +180,9 @@ export const exportRecords = async (
                     rowValue[uniqueLabel] = formatCell(row[key])
                   }
 
-                  const blueprintKeys = new Set(headerMapping.keys())
                   const additionalKeys = Object.keys(row).filter(
                     (key) =>
-                      !blueprintKeys.has(key) && !excludeFieldsSet.has(key)
+                      !blueprintKeysSet.has(key) && !excludeFieldsSet.has(key)
                   )
 
                   for (const key of additionalKeys) {
@@ -243,13 +245,20 @@ export const exportRecords = async (
           }
 
           const emptyRowEntries = await Promise.all(
-            sheet.config.fields.map(async (field) => [
-              await memoizedTransform(field.key),
-              emptyCell,
-            ])
+            sheet.config.fields
+              .filter((f) => !excludeFieldsSet.has(f.key))
+              .map(async (field) => [
+                await memoizedTransform(field.key),
+                emptyCell,
+              ])
           )
 
-          results = [[Object.fromEntries(emptyRowEntries)]]
+          const emptyRow = Object.fromEntries(emptyRowEntries)
+          if (options.includeRecordIds) {
+            results = [[{ recordId: '', ...emptyRow }]]
+          } else {
+            results = [[emptyRow]]
+          }
         }
         const rows = results.flat()
 
@@ -258,9 +267,14 @@ export const exportRecords = async (
         )
 
         if (options.followBlueprintOrder && orderedHeaders) {
-          if (extrasHeaderOrder && extrasHeaderOrder.length > 0) {
-            extrasHeaderOrder.sort()
-            orderedHeaders = orderedHeaders.concat(extrasHeaderOrder)
+          if (extrasKeyToUniqueLabel && extrasKeyToUniqueLabel.size > 0) {
+            const extrasKeysSorted = Array.from(
+              extrasKeyToUniqueLabel.keys()
+            ).sort()
+            const extrasOrderedLabels = extrasKeysSorted.map(
+              (k) => extrasKeyToUniqueLabel.get(k)!
+            )
+            orderedHeaders = orderedHeaders.concat(extrasOrderedLabels)
           }
           sheetOptions.header = orderedHeaders
         }
