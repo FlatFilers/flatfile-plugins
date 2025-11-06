@@ -152,14 +152,6 @@ export const exportRecords = async (
                     c.hidden = true
                   }
 
-                  if (typeof rawValue === 'number') {
-                    return {
-                      t: 'n',
-                      v: rawValue,
-                      c,
-                    }
-                  }
-
                   return {
                     t: 's',
                     v: rawValue,
