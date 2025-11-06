@@ -69,6 +69,9 @@ export const exportRecords = async (
       try {
         let headerMapping: Map<string, string> | null = null
         let orderedHeaders: string[] | null = null
+        let labelCounts: Map<string, number> | null = null
+        let extrasKeyToUniqueLabel: Map<string, string> | null = null
+        let extrasHeaderOrder: string[] | null = null
 
         if (options.followBlueprintOrder) {
           const blueprintKeys = sheet.config.fields
@@ -82,9 +85,11 @@ export const exportRecords = async (
             })
           )
 
-          const labelCounts = new Map<string, number>()
+          labelCounts = new Map<string, number>()
           headerMapping = new Map<string, string>()
           orderedHeaders = []
+          extrasKeyToUniqueLabel = new Map<string, string>()
+          extrasHeaderOrder = []
 
           for (const { key, label } of transformedLabels) {
             const count = labelCounts.get(label) || 0
@@ -137,7 +142,13 @@ export const exportRecords = async (
                   return cell
                 }
 
-                if (options.followBlueprintOrder && headerMapping) {
+                if (
+                  options.followBlueprintOrder &&
+                  headerMapping &&
+                  labelCounts &&
+                  extrasKeyToUniqueLabel &&
+                  extrasHeaderOrder
+                ) {
                   const rowValue: Record<string, XLSX.CellObject> = {}
 
                   for (const [key, uniqueLabel] of headerMapping.entries()) {
@@ -152,11 +163,17 @@ export const exportRecords = async (
                   )
 
                   for (const key of additionalKeys) {
-                    const transformedLabel = await columnNameTransformer(
-                      key,
-                      event
-                    )
-                    rowValue[transformedLabel] = formatCell(row[key])
+                    let uniqueLabel = extrasKeyToUniqueLabel.get(key)
+                    if (!uniqueLabel) {
+                      const baseLabel = await columnNameTransformer(key, event)
+                      const count = labelCounts.get(baseLabel) || 0
+                      labelCounts.set(baseLabel, count + 1)
+                      uniqueLabel =
+                        count > 0 ? `${baseLabel} (${key})` : baseLabel
+                      extrasKeyToUniqueLabel.set(key, uniqueLabel)
+                      extrasHeaderOrder.push(uniqueLabel)
+                    }
+                    rowValue[uniqueLabel] = formatCell(row[key])
                   }
 
                   return options.includeRecordIds
@@ -222,6 +239,9 @@ export const exportRecords = async (
         )
 
         if (options.followBlueprintOrder && orderedHeaders) {
+          if (extrasHeaderOrder && extrasHeaderOrder.length > 0) {
+            orderedHeaders = orderedHeaders.concat(extrasHeaderOrder)
+          }
           sheetOptions.header = orderedHeaders
         }
 
