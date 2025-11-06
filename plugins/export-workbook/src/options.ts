@@ -43,6 +43,7 @@ export type ColumnNameTransformerCallback = (
  * @property {boolean} debug - show helpful messages useful for debugging (use intended for development).
  * @property {Record<string, ExportSheetOptions>} sheetOptions - map of sheet slug to ExportSheetOptions.
  * @property {ColumnNameTransformerCallback} columnNameTransformer - callback to transform column names.
+ * @property {boolean} followBlueprintOrder - if true, export columns in sheet.config.fields order instead of API values order. Handles duplicate labels by disambiguating with field keys.
  */
 export interface PluginOptions {
   readonly jobName?: string
@@ -56,4 +57,5 @@ export interface PluginOptions {
   readonly debug?: boolean
   readonly sheetOptions?: Record<string, ExportSheetOptions>
   readonly columnNameTransformer?: ColumnNameTransformerCallback
+  readonly followBlueprintOrder?: boolean
 }

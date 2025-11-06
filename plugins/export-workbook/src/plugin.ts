@@ -67,56 +67,130 @@ export const exportRecords = async (
         : async (name: string) => name
 
       try {
+        let headerMapping: Map<string, string> | null = null
+        let orderedHeaders: string[] | null = null
+
+        if (options.followBlueprintOrder) {
+          const blueprintKeys = sheet.config.fields
+            .filter((field) => !options.excludeFields?.includes(field.key))
+            .map((field) => field.key)
+
+          const transformedLabels = await Promise.all(
+            blueprintKeys.map(async (key) => {
+              const label = await columnNameTransformer(key, event)
+              return { key, label }
+            })
+          )
+
+          const labelCounts = new Map<string, number>()
+          headerMapping = new Map<string, string>()
+          orderedHeaders = []
+
+          for (const { key, label } of transformedLabels) {
+            const count = labelCounts.get(label) || 0
+            labelCounts.set(label, count + 1)
+
+            const uniqueLabel = count > 0 ? `${label} (${key})` : label
+            headerMapping.set(key, uniqueLabel)
+            orderedHeaders.push(uniqueLabel)
+          }
+
+          if (options.includeRecordIds) {
+            orderedHeaders.unshift('recordId')
+          }
+        }
+
         let results = await processRecords(
           sheet.id,
           async (records): Promise<Flatfile.RecordWithLinks[]> => {
             const processedRecords = await Promise.all(
               records.map(async (record: Flatfile.RecordWithLinks) => {
                 const { id: recordId, values: row } = record
-                const rowEntries = await Promise.all(
-                  Object.keys(row).map(async (colName: string) => {
-                    if (options.excludeFields?.includes(colName)) {
-                      return null
-                    }
-                    const formatCell = (cellValue: Flatfile.CellValue) => {
-                      const { value, messages } = cellValue
-                      const cell: XLSX.CellObject = {
-                        t: 's',
-                        v: Array.isArray(value) ? value.join(', ') : value,
-                        c: [],
-                      }
-                      if (options.excludeMessages) {
-                        cell.c = []
-                      } else if (messages.length > 0) {
-                        cell.c = messages.map((m) => ({
-                          a: 'Flatfile',
-                          t: `[${m.type.toUpperCase()}]: ${m.message}`,
-                          T: true,
-                        }))
-                        cell.c.hidden = true
-                      }
 
-                      return cell
-                    }
+                const formatCell = (
+                  cellValue: Flatfile.CellValue | undefined
+                ) => {
+                  if (!cellValue) {
+                    return {
+                      t: 's',
+                      v: '',
+                      c: [],
+                    } as XLSX.CellObject
+                  }
+                  const { value, messages } = cellValue
+                  const cell: XLSX.CellObject = {
+                    t: 's',
+                    v: Array.isArray(value) ? value.join(', ') : value,
+                    c: [],
+                  }
+                  if (options.excludeMessages) {
+                    cell.c = []
+                  } else if (messages.length > 0) {
+                    cell.c = messages.map((m) => ({
+                      a: 'Flatfile',
+                      t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                      T: true,
+                    }))
+                    cell.c.hidden = true
+                  }
 
-                    const transformedColName = await columnNameTransformer(
-                      colName,
+                  return cell
+                }
+
+                if (options.followBlueprintOrder && headerMapping) {
+                  const rowValue: Record<string, XLSX.CellObject> = {}
+
+                  for (const [key, uniqueLabel] of headerMapping.entries()) {
+                    rowValue[uniqueLabel] = formatCell(row[key])
+                  }
+
+                  const blueprintKeys = new Set(headerMapping.keys())
+                  const additionalKeys = Object.keys(row).filter(
+                    (key) =>
+                      !blueprintKeys.has(key) &&
+                      !options.excludeFields?.includes(key)
+                  )
+
+                  for (const key of additionalKeys) {
+                    const transformedLabel = await columnNameTransformer(
+                      key,
                       event
                     )
-                    return [transformedColName, formatCell(row[colName])]
-                  })
-                )
+                    rowValue[transformedLabel] = formatCell(row[key])
+                  }
 
-                const rowValue = Object.fromEntries(
-                  rowEntries.filter((entry) => entry !== null)
-                )
+                  return options.includeRecordIds
+                    ? {
+                        recordId,
+                        ...rowValue,
+                      }
+                    : rowValue
+                } else {
+                  const rowEntries = await Promise.all(
+                    Object.keys(row).map(async (colName: string) => {
+                      if (options.excludeFields?.includes(colName)) {
+                        return null
+                      }
 
-                return options?.includeRecordIds
-                  ? {
-                      recordId,
-                      ...rowValue,
-                    }
-                  : rowValue
+                      const transformedColName = await columnNameTransformer(
+                        colName,
+                        event
+                      )
+                      return [transformedColName, formatCell(row[colName])]
+                    })
+                  )
+
+                  const rowValue = Object.fromEntries(
+                    rowEntries.filter((entry) => entry !== null)
+                  )
+
+                  return options?.includeRecordIds
+                    ? {
+                        recordId,
+                        ...rowValue,
+                      }
+                    : rowValue
+                }
               })
             )
             return processedRecords
@@ -143,10 +217,15 @@ export const exportRecords = async (
         }
         const rows = results.flat()
 
-        const worksheet = XLSX.utils.json_to_sheet(
-          rows,
-          createXLSXSheetOptions(options.sheetOptions?.[sheet.config.slug])
+        const sheetOptions = createXLSXSheetOptions(
+          options.sheetOptions?.[sheet.config.slug]
         )
+
+        if (options.followBlueprintOrder && orderedHeaders) {
+          sheetOptions.header = orderedHeaders
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(rows, sheetOptions)
 
         XLSX.utils.book_append_sheet(
           xlsxWorkbook,
