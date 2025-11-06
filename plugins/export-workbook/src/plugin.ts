@@ -67,6 +67,18 @@ export const exportRecords = async (
         : async (name: string) => name
 
       try {
+        const excludeFieldsSet = new Set(options.excludeFields ?? [])
+
+        const transformCache = new Map<string, string>()
+        const memoizedTransform = async (key: string) => {
+          if (transformCache.has(key)) {
+            return transformCache.get(key)!
+          }
+          const result = await columnNameTransformer(key, event)
+          transformCache.set(key, result)
+          return result
+        }
+
         let headerMapping: Map<string, string> | null = null
         let orderedHeaders: string[] | null = null
         let labelCounts: Map<string, number> | null = null
@@ -75,12 +87,12 @@ export const exportRecords = async (
 
         if (options.followBlueprintOrder) {
           const blueprintKeys = sheet.config.fields
-            .filter((field) => !options.excludeFields?.includes(field.key))
+            .filter((field) => !excludeFieldsSet.has(field.key))
             .map((field) => field.key)
 
           const transformedLabels = await Promise.all(
             blueprintKeys.map(async (key) => {
-              const label = await columnNameTransformer(key, event)
+              const label = await memoizedTransform(key)
               return { key, label }
             })
           )
@@ -114,32 +126,42 @@ export const exportRecords = async (
 
                 const formatCell = (
                   cellValue: Flatfile.CellValue | undefined
-                ) => {
+                ): XLSX.CellObject => {
                   if (!cellValue) {
                     return {
                       t: 's',
                       v: '',
                       c: [],
-                    } as XLSX.CellObject
+                    }
                   }
                   const { value, messages } = cellValue
-                  const cell: XLSX.CellObject = {
-                    t: 's',
-                    v: Array.isArray(value) ? value.join(', ') : value,
-                    c: [],
-                  }
-                  if (options.excludeMessages) {
-                    cell.c = []
-                  } else if (messages.length > 0) {
-                    cell.c = messages.map((m) => ({
+                  const rawValue = Array.isArray(value)
+                    ? value.join(', ')
+                    : value
+
+                  let c: any = []
+                  if (!options.excludeMessages && messages.length > 0) {
+                    c = messages.map((m) => ({
                       a: 'Flatfile',
                       t: `[${m.type.toUpperCase()}]: ${m.message}`,
                       T: true,
                     }))
-                    cell.c.hidden = true
+                    c.hidden = true
                   }
 
-                  return cell
+                  if (typeof rawValue === 'number') {
+                    return {
+                      t: 'n',
+                      v: rawValue,
+                      c,
+                    }
+                  }
+
+                  return {
+                    t: 's',
+                    v: rawValue,
+                    c,
+                  }
                 }
 
                 if (
@@ -158,14 +180,13 @@ export const exportRecords = async (
                   const blueprintKeys = new Set(headerMapping.keys())
                   const additionalKeys = Object.keys(row).filter(
                     (key) =>
-                      !blueprintKeys.has(key) &&
-                      !options.excludeFields?.includes(key)
+                      !blueprintKeys.has(key) && !excludeFieldsSet.has(key)
                   )
 
                   for (const key of additionalKeys) {
                     let uniqueLabel = extrasKeyToUniqueLabel.get(key)
                     if (!uniqueLabel) {
-                      const baseLabel = await columnNameTransformer(key, event)
+                      const baseLabel = await memoizedTransform(key)
                       const count = labelCounts.get(baseLabel) || 0
                       labelCounts.set(baseLabel, count + 1)
                       uniqueLabel =
@@ -185,14 +206,12 @@ export const exportRecords = async (
                 } else {
                   const rowEntries = await Promise.all(
                     Object.keys(row).map(async (colName: string) => {
-                      if (options.excludeFields?.includes(colName)) {
+                      if (excludeFieldsSet.has(colName)) {
                         return null
                       }
 
-                      const transformedColName = await columnNameTransformer(
-                        colName,
-                        event
-                      )
+                      const transformedColName =
+                        await memoizedTransform(colName)
                       return [transformedColName, formatCell(row[colName])]
                     })
                   )
@@ -225,7 +244,7 @@ export const exportRecords = async (
 
           const emptyRowEntries = await Promise.all(
             sheet.config.fields.map(async (field) => [
-              await columnNameTransformer(field.key, event),
+              await memoizedTransform(field.key),
               emptyCell,
             ])
           )
@@ -240,6 +259,7 @@ export const exportRecords = async (
 
         if (options.followBlueprintOrder && orderedHeaders) {
           if (extrasHeaderOrder && extrasHeaderOrder.length > 0) {
+            extrasHeaderOrder.sort()
             orderedHeaders = orderedHeaders.concat(extrasHeaderOrder)
           }
           sheetOptions.header = orderedHeaders
