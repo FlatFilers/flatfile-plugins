@@ -95,3 +95,140 @@ describe('SpaceConfigure plugin e2e tests', () => {
     expect(mockFn).toHaveBeenCalled()
   })
 })
+
+describe('SpaceConfigure plugin with maintainWorkbookOrder', () => {
+  const listener = new TestListener()
+  const driver = setupDriver()
+  let spaceId: string
+  let createdWorkbookIds: string[] = []
+
+  beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
+    const setupWithOrder: SetupFactory = {
+      workbooks: [
+        {
+          name: 'First Workbook',
+          sheets: [gettingStartedSheet],
+        },
+        {
+          name: 'Second Workbook',
+          sheets: [gettingStartedSheet],
+        },
+        {
+          name: 'Third Workbook',
+          sheets: [gettingStartedSheet],
+        },
+      ],
+      config: {
+        maintainWorkbookOrder: true,
+      },
+    }
+
+    listener.use(
+      configureSpace(setupWithOrder, async (event, workbookIds) => {
+        createdWorkbookIds = workbookIds
+      })
+    )
+
+    const space = await setupSpace()
+    spaceId = space.id
+  })
+
+  afterAll(async () => {
+    await deleteSpace(spaceId)
+
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
+  })
+
+  it('should maintain workbook order in sidebar config', async () => {
+    await listener.waitFor('job:ready', 1, 'space:configure')
+
+    const space = await api.spaces.get(spaceId)
+
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toBeDefined()
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toHaveLength(3)
+
+    expect(space.data.settings?.sidebarConfig?.workbookSidebarOrder).toEqual(
+      createdWorkbookIds
+    )
+  })
+})
+
+describe('SpaceConfigure plugin with maintainWorkbookOrder and existing settings', () => {
+  const listener = new TestListener()
+  const driver = setupDriver()
+  let spaceId: string
+
+  beforeAll(async () => {
+    await driver.start()
+    listener.mount(driver)
+
+    const setupWithExistingSettings: SetupFactory = {
+      workbooks: [
+        {
+          name: 'Workbook A',
+          sheets: [gettingStartedSheet],
+        },
+        {
+          name: 'Workbook B',
+          sheets: [gettingStartedSheet],
+        },
+      ],
+      space: {
+        settings: {
+          filesMappedAfterJob: 'custom-job',
+        },
+      },
+      config: {
+        maintainWorkbookOrder: true,
+      },
+    }
+
+    listener.use(configureSpace(setupWithExistingSettings))
+
+    const space = await setupSpace()
+    spaceId = space.id
+  })
+
+  afterAll(async () => {
+    await deleteSpace(spaceId)
+
+    driver.shutdown()
+  })
+
+  beforeEach(() => {
+    listener.resetCount()
+  })
+
+  afterEach(() => {
+    listener.reset()
+  })
+
+  it('should preserve existing settings while adding workbook order', async () => {
+    await listener.waitFor('job:ready', 1, 'space:configure')
+
+    const space = await api.spaces.get(spaceId)
+
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toBeDefined()
+    expect(
+      space.data.settings?.sidebarConfig?.workbookSidebarOrder
+    ).toHaveLength(2)
+    expect(space.data.settings?.filesMappedAfterJob).toBe('custom-job')
+  })
+})

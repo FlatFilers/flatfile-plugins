@@ -52,15 +52,19 @@ export function configureSpace(
         )
         await tick(50, 'Workbook created')
 
-        if (setup.config?.maintainWorkbookOrder) {
-          if (!setup.space) {
-            setup.space = {}
-          }
+        let spaceUpdate = setup.space ?? {}
 
-          setup.space.settings = {
+        if (setup.config?.maintainWorkbookOrder) {
+          const mergedSettings = {
+            ...(setup.space?.settings ?? {}),
             sidebarConfig: {
+              ...(setup.space?.settings?.sidebarConfig ?? {}),
               workbookSidebarOrder: workbookIds,
             },
+          }
+          spaceUpdate = {
+            ...spaceUpdate,
+            settings: mergedSettings,
           }
         }
 
@@ -68,7 +72,7 @@ export function configureSpace(
           environmentId: environmentId,
           primaryWorkbookId:
             workbookIds && workbookIds.length > 0 ? workbookIds[0] : '',
-          ...setup.space,
+          ...spaceUpdate,
         })
 
         if (setup.documents) {
