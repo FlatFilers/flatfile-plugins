@@ -66,6 +66,9 @@ export const exportRecords = async (
           }
         : async (name: string) => name
 
+      const schemaKeys = new Set(sheet.config.fields.map((field) => field.key))
+      const schemaFieldKeys = sheet.config.fields.map((field) => field.key)
+
       try {
         let results = await processRecords(
           sheet.id,
@@ -103,17 +106,11 @@ export const exportRecords = async (
                   return cell
                 }
 
-                const schemaKeys = new Set(
-                  sheet.config.fields.map((field) => field.key)
-                )
                 const additionalKeys = Object.keys(row).filter(
                   (key) => !schemaKeys.has(key)
                 )
 
-                const allKeys = [
-                  ...sheet.config.fields.map((field) => field.key),
-                  ...additionalKeys,
-                ]
+                const allKeys = [...schemaFieldKeys, ...additionalKeys]
 
                 const rowEntries = await Promise.all(
                   allKeys.map(async (colName) => {
