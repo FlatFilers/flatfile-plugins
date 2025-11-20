@@ -103,9 +103,20 @@ export const exportRecords = async (
                   return cell
                 }
 
+                const schemaKeys = new Set(
+                  sheet.config.fields.map((field) => field.key)
+                )
+                const additionalKeys = Object.keys(row).filter(
+                  (key) => !schemaKeys.has(key)
+                )
+
+                const allKeys = [
+                  ...sheet.config.fields.map((field) => field.key),
+                  ...additionalKeys,
+                ]
+
                 const rowEntries = await Promise.all(
-                  sheet.config.fields.map(async (field) => {
-                    const colName = field.key
+                  allKeys.map(async (colName) => {
                     if (options.excludeFields?.includes(colName)) {
                       return null
                     }
