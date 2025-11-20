@@ -119,6 +119,7 @@ describe('forward-webhook() e2e', () => {
   it('should error', async () => {
     mockWebhookFetch.mockResolvedValue({
       status: 500,
+      statusText: 'Internal Server Error',
       ok: false,
       headers: {
         get: vi.fn().mockReturnValue('application/json'),
@@ -140,7 +141,7 @@ describe('forward-webhook() e2e', () => {
       expect.objectContaining({
         topic: 'commit:created',
         data: {
-          data: 'Error: Error forwarding webhook',
+          data: 'Error: Error forwarding webhook: 500 Internal Server Error',
           error: true,
           message: 'Error received, please try again',
         },
