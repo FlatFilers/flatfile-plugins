@@ -23,6 +23,7 @@ The `callback` parameter takes a function that will be called with the webhook r
 The `options` parameter takes an object with the following properties:
 
 - `debug` - `boolean` - (optional) - Whether to log debug messages.
+- `timeout` - `number` - (optional) - Timeout in milliseconds for the webhook request. Defaults to 5000ms (5 seconds).
 
 
 ## Usage
@@ -45,5 +46,16 @@ import { webhookEventForwarder } from "@flatfile/plugin-webhook-event-forwarder"
 ```ts listener.js
 listener.use(webhookEventForwarder("https://webhook.site/...", (data, event) => {
   console.log(data, event);
+}));
+```
+
+#### With timeout configuration
+
+```ts listener.js
+listener.use(webhookEventForwarder("https://webhook.site/...", (data, event) => {
+  console.log(data, event);
+}, {
+  timeout: 10000, // 10 seconds
+  debug: true
 }));
 ```

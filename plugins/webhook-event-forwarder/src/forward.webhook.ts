@@ -9,10 +9,15 @@ export function webhookEventForward(
   ) => Promise<unknown> | unknown,
   options?: {
     debug?: boolean
+    timeout?: number
   }
 ) {
   return async (listener: FlatfileListener) => {
     return listener.on('**', async (event) => {
+      const controller = new AbortController()
+      const timeoutMs = options?.timeout ?? 5000 // Default 5 seconds
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+
       try {
         const response = await fetch(url, {
           method: 'POST',
@@ -20,9 +25,14 @@ export function webhookEventForward(
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(event),
+          signal: controller.signal,
         })
 
-        if (!response.ok) throw new Error('Error forwarding webhook')
+        if (!response.ok) {
+          throw new Error(
+            `Error forwarding webhook: ${response.status} ${response.statusText}`
+          )
+        }
 
         const contentType = response.headers.get('content-type')
         const isJson = contentType?.includes('application/json')
@@ -30,8 +40,13 @@ export function webhookEventForward(
 
         callback ? await callback(data, event) : null
       } catch (err) {
+        const errorMessage =
+          err.name === 'AbortError'
+            ? `Webhook request timed out after ${timeoutMs}ms`
+            : err.toString()
+
         if (options?.debug) {
-          console.error(err.toString())
+          console.error(`[webhook-event-forwarder] ${errorMessage}`)
         }
 
         callback
@@ -39,11 +54,13 @@ export function webhookEventForward(
               {
                 error: true,
                 message: 'Error received, please try again',
-                data: err.toString(),
+                data: errorMessage,
               },
               event
             )
           : null
+      } finally {
+        clearTimeout(timeoutId)
       }
     })
   }
