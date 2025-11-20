@@ -73,30 +73,41 @@ export const exportRecords = async (
             const processedRecords = await Promise.all(
               records.map(async (record: Flatfile.RecordWithLinks) => {
                 const { id: recordId, values: row } = record
+
+                const formatCell = (cellValue?: Flatfile.CellValue) => {
+                  if (!cellValue) {
+                    return {
+                      t: 's',
+                      v: '',
+                      c: [],
+                    } as XLSX.CellObject
+                  }
+
+                  const { value, messages } = cellValue
+                  const cell: XLSX.CellObject = {
+                    t: 's',
+                    v: Array.isArray(value) ? value.join(', ') : value,
+                    c: [],
+                  }
+                  if (options.excludeMessages) {
+                    cell.c = []
+                  } else if (messages.length > 0) {
+                    cell.c = messages.map((m) => ({
+                      a: 'Flatfile',
+                      t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                      T: true,
+                    }))
+                    cell.c.hidden = true
+                  }
+
+                  return cell
+                }
+
                 const rowEntries = await Promise.all(
-                  Object.keys(row).map(async (colName: string) => {
+                  sheet.config.fields.map(async (field) => {
+                    const colName = field.key
                     if (options.excludeFields?.includes(colName)) {
                       return null
-                    }
-                    const formatCell = (cellValue: Flatfile.CellValue) => {
-                      const { value, messages } = cellValue
-                      const cell: XLSX.CellObject = {
-                        t: 's',
-                        v: Array.isArray(value) ? value.join(', ') : value,
-                        c: [],
-                      }
-                      if (options.excludeMessages) {
-                        cell.c = []
-                      } else if (messages.length > 0) {
-                        cell.c = messages.map((m) => ({
-                          a: 'Flatfile',
-                          t: `[${m.type.toUpperCase()}]: ${m.message}`,
-                          T: true,
-                        }))
-                        cell.c.hidden = true
-                      }
-
-                      return cell
                     }
 
                     const transformedColName = await columnNameTransformer(
