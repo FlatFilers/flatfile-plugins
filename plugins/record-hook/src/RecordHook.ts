@@ -130,6 +130,7 @@ export const BulkRecordHook = async (
         startTimer('update modified records', debug)
         await event.update(modifiedRecords)
         endTimer('update modified records', debug)
+        await completeCommit(event, debug)
         return
       } catch (e) {
         throw new Error('Error updating records')
