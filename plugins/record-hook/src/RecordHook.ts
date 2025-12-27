@@ -132,12 +132,13 @@ export const BulkRecordHook = async (
         endTimer('update modified records', debug)
         return
       } catch (e) {
-        throw new Error('Error updating records')
+        const originalMessage = e instanceof Error ? e.message : String(e)
+        throw new Error(`Error updating records: ${originalMessage}`)
       }
     })
   } catch (e) {
     logError('@flatfile/plugin-record-hook', (e as Error).message)
     await completeCommit(event, debug)
-    return
+    throw e
   }
 }
