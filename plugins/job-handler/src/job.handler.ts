@@ -7,10 +7,14 @@ import type {
 } from '@flatfile/listener'
 import { log, logError } from '@flatfile/util-common'
 
-const api = new FlatfileClient()
-
 export interface PluginOptions {
   readonly debug?: boolean
+  /**
+   * Custom API URL to use for the Flatfile API client.
+   * This is useful when working with non-production environments.
+   * If not provided, defaults to the standard Flatfile API URL.
+   */
+  readonly apiUrl?: string
 }
 
 export type TickFunction = (
@@ -33,6 +37,9 @@ export type TickFunction = (
  * @param {PluginOptions} opts - An optional object containing plugin options.
  * @param {boolean} opts.debug - An optional boolean that will enable debug logging.
  * Defaults to false.
+ * @param {string} opts.apiUrl - An optional custom API URL for non-production environments
+ * (e.g., 'https://<special-url>.flatfile.com/api'). If not provided, uses the default
+ * Flatfile API URL.
  *
  * @returns {Function} Returns a function that takes a FlatfileListener, adding an event
  * listener for the "job:ready" event and processing the job with the provided handler.
@@ -49,6 +56,10 @@ export function jobHandler(
     const filter = typeof job === 'string' ? { job } : job
     listener.on('job:ready', filter, async (event) => {
       const { jobId } = event.context
+
+      const api = new FlatfileClient(
+        opts.apiUrl ? { environment: opts.apiUrl } : undefined
+      )
 
       await api.jobs.ack(jobId, {
         info: 'Accepted',
