@@ -26,9 +26,9 @@ vi.mock('@flatfile/api', async () => {
         get: vi.fn().mockResolvedValue({ data: { name: 'Test Workbook' } }),
       },
       sheets: {
-        list: vi.fn().mockImplementation(() =>
-          Promise.resolve({ data: mockSheets })
-        ),
+        list: vi
+          .fn()
+          .mockImplementation(() => Promise.resolve({ data: mockSheets })),
       },
       files: {
         upload: vi.fn().mockResolvedValue({ data: { id: 'us_fl_test' } }),
@@ -106,10 +106,7 @@ function makeEvent(): FlatfileEvent {
   } as unknown as FlatfileEvent
 }
 
-function cell(
-  value: any,
-  messages: any[] = []
-): Flatfile.CellValue {
+function cell(value: any, messages: any[] = []): Flatfile.CellValue {
   return { value, messages, valid: true }
 }
 
