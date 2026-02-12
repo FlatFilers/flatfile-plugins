@@ -66,6 +66,36 @@ export const exportRecords = async (
           }
         : async (name: string) => name
 
+      // Build the ordered list of blueprint field keys, excluding any
+      // fields the caller wants omitted.  This is the canonical column
+      // order shown in the review screen.
+      const blueprintFields = sheet.config.fields.filter(
+        (f) => !options.excludeFields?.includes(f.key)
+      )
+
+      // Pre-compute the transformed header names in blueprint order so
+      // we can pass them to json_to_sheet as an explicit `header` array.
+      // When a columnNameTransformer produces duplicate names (e.g. two
+      // different field keys both labelled "Employee ID"), we must keep
+      // only the *first* occurrence.  Object.fromEntries used below to
+      // build each row already collapses duplicate keys (last-wins), so
+      // a second header entry with no matching data would create a ghost
+      // column.  Deduplicating here keeps the header in sync with the
+      // row objects.
+      const blueprintHeaderRaw = await Promise.all(
+        blueprintFields.map((f) => columnNameTransformer(f.key, event))
+      )
+      const seenHeaders = new Set<string>()
+      const blueprintHeader = blueprintHeaderRaw.filter((name) => {
+        if (seenHeaders.has(name)) {
+          return false
+        }
+        seenHeaders.add(name)
+        return true
+      })
+
+      const blueprintKeySet = new Set(blueprintFields.map((f) => f.key))
+
       try {
         let results = await processRecords(
           sheet.id,
@@ -73,42 +103,65 @@ export const exportRecords = async (
             const processedRecords = await Promise.all(
               records.map(async (record: Flatfile.RecordWithLinks) => {
                 const { id: recordId, values: row } = record
+
+                const formatCell = (cellValue: Flatfile.CellValue) => {
+                  const { value, messages } = cellValue
+                  const cell: XLSX.CellObject = {
+                    t: 's',
+                    v: Array.isArray(value) ? value.join(', ') : value,
+                    c: [],
+                  }
+                  if (options.excludeMessages) {
+                    cell.c = []
+                  } else if (messages.length > 0) {
+                    cell.c = messages.map((m) => ({
+                      a: 'Flatfile',
+                      t: `[${m.type.toUpperCase()}]: ${m.message}`,
+                      T: true,
+                    }))
+                    cell.c.hidden = true
+                  }
+
+                  return cell
+                }
+
+                // Iterate fields in blueprint order so the resulting
+                // object key order matches the review screen.
                 const rowEntries = await Promise.all(
-                  Object.keys(row).map(async (colName: string) => {
-                    if (options.excludeFields?.includes(colName)) {
+                  blueprintFields.map(async (field) => {
+                    const colName = field.key
+                    const cellValue = row[colName]
+                    if (!cellValue) {
                       return null
                     }
-                    const formatCell = (cellValue: Flatfile.CellValue) => {
-                      const { value, messages } = cellValue
-                      const cell: XLSX.CellObject = {
-                        t: 's',
-                        v: Array.isArray(value) ? value.join(', ') : value,
-                        c: [],
-                      }
-                      if (options.excludeMessages) {
-                        cell.c = []
-                      } else if (messages.length > 0) {
-                        cell.c = messages.map((m) => ({
-                          a: 'Flatfile',
-                          t: `[${m.type.toUpperCase()}]: ${m.message}`,
-                          T: true,
-                        }))
-                        cell.c.hidden = true
-                      }
-
-                      return cell
-                    }
-
                     const transformedColName = await columnNameTransformer(
                       colName,
                       event
                     )
-                    return [transformedColName, formatCell(row[colName])]
+                    return [transformedColName, formatCell(cellValue)]
                   })
                 )
 
+                // Append any extra columns present in the record that
+                // are NOT in the blueprint (e.g. user-added fields when
+                // allowAdditionalFields is true).
+                const extraEntries = await Promise.all(
+                  Object.keys(row)
+                    .filter((k) => !blueprintKeySet.has(k))
+                    .filter((k) => !options.excludeFields?.includes(k))
+                    .map(async (colName) => {
+                      const transformedColName = await columnNameTransformer(
+                        colName,
+                        event
+                      )
+                      return [transformedColName, formatCell(row[colName])]
+                    })
+                )
+
                 const rowValue = Object.fromEntries(
-                  rowEntries.filter((entry) => entry !== null)
+                  [...rowEntries, ...extraEntries].filter(
+                    (entry) => entry !== null
+                  )
                 )
 
                 return options?.includeRecordIds
@@ -143,10 +196,13 @@ export const exportRecords = async (
         }
         const rows = results.flat()
 
-        const worksheet = XLSX.utils.json_to_sheet(
-          rows,
-          createXLSXSheetOptions(options.sheetOptions?.[sheet.config.slug])
-        )
+        const worksheet = XLSX.utils.json_to_sheet(rows, {
+          ...createXLSXSheetOptions(options.sheetOptions?.[sheet.config.slug]),
+          header: [
+            ...(options?.includeRecordIds ? ['recordId'] : []),
+            ...blueprintHeader,
+          ],
+        })
 
         XLSX.utils.book_append_sheet(
           xlsxWorkbook,
