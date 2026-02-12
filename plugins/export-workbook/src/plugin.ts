@@ -76,7 +76,7 @@ export const exportRecords = async (
       // Pre-compute the transformed header names in blueprint order so
       // we can pass them to json_to_sheet as an explicit `header` array.
       // When a columnNameTransformer produces duplicate names (e.g. two
-      // different field keys both labelled "Employee ID"), we must keep
+      // different field keys that map to the same label), we must keep
       // only the *first* occurrence.  Object.fromEntries used below to
       // build each row already collapses duplicate keys (last-wins), so
       // a second header entry with no matching data would create a ghost

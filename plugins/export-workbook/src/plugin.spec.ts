@@ -212,25 +212,25 @@ describe('exportRecords — column ordering', () => {
         name: 'Sheet1',
         slug: 'sheet1',
         fields: [
-          { key: 'id', type: 'string', label: 'Employee ID' },
+          { key: 'primary_id', type: 'string', label: 'ID' },
           { key: 'name', type: 'string', label: 'Name' },
-          { key: 'bank.id', type: 'string', label: 'Employee ID' },
+          { key: 'secondary_id', type: 'string', label: 'ID' },
         ],
       },
     })
 
     mockRecords = [
       record('rec_1', {
-        id: cell('EMP_01'),
+        primary_id: cell('P1'),
         name: cell('Bob'),
-        'bank.id': cell('BANK_01'),
+        secondary_id: cell('S1'),
       }),
     ]
 
     const labels: Record<string, string> = {
-      id: 'Employee ID',
+      primary_id: 'ID',
       name: 'Name',
-      'bank.id': 'Employee ID',
+      secondary_id: 'ID',
     }
     const transformer: PluginOptions['columnNameTransformer'] = async (key) =>
       labels[key] ?? key
@@ -242,7 +242,7 @@ describe('exportRecords — column ordering', () => {
     )
 
     const { opts } = jsonToSheetCalls[0]
-    expect(opts?.header).toEqual(['Employee ID', 'Name'])
+    expect(opts?.header).toEqual(['ID', 'Name'])
   })
 
   it('appends non-blueprint fields after blueprint columns', async () => {
