@@ -105,7 +105,7 @@ export const exportRecords = async (
                 const { id: recordId, values: row } = record
 
                 const formatCell = (cellValue: Flatfile.CellValue) => {
-                  const { value, messages } = cellValue
+                  const { value, messages = [] } = cellValue
                   const cell: XLSX.CellObject = {
                     t: 's',
                     v: Array.isArray(value) ? value.join(', ') : value,
