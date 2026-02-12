@@ -468,4 +468,151 @@ describe('exportRecords — column ordering', () => {
     const { rows } = jsonToSheetCalls[0]
     expect(Object.keys(rows[0])).toEqual(['A'])
   })
+
+  it('empty sheet uses blueprint order for header row', async () => {
+    mockSheets.push({
+      id: 'us_sh_1',
+      name: 'Sheet1',
+      config: {
+        name: 'Sheet1',
+        slug: 'sheet1',
+        fields: [
+          { key: 'X', type: 'string', label: 'X' },
+          { key: 'Y', type: 'string', label: 'Y' },
+          { key: 'Z', type: 'string', label: 'Z' },
+        ],
+      },
+    })
+
+    // No records at all
+    mockRecords = []
+
+    await exportRecords(makeEvent(), {}, tick)
+
+    const { rows, opts } = jsonToSheetCalls[0]
+    // Should still produce one row with empty cells in blueprint order
+    expect(Object.keys(rows[0])).toEqual(['X', 'Y', 'Z'])
+    expect(opts?.header).toEqual(['X', 'Y', 'Z'])
+  })
+
+  it('all rows maintain blueprint column order, not just the first', async () => {
+    mockSheets.push({
+      id: 'us_sh_1',
+      name: 'Sheet1',
+      config: {
+        name: 'Sheet1',
+        slug: 'sheet1',
+        fields: [
+          { key: 'A', type: 'string', label: 'A' },
+          { key: 'B', type: 'string', label: 'B' },
+          { key: 'C', type: 'string', label: 'C' },
+        ],
+      },
+    })
+
+    // Two records with different API key orders
+    mockRecords = [
+      record('rec_1', {
+        C: cell('c1'),
+        A: cell('a1'),
+        B: cell('b1'),
+      }),
+      record('rec_2', {
+        B: cell('b2'),
+        C: cell('c2'),
+        A: cell('a2'),
+      }),
+    ]
+
+    await exportRecords(makeEvent(), {}, tick)
+
+    const { rows } = jsonToSheetCalls[0]
+    expect(Object.keys(rows[0])).toEqual(['A', 'B', 'C'])
+    expect(Object.keys(rows[1])).toEqual(['A', 'B', 'C'])
+  })
+
+  it('columnNameTransformer returning null falls back to original key', async () => {
+    mockSheets.push({
+      id: 'us_sh_1',
+      name: 'Sheet1',
+      config: {
+        name: 'Sheet1',
+        slug: 'sheet1',
+        fields: [
+          { key: 'A', type: 'string', label: 'A' },
+          { key: 'B', type: 'string', label: 'B' },
+        ],
+      },
+    })
+
+    mockRecords = [
+      record('rec_1', {
+        A: cell('a1'),
+        B: cell('b1'),
+      }),
+    ]
+
+    // Transformer returns null for 'A', should fall back to 'A'
+    const transformer: PluginOptions['columnNameTransformer'] = async (key) =>
+      key === 'A' ? null : 'Bravo'
+
+    await exportRecords(
+      makeEvent(),
+      { columnNameTransformer: transformer },
+      tick
+    )
+
+    const { opts } = jsonToSheetCalls[0]
+    expect(opts?.header).toEqual(['A', 'Bravo'])
+  })
+
+  it('excludeMessages suppresses cell comments', async () => {
+    mockSheets.push({
+      id: 'us_sh_1',
+      name: 'Sheet1',
+      config: {
+        name: 'Sheet1',
+        slug: 'sheet1',
+        fields: [{ key: 'A', type: 'string', label: 'A' }],
+      },
+    })
+
+    mockRecords = [
+      record('rec_1', {
+        A: cell('a1', [{ type: 'error', message: 'bad', source: 'custom' }]),
+      }),
+    ]
+
+    await exportRecords(makeEvent(), { excludeMessages: true }, tick)
+
+    const { rows } = jsonToSheetCalls[0]
+    expect(rows[0].A.c).toEqual([])
+  })
+
+  it('validation messages are included as cell comments by default', async () => {
+    mockSheets.push({
+      id: 'us_sh_1',
+      name: 'Sheet1',
+      config: {
+        name: 'Sheet1',
+        slug: 'sheet1',
+        fields: [{ key: 'A', type: 'string', label: 'A' }],
+      },
+    })
+
+    mockRecords = [
+      record('rec_1', {
+        A: cell('a1', [
+          { type: 'error', message: 'is required', source: 'custom' },
+        ]),
+      }),
+    ]
+
+    await exportRecords(makeEvent(), {}, tick)
+
+    const { rows } = jsonToSheetCalls[0]
+    expect(rows[0].A.c).toHaveLength(1)
+    expect(rows[0].A.c[0].t).toBe('[ERROR]: is required')
+    expect(rows[0].A.c.hidden).toBe(true)
+  })
 })
