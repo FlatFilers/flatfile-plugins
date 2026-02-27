@@ -1,5 +1,11 @@
 # @flatfile/plugin-export-workbook
 
+## 6.0.1
+
+### Patch Changes
+
+- 68cf817: Export columns in blueprint field order instead of arbitrary API key order
+
 ## 6.0.0
 
 ### Patch Changes
